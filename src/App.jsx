@@ -2,181 +2,150 @@ import React, { useEffect, useState } from "react";
 
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // HERO VIDEO RESPONSIVE HANDLING
+  /* =========================
+     NAV BAR SCROLL EFFECT
+  ========================== */
   useEffect(() => {
-    const handleResize = () => {
-      const video = document.querySelector("#home video");
-      if (!video) return;
-
-      if (window.innerWidth < 700) {
-        video.pause();
-        video.style.display = "none";
-      } else {
-        video.style.display = "block";
-        video.play().catch(() => {});
-      }
+    const onScroll = () => {
+      setScrolled(window.scrollY > 30);
     };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <>
-      {/* ================================================================
-          HEADER
-      ================================================================= */}
- <header className="absolute top-0 left-0 right-0 z-50 bg-transparent">
-  <div className="max-w-7xl mx-auto px-6">
-    <div className="flex items-center justify-between h-20">
-
-
-      {/* LOGO */}
-      <a href="#home" className="relative flex items-center gap-2 group">
-        <div
-          className="text-2xl font-extrabold tracking-wide relative text-white"
-          style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
-        >
-          padanilathu
-
-          {/* Highlight underline */}
-          <span
-            className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#6FA56F] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300"
-          ></span>
-        </div>
-
-        <div className="ml-3 text-sm text-white/80 font-medium">
-          Since 2008
-        </div>
-      </a>
-
-      {/* DESKTOP NAV */}
-      <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-white">
-        <a href="#sectors" className="hover:text-[#6FA56F]">Sectors</a>
-        <a href="#services" className="hover:text-[#6FA56F]">Services</a>
-        <a href="#projects" className="hover:text-[#6FA56F]">Projects</a>
-        <a href="#gallery" className="hover:text-[#6FA56F]">Gallery</a>
-        <a href="#insights" className="hover:text-[#6FA56F]">Insights</a>
-        <a href="#news" className="hover:text-[#6FA56F]">News</a>
-        <a href="#about" className="hover:text-[#6FA56F]">About</a>
-        <a href="#careers" className="hover:text-[#6FA56F]">Careers</a>
-
-        <a
-          href="#contact"
-          className="px-4 py-2 rounded-md font-semibold border border-white text-white hover:bg-white hover:text-[#6FA56F] transition"
-        >
-          Contact
-        </a>
-      </nav>
-
-      {/* MOBILE TOGGLE */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="md:hidden p-2 border border-white text-white rounded-md"
+      {/* =========================
+          HEADER (TRANSPARENT)
+      ========================== */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/90 backdrop-blur border-b border-slate-200"
+            : "bg-transparent"
+        }`}
       >
-        ☰
-      </button>
-    </div>
-  </div>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between h-20">
+            {/* LOGO */}
+            <a href="#home" className="relative group">
+              <div
+                className={`text-2xl font-extrabold tracking-wide ${
+                  scrolled ? "text-slate-900" : "text-white"
+                }`}
+                style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
+              >
+                padanilathu
+                <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#6FA56F] rounded-full opacity-80"></span>
+              </div>
+            </a>
 
-  {/* MOBILE NAV */}
-  {mobileOpen && (
-    <div className="md:hidden absolute left-4 right-4 top-20 bg-white rounded-lg shadow-lg p-4 z-50">
-      <div className="flex flex-col gap-3 text-slate-700 font-medium">
-        <a href="#sectors" onClick={() => setMobileOpen(false)}>Sectors</a>
-        <a href="#services" onClick={() => setMobileOpen(false)}>Services</a>
-        <a href="#projects" onClick={() => setMobileOpen(false)}>Projects</a>
-        <a href="#gallery" onClick={() => setMobileOpen(false)}>Gallery</a>
-        <a href="#insights" onClick={() => setMobileOpen(false)}>Insights</a>
-        <a href="#news" onClick={() => setMobileOpen(false)}>News</a>
-        <a href="#about" onClick={() => setMobileOpen(false)}>About</a>
-        <a href="#careers" onClick={() => setMobileOpen(false)}>Careers</a>
-        <a
-          href="#contact"
-          onClick={() => setMobileOpen(false)}
-          className="bg-[#6FA56F] text-white px-4 py-2 rounded-md mt-2"
-        >
-          Contact
-        </a>
-      </div>
-    </div>
-  )}
-</header>
+            {/* DESKTOP NAV */}
+            <nav
+              className={`hidden md:flex items-center gap-6 text-sm font-medium ${
+                scrolled ? "text-slate-700" : "text-white"
+              }`}
+            >
+              <a href="#services">Services</a>
+              <a href="#projects">Projects</a>
+              <a href="#gallery">Gallery</a>
+              <a href="#news">News</a>
+              <a href="#contact" className="bg-[#6FA56F] px-4 py-2 rounded-md text-white">
+                Contact
+              </a>
+            </nav>
 
+            {/* MOBILE MENU BUTTON */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className={`md:hidden text-2xl ${
+                scrolled ? "text-slate-900" : "text-white"
+              }`}
+            >
+              ☰
+            </button>
+          </div>
+        </div>
 
-      {/* ================================================================
+        {/* MOBILE NAV */}
+        {mobileOpen && (
+          <div className="md:hidden bg-white shadow-lg px-6 py-4">
+            <div className="flex flex-col gap-4 text-slate-700">
+              <a href="#services" onClick={() => setMobileOpen(false)}>Services</a>
+              <a href="#projects" onClick={() => setMobileOpen(false)}>Projects</a>
+              <a href="#gallery" onClick={() => setMobileOpen(false)}>Gallery</a>
+              <a href="#news" onClick={() => setMobileOpen(false)}>News</a>
+              <a
+                href="#contact"
+                onClick={() => setMobileOpen(false)}
+                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md"
+              >
+                Contact
+              </a>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* =========================
           HERO SECTION
-      ================================================================= */}
-      <section id="home" className="relative h-screen min-h-[650px]">
+      ========================== */}
+      <section
+        id="home"
+        className="relative h-screen min-h-[650px] pt-20"
+      >
+        {/* VIDEO — MOBILE SAFE */}
         <video
           className="absolute inset-0 w-full h-full object-cover"
-          poster="/images/hero1.png"
           autoPlay
           muted
           loop
           playsInline
+          preload="metadata"
+          poster="/images/hero1.png"
         >
           <source src="/videos/hero1.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 bg-black/40" />
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-black/45" />
 
-        <div className="relative z-20 h-full max-w-7xl mx-auto px-6 flex items-center">
+        {/* HERO CONTENT */}
+        <div className="relative z-20 max-w-7xl mx-auto px-6 h-full flex items-center">
           <div className="text-white max-w-3xl">
             <h1
-  className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight"
-  style={{ fontFamily: "Graphik, Inter, sans-serif" }}
->
-
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight"
+              style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
+            >
               Designing Eco-Conscious & Aesthetically Stunning Outdoor Spaces
             </h1>
 
-            <p className="mt-4 text-lg md:text-xl text-white/90">
-              We craft eco-friendly outdoor spaces using sustainable materials,
-              landscape architecture, and 3D visualization — delivering
-              long-lasting, functional, and beautifully designed environments
-              across Kerala.
+            <p className="mt-4 text-lg text-white/90">
+              We craft sustainable, elegant outdoor environments using
+              eco-friendly materials, landscape architecture and 3D design —
+              delivering long-lasting value across Kerala.
             </p>
 
             <div className="mt-6 flex gap-4 flex-wrap">
               <a
                 href="#services"
-                className="bg-white text-[#6FA56F] px-4 py-2 rounded-md font-semibold"
+                className="bg-white text-[#6FA56F] px-5 py-2 rounded-md font-semibold"
               >
                 Explore Services
               </a>
-
               <a
                 href="#projects"
-                className="border border-white/40 text-white px-4 py-2 rounded-md"
+                className="border border-white/40 px-5 py-2 rounded-md"
               >
                 View Projects
               </a>
             </div>
-
-            <div className="mt-10 flex gap-6 flex-wrap">
-              <div className="bg-white/10 p-4 rounded-md min-w-[160px]">
-                <div className="text-2xl font-bold">500+</div>
-                <div className="text-sm text-white/80">Completed Sites</div>
-              </div>
-
-              <div className="bg-white/10 p-4 rounded-md min-w-[160px]">
-                <div className="text-2xl font-bold">17+ Years</div>
-                <div className="text-sm text-white/80">Industry Experience</div>
-              </div>
-
-              <div className="bg-white/10 p-4 rounded-md min-w-[200px]">
-                <div className="text-2xl font-bold">Integrated</div>
-                <div className="text-sm text-white/80">
-                  Design–Build Delivery
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
+
 
       {/* ================================================================
           MAIN WRAPPER
