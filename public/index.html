@@ -1,24 +1,20 @@
-<!--
-  padanilathu - index.html
-  Place this file in the project root (e.g., public/index.html) and put images in /public/images and videos in /public/videos
-  Replace placeholder phone/email/URLs with your real values.
--->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="/favicon.ico" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#6FA56F" />
+    <meta name="theme-color" content="#0B2545" />
 
     <meta
       name="description"
-      content="Padanilathu — landscape architecture, natural stone paving, exterior design and 3D visualization across Kerala. Since 2008. 500+ projects."
+      content="Padanilathu — eco-conscious landscaping, outdoor architecture, stone paving, and 3D design across Kerala."
     />
 
-    <link rel="canonical" href="https://www.padanilathu.com/" />
-
-    <!-- Tailwind CSS (good for prototype). For production: install Tailwind and build a CSS file to purge unused classes. -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Google Fonts -->
@@ -29,597 +25,48 @@
       rel="stylesheet"
     />
 
-    <!-- Social Meta -->
-    <meta property="og:title" content="Padanilathu — Sustainable Landscape & Exterior Design" />
-    <meta property="og:description" content="Design, stone paving, exterior architecture & 3D visualization across Kerala. Since 2008." />
+    <!-- Social Sharing -->
+    <meta property="og:title" content="Padanilathu — Eco-friendly Outdoor Design" />
+    <meta
+      property="og:description"
+      content="Landscaping, stone paving, exterior architecture and sustainable outdoor design services in Kerala."
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/images/hero1.jpg" />
+    <meta property="og:image" content="/images/hero1.png" />
 
+    <!-- Twitter Share -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Padanilathu — Sustainable Landscape & Exterior Design" />
-    <meta name="twitter:description" content="Design, stone paving, exterior architecture & 3D visualization across Kerala. Since 2008." />
-    <meta name="twitter:image" content="/images/hero1.jpg" />
+    <meta name="twitter:title" content="Padanilathu — Eco-friendly Outdoor Design" />
+    <meta
+      name="twitter:description"
+      content="Enduring outdoor spaces crafted with sustainability and high-quality materials."
+    />
+    <meta name="twitter:image" content="/images/hero1.png" />
 
-    <!-- Icons & Manifest -->
+    <!-- PWA Icons -->
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
 
     <title>Padanilathu</title>
 
+    <!-- Base Style (before React loads) -->
     <style>
-      /* small custom overrides */
-      :root {
-        --pad-green: #6FA56F;
-        --pad-green-dark: #507953;
-        --charcoal: #0f172a;
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: "Inter", sans-serif;
+        background: #F8FAFC;
       }
-      .grad-overlay {
-        background: linear-gradient(180deg, rgba(6,8,10,0.20), rgba(6,8,10,0.36));
-      }
-      /* ensure hero text is readable on video */
-      .hero-video {
-        object-fit: cover;
-      }
-
-      /* screen-reader-only utility (if not using an accessible utility library) */
-      .sr-only {
-        position: absolute !important;
-        height: 1px; width: 1px;
-        overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
-        white-space: nowrap; border: 0; padding: 0; margin: -1px;
+      a {
+        color: inherit;
+        text-decoration: none;
       }
     </style>
-
-    <!-- JSON-LD LocalBusiness schema: replace placeholders with real values (I can autofill from your GMB link if you share it). -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "name": "Padanilathu",
-        "url": "https://www.padanilathu.com",
-        "logo": "https://www.padanilathu.com/logo192.png",
-        "telephone": "+91-XXXXXXXXXX",
-        "description": "Landscape architecture, natural stone paving, exterior design and 3D visualization across Kerala. Since 2008. 500+ projects.",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Ernakulam",
-          "addressRegion": "Kerala",
-          "addressCountry": "IN"
-        },
-        "areaServed": "Kerala",
-        "sameAs": [
-          "https://www.facebook.com/yourpage",
-          "https://www.instagram.com/yourpage"
-        ]
-      }
-    </script>
-
-    <!-- Preload hero poster for LCP improvement -->
-    <link rel="preload" as="image" href="/images/hero1.jpg" />
   </head>
 
-  <body class="antialiased text-slate-800 bg-slate-50">
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-sm border-b border-slate-100">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="flex items-center justify-between h-20">
-          <a href="#home" class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-md" style="background:var(--pad-green)"></div>
-            <div class="font-poppins font-semibold text-lg text-slate-900">Padanilathu</div>
-            <div class="ml-3 text-sm text-slate-500">Since 2008</div>
-          </a>
-
-          <nav class="hidden md:flex items-center gap-6 text-sm text-slate-600" aria-label="Primary navigation">
-            <a href="#sectors" class="hover:text-slate-900">Sectors</a>
-            <a href="#services" class="hover:text-slate-900">Services</a>
-            <a href="#projects" class="hover:text-slate-900">Projects</a>
-            <a href="#insights" class="hover:text-slate-900">Insights</a>
-            <a href="#news" class="hover:text-slate-900">News</a>
-            <a href="#about" class="hover:text-slate-900">About</a>
-            <a href="#careers" class="hover:text-slate-900">Careers</a>
-            <a href="#contact" class="inline-flex items-center bg-[var(--pad-green)] hover:bg-[var(--pad-green-dark)] text-white text-sm font-semibold px-4 py-2 rounded-md">Contact</a>
-          </nav>
-
-          <div class="md:hidden">
-            <button id="mobileToggle" aria-label="Open menu" class="p-2 rounded-md border" onclick="toggleMobile()">
-              ☰
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Mobile nav -->
-    <div id="mobileNav" class="md:hidden fixed inset-x-4 top-20 z-40 bg-white rounded-md shadow-lg p-4 hidden" aria-hidden="true">
-      <div class="flex flex-col gap-3 text-slate-700">
-        <a href="#sectors" onclick="toggleMobile()">Sectors</a>
-        <a href="#services" onclick="toggleMobile()">Services</a>
-        <a href="#projects" onclick="toggleMobile()">Projects</a>
-        <a href="#insights" onclick="toggleMobile()">Insights</a>
-        <a href="#news" onclick="toggleMobile()">News</a>
-        <a href="#about" onclick="toggleMobile()">About</a>
-        <a href="#careers" onclick="toggleMobile()">Careers</a>
-        <a href="#contact" class="mt-2 inline-flex items-center bg-[var(--pad-green)] hover:bg-[var(--pad-green-dark)] text-white text-sm font-semibold px-4 py-2 rounded-md" onclick="toggleMobile()">Contact</a>
-      </div>
-    </div>
-
-    <!-- HERO -->
-    <section id="home" class="relative h-screen min-h-[640px]">
-      <video class="absolute inset-0 w-full h-full hero-video" poster="/images/hero1.jpg" autoplay muted loop playsinline aria-hidden="true">
-        <source src="/videos/hero1.mp4" type="video/mp4" />
-        <source src="/videos/hero1.webm" type="video/webm" />
-        <!-- Fallback text for older browsers -->
-        Your browser does not support the video tag. See our hero image instead.
-      </video>
-      <div class="absolute inset-0 grad-overlay" aria-hidden="true"></div>
-
-      <!-- Visible heading content for screen readers is provided below -->
-      <div class="sr-only" role="status">Hero video showing outdoor landscaping examples.</div>
-
-      <div class="relative z-20 max-w-7xl mx-auto px-6 h-full flex items-center">
-        <div class="text-white max-w-3xl">
-          <h1 class="font-poppins text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">Designing Enduring, High-Quality Outdoor Spaces for Kerala</h1>
-          <p class="mt-4 text-lg md:text-xl text-white/90">Landscape architecture, natural stone paving, exterior design and 3D visualization — delivered statewide with a focus on Ernakulam.</p>
-
-          <div class="mt-6 flex flex-wrap gap-4 items-center">
-            <a href="#services" class="inline-flex items-center bg-white text-[var(--pad-green)] font-semibold px-4 py-2 rounded-md shadow-sm">Explore Services</a>
-            <a href="#projects" class="inline-flex items-center border border-white/30 text-white px-4 py-2 rounded-md">View Projects</a>
-          </div>
-
-          <div class="mt-8 flex gap-6 flex-wrap">
-            <div class="bg-white/10 rounded-lg p-3 min-w-[180px]">
-              <div class="text-2xl font-semibold">500+</div>
-              <div class="text-sm text-white/80">Completed Sites</div>
-            </div>
-            <div class="bg-white/10 rounded-lg p-3 min-w-[180px]">
-              <div class="text-2xl font-semibold">17+</div>
-              <div class="text-sm text-white/80">Years of Experience</div>
-            </div>
-            <div class="bg-white/10 rounded-lg p-3 min-w-[220px]">
-              <div class="text-2xl font-semibold">Integrated</div>
-              <div class="text-sm text-white/80">Design–Build Delivery</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <main class="relative max-w-7xl mx-auto px-6 -mt-24 pb-24">
-      <!-- Sectors -->
-      <section id="sectors" class="bg-white rounded-xl shadow-sm p-8">
-        <div class="flex items-start justify-between">
-          <div>
-            <h2 class="text-2xl font-poppins font-semibold">Sectors</h2>
-            <p class="mt-2 text-sm text-slate-600">We create outdoor environments across multiple sectors and project sizes.</p>
-          </div>
-          <div class="hidden md:flex gap-3">
-            <a href="#sectors" class="text-sm text-slate-500">Explore all</a>
-          </div>
-        </div>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <a href="#sector-residential" class="relative block rounded-lg overflow-hidden h-44 bg-cover bg-center" style="background-image:url('/images/sector_residential.jpg')" aria-label="Residential sector">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true"></div>
-            <div class="absolute bottom-4 left-4 text-white font-semibold">Residential</div>
-          </a>
-
-          <a href="#sector-commercial" class="relative block rounded-lg overflow-hidden h-44 bg-cover bg-center" style="background-image:url('/images/sector_commercial.jpg')" aria-label="Commercial sector">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true"></div>
-            <div class="absolute bottom-4 left-4 text-white font-semibold">Commercial</div>
-          </a>
-
-          <a href="#sector-hospitality" class="relative block rounded-lg overflow-hidden h-44 bg-cover bg-center" style="background-image:url('/images/sector_hospitality.jpg')" aria-label="Hospitality sector">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true"></div>
-            <div class="absolute bottom-4 left-4 text-white font-semibold">Hospitality</div>
-          </a>
-
-          <a href="#sector-public" class="relative block rounded-lg overflow-hidden h-44 bg-cover bg-center" style="background-image:url('/images/sector_public.jpg')" aria-label="Public and recreational sector">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true"></div>
-            <div class="absolute bottom-4 left-4 text-white font-semibold">Public &amp; Recreational</div>
-          </a>
-
-          <a href="#sector-institutional" class="relative block rounded-lg overflow-hidden h-44 bg-cover bg-center" style="background-image:url('/images/sector_institutional.jpg')" aria-label="Institutional sector">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true"></div>
-            <div class="absolute bottom-4 left-4 text-white font-semibold">Institutional</div>
-          </a>
-
-          <a href="#sector-developers" class="relative block rounded-lg overflow-hidden h-44 bg-cover bg-center" style="background-image:url('/images/sector_developers.jpg')" aria-label="Real estate and developers">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true"></div>
-            <div class="absolute bottom-4 left-4 text-white font-semibold">Real Estate &amp; Developers</div>
-          </a>
-
-          <a href="#sector-industrial" class="relative block rounded-lg overflow-hidden h-44 bg-cover bg-center" style="background-image:url('/images/sector_industrial.jpg')" aria-label="Industrial sector">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true"></div>
-            <div class="absolute bottom-4 left-4 text-white font-semibold">Industrial</div>
-          </a>
-        </div>
-      </section>
-
-      <!-- Services -->
-      <section id="services" class="mt-8">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-2xl font-poppins font-semibold">Services</h2>
-            <p class="mt-2 text-sm text-slate-600">Complete expertise from concept and 3D visualization to construction and maintenance.</p>
-          </div>
-        </div>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_landscape.jpg" alt="Landscaping and Gardening" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Landscaping and Gardening</h3>
-              <p class="mt-2 text-sm text-slate-600">Master planning, gardens, lawns, vertical &amp; terrace gardens, irrigation and maintenance.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_stonepaving.jpg" alt="Natural stone paving and hardscaping" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Natural Stone Paving and Hardscaping</h3>
-              <p class="mt-2 text-sm text-slate-600">Courtyards, driveways, patios, interlock and long-lasting outdoor flooring solutions.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_exterior.jpg" alt="Exterior architecture and 3D design" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Exterior Architecture and 3D Design</h3>
-              <p class="mt-2 text-sm text-slate-600">Façade design, pergolas, 3D renders, material boards and construction drawings.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_waterfeatures.jpg" alt="Water features" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Water Features</h3>
-              <p class="mt-2 text-sm text-slate-600">Fountains, waterfalls, ponds and eco-circulating systems with lighting and filtration.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_playgrounds.jpg" alt="Playgrounds and sports areas" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Playgrounds and Sports Areas</h3>
-              <p class="mt-2 text-sm text-slate-600">Children's play zones, tennis and badminton courts, jogging tracks and outdoor gyms.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_commercial.jpg" alt="Commercial and resort landscaping" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Commercial and Resort Landscaping</h3>
-              <p class="mt-2 text-sm text-slate-600">Hospitality exteriors, resort pathways, poolside landscapes, and corporate open areas.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_renovation.jpg" alt="Renovation and maintenance" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Renovation and Maintenance</h3>
-              <p class="mt-2 text-sm text-slate-600">Garden restoration, re-paving, seasonal care and annual maintenance packages.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_consulting.jpg" alt="Outdoor space consulting" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Outdoor Space Consulting</h3>
-              <p class="mt-2 text-sm text-slate-600">Site assessment, budgeting, material selection, BOQs and supervision.</p>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/service_sustainability.jpg" alt="Sustainable outdoor solutions" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Sustainable Outdoor Solutions</h3>
-              <p class="mt-2 text-sm text-slate-600">Native planting, rainwater integration, low-water irrigation and solar-ready lighting.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- Projects -->
-      <section id="projects" class="mt-10">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-2xl font-poppins font-semibold">Featured Projects</h2>
-            <p class="mt-2 text-sm text-slate-600">Selected work across Kerala — courtyards, resorts, cafés and residential gardens.</p>
-          </div>
-          <a href="#projects" class="text-sm text-slate-500">View all projects →</a>
-        </div>
-
-        <div class="mt-6 flex gap-6 overflow-x-auto pb-4">
-          <article class="min-w-[320px] bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/project1_1.jpg" alt="Natural stone courtyard — Ernakulam" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Natural Stone Courtyard — Ernakulam</h3>
-              <p class="mt-2 text-sm text-slate-600">Durable paving and courtyard seating area.</p>
-            </div>
-          </article>
-
-          <article class="min-w-[320px] bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/project2_1.jpg" alt="Tropical waterfall garden — Kottayam" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Tropical Waterfall Garden — Kottayam</h3>
-              <p class="mt-2 text-sm text-slate-600">Integrated water feature with native planting palette.</p>
-            </div>
-          </article>
-
-          <article class="min-w-[320px] bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/project3_1.jpg" alt="Café exterior seating — Kochi" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Café Exterior Ambience — Kochi</h3>
-              <p class="mt-2 text-sm text-slate-600">Outdoor dining &amp; lighting design.</p>
-            </div>
-          </article>
-
-          <article class="min-w-[320px] bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src="/images/project4_1.jpg" alt="Resort pathway — Alappuzha" class="w-full h-44 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold">Resort Pathway &amp; Plantation — Alappuzha</h3>
-              <p class="mt-2 text-sm text-slate-600">Pathways and atmospheric lighting.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- Our Process -->
-      <section id="process" class="mt-10 bg-white rounded-xl p-6 shadow-sm">
-        <h2 class="text-2xl font-poppins font-semibold">Our Process</h2>
-        <p class="mt-2 text-sm text-slate-600">A simple, transparent workflow for every project.</p>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div class="p-4 border rounded-md text-sm text-slate-700">
-            <div class="font-semibold">1. Site Consultation</div>
-            <div class="text-slate-500 mt-1 text-sm">On-site study and brief development</div>
-          </div>
-          <div class="p-4 border rounded-md">
-            <div class="font-semibold">2. 3D Design &amp; Planning</div>
-            <div class="text-slate-500 mt-1 text-sm">Photoreal renders and design approval</div>
-          </div>
-          <div class="p-4 border rounded-md">
-            <div class="font-semibold">3. Material &amp; Budget</div>
-            <div class="text-slate-500 mt-1 text-sm">BOQs, sample boards and cost planning</div>
-          </div>
-          <div class="p-4 border rounded-md">
-            <div class="font-semibold">4. Execution &amp; Quality</div>
-            <div class="text-slate-500 mt-1 text-sm">Site supervision and finishing standards</div>
-          </div>
-          <div class="p-4 border rounded-md">
-            <div class="font-semibold">5. Handover &amp; Maintenance</div>
-            <div class="text-slate-500 mt-1 text-sm">Warranty, training and AMC plans</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Insights -->
-      <section id="insights" class="mt-10">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-2xl font-poppins font-semibold">Insights</h2>
-            <p class="mt-2 text-sm text-slate-600">Thought leadership and practical guides from our team.</p>
-          </div>
-          <a href="#insights" class="text-sm text-slate-500">View all insights →</a>
-        </div>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <article class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="font-semibold">Designing Climate-Responsive Landscapes for Kerala</h3>
-            <p class="mt-2 text-sm text-slate-600">How heat, humidity and soil influence planning and plant selection.</p>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="font-semibold">The Role of Native Plants in Sustainable Outdoor Design</h3>
-            <p class="mt-2 text-sm text-slate-600">Why native flora reduces maintenance and supports biodiversity.</p>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="font-semibold">Natural Stone vs Interlock: Choosing the Right Paving Material</h3>
-            <p class="mt-2 text-sm text-slate-600">A practical guide to material selection for long term performance.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- News -->
-      <section id="news" class="mt-10">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-2xl font-poppins font-semibold">News</h2>
-            <p class="mt-2 text-sm text-slate-600">Company announcements, milestones and project updates.</p>
-          </div>
-          <a href="#news" class="text-sm text-slate-500">View all news →</a>
-        </div>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <article class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="font-semibold">Celebrating 17+ Years of padanilathu</h3>
-            <p class="mt-2 text-sm text-slate-600">From 2008 to 2025 — our journey shaping Kerala’s outdoor spaces.</p>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="font-semibold">500+ Completed Sites Milestone</h3>
-            <p class="mt-2 text-sm text-slate-600">A major delivery milestone across residential and commercial sectors.</p>
-          </article>
-
-          <article class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="font-semibold">New Regional Focus: Ernakulam</h3>
-            <p class="mt-2 text-sm text-slate-600">Expanding operations and quicker response times across Ernakulam district.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- About -->
-      <section id="about" class="mt-10 bg-white rounded-xl p-6 shadow-sm">
-        <h2 class="text-2xl font-poppins font-semibold">About padanilathu</h2>
-        <p class="mt-3 text-sm text-slate-600">Since 2008, padanilathu has delivered aesthetic, sustainable outdoor spaces across Kerala. We combine design sensibility with durable materials and a client-focused execution model.</p>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div>
-            <h4 class="font-semibold">Mission</h4>
-            <p class="mt-2 text-sm text-slate-600">To design beautiful, sustainable and functional outdoor spaces that enhance lifestyle and property value.</p>
-          </div>
-
-          <div>
-            <h4 class="font-semibold">Vision</h4>
-            <p class="mt-2 text-sm text-slate-600">To be Kerala's most trusted outdoor design partner for homes, businesses, and public spaces.</p>
-          </div>
-
-          <div>
-            <h4 class="font-semibold">Values</h4>
-            <p class="mt-2 text-sm text-slate-600">Creativity · Sustainability · Craftsmanship · Transparency</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Careers -->
-      <section id="careers" class="mt-10">
-        <h2 class="text-2xl font-poppins font-semibold">Careers</h2>
-        <p class="mt-2 text-sm text-slate-600">Join padanilathu — we hire designers, engineers, horticulturists and technicians for projects across Kerala.</p>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div class="bg-white rounded-lg shadow-sm p-4">
-            <h4 class="font-semibold">Landscape Architect / Designer</h4>
-            <p class="mt-1 text-sm text-slate-600">Experience: 2–6 years. Location: Ernakulam. Apply with CV &amp; portfolio.</p>
-          </div>
-
-          <div class="bg-white rounded-lg shadow-sm p-4">
-            <h4 class="font-semibold">Site Supervisor / Foreman</h4>
-            <p class="mt-1 text-sm text-slate-600">Experience: 3+ years. Supervise site teams, ensure quality delivery.</p>
-          </div>
-
-          <div class="bg-white rounded-lg shadow-sm p-4">
-            <h4 class="font-semibold">Horticulturist / Plant Specialist</h4>
-            <p class="mt-1 text-sm text-slate-600">Plant selection, soil &amp; irrigation planning. Apply with references.</p>
-          </div>
-
-          <div class="bg-white rounded-lg shadow-sm p-4">
-            <h4 class="font-semibold">3D Visualization Intern</h4>
-            <p class="mt-1 text-sm text-slate-600">Assist in renders and CAD drawings. Portfolio required.</p>
-          </div>
-        </div>
-
-        <div class="mt-6">
-          <a href="#contact" class="inline-flex items-center bg-[var(--pad-green)] hover:bg-[var(--pad-green-dark)] text-white text-sm font-semibold px-4 py-2 rounded-md">Apply Now</a>
-        </div>
-      </section>
-
-      <!-- Contact -->
-      <section id="contact" class="mt-10 bg-white rounded-xl p-6 shadow-sm">
-        <h2 class="text-2xl font-poppins font-semibold">Contact</h2>
-        <p class="mt-2 text-sm text-slate-600">Request a free site visit and estimate. We serve all of Kerala with a strong presence in Ernakulam.</p>
-
-        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <p class="text-sm text-slate-600">Quick contact</p>
-            <ul class="mt-4 space-y-3 text-sm text-slate-700">
-              <li><strong>Phone:</strong> <a class="text-slate-600" href="tel:+91-XXXXXXXXXX">+91-XXXXXXXXXX</a></li>
-              <li><strong>Email:</strong> <a class="text-slate-600" href="mailto:hello@padanilathu.com">hello@padanilathu.com</a></li>
-              <li><strong>Service area:</strong> All Kerala — focus Ernakulam</li>
-            </ul>
-
-            <div class="mt-6 rounded-md overflow-hidden">
-              <img src="/images/about_office.jpg" alt="Padanilathu office" class="w-full h-56 object-cover" loading="lazy" />
-            </div>
-          </div>
-
-          <form id="contactForm" class="space-y-3" onsubmit="event.preventDefault(); alert('Form submitted — connect backend to process.');">
-            <input type="text" name="name" required placeholder="Full name" class="w-full p-3 rounded-md border border-slate-200" />
-            <input type="tel" name="phone" required placeholder="Phone" class="w-full p-3 rounded-md border border-slate-200" />
-            <input type="email" name="email" placeholder="Email (optional)" class="w-full p-3 rounded-md border border-slate-200" />
-            <select name="service" class="w-full p-3 rounded-md border border-slate-200">
-              <option>Service required</option>
-              <option>Landscaping</option>
-              <option>Stone paving</option>
-              <option>3D design</option>
-              <option>Maintenance</option>
-            </select>
-            <textarea name="message" rows="4" placeholder="Project brief (optional)" class="w-full p-3 rounded-md border border-slate-200"></textarea>
-            <button type="submit" class="inline-flex items-center bg-[var(--pad-green)] hover:bg-[var(--pad-green-dark)] text-white text-sm font-semibold px-4 py-2 rounded-md">Request Site Visit</button>
-          </form>
-        </div>
-      </section>
-    </main>
-
-    <footer class="bg-white border-t border-slate-100 mt-16">
-      <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
-          <div class="font-poppins font-semibold text-lg">Padanilathu</div>
-          <div class="mt-2 text-sm text-slate-600">Transforming Kerala’s outdoor environments since 2008.</div>
-          <div class="mt-2 text-sm text-slate-600">17+ Years · 500+ Completed Sites</div>
-
-          <div class="mt-4 flex gap-3">
-            <a href="https://instagram.com/yourpage" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-9 h-9 rounded-md border flex items-center justify-center text-slate-700 hover:bg-[var(--pad-green)] hover:text-white">
-              <!-- Instagram -->
-              <svg role="img" aria-label="Instagram" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><title>Instagram</title><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.2"/><circle cx="17.5" cy="6.5" r="0.7" fill="currentColor"/></svg>
-            </a>
-
-            <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-9 h-9 rounded-md border flex items-center justify-center text-slate-700 hover:bg-[var(--pad-green)] hover:text-white">
-              <!-- Facebook -->
-              <svg role="img" aria-label="Facebook" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><title>Facebook</title><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.2"/><path d="M15 8h-1.4c-1 0-1.1.5-1.1 1.1V10h2.5l-.4 2.3H12.5v5H10v-5H8.8V10H10v-1.6C10 6.9 10.9 6 12.6 6H15v2z" fill="currentColor"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div>
-          <div class="font-semibold">Navigation</div>
-          <ul class="mt-3 space-y-2 text-sm text-slate-600">
-            <li><a href="#sectors">Sectors</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#insights">Insights</a></li>
-            <li><a href="#news">News</a></li>
-            <li><a href="#careers">Careers</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <div class="font-semibold">Contact</div>
-          <div class="mt-3 text-sm text-slate-600">
-            Phone: <a href="tel:+91-XXXXXXXXXX" class="text-slate-700">+91-XXXXXXXXXX</a><br />
-            Email: <a href="mailto:hello@padanilathu.com" class="text-slate-700">hello@padanilathu.com</a><br />
-            Service area: All Kerala — focus Ernakulam
-          </div>
-        </div>
-
-        <div>
-          <div class="font-semibold">Quick Links</div>
-          <ul class="mt-3 space-y-2 text-sm text-slate-600">
-            <li><a href="#contact">Request a Free Site Visit</a></li>
-            <li><a href="#">Download Company Profile (PDF)</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="border-t border-slate-100 py-4">
-        <div class="max-w-7xl mx-auto px-6 text-center text-sm text-slate-500">© 2025 Pad​anilathu. All rights reserved.</div>
-      </div>
-    </footer>
-
-    <script>
-      function toggleMobile() {
-        const nav = document.getElementById('mobileNav');
-        if (!nav) return;
-        nav.classList.toggle('hidden');
-        nav.setAttribute('aria-hidden', nav.classList.contains('hidden'));
-      }
-
-      // Pause hero video on small screens to save bandwidth
-      (function () {
-        const video = document.querySelector('section#home video');
-        if (!video) return;
-        function check() {
-          if (window.innerWidth < 700) {
-            video.pause();
-            video.style.display = 'none';
-          } else {
-            video.style.display = '';
-            video.play().catch(() => {});
-          }
-        }
-        check();
-        window.addEventListener('resize', check);
-      })();
-    </script>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
   </body>
 </html>
