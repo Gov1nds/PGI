@@ -28,10 +28,10 @@ export default function App() {
       {/* ================================================================
           HEADER
       ================================================================= */}
- <header className="w-full bg-white/20 backdrop-blur-md border-b border-white/10">
-
+ <header className="absolute top-0 left-0 right-0 z-50 bg-transparent">
   <div className="max-w-7xl mx-auto px-6">
     <div className="flex items-center justify-between h-20">
+
 
       {/* LOGO */}
       <a href="#home" className="relative flex items-center gap-2 group">
@@ -426,49 +426,49 @@ export default function App() {
 {/* ================================================================
     REVIEWS
 ================================================================ */}
-<section id="reviews" className="mt-16 bg-white rounded-xl p-8 shadow">
-  <h2 className="text-2xl font-semibold" style={{ fontFamily: "Graphik, Inter, sans-serif" }}>
-    Client Reviews
+<section id="reviews" className="mt-16">
+  <h2 className="text-2xl font-poppins font-semibold">
+    What Our Clients Say
   </h2>
   <p className="mt-2 text-sm text-slate-600">
-    Genuine feedback from our customers across Kerala.
+    Genuine feedback from homeowners and long-term clients.
   </p>
 
-  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-    {/* Review 1 */}
-    <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 shadow-sm">
-      <h3 className="font-semibold text-lg">Sanjith Pillai</h3>
-      <p className="mt-2 text-sm text-slate-700 leading-relaxed">
-        Worked with them for my home front yard tile paving and found their 
-        service extremely satisfying and value for money. If I need to work 
-        with them again, I will have no hesitation without any second thoughts.
+  <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <p className="text-sm text-slate-600">
+        “Worked with them for my home front yard tile paving and found their
+        service extremely satisfying and value for money. I would gladly
+        work with them again.”
       </p>
+      <div className="mt-4 font-semibold text-slate-900">
+        Sanjith Pillai
+      </div>
     </div>
 
-    {/* Review 2 */}
-    <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 shadow-sm">
-      <h3 className="font-semibold text-lg">Sreekanth Haridasan</h3>
-      <p className="mt-2 text-sm text-slate-700 leading-relaxed">
-        Although I have been in contact with people from various professions 
-        related to house construction, it was only when I met "Padanilathu" 
-        that I was able to see a team that works honestly. Thanks to Mr. 
-        Sudhakaran and his hardworking team members.
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <p className="text-sm text-slate-600">
+        “Among many professionals I met during house construction,
+        Padanilathu stood out for their honesty and dedication.
+        Special thanks to Mr. Sudhakaran and the team.”
       </p>
+      <div className="mt-4 font-semibold text-slate-900">
+        Sreekanth Haridasan
+      </div>
+      <div className="text-xs text-slate-500">3 years ago</div>
     </div>
 
-    {/* Review 3 (Optional placeholder) */}
-    <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 shadow-sm md:col-span-2">
-      <h3 className="font-semibold text-lg">Anonymous Review</h3>
-      <p className="mt-2 text-sm text-slate-700 leading-relaxed">
-        Professional and well-organized execution. Their team ensured 
-        quality workmanship and delivered the project exactly as planned.
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <p className="text-sm text-slate-600 italic">
+        “Professional execution, transparent communication, and
+        eco-friendly approach throughout the project.”
       </p>
+      <div className="mt-4 font-semibold text-slate-900">
+        Ananya R
+      </div>
     </div>
-
   </div>
 </section>
-
 
         {/* ================================================================
             ABOUT
