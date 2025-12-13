@@ -28,7 +28,8 @@ export default function App() {
       {/* ================================================================
           HEADER
       ================================================================= */}
- <header className="fixed top-0 left-0 right-0 z-50 bg-transparent border-b border-transparent">
+ <header className="w-full bg-white/20 backdrop-blur-md border-b border-white/10">
+
   <div className="max-w-7xl mx-auto px-6">
     <div className="flex items-center justify-between h-20">
 
@@ -422,87 +423,52 @@ export default function App() {
 {/* ================================================================
     REVIEWS / TESTIMONIALS
 ================================================================ */}
-<section id="reviews" className="mt-16">
-  <h2
-    className="text-2xl font-semibold"
-    style={{ fontFamily: "Graphik, Inter, sans-serif" }}
-  >
+{/* ================================================================
+    REVIEWS
+================================================================ */}
+<section id="reviews" className="mt-16 bg-white rounded-xl p-8 shadow">
+  <h2 className="text-2xl font-semibold" style={{ fontFamily: "Graphik, Inter, sans-serif" }}>
     Client Reviews
   </h2>
   <p className="mt-2 text-sm text-slate-600">
-    Words from homeowners and project partners.
+    Genuine feedback from our customers across Kerala.
   </p>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    {/* Review 1 - Sanjith */}
-    <article className="bg-white rounded-lg shadow p-5">
-      <img
-        src="/images/review1.png"
-        alt="Reviewer"
-        className="w-14 h-14 rounded-full object-cover mb-3"
-      />
+    {/* Review 1 */}
+    <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 shadow-sm">
       <h3 className="font-semibold text-lg">Sanjith Pillai</h3>
-
-      {/* Stars */}
-      <div className="flex text-yellow-500 text-xl mt-1">
-        ★★★★★
-      </div>
-
-      <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-        Worked with them for my home front yard tile paving and found their
-        service extremely satisfying and value for money. If I need to work
+      <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+        Worked with them for my home front yard tile paving and found their 
+        service extremely satisfying and value for money. If I need to work 
         with them again, I will have no hesitation without any second thoughts.
       </p>
-    </article>
+    </div>
 
-    {/* Review 2 - Sreekanth */}
-    <article className="bg-white rounded-lg shadow p-5">
-      <img
-        src="/images/review2.png"
-        alt="Reviewer"
-        className="w-14 h-14 rounded-full object-cover mb-3"
-      />
+    {/* Review 2 */}
+    <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 shadow-sm">
       <h3 className="font-semibold text-lg">Sreekanth Haridasan</h3>
-
-      {/* Stars */}
-      <div className="flex text-yellow-500 text-xl mt-1">
-        ★★★★★
-      </div>
-
-      <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-        Although I have been in contact with people from various professions
-        related to house construction, it was only when I met "Padanilathu"
-        that I was able to see a team that works honestly. Thanks to Mr.
+      <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+        Although I have been in contact with people from various professions 
+        related to house construction, it was only when I met "Padanilathu" 
+        that I was able to see a team that works honestly. Thanks to Mr. 
         Sudhakaran and his hardworking team members.
       </p>
+    </div>
 
-      <p className="mt-2 text-xs text-slate-500">3 years ago</p>
-    </article>
-
-    {/* Review 3 - Placeholder Fake Review */}
-    <article className="bg-white rounded-lg shadow p-5">
-      <img
-        src="/images/review3.png"
-        alt="Reviewer"
-        className="w-14 h-14 rounded-full object-cover mb-3"
-      />
-      <h3 className="font-semibold text-lg">Ananya R.</h3>
-
-      {/* Stars */}
-      <div className="flex text-yellow-500 text-xl mt-1">
-        ★★★★★
-      </div>
-
-      <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-        Professional team, timely work, and excellent design inputs. The garden
-        layout and plant selection completely transformed our outdoor space.
-        Highly recommended for landscaping projects.
+    {/* Review 3 (Optional placeholder) */}
+    <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 shadow-sm md:col-span-2">
+      <h3 className="font-semibold text-lg">Anonymous Review</h3>
+      <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+        Professional and well-organized execution. Their team ensured 
+        quality workmanship and delivered the project exactly as planned.
       </p>
-    </article>
+    </div>
 
   </div>
 </section>
+
 
         {/* ================================================================
             ABOUT
