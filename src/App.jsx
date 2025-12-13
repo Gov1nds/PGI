@@ -300,14 +300,14 @@ export default function App() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
             {[
-              "gallery1.png",
+              "gallery1.jpg",
               "gallery2.png",
-              "gallery3.png",
-              "gallery4.png",
-              "gallery5.png",
+              "gallery3.jpg",
+              "gallery4.jpg",
+              "gallery5.jpg",
               "gallery6.png",
-              "gallery7.png",
-              "gallery8.png",
+              "gallery7.jpg",
+              "gallery8.jpg",
             ].map((img) => (
               <img
                 key={img}
