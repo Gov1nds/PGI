@@ -2,22 +2,47 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/favicon.png" />
 
+    <!-- =========================
+         FAVICON & BRAND ICONS
+    ========================== -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- =========================
+         META CONFIGURATION
+    ========================== -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0B2545" />
 
     <meta
       name="description"
-      content="Padanilathu — eco-conscious landscaping, outdoor architecture, stone paving, and 3D design across Kerala."
+      content="Padanilathu — Eco-conscious landscaping, stone paving, exterior architecture, and sustainable outdoor design across Kerala."
     />
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- =========================
+         SOCIAL SHARE PREVIEW
+    ========================== -->
+    <meta property="og:title" content="Padanilathu — Eco-friendly Outdoor Design" />
+    <meta
+      property="og:description"
+      content="Landscaping, natural stone paving, 3D design, and sustainable outdoor architecture across Kerala."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/images/hero1.png" />
 
-    <!-- Google Fonts -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Padanilathu — Eco-friendly Outdoor Design" />
+    <meta
+      name="twitter:description"
+      content="Enduring outdoor spaces crafted with sustainability and premium materials."
+    />
+    <meta name="twitter:image" content="/images/hero1.png" />
+
+    <!-- =========================
+         GOOGLE FONTS
+    ========================== -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,38 +50,29 @@
       rel="stylesheet"
     />
 
-    <!-- Social Sharing -->
-    <meta property="og:title" content="Padanilathu — Eco-friendly Outdoor Design" />
-    <meta
-      property="og:description"
-      content="Landscaping, stone paving, exterior architecture and sustainable outdoor design services in Kerala."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/images/hero1.png" />
+    <!-- =========================
+         TAILWIND CSS
+    ========================== -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Twitter Share -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Padanilathu — Eco-friendly Outdoor Design" />
-    <meta
-      name="twitter:description"
-      content="Enduring outdoor spaces crafted with sustainability and high-quality materials."
-    />
-    <meta name="twitter:image" content="/images/hero1.png" />
-
-    <!-- PWA Icons -->
-    <link rel="apple-touch-icon" href="/logo192.png" />
-    <link rel="manifest" href="/manifest.json" />
-
+    <!-- =========================
+         TITLE
+    ========================== -->
     <title>Padanilathu</title>
 
-    <!-- Base Style (before React loads) -->
+    <!-- =========================
+         BASE STYLES
+    ========================== -->
     <style>
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
         height: 100%;
         font-family: "Inter", sans-serif;
         background: #F8FAFC;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
       a {
         color: inherit;

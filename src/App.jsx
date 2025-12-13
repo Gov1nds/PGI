@@ -3,42 +3,41 @@ import React, { useEffect, useState } from "react";
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Responsive video behavior
+  // HERO VIDEO RESPONSIVE HANDLING
   useEffect(() => {
-    const check = () => {
-      const video = document.querySelector("section#home video");
+    const handleResize = () => {
+      const video = document.querySelector("#home video");
       if (!video) return;
 
       if (window.innerWidth < 700) {
         video.pause();
         video.style.display = "none";
       } else {
-        video.style.display = "";
+        video.style.display = "block";
         video.play().catch(() => {});
       }
     };
 
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <>
-      {/* HEADER */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      {/* ================================================================
+          HEADER
+      ================================================================= */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             {/* LOGO */}
             <a href="#home" className="flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded-md"
-                style={{ background: "#6FA56F" }}
-              />
-              <div className="font-poppins font-semibold text-lg text-slate-900">
+              <div className="w-10 h-10 rounded-md bg-[#6FA56F]" />
+              <div className="font-poppins text-xl font-semibold text-slate-900">
                 padanilathu
               </div>
-              <div className="ml-3 text-sm text-slate-500">Since 2008</div>
+              <div className="text-sm text-slate-500 ml-2">Since 2008</div>
             </a>
 
             {/* DESKTOP NAV */}
@@ -49,51 +48,56 @@ export default function App() {
               <a href="#gallery" className="hover:text-slate-900">Gallery</a>
               <a href="#insights" className="hover:text-slate-900">Insights</a>
               <a href="#news" className="hover:text-slate-900">News</a>
+              <a href="#about" className="hover:text-slate-900">About</a>
+              <a href="#careers" className="hover:text-slate-900">Careers</a>
+
               <a
                 href="#contact"
-                className="ml-3 inline-flex items-center bg-[#6FA56F] hover:bg-[#507953] text-white text-sm font-semibold px-4 py-2 rounded-md"
+                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md font-semibold hover:bg-[#507953]"
               >
                 Contact
               </a>
             </nav>
 
-            {/* MOBILE TOGGLE */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setMobileOpen((s) => !s)}
-                className="p-2 rounded-md border"
-              >
-                ☰
-              </button>
-            </div>
+            {/* MOBILE BUTTON */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden p-2 border rounded-md"
+            >
+              ☰
+            </button>
           </div>
         </div>
 
-        {/* MOBILE MENU */}
+        {/* MOBILE NAV */}
         {mobileOpen && (
-          <div className="md:hidden absolute top-20 left-4 right-4 bg-white rounded-lg shadow-lg p-4 z-50">
-            <nav className="flex flex-col gap-3 text-slate-700 font-medium">
+          <div className="md:hidden absolute left-4 right-4 top-20 bg-white rounded-lg shadow-lg p-4 z-50">
+            <div className="flex flex-col gap-3 text-slate-700 font-medium">
               <a href="#sectors" onClick={() => setMobileOpen(false)}>Sectors</a>
               <a href="#services" onClick={() => setMobileOpen(false)}>Services</a>
               <a href="#projects" onClick={() => setMobileOpen(false)}>Projects</a>
               <a href="#gallery" onClick={() => setMobileOpen(false)}>Gallery</a>
               <a href="#insights" onClick={() => setMobileOpen(false)}>Insights</a>
               <a href="#news" onClick={() => setMobileOpen(false)}>News</a>
+              <a href="#about" onClick={() => setMobileOpen(false)}>About</a>
+              <a href="#careers" onClick={() => setMobileOpen(false)}>Careers</a>
 
               <a
                 href="#contact"
                 onClick={() => setMobileOpen(false)}
-                className="mt-2 inline-flex items-center bg-[#6FA56F] hover:bg-[#507953] text-white text-sm font-semibold px-4 py-2 rounded-md"
+                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md mt-2"
               >
                 Contact
               </a>
-            </nav>
+            </div>
           </div>
         )}
       </header>
 
-      {/* HERO SECTION */}
-      <section id="home" className="relative h-screen min-h-[640px]">
+      {/* ================================================================
+          HERO SECTION
+      ================================================================= */}
+      <section id="home" className="relative h-screen min-h-[650px]">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           poster="/images/hero1.png"
@@ -105,51 +109,75 @@ export default function App() {
           <source src="/videos/hero1.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/50" />
+        <div className="absolute inset-0 bg-black/40" />
 
-        <div className="relative z-20 max-w-7xl mx-auto px-6 h-full flex items-center">
+        <div className="relative z-20 h-full max-w-7xl mx-auto px-6 flex items-center">
           <div className="text-white max-w-3xl">
-            <h1 className="font-poppins text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight font-poppins">
               Designing Eco-Conscious & Aesthetically Stunning Outdoor Spaces
             </h1>
 
             <p className="mt-4 text-lg md:text-xl text-white/90">
-              We craft aesthetically appealing, eco-friendly outdoor spaces by
-              prioritizing sustainability and the best materials for eco-house
-              living. Our services, including landscape architecture and 3D
-              visualization, deliver enduring, high-quality, and ecologically
-              sound designs across the state.
+              We craft eco-friendly outdoor spaces using sustainable materials,
+              landscape architecture, and 3D visualization — delivering
+              long-lasting, functional, and beautifully designed environments
+              across Kerala.
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-4">
+            <div className="mt-6 flex gap-4 flex-wrap">
               <a
                 href="#services"
-                className="inline-flex items-center bg-white text-[#6FA56F] font-semibold px-4 py-2 rounded-md shadow-sm"
+                className="bg-white text-[#6FA56F] px-4 py-2 rounded-md font-semibold"
               >
                 Explore Services
               </a>
+
               <a
                 href="#projects"
-                className="inline-flex items-center border border-white/40 text-white px-4 py-2 rounded-md"
+                className="border border-white/40 text-white px-4 py-2 rounded-md"
               >
                 View Projects
               </a>
+            </div>
+
+            <div className="mt-10 flex gap-6 flex-wrap">
+              <div className="bg-white/10 p-4 rounded-md min-w-[160px]">
+                <div className="text-2xl font-bold">500+</div>
+                <div className="text-sm text-white/80">Completed Sites</div>
+              </div>
+
+              <div className="bg-white/10 p-4 rounded-md min-w-[160px]">
+                <div className="text-2xl font-bold">17+ Years</div>
+                <div className="text-sm text-white/80">Industry Experience</div>
+              </div>
+
+              <div className="bg-white/10 p-4 rounded-md min-w-[200px]">
+                <div className="text-2xl font-bold">Integrated</div>
+                <div className="text-sm text-white/80">
+                  Design–Build Delivery
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* MAIN CONTENT */}
+      {/* ================================================================
+          MAIN WRAPPER
+      ================================================================= */}
       <main className="relative max-w-7xl mx-auto px-6 -mt-24 pb-24">
 
-        {/* SECTORS */}
+        {/* ================================================================
+            SECTORS
+        ================================================================ */}
         <section id="sectors" className="bg-white rounded-xl shadow p-8">
           <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
-          <p className="text-sm mt-2 text-slate-600">
-            We create outdoor environments across residential, commercial, public, and hospitality sectors.
+          <p className="text-sm text-slate-600 mt-2">
+            We design outdoor environments across residential, commercial,
+            hospitality, public and institutional spaces.
           </p>
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {[
               ["Residential", "sector_residential.png"],
               ["Commercial", "sector_commercial.png"],
@@ -161,11 +189,11 @@ export default function App() {
             ].map(([title, img]) => (
               <div
                 key={title}
-                className="relative h-44 rounded-lg bg-cover bg-center overflow-hidden"
+                className="relative h-44 rounded-lg bg-cover bg-center"
                 style={{ backgroundImage: `url(/images/${img})` }}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
-                <div className="absolute bottom-4 left-4 text-white font-semibold text-lg">
+                <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
                   {title}
                 </div>
               </div>
@@ -173,14 +201,16 @@ export default function App() {
           </div>
         </section>
 
-        {/* SERVICES */}
+        {/* ================================================================
+            SERVICES
+        ================================================================ */}
         <section id="services" className="mt-12">
           <h2 className="text-2xl font-poppins font-semibold">Services</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Complete expertise from concept & 3D visualization to execution and maintenance.
+            From concept and 3D visualization to execution and maintenance.
           </p>
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {[
               ["service_landscape.png", "Landscaping & Gardening"],
               ["service_stonepaving.png", "Natural Stone Paving"],
@@ -192,8 +222,15 @@ export default function App() {
               ["service_consulting.png", "Outdoor Space Consulting"],
               ["service_sustainability.png", "Sustainable Outdoor Solutions"],
             ].map(([img, title]) => (
-              <article key={title} className="bg-white rounded-lg shadow overflow-hidden">
-                <img src={`/images/${img}`} className="w-full h-44 object-cover" alt={title} />
+              <article
+                key={title}
+                className="bg-white rounded-lg shadow overflow-hidden"
+              >
+                <img
+                  src={`/images/${img}`}
+                  className="w-full h-44 object-cover"
+                  alt={title}
+                />
                 <div className="p-4">
                   <h3 className="font-semibold">{title}</h3>
                 </div>
@@ -202,18 +239,32 @@ export default function App() {
           </div>
         </section>
 
-        {/* PROJECTS */}
-        <section id="projects" className="mt-12">
+        {/* ================================================================
+            PROJECTS
+        ================================================================ */}
+        <section id="projects" className="mt-14">
           <h2 className="text-2xl font-poppins font-semibold">Featured Projects</h2>
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <p className="mt-2 text-sm text-slate-600">
+            A curated look at some of our most iconic project deliveries.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
             {[
               ["project1_1.png", "Natural Stone Courtyard"],
               ["project2_1.png", "Waterfall Garden"],
               ["project3_1.png", "Café Outdoor Seating"],
-              ["project4_1.png", "Resort Pathway & Landscape"],
+              ["project4_1.png", "Resort Pathway"],
             ].map(([img, title]) => (
-              <article key={title} className="bg-white rounded-lg shadow overflow-hidden">
-                <img src={`/images/${img}`} className="w-full h-44 object-cover" alt={title} />
+              <article
+                key={title}
+                className="bg-white rounded-lg shadow overflow-hidden"
+              >
+                <img
+                  src={`/images/${img}`}
+                  className="w-full h-44 object-cover"
+                  alt={title}
+                />
                 <div className="p-4">
                   <h3 className="font-semibold">{title}</h3>
                 </div>
@@ -222,14 +273,16 @@ export default function App() {
           </div>
         </section>
 
-        {/* GALLERY */}
+        {/* ================================================================
+            GALLERY
+        ================================================================ */}
         <section id="gallery" className="mt-16">
           <h2 className="text-2xl font-poppins font-semibold">Gallery</h2>
           <p className="mt-2 text-sm text-slate-600">
-            A curated collection showcasing our outdoor craftsmanship.
+            Visual moments from our completed landscape projects.
           </p>
 
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
             {[
               "gallery1.png",
               "gallery2.png",
@@ -243,18 +296,384 @@ export default function App() {
               <img
                 key={img}
                 src={`/images/${img}`}
+                className="h-40 w-full object-cover rounded-lg shadow"
                 alt="Gallery"
-                className="w-full h-40 object-cover rounded-lg shadow-sm hover:opacity-90 transition"
               />
             ))}
           </div>
         </section>
+        {/* ================================================================
+            OUR PROCESS
+        ================================================================ */}
+        <section id="process" className="mt-16 bg-white rounded-xl p-8 shadow-sm">
+          <h2 className="text-2xl font-poppins font-semibold">Our Process</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            A simple and transparent workflow from concept to completion.
+          </p>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-6">
+            {[
+              ["1. Site Consultation", "On-site study and requirement briefing"],
+              ["2. 3D Design & Planning", "Photoreal renders and approval"],
+              ["3. Material & Budgeting", "BOQs, samples, and cost planning"],
+              ["4. Execution & Quality", "Supervision and quality finishing"],
+              ["5. Handover & Maintenance", "Warranty and AMC support"],
+            ].map(([title, desc]) => (
+              <div
+                key={title}
+                className="p-4 border rounded-md text-sm text-slate-700"
+              >
+                <div className="font-semibold">{title}</div>
+                <div className="text-slate-500 mt-1 text-sm">{desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================================================================
+            INSIGHTS
+        ================================================================ */}
+        <section id="insights" className="mt-16">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-poppins font-semibold">Insights</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Thought leadership, practical guides, and ideas from our team.
+              </p>
+            </div>
+
+            <a href="#insights" className="text-sm text-slate-500">
+              View all insights →
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {[
+              [
+                "Designing Climate-Responsive Landscapes for Kerala",
+                "How heat, humidity, and soil shape plant selection and design decisions.",
+              ],
+              [
+                "Role of Native Plants in Sustainable Outdoor Design",
+                "Why native species reduce maintenance and support biodiversity.",
+              ],
+              [
+                "Natural Stone vs Interlock",
+                "Choosing the best paving material for long-term durability.",
+              ],
+            ].map(([title, desc]) => (
+              <article
+                key={title}
+                className="bg-white rounded-lg shadow-sm p-4"
+              >
+                <h3 className="font-semibold">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* ================================================================
+            NEWS
+        ================================================================ */}
+        <section id="news" className="mt-16">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-poppins font-semibold">News</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Company updates, achievements, and important announcements.
+              </p>
+            </div>
+
+            <a href="#news" className="text-sm text-slate-500">
+              View all news →
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {[
+              [
+                "Celebrating 17+ Years of padanilathu",
+                "Marking our journey of shaping outdoor spaces since 2008.",
+              ],
+              [
+                "500+ Completed Sites Milestone",
+                "A major achievement across homes, resorts, and institutions.",
+              ],
+              [
+                "New Regional Focus: Ernakulam",
+                "Scaling operations and increasing response speed across the district.",
+              ],
+            ].map(([title, desc]) => (
+              <article key={title} className="bg-white rounded-lg shadow-sm p-4">
+                <h3 className="font-semibold">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* ================================================================
+            ABOUT
+        ================================================================ */}
+        <section id="about" className="mt-16 bg-white rounded-xl p-8 shadow-sm">
+          <h2 className="text-2xl font-poppins font-semibold">About padanilathu</h2>
+
+          <p className="mt-3 text-sm text-slate-600">
+            Since 2008, padanilathu has delivered aesthetically crafted,
+            sustainable outdoor spaces across Kerala. We blend creative design,
+            natural materials, and engineering precision to transform properties
+            into functional, eco-conscious environments.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div>
+              <h4 className="font-semibold">Mission</h4>
+              <p className="mt-2 text-sm text-slate-600">
+                To design beautiful, sustainable, and functional outdoor spaces
+                that enhance lifestyle and property value.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold">Vision</h4>
+              <p className="mt-2 text-sm text-slate-600">
+                To be Kerala's most trusted outdoor design partner for homes,
+                businesses, and public institutions.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold">Values</h4>
+              <p className="mt-2 text-sm text-slate-600">
+                Creativity · Sustainability · Craftsmanship · Transparency
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================================================
+            CAREERS
+        ================================================================ */}
+        <section id="careers" className="mt-16">
+          <h2 className="text-2xl font-poppins font-semibold">Careers</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Join our growing team — we hire designers, engineers, horticulturists
+            and site specialists across Kerala.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+            {[
+              [
+                "Landscape Architect / Designer",
+                "Experience: 2–6 years · Location: Ernakulam · Apply with CV & portfolio.",
+              ],
+              [
+                "Site Supervisor / Foreman",
+                "Experience: 3+ years · Lead site teams and ensure quality delivery.",
+              ],
+              [
+                "Horticulturist / Plant Specialist",
+                "Plant selection, soil and irrigation planning · References preferred.",
+              ],
+              [
+                "3D Visualization Intern",
+                "Assist in renders and CAD drawings · Portfolio required.",
+              ],
+            ].map(([title, desc]) => (
+              <div key={title} className="bg-white rounded-lg shadow-sm p-4">
+                <h4 className="font-semibold">{title}</h4>
+                <p className="mt-1 text-sm text-slate-600">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <a
+              href="#contact"
+              className="inline-flex items-center bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold"
+            >
+              Apply Now
+            </a>
+          </div>
+        </section>
+
+        {/* ================================================================
+            CONTACT
+        ================================================================ */}
+        <section
+          id="contact"
+          className="mt-16 bg-white rounded-xl p-8 shadow-sm"
+        >
+          <h2 className="text-2xl font-poppins font-semibold">Contact</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Request a free site visit and quotation. We serve all of Kerala with
+            a strong presence in Ernakulam.
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            {/* CONTACT INFO */}
+            <div>
+              <p className="text-sm text-slate-600">Quick contact</p>
+              <ul className="mt-4 space-y-3 text-sm text-slate-700">
+                <li>
+                  <strong>Phone:</strong>{" "}
+                  <a href="tel:+91-XXXXXXXXXX" className="text-slate-600">
+                    +91-XXXXXXXXXX
+                  </a>
+                </li>
+
+                <li>
+                  <strong>Email:</strong>{" "}
+                  <a href="mailto:hello@padanilathu.com" className="text-slate-600">
+                    hello@padanilathu.com
+                  </a>
+                </li>
+
+                <li>
+                  <strong>Service area:</strong> All Kerala — focus Ernakulam
+                </li>
+              </ul>
+
+              <div className="mt-6 rounded-md overflow-hidden">
+                <img
+                  src="/images/about_office.png"
+                  alt="Padanilathu office"
+                  className="w-full h-56 object-cover"
+                />
+              </div>
+            </div>
+
+            {/* FORM */}
+            <form
+              id="contactForm"
+              className="space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                alert("Form submitted — backend not yet connected.");
+              }}
+            >
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="Full name"
+                className="w-full p-3 rounded-md border border-slate-200"
+              />
+
+              <input
+                type="tel"
+                name="phone"
+                required
+                placeholder="Phone"
+                className="w-full p-3 rounded-md border border-slate-200"
+              />
+
+              <input
+                type="email"
+                name="email"
+                placeholder="Email (optional)"
+                className="w-full p-3 rounded-md border border-slate-200"
+              />
+
+              <select
+                name="service"
+                className="w-full p-3 rounded-md border border-slate-200"
+              >
+                <option>Service required</option>
+                <option>Landscaping</option>
+                <option>Stone paving</option>
+                <option>3D design</option>
+                <option>Maintenance</option>
+              </select>
+
+              <textarea
+                name="message"
+                rows="4"
+                placeholder="Project details (optional)"
+                className="w-full p-3 rounded-md border border-slate-200"
+              />
+
+              <button
+                type="submit"
+                className="bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold"
+              >
+                Request Site Visit
+              </button>
+            </form>
+          </div>
+        </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-white border-t border-slate-200 mt-16 py-10 text-center text-sm text-slate-500">
-        © 2025 padanilathu — All Rights Reserved.
+      {/* ================================================================
+          FOOTER
+      ================================================================ */}
+      <footer className="bg-white border-t border-slate-200 mt-20">
+        <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* BRAND */}
+          <div>
+            <div className="font-poppins font-semibold text-lg">padanilathu</div>
+            <p className="text-sm mt-2 text-slate-600">
+              Transforming Kerala’s outdoor spaces since 2008.
+            </p>
+            <p className="text-sm text-slate-600 mt-1">
+              17+ Years · 500+ Completed Sites
+            </p>
+
+            <div className="flex gap-3 mt-4">
+              <a
+                href="#"
+                className="w-9 h-9 border rounded-md flex items-center justify-center text-slate-700 hover:bg-[#6FA56F] hover:text-white"
+              >
+                IG
+              </a>
+              <a
+                href="#"
+                className="w-9 h-9 border rounded-md flex items-center justify-center text-slate-700 hover:bg-[#6FA56F] hover:text-white"
+              >
+                FB
+              </a>
+            </div>
+          </div>
+
+          {/* NAVIGATION */}
+          <div>
+            <h4 className="font-semibold">Navigation</h4>
+            <ul className="text-sm mt-3 space-y-2 text-slate-600">
+              <li><a href="#sectors">Sectors</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#projects">Projects</a></li>
+              <li><a href="#gallery">Gallery</a></li>
+              <li><a href="#insights">Insights</a></li>
+              <li><a href="#news">News</a></li>
+              <li><a href="#careers">Careers</a></li>
+            </ul>
+          </div>
+
+          {/* CONTACT */}
+          <div>
+            <h4 className="font-semibold">Contact</h4>
+            <p className="text-sm mt-3 text-slate-600">
+              Phone: +91-XXXXXXXXXX <br />
+              Email: hello@padanilathu.com <br />
+              Service Area: Kerala (Focus: Ernakulam)
+            </p>
+          </div>
+
+          {/* QUICK LINKS */}
+          <div>
+            <h4 className="font-semibold">Quick Links</h4>
+            <ul className="text-sm mt-3 space-y-2 text-slate-600">
+              <li><a href="#contact">Request a Free Site Visit</a></li>
+              <li><a href="#">Download Company Profile (PDF)</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-slate-200 py-4 text-center text-sm text-slate-500">
+          © 2025 padanilathu — All Rights Reserved.
+        </div>
       </footer>
     </>
   );
