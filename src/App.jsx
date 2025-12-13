@@ -302,19 +302,22 @@ export default function App() {
             {[
               "gallery1.jpg",
               "gallery2.png",
-              "gallery3.jpg",
-              "gallery4.jpg",
+              
+
               "gallery5.jpg",
-              "gallery6.png",
-              "gallery7.jpg",
+              
+              
               "gallery8.jpg",
             ].map((img) => (
               <img
-                key={img}
-                src={`/images/${img}`}
-                className="h-40 w-full object-cover rounded-lg shadow"
-                alt="Gallery"
-              />
+  src={`/images/${img}`}
+  loading="lazy"
+  decoding="async"
+  className="h-40 w-full object-cover rounded-lg shadow"
+  alt="Gallery"
+/>
+
+              
             ))}
           </div>
         </section>
