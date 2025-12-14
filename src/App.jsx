@@ -7,6 +7,8 @@ export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [processVisible, setProcessVisible] = useState(false);
+
 
   /* =========================
      SCROLL EFFECT
@@ -30,6 +32,28 @@ export default function App() {
 
     return () => clearTimeout(timer);
   }, []);
+  /* =========================
+   PROCESS SECTION REVEAL
+========================= */
+useEffect(() => {
+  const section = document.getElementById("process");
+  if (!section) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        setProcessVisible(true);
+        observer.disconnect(); // run once
+      }
+    },
+    { threshold: 0.2 }
+  );
+
+  observer.observe(section);
+
+  return () => observer.disconnect();
+}, []);
+
 
   return (
     <>
@@ -46,17 +70,30 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             {/* LOGO */}
-            <a href="#home" className="relative">
-              <div
-                className={`text-2xl font-extrabold tracking-wide ${
-                  scrolled ? "text-slate-900" : "text-white"
-                }`}
-                style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
-              >
-                padanilathu
-                <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#6FA56F] rounded-full" />
-              </div>
-            </a>
+            <a href="#home" className="relative group select-none">
+  <div
+    className={`text-2xl font-semibold tracking-wide ${
+      scrolled ? "text-slate-900" : "text-white"
+    }`}
+    style={{ fontFamily: "Graphik, Inter, Arial, sans-serif" }}
+  >
+    <span className="relative inline-block">
+      Padanilathu
+
+      {/* Premium accent underline */}
+      <span
+        className="
+          absolute left-0 -bottom-1
+          h-[2px] w-2/3
+          bg-[#6FA56F]
+          transition-all duration-300
+          group-hover:w-full
+        "
+      />
+    </span>
+  </div>
+</a>
+
 
             {/* DESKTOP NAV */}
             <nav
