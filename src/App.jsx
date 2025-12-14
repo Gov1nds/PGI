@@ -1,29 +1,13 @@
-function LazyImage({ src, alt, className }) {
-  const [loaded, setLoaded] = React.useState(false);
-
-  return (
-    <div className="relative overflow-hidden bg-slate-200">
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        onLoad={() => setLoaded(true)}
-        className={`${className} transition-all duration-700 ${
-          loaded ? "blur-0 scale-100" : "blur-lg scale-105"
-        }`}
-      />
-    </div>
-  );
-}
 import React, { useEffect, useState } from "react";
 
+/* =========================
+   HEADER + HERO
+========================= */
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  /* =========================
-     SCROLL EFFECT (NON-FIXED)
-  ========================== */
+  /* SCROLL EFFECT */
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
@@ -35,11 +19,13 @@ export default function App() {
   return (
     <>
       {/* =========================
-          HEADER (NOT FIXED)
+          HEADER
       ========================== */}
       <header
-        className={`absolute top-0 left-0 right-0 z-30 transition-all duration-300 ${
-          scrolled ? "bg-white/90 backdrop-blur shadow-sm" : "bg-transparent"
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/90 backdrop-blur shadow-sm"
+            : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6">
@@ -83,6 +69,7 @@ export default function App() {
 
             {/* MOBILE MENU BUTTON */}
             <button
+              aria-label="Toggle menu"
               onClick={() => setMobileOpen(!mobileOpen)}
               className={`md:hidden text-2xl ${
                 scrolled ? "text-slate-900" : "text-white"
@@ -141,6 +128,7 @@ export default function App() {
           muted
           loop
           playsInline
+          preload="none"
         >
           <source src="/videos/hero1.mp4" type="video/mp4" />
         </video>
@@ -148,7 +136,7 @@ export default function App() {
         {/* MOBILE IMAGE */}
         <img
           src="/images/hero1.png"
-          alt="Hero"
+          alt="Eco-conscious landscaping"
           className="absolute inset-0 w-full h-full object-cover md:hidden"
         />
 
@@ -163,9 +151,8 @@ export default function App() {
               fontFamily: "Graphik, Arial Black, Arial, sans-serif",
             }}
           >
-            Designing Eco-Conscious &  
-            <br />
-            Aesthetically Stunning Outdoor Spaces
+            Designing Eco-Conscious <br />
+            & Aesthetically Stunning Outdoor Spaces
           </h1>
 
           <p className="mt-5 text-lg md:text-xl text-white/90 max-w-3xl">
