@@ -394,75 +394,116 @@ export default function App() {
           </div>
         </section>
         {/* ================================================================
-            OUR PROCESS
-        ================================================================ */}
-        <section id="process" className="mt-16 bg-white rounded-xl p-8 shadow-sm">
-          <h2 className="text-2xl font-poppins font-semibold">Our Process</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            A simple and transparent workflow from concept to completion.
-          </p>
+    OUR PROCESS
+================================================================ */}
+<section id="process" className="mt-16 bg-white rounded-xl p-8 shadow-sm">
+  <h2 className="text-2xl font-poppins font-semibold">
+    Our Process
+  </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-6">
-            {[
-              ["1. Site Consultation", "On-site study and requirement briefing"],
-              ["2. 3D Design & Planning", "Photoreal renders and approval"],
-              ["3. Material & Budgeting", "BOQs, samples, and cost planning"],
-              ["4. Execution & Quality", "Supervision and quality finishing"],
-              ["5. Handover & Maintenance", "Warranty and AMC support"],
-            ].map(([title, desc]) => (
-              <div
-                key={title}
-                className="p-4 border rounded-md text-sm text-slate-700"
-              >
-                <div className="font-semibold">{title}</div>
-                <div className="text-slate-500 mt-1 text-sm">{desc}</div>
-              </div>
-            ))}
+  <p className="mt-2 text-sm text-slate-600">
+    A simple, transparent workflow from concept to completion.
+  </p>
+
+  <div className="relative mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+
+    {[
+      ["1", "Site Consultation", "On-site study & requirement discussion"],
+      ["2", "3D Design & Planning", "Photorealistic renders & approvals"],
+      ["3", "Material & Budgeting", "BOQs, samples & cost planning"],
+      ["4", "Execution & Quality", "Supervised execution & finishing"],
+      ["5", "Handover & Support", "Warranty & maintenance assistance"],
+    ].map(([step, title, desc], index) => {
+
+      const isMobile = window.innerWidth < 768;
+      const delay = index * (isMobile ? 80 : 120);
+      const duration = isMobile ? "400ms" : "700ms";
+
+      return (
+        <div
+          key={step}
+          className={`relative bg-white border rounded-xl p-6 text-center shadow-sm
+          transition-all ease-out
+          ${processVisible
+            ? "opacity-100 translate-y-0 glow-once"
+            : "opacity-0 translate-y-6"}
+          `}
+          style={{
+            transitionDuration: duration,
+            transitionDelay: `${delay}ms`,
+          }}
+        >
+          {/* ================= CONNECTING LINE ================= */}
+
+          {/* DESKTOP LINE */}
+          {index !== 0 && (
+            <span
+              className="hidden lg:block process-line"
+              style={{
+                left: "-30px",
+                top: "50%",
+                width: "30px",
+                height: "2px",
+                transformOrigin: "left",
+                animationDelay: `${delay}ms`,
+              }}
+            >
+              {/* MOVING DOT */}
+              <span
+                className="process-dot"
+                style={{
+                  top: "-3px",
+                  left: "0",
+                  animation: `dotMoveHorizontal ${
+                    isMobile ? "0.4s" : "0.6s"
+                  } ease-out ${delay}ms forwards`,
+                }}
+              />
+            </span>
+          )}
+
+          {/* MOBILE LINE */}
+          {index !== 0 && (
+            <span
+              className="lg:hidden process-line"
+              style={{
+                top: "-24px",
+                left: "50%",
+                width: "2px",
+                height: "24px",
+                transform: "translateX(-50%)",
+                background:
+                  "linear-gradient(180deg, rgba(111,165,111,0), rgba(111,165,111,.8), rgba(111,165,111,0))",
+                animationDelay: `${delay}ms`,
+              }}
+            >
+              {/* MOVING DOT */}
+              <span
+                className="process-dot"
+                style={{
+                  left: "-3px",
+                  top: "0",
+                  animation: `dotMoveVertical ${
+                    isMobile ? "0.35s" : "0.5s"
+                  } ease-out ${delay}ms forwards`,
+                }}
+              />
+            </span>
+          )}
+
+          {/* ================= STEP CONTENT ================= */}
+          <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg">
+            {step}
           </div>
-        </section>
 
-        {/* ================================================================
-            INSIGHTS
-        ================================================================ */}
-        <section id="insights" className="mt-16">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-poppins font-semibold">Insights</h2>
-              <p className="mt-2 text-sm text-slate-600">
-                Thought leadership, practical guides, and ideas from our team.
-              </p>
-            </div>
+          <h4 className="font-semibold">{title}</h4>
+          <p className="mt-2 text-sm text-slate-600">{desc}</p>
+        </div>
+      );
+    })}
 
-            <a href="#insights" className="text-sm text-slate-500">
-              View all insights →
-            </a>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-            {[
-              [
-                "Designing Climate-Responsive Landscapes for Kerala",
-                "How heat, humidity, and soil shape plant selection and design decisions.",
-              ],
-              [
-                "Role of Native Plants in Sustainable Outdoor Design",
-                "Why native species reduce maintenance and support biodiversity.",
-              ],
-              [
-                "Natural Stone vs Interlock",
-                "Choosing the best paving material for long-term durability.",
-              ],
-            ].map(([title, desc]) => (
-              <article
-                key={title}
-                className="bg-white rounded-lg shadow-sm p-4"
-              >
-                <h3 className="font-semibold">{title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+  </div>
+</section>
 
         {/* ================================================================
             NEWS
@@ -509,39 +550,60 @@ export default function App() {
     Genuine feedback from homeowners and long-term clients.
   </p>
 
+  {/* REVIEW GRID */}
   <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    {/* REVIEW 1 */}
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <p className="text-sm text-slate-600">
+      <div className="flex gap-1 text-yellow-400 text-lg">
+        ★ ★ ★ ★ ★
+      </div>
+
+      <p className="mt-3 text-sm text-slate-600">
         “Worked with them for my home front yard tile paving and found their
         service extremely satisfying and value for money. I would gladly
         work with them again.”
       </p>
+
       <div className="mt-4 font-semibold text-slate-900">
         Sanjith Pillai
       </div>
     </div>
 
+    {/* REVIEW 2 */}
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <p className="text-sm text-slate-600">
+      <div className="flex gap-1 text-yellow-400 text-lg">
+        ★ ★ ★ ★ ★
+      </div>
+
+      <p className="mt-3 text-sm text-slate-600">
         “Among many professionals I met during house construction,
         Padanilathu stood out for their honesty and dedication.
         Special thanks to Mr. Sudhakaran and the team.”
       </p>
+
       <div className="mt-4 font-semibold text-slate-900">
         Sreekanth Haridasan
       </div>
       <div className="text-xs text-slate-500">3 years ago</div>
     </div>
 
+    {/* REVIEW 3 */}
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <p className="text-sm text-slate-600 italic">
+      <div className="flex gap-1 text-yellow-400 text-lg">
+        ★ ★ ★ ★ ★
+      </div>
+
+      <p className="mt-3 text-sm text-slate-600 italic">
         “Professional execution, transparent communication, and
         eco-friendly approach throughout the project.”
       </p>
+
       <div className="mt-4 font-semibold text-slate-900">
         Ananya R
       </div>
     </div>
+
   </div>
 </section>
 
