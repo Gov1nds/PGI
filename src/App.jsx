@@ -80,7 +80,7 @@ useEffect(() => {
     <span className="relative inline-block">
       PADANILATHU
 
-      {/* Premium accent underline */}
+      
       <span
         className="
           absolute left-0 -bottom-1
