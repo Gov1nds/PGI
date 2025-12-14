@@ -78,7 +78,7 @@ useEffect(() => {
     style={{ fontFamily: "Graphik, Inter, Arial, sans-serif" }}
   >
     <span className="relative inline-block">
-      Padanilathu
+      PADANILATHU
 
       {/* Premium accent underline */}
       <span
