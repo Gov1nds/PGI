@@ -1,3 +1,20 @@
+function LazyImage({ src, alt, className }) {
+  const [loaded, setLoaded] = React.useState(false);
+
+  return (
+    <div className="relative overflow-hidden bg-slate-200">
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        className={`${className} transition-all duration-700 ${
+          loaded ? "blur-0 scale-100" : "blur-lg scale-105"
+        }`}
+      />
+    </div>
+  );
+}
 import React, { useEffect, useState } from "react";
 
 export default function App() {
