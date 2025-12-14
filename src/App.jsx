@@ -1,19 +1,34 @@
 import React, { useEffect, useState } from "react";
 
 /* =========================
-   HEADER + HERO
+   APP
 ========================= */
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
-  /* SCROLL EFFECT */
+  /* =========================
+     SCROLL EFFECT
+  ========================= */
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* =========================
+     AUTO OPEN QUOTE POPUP (15s)
+  ========================= */
+  useEffect(() => {
+    const alreadyClosed = sessionStorage.getItem("quoteClosed");
+    if (alreadyClosed) return;
+
+    const timer = setTimeout(() => {
+      setQuoteOpen(true);
+    }, 15000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -36,12 +51,10 @@ export default function App() {
                 className={`text-2xl font-extrabold tracking-wide ${
                   scrolled ? "text-slate-900" : "text-white"
                 }`}
-                style={{
-                  fontFamily: "Graphik, Arial Black, Arial, sans-serif",
-                }}
+                style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
               >
                 padanilathu
-                <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#6FA56F] rounded-full"></span>
+                <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#6FA56F] rounded-full" />
               </div>
             </a>
 
@@ -55,21 +68,18 @@ export default function App() {
               <a href="#services">Services</a>
               <a href="#projects">Projects</a>
               <a href="#gallery">Gallery</a>
-              <a href="#insights">Insights</a>
-              <a href="#news">News</a>
               <a href="#about">About</a>
               <a href="#careers">Careers</a>
-              <a
-                href="#contact"
+              <button
+                onClick={() => setQuoteOpen(true)}
                 className="bg-[#6FA56F] text-white px-4 py-2 rounded-md"
               >
-                Contact
-              </a>
+                Request Quote
+              </button>
             </nav>
 
-            {/* MOBILE MENU BUTTON */}
+            {/* MOBILE MENU */}
             <button
-              aria-label="Toggle menu"
               onClick={() => setMobileOpen(!mobileOpen)}
               className={`md:hidden text-2xl ${
                 scrolled ? "text-slate-900" : "text-white"
@@ -89,8 +99,6 @@ export default function App() {
                 "services",
                 "projects",
                 "gallery",
-                "insights",
-                "news",
                 "about",
                 "careers",
               ].map((item) => (
@@ -102,82 +110,146 @@ export default function App() {
                   {item.charAt(0).toUpperCase() + item.slice(1)}
                 </a>
               ))}
-              <a
-                href="#contact"
-                onClick={() => setMobileOpen(false)}
-                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md text-center"
+              <button
+                onClick={() => {
+                  setQuoteOpen(true);
+                  setMobileOpen(false);
+                }}
+                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md"
               >
-                Contact
-              </a>
+                Request Quote
+              </button>
             </div>
           </div>
         )}
       </header>
 
       {/* =========================
-          HERO SECTION
+          HERO
       ========================== */}
       <section
         id="home"
-        className="relative min-h-screen flex items-center"
+        className="relative min-h-screen flex items-center justify-center"
       >
-        {/* DESKTOP VIDEO */}
+        {/* BACKGROUND */}
         <video
           className="absolute inset-0 w-full h-full object-cover hidden md:block"
           autoPlay
           muted
           loop
           playsInline
-          preload="none"
         >
           <source src="/videos/hero1.mp4" type="video/mp4" />
         </video>
 
-        {/* MOBILE IMAGE */}
         <img
           src="/images/hero1.png"
-          alt="Eco-conscious landscaping"
+          alt="Eco landscaping"
           className="absolute inset-0 w-full h-full object-cover md:hidden"
         />
 
-        {/* OVERLAY */}
         <div className="absolute inset-0 bg-black/45" />
 
         {/* HERO CONTENT */}
-        <div className="relative z-20 max-w-7xl mx-auto px-6 pt-28 md:pt-20 text-white">
+        <div className="relative z-20 max-w-7xl mx-auto px-6 text-white text-center md:text-left pt-28 pb-24">
           <h1
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight max-w-3xl"
-            style={{
-              fontFamily: "Graphik, Arial Black, Arial, sans-serif",
-            }}
+            style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
           >
             Designing Eco-Conscious <br />
             & Aesthetically Stunning Outdoor Spaces
           </h1>
 
           <p className="mt-5 text-lg md:text-xl text-white/90 max-w-3xl">
-            We craft sustainable, elegant outdoor environments using eco-friendly
-            materials, landscape architecture and 3D design — delivering
-            long-lasting value across Kerala.
+            Sustainable landscaping, exterior architecture & 3D design across
+            Kerala.
           </p>
 
-          <div className="mt-8 flex gap-4 flex-wrap">
-            <a
-              href="#services"
-              className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold"
+          {/* FIXED BUTTON LAYOUT */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:items-center">
+            <button
+              onClick={() => setQuoteOpen(true)}
+              className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold w-full sm:w-auto"
             >
-              Explore Services
-            </a>
+              Request Quote
+            </button>
+
             <a
               href="#projects"
-              className="border border-white/40 px-6 py-3 rounded-md"
+              className="border border-white/40 px-6 py-3 rounded-md text-center w-full sm:w-auto"
             >
               View Projects
             </a>
           </div>
         </div>
       </section>
-   
+
+      {/* =========================
+          QUOTE POPUP
+      ========================== */}
+      {quoteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="relative bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-6">
+
+            <button
+              onClick={() => {
+                setQuoteOpen(false);
+                sessionStorage.setItem("quoteClosed", "true");
+              }}
+              className="absolute top-4 right-4 text-2xl"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-2xl font-bold">Request a Quote</h2>
+            <p className="text-sm text-slate-600 mt-1">
+              Share project details for accurate pricing.
+            </p>
+
+            <form className="mt-6 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input className="border p-3 rounded" placeholder="Name*" />
+                <input className="border p-3 rounded" placeholder="Phone*" />
+                <input className="border p-3 rounded" placeholder="Email" />
+                <input className="border p-3 rounded" placeholder="Location*" />
+              </div>
+
+              <select className="border p-3 rounded w-full">
+                <option>Select Service</option>
+                <option>Landscaping & Gardening</option>
+                <option>Stone Paving</option>
+                <option>Exterior Design</option>
+                <option>Water Features</option>
+                <option>Maintenance</option>
+                <option>Consulting</option>
+              </select>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <input className="border p-3 rounded" placeholder="Length" />
+                <input className="border p-3 rounded" placeholder="Width" />
+                <input className="border p-3 rounded" placeholder="Area" />
+              </div>
+
+              <textarea
+                rows="3"
+                className="border p-3 rounded w-full"
+                placeholder="Project details"
+              />
+
+              <button
+                type="submit"
+                className="bg-[#6FA56F] text-white px-6 py-3 rounded-md font-semibold"
+              >
+                Submit Quote Request
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 
 
 
