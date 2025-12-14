@@ -1,10 +1,16 @@
 /* ================================
    GLOBAL RESET & BASE
 ================================ */
+html {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
 body {
   margin: 0;
   background-color: var(--brand-bg-soft);
   color: var(--brand-dark);
+  overflow-x: hidden;
 
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
@@ -19,55 +25,44 @@ code {
     monospace;
 }
 
-html {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  text-rendering: optimizeLegibility;
-}
-
 /* ================================
-   TYPOGRAPHY
+   TYPOGRAPHY (FORCED VISIBILITY)
 ================================ */
 h1,
 h2,
 h3,
 h4,
-h5 {
+h5,
+h6 {
   font-family: Graphik, Inter, Arial, sans-serif;
+  color: var(--brand-dark);
+}
+
+p,
+span,
+li {
+  color: var(--brand-dark);
+}
+
+.text-muted {
+  color: var(--brand-muted);
 }
 
 /* ================================
-   BRAND COLORS (LIGHT MODE)
+   BRAND COLORS (LIGHT MODE ONLY)
 ================================ */
 :root {
   --brand-green: #6fa56f;
   --brand-green-dark: #507953;
 
-  --brand-dark: #0f172a; /* slate-900 */
-  --brand-muted: #64748b; /* slate-500 */
+  --brand-dark: #0f172a;     /* slate-900 */
+  --brand-muted: #64748b;   /* slate-500 */
   --brand-bg-soft: #ffffff;
 }
 
 /* ================================
-   DARK MODE (SYSTEM DEFAULT)
-================================ */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --brand-green: #7fbf7f;
-    --brand-green-dark: #5f8f63;
-
-    --brand-dark: #f8fafc;
-    --brand-muted: #94a3b8;
-    --brand-bg-soft: #020617; /* slate-950 */
-  }
-
-  body {
-    background-color: var(--brand-bg-soft);
-    color: var(--brand-dark);
-  }
-}
-
-/* ================================
    MANUAL DARK MODE (FUTURE READY)
+   ⚠️ Not active unless data-theme="dark"
 ================================ */
 [data-theme="dark"] {
   --brand-green: #7fbf7f;
@@ -89,6 +84,10 @@ a,
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+button {
+  touch-action: manipulation;
+}
+
 /* ================================
    IMAGE PERFORMANCE
 ================================ */
@@ -99,8 +98,6 @@ img {
 /* ================================
    PROCESS SECTION ANIMATIONS
 ================================ */
-
-/* Glow effect */
 @keyframes glowPulse {
   0% {
     box-shadow: 0 0 0 rgba(111, 165, 111, 0);
@@ -158,7 +155,6 @@ img {
   will-change: transform, opacity;
 }
 
-/* Horizontal dot animation */
 @keyframes dotMoveHorizontal {
   from {
     transform: translateX(0);
@@ -170,7 +166,6 @@ img {
   }
 }
 
-/* Vertical dot animation */
 @keyframes dotMoveVertical {
   from {
     transform: translateY(0);
@@ -196,15 +191,6 @@ img {
 }
 
 /* ================================
-   ACCESSIBILITY & LIGHTHOUSE
-================================ */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-/* ================================
    FLOATING CONTACT POPUP (FIXED)
 ================================ */
 .contact-popup {
@@ -212,4 +198,14 @@ img {
   bottom: max(env(safe-area-inset-bottom), 24px);
   right: max(env(safe-area-inset-right), 24px);
   z-index: 999999;
+}
+
+/* ================================
+   ACCESSIBILITY & LIGHTHOUSE
+================================ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
