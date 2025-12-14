@@ -5,11 +5,11 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
 
   /* =========================
-     NAV BAR SCROLL EFFECT
+     SCROLL EFFECT (NON-FIXED)
   ========================== */
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 30);
+      setScrolled(window.scrollY > 40);
     };
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
@@ -18,27 +18,27 @@ export default function App() {
   return (
     <>
       {/* =========================
-          HEADER (TRANSPARENT)
+          HEADER (NOT FIXED)
       ========================== */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-white/90 backdrop-blur border-b border-slate-200"
-            : "bg-transparent"
+        className={`absolute top-0 left-0 right-0 z-30 transition-all duration-300 ${
+          scrolled ? "bg-white/90 backdrop-blur shadow-sm" : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             {/* LOGO */}
-            <a href="#home" className="relative group">
+            <a href="#home" className="relative">
               <div
                 className={`text-2xl font-extrabold tracking-wide ${
                   scrolled ? "text-slate-900" : "text-white"
                 }`}
-                style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
+                style={{
+                  fontFamily: "Graphik, Arial Black, Arial, sans-serif",
+                }}
               >
                 padanilathu
-                <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#6FA56F] rounded-full opacity-80"></span>
+                <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#6FA56F] rounded-full"></span>
               </div>
             </a>
 
@@ -48,11 +48,18 @@ export default function App() {
                 scrolled ? "text-slate-700" : "text-white"
               }`}
             >
+              <a href="#sectors">Sectors</a>
               <a href="#services">Services</a>
               <a href="#projects">Projects</a>
               <a href="#gallery">Gallery</a>
+              <a href="#insights">Insights</a>
               <a href="#news">News</a>
-              <a href="#contact" className="bg-[#6FA56F] px-4 py-2 rounded-md text-white">
+              <a href="#about">About</a>
+              <a href="#careers">Careers</a>
+              <a
+                href="#contact"
+                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md"
+              >
                 Contact
               </a>
             </nav>
@@ -71,16 +78,30 @@ export default function App() {
 
         {/* MOBILE NAV */}
         {mobileOpen && (
-          <div className="md:hidden bg-white shadow-lg px-6 py-4">
-            <div className="flex flex-col gap-4 text-slate-700">
-              <a href="#services" onClick={() => setMobileOpen(false)}>Services</a>
-              <a href="#projects" onClick={() => setMobileOpen(false)}>Projects</a>
-              <a href="#gallery" onClick={() => setMobileOpen(false)}>Gallery</a>
-              <a href="#news" onClick={() => setMobileOpen(false)}>News</a>
+          <div className="md:hidden bg-white shadow-md px-6 py-5">
+            <div className="flex flex-col gap-4 text-slate-700 font-medium">
+              {[
+                "sectors",
+                "services",
+                "projects",
+                "gallery",
+                "insights",
+                "news",
+                "about",
+                "careers",
+              ].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item}`}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </a>
+              ))}
               <a
                 href="#contact"
                 onClick={() => setMobileOpen(false)}
-                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md"
+                className="bg-[#6FA56F] text-white px-4 py-2 rounded-md text-center"
               >
                 Contact
               </a>
@@ -90,66 +111,71 @@ export default function App() {
       </header>
 
       {/* =========================
-    HERO SECTION
-========================== */}
-<section
-  id="home"
-  className="relative h-screen min-h-[650px] pt-20"
->
-  {/* DESKTOP VIDEO */}
-  <video
-    className="absolute inset-0 w-full h-full object-cover hidden md:block"
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="metadata"
-  >
-    <source src="/videos/hero1.mp4" type="video/mp4" />
-  </video>
-
-  {/* MOBILE IMAGE */}
-  <div
-    className="absolute inset-0 bg-cover bg-center md:hidden"
-    style={{ backgroundImage: "url('/images/hero1.png')" }}
-  />
-
-  {/* OVERLAY */}
-  <div className="absolute inset-0 bg-black/45" />
-
-  {/* HERO CONTENT */}
-  <div className="relative z-20 max-w-7xl mx-auto px-6 h-full flex items-center">
-    <div className="text-white max-w-3xl">
-      <h1
-        className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight"
-        style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
+          HERO SECTION
+      ========================== */}
+      <section
+        id="home"
+        className="relative min-h-screen flex items-center"
       >
-        Designing Eco-Conscious & Aesthetically Stunning Outdoor Spaces
-      </h1>
-
-      <p className="mt-4 text-lg text-white/90">
-        We craft sustainable, elegant outdoor environments using eco-friendly
-        materials, landscape architecture and 3D design — delivering long-lasting
-        value across Kerala.
-      </p>
-
-      <div className="mt-6 flex gap-4 flex-wrap">
-        <a
-          href="#services"
-          className="bg-white text-[#6FA56F] px-5 py-2 rounded-md font-semibold"
+        {/* DESKTOP VIDEO */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover hidden md:block"
+          autoPlay
+          muted
+          loop
+          playsInline
         >
-          Explore Services
-        </a>
-        <a
-          href="#projects"
-          className="border border-white/40 px-5 py-2 rounded-md"
-        >
-          View Projects
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
+          <source src="/videos/hero1.mp4" type="video/mp4" />
+        </video>
+
+        {/* MOBILE IMAGE */}
+        <img
+          src="/images/hero1.png"
+          alt="Hero"
+          className="absolute inset-0 w-full h-full object-cover md:hidden"
+        />
+
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-black/45" />
+
+        {/* HERO CONTENT */}
+        <div className="relative z-20 max-w-7xl mx-auto px-6 pt-28 md:pt-20 text-white">
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight max-w-3xl"
+            style={{
+              fontFamily: "Graphik, Arial Black, Arial, sans-serif",
+            }}
+          >
+            Designing Eco-Conscious &  
+            <br />
+            Aesthetically Stunning Outdoor Spaces
+          </h1>
+
+          <p className="mt-5 text-lg md:text-xl text-white/90 max-w-3xl">
+            We craft sustainable, elegant outdoor environments using eco-friendly
+            materials, landscape architecture and 3D design — delivering
+            long-lasting value across Kerala.
+          </p>
+
+          <div className="mt-8 flex gap-4 flex-wrap">
+            <a
+              href="#services"
+              className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold"
+            >
+              Explore Services
+            </a>
+            <a
+              href="#projects"
+              className="border border-white/40 px-6 py-3 rounded-md"
+            >
+              View Projects
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
 
 
 
