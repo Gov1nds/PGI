@@ -209,3 +209,11 @@ img {
     transition: none !important;
   }
 }
+/* ================================
+   HERO TEXT OVERRIDE
+================================ */
+#home h1,
+#home h2,
+#home p {
+  color: #ffffff;
+}
