@@ -90,61 +90,67 @@ export default function App() {
       </header>
 
       {/* =========================
-          HERO SECTION
-      ========================== */}
-      <section
-        id="home"
-        className="relative h-screen min-h-[650px] pt-20"
+    HERO SECTION
+========================== */}
+<section
+  id="home"
+  className="relative h-screen min-h-[650px] pt-20"
+>
+  {/* DESKTOP VIDEO */}
+  <video
+    className="absolute inset-0 w-full h-full object-cover hidden md:block"
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="metadata"
+  >
+    <source src="/videos/hero1.mp4" type="video/mp4" />
+  </video>
+
+  {/* MOBILE IMAGE */}
+  <div
+    className="absolute inset-0 bg-cover bg-center md:hidden"
+    style={{ backgroundImage: "url('/images/hero1.png')" }}
+  />
+
+  {/* OVERLAY */}
+  <div className="absolute inset-0 bg-black/45" />
+
+  {/* HERO CONTENT */}
+  <div className="relative z-20 max-w-7xl mx-auto px-6 h-full flex items-center">
+    <div className="text-white max-w-3xl">
+      <h1
+        className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight"
+        style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
       >
-        {/* VIDEO — MOBILE SAFE */}
-        <video
-          className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster="/images/hero1.png"
+        Designing Eco-Conscious & Aesthetically Stunning Outdoor Spaces
+      </h1>
+
+      <p className="mt-4 text-lg text-white/90">
+        We craft sustainable, elegant outdoor environments using eco-friendly
+        materials, landscape architecture and 3D design — delivering long-lasting
+        value across Kerala.
+      </p>
+
+      <div className="mt-6 flex gap-4 flex-wrap">
+        <a
+          href="#services"
+          className="bg-white text-[#6FA56F] px-5 py-2 rounded-md font-semibold"
         >
-          <source src="/videos/hero1.mp4" type="video/mp4" />
-        </video>
+          Explore Services
+        </a>
+        <a
+          href="#projects"
+          className="border border-white/40 px-5 py-2 rounded-md"
+        >
+          View Projects
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-        {/* OVERLAY */}
-        <div className="absolute inset-0 bg-black/45" />
-
-        {/* HERO CONTENT */}
-        <div className="relative z-20 max-w-7xl mx-auto px-6 h-full flex items-center">
-          <div className="text-white max-w-3xl">
-            <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight"
-              style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
-            >
-              Designing Eco-Conscious & Aesthetically Stunning Outdoor Spaces
-            </h1>
-
-            <p className="mt-4 text-lg text-white/90">
-              We craft sustainable, elegant outdoor environments using
-              eco-friendly materials, landscape architecture and 3D design —
-              delivering long-lasting value across Kerala.
-            </p>
-
-            <div className="mt-6 flex gap-4 flex-wrap">
-              <a
-                href="#services"
-                className="bg-white text-[#6FA56F] px-5 py-2 rounded-md font-semibold"
-              >
-                Explore Services
-              </a>
-              <a
-                href="#projects"
-                className="border border-white/40 px-5 py-2 rounded-md"
-              >
-                View Projects
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
 
 
       {/* ================================================================
