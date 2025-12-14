@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
    APP
 ========================= */
 export default function App() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
@@ -18,6 +20,12 @@ export default function App() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+useEffect(() => {
+  const checkMobile = () => setIsMobile(window.innerWidth < 768);
+  checkMobile();
+  window.addEventListener("resize", checkMobile);
+  return () => window.removeEventListener("resize", checkMobile);
+}, []);
 
   /* =========================
      AUTO OPEN QUOTE POPUP (15s)
@@ -452,7 +460,6 @@ useEffect(() => {
       ["5", "Handover & Support", "Warranty & maintenance assistance"],
     ].map(([step, title, desc], index) => {
 
-      const isMobile = window.innerWidth < 768;
       const delay = index * (isMobile ? 80 : 120);
       const duration = isMobile ? "400ms" : "700ms";
 
@@ -825,6 +832,39 @@ useEffect(() => {
           </div>
         </section>
       </main>
+     {/* =========================
+    FLOATING CONTACT BUTTON
+========================= */}
+<div className="fixed bottom-6 right-6 z-50 contact-popup">
+  <button
+    onClick={() => setContactOpen(!contactOpen)}
+    className="w-14 h-14 rounded-full bg-[#6FA56F] text-white text-2xl shadow-lg flex items-center justify-center"
+    aria-label="Contact options"
+    type="button"
+  >
+    ☎
+  </button>
+
+  {contactOpen && (
+    <div className="absolute bottom-16 right-0 bg-white rounded-xl shadow-lg p-3 w-44">
+      <a
+        href="tel:+919876543210"
+        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm"
+      >
+        📞 Call Now
+      </a>
+
+      <a
+        href="https://wa.me/919876543210"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm"
+      >
+        💬 WhatsApp
+      </a>
+    </div>
+  )}
+</div>
 
       {/* ================================================================
           FOOTER
