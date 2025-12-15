@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-const img = (path, w = 800, q = 75) =>
+const vimg = (path, w = 800, q = 75) =>
   `/_vercel/image?url=${path}&w=${w}&q=${q}`;
+
 
 
 /* =========================
@@ -191,7 +192,7 @@ useEffect(() => {
         </video>
 
       <img
-  src={img("/images/hero1.png", 1200, 80)}
+  src={vimg(`/images/${img}`, 600, 65)}
   alt="Eco landscaping"
   className="absolute inset-0 w-full h-full object-cover md:hidden"
 />
@@ -329,7 +330,7 @@ useEffect(() => {
   className="relative h-44 rounded-lg overflow-hidden"
 >
   <img
-    src={img(`/images/${img}`, 800, 70)}
+    src={vimg(`/images/${img}`, 800, 70)}
     alt={title}
     className="absolute inset-0 w-full h-full object-cover"
     loading="lazy"
@@ -373,7 +374,7 @@ useEffect(() => {
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
                 <img
-  src={img(`/images/${img}`, 800, 70)}
+  src={vimg(`/images/${img}`, 800, 70)}
   loading="lazy"
   decoding="async"
   className="w-full h-44 object-cover"
@@ -409,13 +410,14 @@ useEffect(() => {
                 key={title}
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
-                <img
-  src={img(`/images/${img}`, 800, 70)}
+               <img
+  src={vimg(`/images/${img}`, 800, 70)}
   loading="lazy"
   decoding="async"
   className="w-full h-44 object-cover"
   alt={title}
 />
+
 
                 <div className="p-4">
                   <h3 className="font-semibold">{title}</h3>
@@ -446,7 +448,7 @@ useEffect(() => {
               "gallery8.jpg",
             ].map((img) => (
   <img
-  src={img(`/images/${img}`, 600, 65)}
+  src={vimg(`/images/${img}`, 600, 65)}
   loading="lazy"
   decoding="async"
   className="h-40 w-full object-cover rounded-lg shadow"
@@ -587,7 +589,14 @@ useEffect(() => {
         "Emerging eco-friendly materials and design philosophies."]
     ].map(([img, title, desc]) => (
       <article key={title} className="bg-white rounded-lg shadow overflow-hidden">
-        <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" />
+        <img
+  src={vimg(`/images/${img}`, 800, 70)}
+  alt={title}
+  className="w-full h-40 object-cover"
+  loading="lazy"
+  decoding="async"
+/>
+
         <div className="p-4">
           <h3 className="font-semibold" style={{ fontFamily: 'Graphik, Inter, sans-serif' }}>
             {title}
