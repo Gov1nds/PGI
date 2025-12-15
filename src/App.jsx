@@ -315,33 +315,29 @@ useEffect(() => {
 
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
     {[
-      ["Residential", "sector_residential.png"],
-      ["Commercial", "sector_commercial.png"],
-      ["Hospitality", "sector_hospitality.png"],
-      ["Public & Recreational", "sector_public.png"],
-      ["Institutional", "sector_institutional.png"],
-      ["Real Estate & Developers", "sector_developers.png"],
-      ["Industrial", "sector_industrial.png"],
-    ].map(([title, img]) => (
-      <div
-        key={title}
-        className="relative h-44 rounded-lg overflow-hidden"
-      >
-        <img
-          src={`/images/${img.replace(".png", ".webp")}`}
-          alt={title}
-          className="absolute inset-0 w-full h-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
+  ["Residential", "sector_residential.webp"],
+  ["Commercial", "sector_commercial.webp"],
+  ["Hospitality", "sector_hospitality.webp"],
+  ["Public & Recreational", "sector_public.webp"],
+  ["Institutional", "sector_institutional.webp"],
+  ["Real Estate & Developers", "sector_developers.webp"],
+  ["Industrial", "sector_industrial.webp"],
+].map(([title, img]) => (
+  <div key={title} className="relative h-44 rounded-lg overflow-hidden">
+    <img
+      src={`/images/${img}`}
+      alt={title}
+      className="absolute inset-0 w-full h-full object-cover"
+      loading="lazy"
+      decoding="async"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
+    <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
+      {title}
+    </div>
+  </div>
+))}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
-
-        <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
-          {title}
-        </div>
-      </div>
-    ))}
   </div>
 </section>
 
@@ -357,33 +353,30 @@ useEffect(() => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {[
-              ["service_landscape.png", "Landscaping & Gardening"],
-              ["service_stonepaving.png", "Natural Stone Paving"],
-              ["service_exterior.png", "Exterior Architecture & 3D Design"],
-              ["service_waterfeatures.png", "Water Features"],
-              ["service_playgrounds.png", "Playgrounds & Sports Areas"],
-              ["service_commercial.png", "Commercial & Resort Landscaping"],
-              ["service_renovation.png", "Renovation & Maintenance"],
-              ["service_consulting.png", "Outdoor Space Consulting"],
-              ["service_sustainability.png", "Sustainable Outdoor Solutions"],
-            ].map(([img, title]) => (
-              <article
-                key={title}
-                className="bg-white rounded-lg shadow overflow-hidden"
-              >
-                <img
-  src={`/images/${img.replace(".png", ".webp")}`}
-  className="w-full h-44 object-cover"
-  loading="lazy"
-  decoding="async"
-  alt={title}
-/>
+  ["service_landscape.webp", "Landscaping & Gardening"],
+  ["service_stonepaving.webp", "Natural Stone Paving"],
+  ["service_exterior.webp", "Exterior Architecture & 3D Design"],
+  ["service_waterfeatures.webp", "Water Features"],
+  ["service_playgrounds.webp", "Playgrounds & Sports Areas"],
+  ["service_commercial.webp", "Commercial & Resort Landscaping"],
+  ["service_renovation.webp", "Renovation & Maintenance"],
+  ["service_consulting.webp", "Outdoor Space Consulting"],
+  ["service_sustainability.webp", "Sustainable Outdoor Solutions"],
+].map(([img, title]) => (
+  <article key={title} className="bg-white rounded-lg shadow overflow-hidden">
+    <img
+      src={`/images/${img}`}
+      className="w-full h-44 object-cover"
+      loading="lazy"
+      decoding="async"
+      alt={title}
+    />
+    <div className="p-4">
+      <h3 className="font-semibold">{title}</h3>
+    </div>
+  </article>
+))}
 
-                <div className="p-4">
-                  <h3 className="font-semibold">{title}</h3>
-                </div>
-              </article>
-            ))}
           </div>
         </section>
 
@@ -399,22 +392,24 @@ useEffect(() => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
             {[
-              ["project1_1.png", "Natural Stone Courtyard"],
-              ["project2_1.png", "Waterfall Garden"],
-              ["project3_1.png", "Café Outdoor Seating"],
-              ["project4_1.png", "Resort Pathway"],
-            ].map(([img, title]) => (
+  ["project1_1.webp", "Natural Stone Courtyard"],
+  ["project2_1.webp", "Waterfall Garden"],
+  ["project3_1.webp", "Café Outdoor Seating"],
+  ["project4_1.webp", "Resort Pathway"],
+].map(([img, title]) => (
+
               <article
                 key={title}
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
-                <img
-  src={`/images/${img.replace(".png", ".webp")}`}
+               <img
+  src={`/images/${img}`}
   className="w-full h-44 object-cover"
   loading="lazy"
   decoding="async"
   alt={title}
 />
+
 
                 <div className="p-4">
                   <h3 className="font-semibold">{title}</h3>
@@ -435,20 +430,21 @@ useEffect(() => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
            {[
-  "gallery1.jpg",
-  "gallery2.png",
-  "gallery5.jpg",
-  "gallery8.jpg",
+  "gallery1.webp",
+  "gallery2.webp",
+  "gallery5.webp",
+  "gallery8.webp",
 ].map((img) => (
   <img
     key={img}
-    src={`/images/${img.replace(/\.(png|jpg)/, ".webp")}`}
+    src={`/images/${img}`}
     loading="lazy"
     decoding="async"
     className="h-40 w-full object-cover rounded-lg shadow"
     alt="Gallery"
   />
 ))}
+
 
           </div>
         </section>
@@ -564,34 +560,55 @@ useEffect(() => {
 </section>
 
         {/* ================================================================
-            NEWS
-        ================================================================ */}
-        <section id="news" className="mt-16">
-  <h2 className="text-2xl font-semibold" style={{ fontFamily: "Graphik, Inter, sans-serif" }}>
+    NEWS
+================================================================ */}
+<section id="news" className="mt-16">
+  <h2
+    className="text-2xl font-semibold"
+    style={{ fontFamily: "Graphik, Inter, sans-serif" }}
+  >
     News & Updates
   </h2>
-  <p className="mt-2 text-sm text-slate-600">Latest announcements & events.</p>
+
+  <p className="mt-2 text-sm text-slate-600">
+    Latest announcements & events.
+  </p>
 
   <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {[
-      ["news1.png", "Christmas Update — New Outdoor Lighting Designs",
-        "Special festive installations completed across Kerala resorts."],
-      ["news2.png", "500+ Completed Projects Milestone",
-        "A major achievement in delivering sustainable outdoor spaces."],
-      ["news3.png", "Kerala Landscaping Trends 2025",
-        "Emerging eco-friendly materials and design philosophies."]
+      [
+        "news1.webp",
+        "Christmas Update — New Outdoor Lighting Designs",
+        "Special festive installations completed across Kerala resorts.",
+      ],
+      [
+        "news2.webp",
+        "500+ Completed Projects Milestone",
+        "A major achievement in delivering sustainable outdoor spaces.",
+      ],
+      [
+        "news3.webp",
+        "Kerala Landscaping Trends 2025",
+        "Emerging eco-friendly materials and design philosophies.",
+      ],
     ].map(([img, title, desc]) => (
-      <article key={title} className="bg-white rounded-lg shadow overflow-hidden">
+      <article
+        key={title}
+        className="bg-white rounded-lg shadow overflow-hidden"
+      >
         <img
-  src={`/images/${img.replace(".png", ".webp")}`}
-  alt={title}
-  className="w-full h-40 object-cover"
-  loading="lazy"
-  decoding="async"
-/>
+          src={`/images/${img}`}
+          alt={title}
+          className="w-full h-40 object-cover"
+          loading="lazy"
+          decoding="async"
+        />
 
         <div className="p-4">
-          <h3 className="font-semibold" style={{ fontFamily: 'Graphik, Inter, sans-serif' }}>
+          <h3
+            className="font-semibold"
+            style={{ fontFamily: "Graphik, Inter, sans-serif" }}
+          >
             {title}
           </h3>
           <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -600,6 +617,7 @@ useEffect(() => {
     ))}
   </div>
 </section>
+
 
 {/* ================================================================
     REVIEWS / TESTIMONIALS
@@ -685,25 +703,23 @@ useEffect(() => {
 
   <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
     {[
-      ["mission.png", "Mission", "Crafting eco-conscious, aesthetic outdoor environments that improve everyday living."],
-      ["vision.png", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
-      ["values.png", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
-    ].map(([img, title, desc]) => (
-      <div key={title} className="text-center bg-white p-4 rounded-lg shadow-sm">
-       <img
-  src={`/images/${img.replace(".png", ".webp")}`}
-  alt={title}
-  className="w-full h-40 object-cover rounded-md mb-4"
-  loading="lazy"
-  decoding="async"
-/>
+  ["mission.webp", "Mission", "Crafting eco-conscious, aesthetic outdoor environments that improve everyday living."],
+  ["vision.webp", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
+  ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
+].map(([img, title, desc]) => (
+  <div key={title} className="text-center bg-white p-4 rounded-lg shadow-sm">
+    <img
+      src={`/images/${img}`}
+      alt={title}
+      className="w-full h-40 object-cover rounded-md mb-4"
+      loading="lazy"
+      decoding="async"
+    />
+    <h3 className="font-semibold text-lg">{title}</h3>
+    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+  </div>
+))}
 
-        <h3 className="font-semibold text-lg" style={{ fontFamily: 'Graphik, Inter, sans-serif' }}>
-          {title}
-        </h3>
-        <p className="mt-2 text-sm text-slate-600">{desc}</p>
-      </div>
-    ))}
   </div>
 </section>
 
