@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 const vimg = (path, w = 800, q = 75) =>
-  `/_vercel/image?url=${path}&w=${w}&q=${q}`;
+  `/_vercel/image?url=${encodeURIComponent(path)}&w=${w}&q=${q}`;
+
 
 
 
