@@ -191,11 +191,13 @@ useEffect(() => {
           <source src="/videos/hero1.mp4" type="video/mp4" />
         </video>
 
-      <img
-  src={vimg(`/images/${img}`, 600, 65)}
+     <img
+  src={vimg("/images/hero1.png", 600, 65)}
   alt="Eco landscaping"
   className="absolute inset-0 w-full h-full object-cover md:hidden"
+  fetchpriority="high"
 />
+
 
 
         <div className="absolute inset-0 bg-black/45" />
@@ -697,7 +699,14 @@ useEffect(() => {
       ["values.png", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
     ].map(([img, title, desc]) => (
       <div key={title} className="text-center bg-white p-4 rounded-lg shadow-sm">
-        <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" />
+       <img
+  src={vimg(`/images/${img}`, 800, 70)}
+  alt={title}
+  className="w-full h-40 object-cover rounded-md mb-4"
+  loading="lazy"
+  decoding="async"
+/>
+
         <h3 className="font-semibold text-lg" style={{ fontFamily: 'Graphik, Inter, sans-serif' }}>
           {title}
         </h3>
@@ -792,11 +801,14 @@ useEffect(() => {
               </ul>
 
               <div className="mt-6 rounded-md overflow-hidden">
-                <img
-                  src="/images/about_office.png"
-                  alt="Padanilathu office"
-                  className="w-full h-56 object-cover"
-                />
+               <img
+  src={vimg("/images/about_office.png", 900, 75)}
+  alt="Padanilathu office"
+  className="w-full h-56 object-cover"
+  loading="lazy"
+  decoding="async"
+/>
+
               </div>
             </div>
 
