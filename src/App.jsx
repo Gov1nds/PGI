@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+const img = (path, w = 800, q = 75) =>
+  `/_vercel/image?url=${path}&w=${w}&q=${q}`;
+
 
 /* =========================
    APP
@@ -187,11 +190,12 @@ useEffect(() => {
           <source src="/videos/hero1.mp4" type="video/mp4" />
         </video>
 
-        <img
-          src="/images/hero1.png"
-          alt="Eco landscaping"
-          className="absolute inset-0 w-full h-full object-cover md:hidden"
-        />
+      <img
+  src={img("/images/hero1.png", 1200, 80)}
+  alt="Eco landscaping"
+  className="absolute inset-0 w-full h-full object-cover md:hidden"
+/>
+
 
         <div className="absolute inset-0 bg-black/45" />
 
@@ -320,16 +324,25 @@ useEffect(() => {
               ["Real Estate & Developers", "sector_developers.png"],
               ["Industrial", "sector_industrial.png"],
             ].map(([title, img]) => (
-              <div
-                key={title}
-                className="relative h-44 rounded-lg bg-cover bg-center"
-                style={{ backgroundImage: `url(/images/${img})` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
-                <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
-                  {title}
-                </div>
-              </div>
+             <div
+  key={title}
+  className="relative h-44 rounded-lg overflow-hidden"
+>
+  <img
+    src={img(`/images/${img}`, 800, 70)}
+    alt={title}
+    className="absolute inset-0 w-full h-full object-cover"
+    loading="lazy"
+    decoding="async"
+  />
+
+  <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
+
+  <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
+    {title}
+  </div>
+</div>
+
             ))}
           </div>
         </section>
@@ -360,10 +373,13 @@ useEffect(() => {
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
                 <img
-                  src={`/images/${img}`}
-                  className="w-full h-44 object-cover"
-                  alt={title}
-                />
+  src={img(`/images/${img}`, 800, 70)}
+  loading="lazy"
+  decoding="async"
+  className="w-full h-44 object-cover"
+  alt={title}
+/>
+
                 <div className="p-4">
                   <h3 className="font-semibold">{title}</h3>
                 </div>
@@ -394,10 +410,13 @@ useEffect(() => {
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
                 <img
-                  src={`/images/${img}`}
-                  className="w-full h-44 object-cover"
-                  alt={title}
-                />
+  src={img(`/images/${img}`, 800, 70)}
+  loading="lazy"
+  decoding="async"
+  className="w-full h-44 object-cover"
+  alt={title}
+/>
+
                 <div className="p-4">
                   <h3 className="font-semibold">{title}</h3>
                 </div>
@@ -426,8 +445,8 @@ useEffect(() => {
               
               "gallery8.jpg",
             ].map((img) => (
-              <img
-  src={`/images/${img}`}
+  <img
+  src={img(`/images/${img}`, 600, 65)}
   loading="lazy"
   decoding="async"
   className="h-40 w-full object-cover rounded-lg shadow"
