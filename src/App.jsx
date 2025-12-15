@@ -1,9 +1,4 @@
 import React, { useEffect, useState } from "react";
-const vimg = (path, w = 800, q = 75) =>
-  `/_vercel/image?url=${encodeURIComponent(path)}&w=${w}&q=${q}`;
-
-
-
 
 /* =========================
    APP
@@ -192,13 +187,12 @@ useEffect(() => {
           <source src="/videos/hero1.mp4" type="video/mp4" />
         </video>
 
-     <img
-  src={vimg("/images/hero1.png", 600, 65)}
+        <img
+  src="/images/hero1.webp"
   alt="Eco landscaping"
   className="absolute inset-0 w-full h-full object-cover md:hidden"
-  fetchpriority="high"
+  loading="eager"
 />
-
 
 
         <div className="absolute inset-0 bg-black/45" />
@@ -308,48 +302,49 @@ useEffect(() => {
       ================================================================= */}
       <main className="relative max-w-7xl mx-auto px-6 -mt-24 pb-24">
 
-        {/* ================================================================
-            SECTORS
-        ================================================================ */}
-        <section id="sectors" className="bg-white rounded-xl shadow p-8">
-          <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
-          <p className="text-sm text-slate-600 mt-2">
-            We design outdoor environments across residential, commercial,
-            hospitality, public and institutional spaces.
-          </p>
+    
+{/* ================================================================
+    SECTORS
+================================================================ */}
+<section id="sectors" className="bg-white rounded-xl shadow p-8">
+  <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
+  <p className="text-sm text-slate-600 mt-2">
+    We design outdoor environments across residential, commercial,
+    hospitality, public and institutional spaces.
+  </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-            {[
-              ["Residential", "sector_residential.png"],
-              ["Commercial", "sector_commercial.png"],
-              ["Hospitality", "sector_hospitality.png"],
-              ["Public & Recreational", "sector_public.png"],
-              ["Institutional", "sector_institutional.png"],
-              ["Real Estate & Developers", "sector_developers.png"],
-              ["Industrial", "sector_industrial.png"],
-            ].map(([title, img]) => (
-             <div
-  key={title}
-  className="relative h-44 rounded-lg overflow-hidden"
->
-  <img
-    src={vimg(`/images/${img}`, 800, 70)}
-    alt={title}
-    className="absolute inset-0 w-full h-full object-cover"
-    loading="lazy"
-    decoding="async"
-  />
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    {[
+      ["Residential", "sector_residential.png"],
+      ["Commercial", "sector_commercial.png"],
+      ["Hospitality", "sector_hospitality.png"],
+      ["Public & Recreational", "sector_public.png"],
+      ["Institutional", "sector_institutional.png"],
+      ["Real Estate & Developers", "sector_developers.png"],
+      ["Industrial", "sector_industrial.png"],
+    ].map(([title, img]) => (
+      <div
+        key={title}
+        className="relative h-44 rounded-lg overflow-hidden"
+      >
+        <img
+          src={`/images/${img.replace(".png", ".webp")}`}
+          alt={title}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
 
-  <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
 
-  <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
-    {title}
+        <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
+          {title}
+        </div>
+      </div>
+    ))}
   </div>
-</div>
+</section>
 
-            ))}
-          </div>
-        </section>
 
         {/* ================================================================
             SERVICES
@@ -377,10 +372,10 @@ useEffect(() => {
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
                 <img
-  src={vimg(`/images/${img}`, 800, 70)}
+  src={`/images/${img.replace(".png", ".webp")}`}
+  className="w-full h-44 object-cover"
   loading="lazy"
   decoding="async"
-  className="w-full h-44 object-cover"
   alt={title}
 />
 
@@ -413,14 +408,13 @@ useEffect(() => {
                 key={title}
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
-               <img
-  src={vimg(`/images/${img}`, 800, 70)}
+                <img
+  src={`/images/${img.replace(".png", ".webp")}`}
+  className="w-full h-44 object-cover"
   loading="lazy"
   decoding="async"
-  className="w-full h-44 object-cover"
   alt={title}
 />
-
 
                 <div className="p-4">
                   <h3 className="font-semibold">{title}</h3>
@@ -440,26 +434,22 @@ useEffect(() => {
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
-            {[
-              "gallery1.jpg",
-              "gallery2.png",
-              
-
-              "gallery5.jpg",
-              
-              
-              "gallery8.jpg",
-            ].map((img) => (
+           {[
+  "gallery1.jpg",
+  "gallery2.png",
+  "gallery5.jpg",
+  "gallery8.jpg",
+].map((img) => (
   <img
-  src={vimg(`/images/${img}`, 600, 65)}
-  loading="lazy"
-  decoding="async"
-  className="h-40 w-full object-cover rounded-lg shadow"
-  alt="Gallery"
-/>
+    key={img}
+    src={`/images/${img.replace(/\.(png|jpg)/, ".webp")}`}
+    loading="lazy"
+    decoding="async"
+    className="h-40 w-full object-cover rounded-lg shadow"
+    alt="Gallery"
+  />
+))}
 
-              
-            ))}
           </div>
         </section>
         {/* ================================================================
@@ -593,7 +583,7 @@ useEffect(() => {
     ].map(([img, title, desc]) => (
       <article key={title} className="bg-white rounded-lg shadow overflow-hidden">
         <img
-  src={vimg(`/images/${img}`, 800, 70)}
+  src={`/images/${img.replace(".png", ".webp")}`}
   alt={title}
   className="w-full h-40 object-cover"
   loading="lazy"
@@ -701,7 +691,7 @@ useEffect(() => {
     ].map(([img, title, desc]) => (
       <div key={title} className="text-center bg-white p-4 rounded-lg shadow-sm">
        <img
-  src={vimg(`/images/${img}`, 800, 70)}
+  src={`/images/${img.replace(".png", ".webp")}`}
   alt={title}
   className="w-full h-40 object-cover rounded-md mb-4"
   loading="lazy"
@@ -802,12 +792,10 @@ useEffect(() => {
               </ul>
 
               <div className="mt-6 rounded-md overflow-hidden">
-               <img
-  src={vimg("/images/about_office.png", 900, 75)}
+                <img
+src="/images/about_office.webp"
   alt="Padanilathu office"
   className="w-full h-56 object-cover"
-  loading="lazy"
-  decoding="async"
 />
 
               </div>
