@@ -195,40 +195,51 @@ useEffect(() => {
 />
 
 
-        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
 
-        {/* HERO CONTENT */}
-        <div className="relative z-20 max-w-7xl mx-auto px-6 text-white text-center md:text-left pt-28 pb-24">
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight max-w-3xl"
-            style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
-          >
-            Designing Eco-Conscious <br />
-            & Aesthetically Stunning Outdoor Spaces
-          </h1>
 
-          <p className="mt-5 text-lg md:text-xl text-white/90 max-w-3xl">
-            Sustainable landscaping, exterior architecture & 3D design across
-            Kerala.
-          </p>
+       {/* HERO CONTENT */}
+<div className="relative z-20 max-w-7xl mx-auto px-6 text-white text-center md:text-left pt-28 pb-24">
 
-          {/* FIXED BUTTON LAYOUT */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:items-center">
-            <button
-              onClick={() => setQuoteOpen(true)}
-              className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold w-full sm:w-auto"
-            >
-              Request Quote
-            </button>
+  {/* HEADING */}
+  <h1
+    className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight max-w-3xl animate-fade-up"
+    style={{ fontFamily: "Graphik, Arial Black, Arial, sans-serif" }}
+  >
+    Designing Eco-Conscious <br />
+    & Aesthetically Stunning Outdoor Spaces
+  </h1>
 
-            <a
-              href="#projects"
-              className="border border-white/40 px-6 py-3 rounded-md text-center w-full sm:w-auto"
-            >
-              View Projects
-            </a>
-          </div>
-        </div>
+  {/* SUBTEXT */}
+  <p
+    className="mt-5 text-lg md:text-xl text-white/90 max-w-3xl animate-fade-up"
+    style={{ animationDelay: "150ms" }}
+  >
+    Sustainable landscaping, exterior architecture & 3D design across Kerala.
+  </p>
+
+  {/* BUTTONS */}
+  <div
+    className="mt-8 flex flex-col sm:flex-row gap-4 sm:items-center animate-fade-up"
+    style={{ animationDelay: "300ms" }}
+  >
+    <button
+      onClick={() => setQuoteOpen(true)}
+      className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold w-full sm:w-auto"
+    >
+      Request Quote
+    </button>
+
+    <a
+      href="#projects"
+      className="border border-white/40 px-6 py-3 rounded-md text-center w-full sm:w-auto"
+    >
+      View Projects
+    </a>
+  </div>
+
+</div>
+
       </section>
 
       {/* =========================
@@ -294,6 +305,36 @@ useEffect(() => {
         </div>
       )}
 
+{/* =========================
+    PHILOSOPHY INTRO
+========================= */}
+<section className="relative z-30 max-w-6xl mx-auto px-6">
+  <div className="bg-white/95 backdrop-blur rounded-xl shadow-sm px-8 py-10 -mt-16">
+
+    {/* HEADING */}
+    <h2
+      className="text-2xl md:text-3xl font-semibold text-slate-900 text-center"
+      style={{ fontFamily: "Graphik, Inter, sans-serif" }}
+    >
+      Crafting Timeless Outdoor Spaces
+    </h2>
+
+    {/* TEXT */}
+    <p
+      className="mt-4 text-base md:text-lg leading-relaxed text-slate-700 text-center max-w-4xl mx-auto"
+      style={{ fontFamily: "Graphik, Inter, sans-serif" }}
+    >
+      Our practice is guided by a deep respect for nature and the landscapes of Kerala. We believe outdoor 
+      spaces are living extensions of life itself—where design, ecology, and human experience exist in quiet 
+      harmony. With sustainability as our foundation, we craft thoughtful exterior environments that honour
+      the land while elevating aesthetic expression. Through a disciplined, well-structured process and a culture
+      of precision in execution, we deliver enduring landscapes shaped by trust, clarity, and care. Our work is 
+      driven by a single purpose: to create timeless, eco-conscious outdoor spaces that enrich Kerala’s
+      atmosphere and leave every client deeply satisfied
+    </p>
+
+  </div>
+</section>
 
 
 
