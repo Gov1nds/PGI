@@ -339,51 +339,61 @@ useEffect(() => {
 
 
       {/* ================================================================
-          MAIN WRAPPER
-      ================================================================= */}
-<main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
-
-    
-{/* ================================================================
-    SECTORS
+    MAIN WRAPPER (before sectors)
 ================================================================ */}
-<section id="sectors" className="mt-12 bg-[#f8f9f8] py-12">
-  <div className="max-w-7xl mx-auto bg-white rounded-xl shadow p-8">
+<main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
+  {/* any content before sectors (if none, this can be empty) */}
+</main>
 
-    <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
-    <p className="text-sm text-slate-600 mt-2">
-      We design outdoor environments across residential, commercial,
-      hospitality, public and institutional spaces.
-    </p>
+{/* ================================================================
+    SECTORS (FULL WIDTH)
+================================================================ */}
+<section id="sectors" className="bg-[#f8f9f8] py-16">
+  <div className="max-w-7xl mx-auto px-6">
+    <div className="bg-white rounded-xl shadow p-8">
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-      {[
-        ["Residential", "sector_residential.webp"],
-        ["Commercial", "sector_commercial.webp"],
-        ["Hospitality", "sector_hospitality.webp"],
-        ["Public & Recreational", "sector_public.webp"],
-        ["Institutional", "sector_institutional.webp"],
-        ["Real Estate & Developers", "sector_developers.webp"],
-        ["Industrial", "sector_industrial.webp"],
-      ].map(([title, img]) => (
-        <div key={title} className="relative h-44 rounded-lg overflow-hidden">
-          <img
-            src={`/images/${img}`}
-            alt={title}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
-          <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
-            {title}
+      <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
+      <p className="text-sm text-slate-600 mt-2">
+        We design outdoor environments across residential, commercial,
+        hospitality, public and institutional spaces.
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {[
+          ["Residential", "sector_residential.webp"],
+          ["Commercial", "sector_commercial.webp"],
+          ["Hospitality", "sector_hospitality.webp"],
+          ["Public & Recreational", "sector_public.webp"],
+          ["Institutional", "sector_institutional.webp"],
+          ["Real Estate & Developers", "sector_developers.webp"],
+          ["Industrial", "sector_industrial.webp"],
+        ].map(([title, img]) => (
+          <div key={title} className="relative h-44 rounded-lg overflow-hidden">
+           <img
+  src={`/images/${img}`}
+  alt={title}
+  className="absolute inset-0 w-full h-full object-cover"
+  loading="lazy"
+  decoding="async"
+/>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
+            <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
+              {title}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
 
+    </div>
   </div>
 </section>
+
+{/* ================================================================
+    MAIN WRAPPER (after sectors)
+================================================================ */}
+<main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
+  {/* Services, Projects, Gallery, Process, etc */}
 
 
         {/* ================================================================
