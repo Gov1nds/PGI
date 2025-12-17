@@ -348,9 +348,10 @@ useEffect(() => {
 {/* ================================================================
     SECTORS (FULL WIDTH)
 ================================================================ */}
-<section id="sectors" className="bg-[#f8f9f8] py-16">
+<section id="sectors" className="bg-[#f3f5f3] py-16">
   <div className="max-w-7xl mx-auto px-6">
-    <div className="bg-white rounded-xl shadow p-8">
+   <div className="bg-white rounded-xl shadow p-6 md:p-8">
+
 
       <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
       <p className="text-sm text-slate-600 mt-2">
@@ -379,6 +380,8 @@ useEffect(() => {
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/50" />
             <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
+              <div className="mt-16 h-1 w-full bg-gradient-to-r from-transparent via-[#6FA56F]/30 to-transparent" />
+
               {title}
             </div>
           </div>
