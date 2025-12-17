@@ -347,7 +347,11 @@ useEffect(() => {
 {/* ================================================================
     SECTORS
 ================================================================ */}
-<section id="sectors" className="bg-white rounded-xl shadow p-8">
+<section
+  id="sectors"
+  className="bg-[var(--bg-light)] rounded-xl shadow p-8"
+>
+
   <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
   <p className="text-sm text-slate-600 mt-2">
     We design outdoor environments across residential, commercial,
@@ -463,7 +467,11 @@ useEffect(() => {
         {/* ================================================================
             GALLERY
         ================================================================ */}
-        <section id="gallery" className="mt-16">
+       <section
+  id="gallery"
+  className="mt-16 bg-[var(--bg-light)] rounded-xl p-8"
+>
+
           <h2 className="text-2xl font-poppins font-semibold">Gallery</h2>
           <p className="mt-2 text-sm text-slate-600">
             Visual moments from our completed landscape projects.
@@ -492,7 +500,11 @@ useEffect(() => {
         {/* ================================================================
     OUR PROCESS
 ================================================================ */}
-<section id="process" className="mt-16 bg-white rounded-xl p-8 shadow-sm">
+<section
+  id="process"
+  className="mt-16 bg-[var(--bg-accent)] rounded-xl p-8 shadow-sm"
+>
+
   <h2 className="text-2xl font-poppins font-semibold">
     Our Process
   </h2>
@@ -814,10 +826,11 @@ useEffect(() => {
         {/* ================================================================
             CONTACT
         ================================================================ */}
-        <section
-          id="contact"
-          className="mt-16 bg-white rounded-xl p-8 shadow-sm"
-        >
+       <section
+  id="contact"
+  className="mt-16 bg-[var(--bg-light)] rounded-xl p-8 shadow-sm"
+>
+
           <h2 className="text-2xl font-poppins font-semibold">Contact</h2>
           <p className="mt-2 text-sm text-slate-600">
             Request a free site visit and quotation. We serve all of Kerala with
