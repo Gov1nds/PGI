@@ -642,12 +642,13 @@ useEffect(() => {
   </p>
 
   <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    {[
+    {
       [
-        "news1.webp",
-        "Christmas Update — New Outdoor Lighting Designs",
-        "Special festive installations completed across Kerala resorts.",
-      ],
+  [
+    "news1.webp",
+    "17 Years of Landscape Excellence",
+    "Celebrating over 17 years of crafting sustainable, high-quality outdoor spaces across Kerala.",
+  ],
       [
         "news2.webp",
         "500+ Completed Projects Milestone",
@@ -847,8 +848,7 @@ useEffect(() => {
 
           <h2 className="text-2xl font-poppins font-semibold">Contact</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Request a free site visit and quotation. We serve all of Kerala with
-            a strong presence in Ernakulam.
+            Request a free site visit and quotation. We serve clients across Kerala, with a strong presence in South Kerala.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
@@ -858,8 +858,8 @@ useEffect(() => {
               <ul className="mt-4 space-y-3 text-sm text-slate-700">
                 <li>
                   <strong>Phone:</strong>{" "}
-                  <a href="tel:+91-XXXXXXXXXX" className="text-slate-600">
-                    +91-XXXXXXXXXX
+                  <a href="tel:+91-7907709032" className="text-slate-600">
+                    +91-7907709032
                   </a>
                 </li>
 
@@ -871,7 +871,7 @@ useEffect(() => {
                 </li>
 
                 <li>
-                  <strong>Service area:</strong> All Kerala — focus Ernakulam
+                  <strong>Service area:</strong> All Kerala
                 </li>
               </ul>
 
@@ -961,14 +961,14 @@ src="/images/about_office.webp"
   {contactOpen && (
     <div className="absolute bottom-16 right-0 bg-white rounded-xl shadow-lg p-3 w-44">
       <a
-        href="tel:+919876543210"
+        href="tel:+917907709032"
         className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm"
       >
         📞 Call Now
       </a>
 
       <a
-        href="https://wa.me/919876543210"
+        href="https://wa.me/919446061029"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm"
@@ -1028,7 +1028,7 @@ src="/images/about_office.webp"
           <div>
             <h4 className="font-semibold">Contact</h4>
             <p className="text-sm mt-3 text-slate-600">
-              Phone: +91-XXXXXXXXXX <br />
+              Phone: +91-7907709032 <br />
               Email: hello@padanilathu.com <br />
               Service Area: Kerala (Focus: Ernakulam)
             </p>
