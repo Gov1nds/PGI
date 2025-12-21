@@ -292,7 +292,7 @@ export default function App() {
               muted
               loop
               playsInline
-              poster="/images/hero1-poster.webp"
+              poster="/images/hero1.webp"
             >
               <source src="/videos/hero1.mp4" type="video/mp4" />
               Your browser does not support the video tag.
