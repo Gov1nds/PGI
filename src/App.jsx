@@ -540,7 +540,7 @@ export default function App() {
             <h3 className="text-xl font-semibold">Architecture & Interiors</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
               {[
-                ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
+                ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior1.webp"],
                 ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
                 ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service_smallspace.webp"],
               ].map(([title, desc, img]) => (
