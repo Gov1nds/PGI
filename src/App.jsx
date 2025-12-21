@@ -59,16 +59,23 @@ export default function App() {
   // site-wide wrapper
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-20";
 
-  // Slightly darker, more grounded background texture:
+  // Stronger, slightly darker but still soft green gradient (updated to match provided image feel)
   const siteGradient = {
     background:
-      "radial-gradient(60% 60% at 50% 36%, rgba(250,250,250,0.96) 0%, rgba(244,247,244,0.95) 28%, rgba(238,244,238,0.94) 52%, transparent 78%), " +
-      "radial-gradient(55% 50% at 12% 12%, rgba(20,90,50,0.08) 0%, rgba(20,90,50,0.04) 30%, transparent 80%), " +
-      "radial-gradient(65% 55% at 88% 90%, rgba(22,110,55,0.09) 0%, rgba(22,110,55,0.035) 35%, transparent 85%), " +
-      "linear-gradient(180deg, rgba(240,246,240,0.96), rgba(228,238,230,0.97))",
+      // subtle light area near the top
+      "radial-gradient(60% 40% at 50% 8%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.12) 28%, rgba(255,255,255,0) 55%), " +
+      // main vertical gradient — brighter at mid-top, richer green in middle, teal deeper at bottom
+      "linear-gradient(180deg, rgba(220,255,235,0.95) 0%, rgba(175,245,200,0.95) 18%, rgba(110,210,160,0.98) 45%, rgba(44,185,150,0.98) 72%, rgba(11,143,120,0.98) 100%), " +
+      // soft vignette / darker edges to add depth
+      "radial-gradient(70% 50% at 10% 95%, rgba(0,0,0,0.07) 0%, rgba(0,0,0,0) 40%), " +
+      "radial-gradient(70% 50% at 90% 5%, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0) 35%), " +
+      // gentle grain-like texture using very faint repeating linear stripe (kept subtle)
+      "repeating-linear-gradient(0deg, rgba(0,0,0,0.006), rgba(0,0,0,0.006) 1px, rgba(255,255,255,0) 1px, rgba(255,255,255,0) 6px)",
     backgroundAttachment: "fixed",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
+    // optionally improve how layers blend (keeps the main gradient vivid but soft)
+    backgroundBlendMode: "normal, normal, overlay, overlay, normal",
   };
 
   // connector top position adjusted dynamically for better alignment with the number badges
