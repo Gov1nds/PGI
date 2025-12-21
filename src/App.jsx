@@ -54,12 +54,18 @@ export default function App() {
   // Increased vertical padding (bigger sections)
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-32";
 
-  // Site-wide gradient style (radial, multi-colour). Adjust colours or position as needed.
+  // Site-wide gradient style updated to match the uploaded image:
+  // soft white centre, pale green hints top-left, subtle stronger green bottom-right.
+  // Layered radial gradients allow easy tweaks to color, position and opacity.
   const siteGradient = {
     background:
-      // radial gradient centered left-topish with multiple soft stops to mimic the provided images
-      "radial-gradient(circle at 20% 40%, #baf0c9 0%, #9fe8ff 18%, #f6c9ff 42%, #f7a6d9 55%, #ffd28a 78%, #ffb07b 92%)",
+      // layered radial gradients: pale top-left, slightly stronger bottom-right, bright centre
+      "radial-gradient(40% 40% at 12% 12%, rgba(219,243,226,0.65) 0%, rgba(219,243,226,0.35) 25%, transparent 60%), " +
+      "radial-gradient(60% 50% at 85% 88%, rgba(200,238,205,0.75) 0%, rgba(200,238,205,0.28) 28%, transparent 70%), " +
+      "radial-gradient(circle at 50% 35%, rgba(255,255,255,1) 0%, rgba(250,251,250,1) 35%, rgba(245,250,245,0.95) 60%)",
     backgroundAttachment: "fixed",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
   };
 
   return (
