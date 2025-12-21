@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Changed site-wide background to a soft multi-colour gradient (radial) that shows through
-    sections that previously used fixed background images.
-  - Reduced some section overlay opacity so the gradient is visible while keeping text readable.
-  - If you want the gradient everywhere (including the hero), remove the hero video/image or make them semi-transparent.
+  - Changed site-wide background to a darker, richer multi-stop radial gradient that matches the requested darker look.
+  - Everything else left as-is.
 */
 
 export default function App() {
@@ -54,15 +52,20 @@ export default function App() {
   // Increased vertical padding (bigger sections)
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-32";
 
-  // Site-wide gradient style updated to match the uploaded image:
-  // soft white centre, pale green hints top-left, subtle stronger green bottom-right.
-  // Layered radial gradients allow easy tweaks to color, position and opacity.
+  // Darker site-wide gradient:
+  // - deeper greens on top-left and bottom-right
+  // - reduced bright centre so the overall feel is darker and moodier
+  // - a subtle dark linear overlay to push contrast slightly down
   const siteGradient = {
     background:
-      // layered radial gradients: pale top-left, slightly stronger bottom-right, bright centre
-      "radial-gradient(40% 40% at 12% 12%, rgba(219,243,226,0.65) 0%, rgba(219,243,226,0.35) 25%, transparent 60%), " +
-      "radial-gradient(60% 50% at 85% 88%, rgba(200,238,205,0.75) 0%, rgba(200,238,205,0.28) 28%, transparent 70%), " +
-      "radial-gradient(circle at 50% 35%, rgba(255,255,255,1) 0%, rgba(250,251,250,1) 35%, rgba(245,250,245,0.95) 60%)",
+      // deep green wash at top-left
+      "radial-gradient(42% 42% at 10% 12%, rgba(14,63,35,0.92) 0%, rgba(14,63,35,0.70) 28%, transparent 60%), " +
+      // richer green at bottom-right
+      "radial-gradient(62% 54% at 86% 88%, rgba(26,115,58,0.95) 0%, rgba(26,115,58,0.55) 32%, transparent 72%), " +
+      // slightly muted centre (not pure white)
+      "radial-gradient(circle at 50% 36%, rgba(245,249,246,0.86) 0%, rgba(236,243,237,0.78) 34%, rgba(230,240,232,0.65) 60%), " +
+      // gentle dark overlay to subtly deepen the overall tone
+      "linear-gradient(rgba(0,0,0,0.06), rgba(0,0,0,0.12))",
     backgroundAttachment: "fixed",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
