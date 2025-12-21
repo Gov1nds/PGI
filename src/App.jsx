@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Adjusted site-wide gradient to be slightly darker / more grounded.
-  - Tuned the process dotted connector line so it aligns better with the round step badges across breakpoints.
-  - Everything else left intact.
+  - Full file: hero video on mobile, animations, improved mobile spacing & alignment.
+  - Includes inline CSS keyframes to avoid Tailwind config changes.
+  - Preserves IntersectionObserver logic for process cards.
 */
 
 export default function App() {
@@ -14,12 +14,18 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [processVisible, setProcessVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -50,22 +56,15 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Reduced vertical padding so the top sections sit closer together (was py-32)
+  // site-wide wrapper
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-20";
 
   // Slightly darker, more grounded background texture:
-  // - centre made a touch less bright
-  // - green vignettes increased slightly in opacity so the tonal depth is higher
-  // - linear wash moved slightly darker to anchor the page
   const siteGradient = {
     background:
-      // soft not-too-bright centre to keep content readable but slightly darker overall
       "radial-gradient(60% 60% at 50% 36%, rgba(250,250,250,0.96) 0%, rgba(244,247,244,0.95) 28%, rgba(238,244,238,0.94) 52%, transparent 78%), " +
-      // very wide, low-opacity pale green vignette top-left (a touch stronger)
       "radial-gradient(55% 50% at 12% 12%, rgba(20,90,50,0.08) 0%, rgba(20,90,50,0.04) 30%, transparent 80%), " +
-      // very wide, low-opacity pale green vignette bottom-right (a touch stronger)
       "radial-gradient(65% 55% at 88% 90%, rgba(22,110,55,0.09) 0%, rgba(22,110,55,0.035) 35%, transparent 85%), " +
-      // slightly deeper linear wash to give overall anchoring
       "linear-gradient(180deg, rgba(240,246,240,0.96), rgba(228,238,230,0.97))",
     backgroundAttachment: "fixed",
     backgroundRepeat: "no-repeat",
@@ -73,24 +72,46 @@ export default function App() {
   };
 
   // connector top position adjusted dynamically for better alignment with the number badges
-  const connectorTop = isMobile ? "3.6rem" : "4.5rem";
+  const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
 
   return (
-    <div style={siteGradient} className="min-h-screen">
+    <div style={siteGradient} className="min-h-screen relative">
+      {/* Inline animation styles */}
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatY {
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+          100% { transform: translateY(0); }
+        }
+        .animate-fadeInUp { animation: fadeInUp 600ms cubic-bezier(.2,.9,.3,1) both; }
+        .animate-fadeInUp-slow { animation: fadeInUp 900ms cubic-bezier(.2,.9,.3,1) both; }
+        .float-subtle { animation: floatY 6s ease-in-out infinite; }
+        .card-hover { transition: transform 240ms ease, box-shadow 240ms ease; }
+        .card-hover:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 18px 40px rgba(15,23,42,0.12); }
+        .hero-video { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .connector-dots { transition: transform 600ms ease, opacity 600ms ease; transform-origin: center; }
+        @media (max-width: 640px) {
+          .hero-overlay { background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.25)); }
+          .hero-cta { width: 100%; padding-left: 1rem; padding-right: 1rem; }
+          .header-pad { padding-top: 12px; padding-bottom: 12px; }
+          .section-reduced-mobile { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+        }
+      `}</style>
+
       {/* HEADER */}
       <header
-        className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
-          scrolled ? "bg-white/95 backdrop-blur-sm shadow" : "bg-transparent"
-        }`}
+        className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-sm shadow" : "bg-transparent"}`}
         aria-label="Main header"
       >
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-24">
+          <div className="flex items-center justify-between h-24 header-pad">
             <a href="#home" className="group inline-flex items-center gap-3">
               <div
-                className={`text-2xl md:text-3xl font-semibold tracking-wide ${
-                  scrolled ? "text-slate-900" : "text-white"
-                }`}
+                className={`text-2xl md:text-3xl font-semibold tracking-wide ${scrolled ? "text-slate-900" : "text-white"}`}
                 style={{ fontFamily: "Poppins, Inter, Arial, sans-serif" }}
               >
                 <span className="relative inline-block">
@@ -104,9 +125,7 @@ export default function App() {
             </a>
 
             <nav
-              className={`hidden md:flex items-center gap-8 text-sm font-medium ${
-                scrolled ? "text-slate-700" : "text-white"
-              }`}
+              className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`}
               aria-label="Primary navigation"
             >
               <a href="#sectors" className="hover:underline">
@@ -137,9 +156,7 @@ export default function App() {
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className={`md:hidden text-2xl p-2 rounded-md ${
-                scrolled ? "text-slate-900 bg-white/0" : "text-white"
-              }`}
+              className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-white"}`}
               aria-label="Toggle mobile menu"
             >
               {mobileOpen ? "✕" : "☰"}
@@ -169,55 +186,58 @@ export default function App() {
         )}
       </header>
 
-      {/* HERO (updated) */}
+      {/* HERO (video shown on all sizes including phone) */}
       <section id="home" className="relative min-h-[84vh] flex items-center">
         <div className="absolute inset-0">
-          <video className="w-full h-full object-cover hidden lg:block" autoPlay muted loop playsInline>
+          <video
+            className="w-full h-full object-cover hero-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/images/hero1-poster.webp"
+          >
+            {/* mobile-optimized source first (if provided) */}
+            <source src="/videos/hero1-mobile.mp4" type="video/mp4" media="(max-width: 767px)" />
             <source src="/videos/hero1.mp4" type="video/mp4" />
+            {/* fallback text for very old browsers */}
+            Your browser does not support the video tag.
           </video>
 
-          <img
-            src="/images/hero1.webp"
-            alt="Eco landscaping"
-            className="w-full h-full object-cover lg:hidden"
-            loading="eager"
-          />
-
-          {/* keep hero overlay to preserve contrast for hero text */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+          {/* adjusted hero overlay so video reads well on mobile too */}
+          <div className="absolute inset-0 hero-overlay" />
         </div>
 
-        <div className="relative z-20 max-w-7xl mx-auto px-6 py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white">
+        <div className="relative z-20 max-w-7xl mx-auto px-6 py-20 sm:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className={`text-white ${mounted ? "animate-fadeInUp" : "opacity-0"}`}>
               <h1
-                className="text-4xl md:text-6xl lg:text-6xl font-semibold leading-tight max-w-3xl"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-6xl font-semibold leading-tight max-w-3xl"
                 style={{ fontFamily: "Poppins, Inter, sans-serif" }}
               >
                 Sustainable Design for Better Living
               </h1>
 
-              <p className="mt-6 text-lg md:text-xl max-w-2xl text-white/90">
+              <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl max-w-2xl text-white/95">
                 Eco-friendly, smart homes and outdoor spaces designed for Kerala’s climate.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                {/* Top-level quick links requested by user */}
-                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md">
+                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md float-subtle">
                   🏡 Exterior Design
                 </span>
-                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md">
+                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md float-subtle" style={{ animationDelay: "200ms" }}>
                   🌿 Landscaping & Gardening
                 </span>
-                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md">
+                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md float-subtle" style={{ animationDelay: "400ms" }}>
                   🏠 Interior Design
                 </span>
               </div>
 
-              <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => setQuoteOpen(true)}
-                  className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold shadow w-full sm:w-auto"
+                  className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold shadow w-full sm:w-auto hero-cta"
                 >
                   Request Quote
                 </button>
@@ -230,13 +250,14 @@ export default function App() {
               </div>
             </div>
 
-            <aside className="hidden lg:flex flex-col gap-4 items-start">
-              <div className="bg-white/6 backdrop-blur-md rounded-md p-4 text-white/90 w-full">
+            {/* Right column preserved for larger screens */}
+            <aside className="hidden lg:flex flex-col gap-4 items-start animate-fadeInUp-slow">
+              <div className="bg-white/6 backdrop-blur-md rounded-md p-4 text-white/90 w-full card-hover">
                 <div className="text-sm">17+ Years · 500+ Completed Sites</div>
                 <div className="mt-3 text-lg font-semibold">Trusted across Kerala</div>
               </div>
 
-              <div className="bg-white/6 backdrop-blur-md rounded-md p-4 text-white/90 w-full">
+              <div className="bg-white/6 backdrop-blur-md rounded-md p-4 text-white/90 w-full card-hover">
                 <div className="text-sm">Eco-first approach</div>
                 <div className="mt-3 text-lg font-semibold">Energy-efficient, smart homes</div>
               </div>
@@ -283,8 +304,11 @@ export default function App() {
                 <option value="" disabled>
                   Select Service
                 </option>
+                <option>Interior Design</option>
                 <option>Landscaping & Gardening</option>
+                <option>Home automation</option>
                 <option>Stone Paving</option>
+                <option>Swimming Pool</option>
                 <option>Exterior Design</option>
                 <option>Water Features</option>
                 <option>Maintenance</option>
@@ -310,30 +334,22 @@ export default function App() {
         </div>
       )}
 
-      {/* ECO SMART LIVING (now relies on site gradient — overlay made lighter so gradient shows through) */}
-      <section
-        className={`${sectionWrapper} relative`}
-        id="eco-living"
-      >
-        {/* softer overlay so gradient is visible */}
+      {/* ECO SMART LIVING */}
+      <section className={`${sectionWrapper} relative`} id="eco-living">
         <div className="absolute inset-0 bg-white/30" />
         <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">
-            Sustainable, Energy-Efficient & Smart Living Spaces
-          </h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">Sustainable, Energy-Efficient & Smart Living Spaces</h2>
 
           <p className="mt-6 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            We design and build sustainable, energy-efficient and AI-enabled homes tailored for Kerala’s climate — combining natural ventilation,
-            smart technology and eco-friendly construction for healthier, lower-energy living.
+            Smarter, greener homes for Kerala. We blend AI technology with eco-friendly architecture to deliver energy-efficient living tailored to the local climate.
           </p>
 
           <p className="mt-4 text-sm text-slate-600">Better air. Lower energy bills. Smarter everyday comfort.</p>
         </div>
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
-          {/* Large left featured card */}
           <div className="lg:col-span-5 px-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg h-full">
+            <div className="bg-white rounded-xl p-8 shadow-lg h-full card-hover">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Core Service</div>
@@ -354,78 +370,27 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right grid cards */}
           <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
-            <div className="bg-white rounded-xl p-6 shadow">
-              <div className="flex items-center gap-3">
-                <div className="text-xl">🌬️</div>
-                <h4 className="font-semibold text-slate-900">Fresh Air & Thermal Comfort</h4>
-              </div>
-              <p className="mt-3 text-sm text-slate-600">
-                Cross-ventilation planning, breathable interiors and indoor air-quality optimisation designed for humid tropical climates.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow">
-              <div className="flex items-center gap-3">
-                <div className="text-xl">⚡</div>
-                <h4 className="font-semibold text-slate-900">Maximum Energy Saving</h4>
-              </div>
-              <p className="mt-3 text-sm text-slate-600">
-                Solar integration, daylight optimisation and insulation strategies that significantly reduce electricity consumption.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow">
-              <div className="flex items-center gap-3">
-                <div className="text-xl">🏠</div>
-                <h4 className="font-semibold text-slate-900">Smart & AI-Enabled Homes</h4>
-              </div>
-              <p className="mt-3 text-sm text-slate-600">Intelligent automation for lighting, security and climate — adapting to your lifestyle while reducing energy waste.</p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow">
-              <div className="flex items-center gap-3">
-                <div className="text-xl">🏨</div>
-                <h4 className="font-semibold text-slate-900">Hospitality & Café Design</h4>
-              </div>
-              <p className="mt-3 text-sm text-slate-600">
-                Eco-focused interiors for cafés, homestays and resorts — designed for guest comfort, operational efficiency and lower running costs.
-              </p>
-            </div>
-
-            <div className="md:col-span-1 bg-white rounded-xl p-6 shadow">
-              <div className="flex items-center gap-3">
-                <div className="text-xl">🏊‍♂️</div>
-                <h4 className="font-semibold text-slate-900">Eco-Optimised Swimming Pools</h4>
-              </div>
-              <p className="mt-3 text-sm text-slate-600">
-                Low-chemical pools with energy-efficient filtration, natural water circulation and reduced maintenance.
-              </p>
-            </div>
-
-            <div className="md:col-span-1 bg-white rounded-xl p-6 shadow flex items-start justify-between">
-              <div>
-                <div className="flex items-start gap-3">
-                  <div className="text-xl">🍃</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">Maintenance & Long-Term Support</h4>
-                    <p className="mt-3 text-sm text-slate-600">Practical maintenance plans to keep systems efficient and landscapes thriving year-round.</p>
-                  </div>
+            {[
+              ["Fresh Air & Thermal Comfort", "Cross-ventilation planning, breathable interiors and indoor air-quality optimisation designed for humid tropical climates."],
+              ["Maximum Energy Saving", "Solar integration, daylight optimisation and insulation strategies that significantly reduce electricity consumption."],
+              ["Smart & AI-Enabled Homes", "Intelligent automation for lighting, security and climate — adapting to your lifestyle while reducing energy waste."],
+              ["Hospitality & Café Design", "Eco-focused interiors for cafés, homestays and resorts — designed for guest comfort, operational efficiency and lower running costs."],
+            ].map(([title, desc]) => (
+              <div key={title} className="bg-white rounded-xl p-6 shadow card-hover">
+                <div className="flex items-center gap-3">
+                  <div className="text-xl"></div>
+                  <h4 className="font-semibold text-slate-900">{title}</h4>
                 </div>
+                <p className="mt-3 text-sm text-slate-600">{desc}</p>
               </div>
-
-              {/* Removed the "Request an Eco Design Consultation" CTA as requested */}
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* AI-INTEGRATED LIVING (now uses site gradient; removed section-specific background so gradient shows through) */}
-      <section
-        id="ai"
-        className={`${sectionWrapper} relative`}
-      >
+      {/* AI-INTEGRATED LIVING */}
+      <section id="ai" className={`${sectionWrapper} relative`}>
         <div className="absolute inset-0 bg-white/20" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">AI-Integrated Living</h2>
@@ -437,7 +402,7 @@ export default function App() {
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg h-full">
+            <div className="bg-white rounded-xl p-8 shadow-lg h-full animate-fadeInUp card-hover">
               <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
               <p className="mt-4 text-slate-600">
                 Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.
@@ -457,7 +422,7 @@ export default function App() {
               ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
               ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
             ].map(([title, desc, icon]) => (
-              <div key={title} className="bg-white rounded-xl p-6 shadow">
+              <div key={title} className="bg-white rounded-xl p-6 shadow card-hover">
                 <div className="flex items-start gap-4">
                   <div className="text-2xl">{icon}</div>
                   <div>
@@ -475,11 +440,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* SUSTAINABLE CONSTRUCTION (overlay reduced so gradient shows) */}
-      <section
-        id="sustainable-construction"
-        className={`${sectionWrapper} relative`}
-      >
+      {/* SUSTAINABLE CONSTRUCTION */}
+      <section id="sustainable-construction" className={`${sectionWrapper} relative`}>
         <div className="absolute inset-0 bg-white/30" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Sustainable Construction</h2>
@@ -490,7 +452,7 @@ export default function App() {
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg h-full">
+            <div className="bg-white rounded-xl p-8 shadow-lg h-full card-hover">
               <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
               <p className="mt-4 text-slate-600">
                 Material selection, insulation, breathable finishes and workmanship tailored to Kerala’s humidity and monsoon conditions.
@@ -505,12 +467,12 @@ export default function App() {
           </div>
 
           <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-6 shadow">
+            <div className="bg-white rounded-xl p-6 shadow card-hover">
               <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
               <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow">
+            <div className="bg-white rounded-xl p-6 shadow card-hover">
               <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
               <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
             </div>
@@ -518,11 +480,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* EXTERIOR DESIGN & LANDSCAPING (overlay reduced) */}
-      <section
-        id="exterior"
-        className={`${sectionWrapper} relative`}
-      >
+      {/* EXTERIOR DESIGN & LANDSCAPING */}
+      <section id="exterior" className={`${sectionWrapper} relative`}>
         <div className="absolute inset-0 bg-white/30" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
@@ -537,7 +496,7 @@ export default function App() {
             ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
             ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
           ].map(([title, desc, img]) => (
-            <article key={title} className="rounded-lg shadow overflow-hidden bg-[#f7f8f7]">
+            <article key={title} className="rounded-lg shadow overflow-hidden bg-[#f7f8f7] card-hover">
               <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
               <div className="p-4">
                 <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
@@ -548,7 +507,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* SERVICES (converted & moved above Sectors) */}
+      {/* SERVICES (full groups) */}
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
         <section id="services" className="mt-6">
           <h2 className="text-3xl md:text-4xl font-poppins font-semibold">Our Services</h2>
@@ -565,7 +524,7 @@ export default function App() {
                 ["Swimming Pools & Water Systems", "Natural pools, energy-efficient filtration and sustainable water systems.", "service_pool.webp"],
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+                <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -585,7 +544,7 @@ export default function App() {
                 ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
                 ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service_smallspace.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+                <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -605,7 +564,7 @@ export default function App() {
                 ["Energy-Efficient Design & Solar Planning", "Solar planning, daylighting and energy-saving strategies.", "service_energy.webp"],
                 ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+                <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -624,7 +583,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTORS (moved below Services) */}
+        {/* SECTORS */}
         <section id="sectors" className="mt-14 bg-[#f7f8f7] py-16 rounded-xl p-8">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-poppins font-semibold">Sectors</h2>
@@ -644,7 +603,7 @@ export default function App() {
               ].map(([title, img], index) => {
                 const bg = index % 2 === 0 ? "bg-[#eef4ef]" : "bg-[#f7f8f7]";
                 return (
-                  <div key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden`}>
+                  <div key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden card-hover`}>
                     <img src={`/images/${img}`} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" decoding="async" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40" />
                     <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
@@ -670,7 +629,7 @@ export default function App() {
               ["project3_1.webp", "Café Outdoor Seating"],
               ["project4_1.webp", "Resort Pathway"],
             ].map(([img, title]) => (
-              <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+              <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
                 <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
@@ -687,12 +646,12 @@ export default function App() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
             {["gallery1.webp", "gallery2.webp", "gallery5.webp", "gallery8.webp"].map((img, index) => (
-              <img key={img} src={`/images/${img}`} loading="lazy" decoding="async" className="h-40 w-full object-cover rounded-lg shadow" alt={`Gallery ${index + 1}`} />
+              <img key={img} src={`/images/${img}`} loading="lazy" decoding="async" className="h-40 w-full object-cover rounded-lg shadow card-hover" alt={`Gallery ${index + 1}`} />
             ))}
           </div>
         </section>
 
-        {/* PROCESS (updated alignment and softer connector) */}
+        {/* PROCESS */}
         <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-serif text-slate-900">Our Design & Build Process</h2>
@@ -702,8 +661,8 @@ export default function App() {
           <div className="max-w-7xl mx-auto mt-8 relative">
             {/* dotted connector line — position now responsive using connectorTop variable */}
             <div
-              className="hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)]"
-              style={{ top: connectorTop }}
+              className={`hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)] connector-dots`}
+              style={{ top: connectorTop, opacity: processVisible ? 1 : 0, transform: processVisible ? "translateY(0)" : "translateY(6px)" }}
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start lg:items-stretch">
@@ -725,7 +684,7 @@ export default function App() {
                       <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">Key Stage</div>
                     )}
 
-                    <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg">{step}</div>
+                    <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg float-subtle">{step}</div>
                     <h4 className="font-semibold text-slate-900 text-lg">{title}</h4>
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
                   </div>
@@ -736,7 +695,7 @@ export default function App() {
             <div className="max-w-2xl mx-auto text-center mt-10">
               <p className="text-slate-700">Every stage is transparent, supervised and tailored to Kerala’s climate.</p>
               <div className="mt-6">
-                <a href="#contact" className="inline-block bg-[#2f5640] text-white px-8 py-3 rounded-md shadow">
+                <a href="#contact" className="inline-block bg-[#2f5640] text-white px-8 py-3 rounded-md shadow card-hover">
                   Book a Site Consultation →
                 </a>
               </div>
@@ -754,7 +713,7 @@ export default function App() {
               ["🏗 17+ Years Experience", "Ground-level execution knowledge across Kerala conditions."],
               ["📐 Practical Innovation", "Smart solutions that are realistic, serviceable and future-ready."],
             ].map(([title, desc]) => (
-              <div key={title} className="bg-[#f8f9f8] rounded-lg p-5">
+              <div key={title} className="bg-[#f8f9f8] rounded-lg p-5 card-hover">
                 <h4 className="font-semibold">{title}</h4>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
               </div>
@@ -773,7 +732,7 @@ export default function App() {
               ["news2.webp", "500+ Completed Projects Milestone", "A major achievement in delivering sustainable outdoor spaces."],
               ["news3.webp", "Kerala Landscaping Trends 2025", "Emerging eco-friendly materials and design philosophies."],
             ].map(([img, title, desc]) => (
-              <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+              <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
                 <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
@@ -807,7 +766,7 @@ export default function App() {
                 author: "Ananya R",
               },
             ].map((r) => (
-              <div key={r.author} className="bg-[#f7f8f7] rounded-lg shadow-sm p-6">
+              <div key={r.author} className="bg-[#f7f8f7] rounded-lg shadow-sm p-6 card-hover">
                 <div className="flex gap-1 text-yellow-400 text-lg">{r.stars}</div>
                 <p className="mt-3 text-sm text-slate-600">{r.text}</p>
                 <div className="mt-4 font-semibold text-slate-900">{r.author}</div>
@@ -829,7 +788,7 @@ export default function App() {
               ["vision.webp", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
               ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
             ].map(([img, title, desc]) => (
-              <div key={title} className="bg-white text-center p-4 rounded-lg shadow-sm">
+              <div key={title} className="bg-white text-center p-4 rounded-lg shadow-sm card-hover">
                 <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" />
                 <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -838,12 +797,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* POSITIONING SUMMARY (redesigned panel with bg image removed so gradient shows through) */}
+        {/* POSITIONING SUMMARY */}
         <section className="mt-10">
-          <div
-            className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg"
-          >
-            {/* subtle inner overlay to soften the background and allow gradient to show */}
+          <div className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg">
             <div className="absolute inset-0 bg-white/25" />
             <div className="relative p-12">
               <div className="text-center max-w-3xl mx-auto">
@@ -852,8 +808,7 @@ export default function App() {
               </div>
 
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* card 1 */}
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
                   <div className="text-3xl text-green-700">🍃</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Eco Home Designer</h4>
@@ -861,8 +816,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* card 2 */}
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
                   <div className="text-3xl text-slate-700">🏠</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Interior + Exterior Studio</h4>
@@ -870,8 +824,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* card 3 */}
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
                   <div className="text-3xl text-yellow-500">⚡</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Energy-Saving Specialist</h4>
@@ -879,8 +832,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* card 4 */}
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
                   <div className="text-3xl text-emerald-700">🤖</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Smart Home Integrator</h4>
@@ -906,7 +858,7 @@ export default function App() {
               ["Horticulturist / Plant Specialist", "Plant selection, soil and irrigation planning · References preferred."],
               ["3D Visualization Intern", "Assist in renders and CAD drawings · Portfolio required."],
             ].map(([title, desc]) => (
-              <div key={title} className="bg-white rounded-lg shadow-sm p-4">
+              <div key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover">
                 <h4 className="font-semibold text-slate-900">{title}</h4>
                 <p className="mt-1 text-sm text-slate-600">{desc}</p>
               </div>
