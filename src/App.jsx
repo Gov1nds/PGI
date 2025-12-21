@@ -299,7 +299,7 @@ export default function App() {
             </video>
           ) : (
             <img
-              src="/images/hero1-poster.webp"
+              src="/images/hero1.webp"
               alt="Padanilathu — Sustainable design hero"
               className="w-full h-full object-cover"
               loading="eager"
