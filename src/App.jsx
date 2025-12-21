@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Full file: hero video on mobile, animations, improved mobile spacing & alignment.
-  - Includes inline CSS keyframes to avoid Tailwind config changes.
-  - Preserves IntersectionObserver logic for process cards.
+  - Full page: apple-green + cream gradient, premium visual updates.
+  - Desktop/tablet: hero video. Mobile: hero poster image only (no video).
+  - Premium card styles, refined CTAs, improved typography & spacing.
+  - Preserves IntersectionObserver logic for process cards and other behaviour.
 */
 
 export default function App() {
@@ -56,34 +57,30 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  // site-wide wrapper
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-20";
 
-  // Stronger, slightly darker but still soft green gradient (updated to match provided image feel)
+  // Apple green + cream gradient — premium, slightly darker but still soft
   const siteGradient = {
     background:
-      // subtle light area near the top
-      "radial-gradient(60% 40% at 50% 8%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.12) 28%, rgba(255,255,255,0) 55%), " +
-      // main vertical gradient — brighter at mid-top, richer green in middle, teal deeper at bottom
-      "linear-gradient(180deg, rgba(220,255,235,0.95) 0%, rgba(175,245,200,0.95) 18%, rgba(110,210,160,0.98) 45%, rgba(44,185,150,0.98) 72%, rgba(11,143,120,0.98) 100%), " +
-      // soft vignette / darker edges to add depth
-      "radial-gradient(70% 50% at 10% 95%, rgba(0,0,0,0.07) 0%, rgba(0,0,0,0) 40%), " +
-      "radial-gradient(70% 50% at 90% 5%, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0) 35%), " +
-      // gentle grain-like texture using very faint repeating linear stripe (kept subtle)
-      "repeating-linear-gradient(0deg, rgba(0,0,0,0.006), rgba(0,0,0,0.006) 1px, rgba(255,255,255,0) 1px, rgba(255,255,255,0) 6px)",
+      // subtle cream highlight near top
+      "radial-gradient(60% 35% at 50% 6%, rgba(255,247,234,0.95) 0%, rgba(255,247,234,0.25) 28%, rgba(255,247,234,0) 55%), " +
+      // main cream -> pale mint -> apple green -> deeper green vertical gradient
+      "linear-gradient(180deg, rgba(255,247,234,0.98) 0%, rgba(240,254,240,0.98) 18%, rgba(208,246,214,0.98) 38%, rgba(134,224,152,0.98) 62%, rgba(26,132,86,0.98) 100%), " +
+      // soft vignette for depth
+      "radial-gradient(80% 60% at 50% 105%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 35%), " +
+      // light texture grain (very subtle)
+      "repeating-linear-gradient(0deg, rgba(0,0,0,0.006), rgba(0,0,0,0.006) 1px, rgba(255,255,255,0) 1px, rgba(255,255,255,0) 8px)",
     backgroundAttachment: "fixed",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
-    // optionally improve how layers blend (keeps the main gradient vivid but soft)
-    backgroundBlendMode: "normal, normal, overlay, overlay, normal",
+    backgroundBlendMode: "normal, normal, overlay, normal",
   };
 
-  // connector top position adjusted dynamically for better alignment with the number badges
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
 
   return (
-    <div style={siteGradient} className="min-h-screen relative">
-      {/* Inline animation styles */}
+    <div style={siteGradient} className="min-h-screen relative font-sans text-slate-900">
+      {/* Inline animation & premium styles */}
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(10px); }
@@ -94,19 +91,42 @@ export default function App() {
           50% { transform: translateY(-6px); }
           100% { transform: translateY(0); }
         }
+
         .animate-fadeInUp { animation: fadeInUp 600ms cubic-bezier(.2,.9,.3,1) both; }
         .animate-fadeInUp-slow { animation: fadeInUp 900ms cubic-bezier(.2,.9,.3,1) both; }
         .float-subtle { animation: floatY 6s ease-in-out infinite; }
-        .card-hover { transition: transform 240ms ease, box-shadow 240ms ease; }
-        .card-hover:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 18px 40px rgba(15,23,42,0.12); }
+
+        /* Premium card (glass-like) */
+        .card-hover { transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.55); backdrop-filter: blur(6px); }
+        .card-hover:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 28px 60px rgba(15,23,42,0.12); border-color: rgba(255,255,255,0.18); }
+
+        .soft-white { background: rgba(255,255,255,0.94); box-shadow: 0 10px 30px rgba(15,23,42,0.06); border: 1px solid rgba(15,23,42,0.03); }
+
         .hero-video { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
         .connector-dots { transition: transform 600ms ease, opacity 600ms ease; transform-origin: center; }
+
+        .hero-overlay { background: linear-gradient(180deg, rgba(255,247,234,0.5) 0%, rgba(230,252,236,0.25) 30%, rgba(12,93,61,0.12) 100%); }
+
+        .cta-primary {
+          background: linear-gradient(90deg, #2fa86a 0%, #6fd992 100%);
+          color: white;
+          box-shadow: 0 12px 30px rgba(47,168,106,0.18);
+        }
+        .cta-outline {
+          border: 1px solid rgba(47,168,106,0.12);
+          color: #11402a;
+          background: rgba(255,255,255,0.6);
+        }
+
         @media (max-width: 640px) {
-          .hero-overlay { background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.25)); }
+          .hero-overlay { background: linear-gradient(180deg, rgba(255,247,234,0.7), rgba(240,254,240,0.35)); }
           .hero-cta { width: 100%; padding-left: 1rem; padding-right: 1rem; }
-          .header-pad { padding-top: 12px; padding-bottom: 12px; }
+          .header-pad { padding-top: 10px; padding-bottom: 10px; }
           .section-reduced-mobile { padding-top: 3.5rem; padding-bottom: 3.5rem; }
         }
+
+        .display-lg { font-family: "Playfair Display", serif; font-weight: 600; letter-spacing: -0.02em; }
+        .lead { color: rgba(17, 64, 42, 0.9); }
       `}</style>
 
       {/* HEADER */}
@@ -118,7 +138,7 @@ export default function App() {
           <div className="flex items-center justify-between h-24 header-pad">
             <a href="#home" className="group inline-flex items-center gap-3">
               <div
-                className={`text-2xl md:text-3xl font-semibold tracking-wide ${scrolled ? "text-slate-900" : "text-white"}`}
+                className={`text-2xl md:text-3xl font-semibold tracking-wide ${scrolled ? "text-slate-900" : (isMobile ? "text-emerald-900" : "text-white")}`}
                 style={{ fontFamily: "Poppins, Inter, Arial, sans-serif" }}
               >
                 <span className="relative inline-block">
@@ -132,7 +152,7 @@ export default function App() {
             </a>
 
             <nav
-              className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`}
+              className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : (isMobile ? "text-emerald-900" : "text-white")}`}
               aria-label="Primary navigation"
             >
               <a href="#sectors" className="hover:underline">
@@ -155,7 +175,7 @@ export default function App() {
               </a>
               <button
                 onClick={() => setQuoteOpen(true)}
-                className="ml-2 bg-[#6FA56F] hover:bg-[#5f9a5f] text-white px-5 py-2 rounded-md text-sm font-semibold shadow"
+                className="ml-2 cta-primary px-5 py-2 rounded-md text-sm font-semibold"
               >
                 Request Quote
               </button>
@@ -163,7 +183,7 @@ export default function App() {
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-white"}`}
+              className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-emerald-900 bg-white/10"}`}
               aria-label="Toggle mobile menu"
             >
               {mobileOpen ? "✕" : "☰"}
@@ -184,7 +204,7 @@ export default function App() {
                   setQuoteOpen(true);
                   setMobileOpen(false);
                 }}
-                className="mt-2 bg-[#6FA56F] text-white px-4 py-2 rounded-md"
+                className="mt-2 cta-primary px-4 py-2 rounded-md text-white"
               >
                 Request Quote
               </button>
@@ -193,80 +213,87 @@ export default function App() {
         )}
       </header>
 
-      {/* HERO (video shown on all sizes including phone) */}
+      {/* HERO (video on desktop/tablet, poster image on mobile) */}
       <section id="home" className="relative min-h-[84vh] flex items-center">
         <div className="absolute inset-0">
-          <video
-            className="w-full h-full object-cover hero-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            poster="/images/hero1-poster.webp"
-          >
-            {/* mobile-optimized source first (if provided) */}
-            <source src="/videos/hero1-mobile.mp4" type="video/mp4" media="(max-width: 767px)" />
-            <source src="/videos/hero1.mp4" type="video/mp4" />
-            {/* fallback text for very old browsers */}
-            Your browser does not support the video tag.
-          </video>
+          {!isMobile ? (
+            <video
+              className="w-full h-full object-cover hero-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster="/images/hero1-poster.webp"
+            >
+              <source src="/videos/hero1.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img
+              src="/images/hero1-poster.webp"
+              alt="Padanilathu — Sustainable design hero"
+              className="w-full h-full object-cover"
+              loading="eager"
+            />
+          )}
 
-          {/* adjusted hero overlay so video reads well on mobile too */}
           <div className="absolute inset-0 hero-overlay" />
         </div>
 
-        <div className="relative z-20 max-w-7xl mx-auto px-6 py-20 sm:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div className={`text-white ${mounted ? "animate-fadeInUp" : "opacity-0"}`}>
+        <div className="relative z-20 max-w-7xl mx-auto px-6 py-24 sm:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"} ${isMobile ? "text-emerald-900" : "text-white"}`}>
               <h1
-                className="text-3xl sm:text-4xl md:text-6xl lg:text-6xl font-semibold leading-tight max-w-3xl"
-                style={{ fontFamily: "Poppins, Inter, sans-serif" }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight max-w-3xl display-lg"
+                style={{ lineHeight: 1.02 }}
               >
                 Sustainable Design for Better Living
               </h1>
 
-              <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl max-w-2xl text-white/95">
-                Eco-friendly, smart homes and outdoor spaces designed for Kerala’s climate.
+              <p className={`mt-4 sm:mt-6 text-base sm:text-lg md:text-xl max-w-2xl ${isMobile ? "lead" : "text-white/95"}`}>
+                Eco-first homes and outdoor spaces, crafted for Kerala’s climate — energy-saving, beautiful and future-ready.
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md float-subtle">
+              <div className="mt-8 flex flex-wrap gap-4">
+                <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle">
                   🏡 Exterior Design
                 </span>
-                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md float-subtle" style={{ animationDelay: "200ms" }}>
+                <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle" style={{ animationDelay: "180ms" }}>
                   🌿 Landscaping & Gardening
                 </span>
-                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md float-subtle" style={{ animationDelay: "400ms" }}>
+                <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle" style={{ animationDelay: "360ms" }}>
                   🏠 Interior Design
                 </span>
               </div>
 
-              <div className="mt-6 flex flex-col sm:flex-row gap-4">
+              <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => setQuoteOpen(true)}
-                  className="bg-white text-[#6FA56F] px-6 py-3 rounded-md font-semibold shadow w-full sm:w-auto hero-cta"
+                  className="cta-primary px-6 py-3 rounded-full font-semibold shadow-md w-full sm:w-auto hero-cta"
                 >
                   Request Quote
                 </button>
+
                 <a
                   href="#projects"
-                  className="border border-white/30 px-6 py-3 rounded-md text-center w-full sm:w-auto text-white/95"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-full cta-outline w-full sm:w-auto hero-cta"
                 >
                   View Projects
                 </a>
               </div>
             </div>
 
-            {/* Right column preserved for larger screens */}
-            <aside className="hidden lg:flex flex-col gap-4 items-start animate-fadeInUp-slow">
-              <div className="bg-white/6 backdrop-blur-md rounded-md p-4 text-white/90 w-full card-hover">
-                <div className="text-sm">17+ Years · 500+ Completed Sites</div>
-                <div className="mt-3 text-lg font-semibold">Trusted across Kerala</div>
+            <aside className="hidden lg:flex flex-col gap-6 items-start animate-fadeInUp-slow">
+              <div className="soft-white rounded-xl p-6 w-80">
+                <div className="text-sm text-green-800/90">17+ Years · 500+ Completed Sites</div>
+                <div className="mt-3 text-xl font-semibold text-slate-900">Trusted across Kerala</div>
+                <p className="mt-3 text-sm text-slate-600">We combine craft, climate knowledge and modern tech to deliver long-lasting results.</p>
               </div>
 
-              <div className="bg-white/6 backdrop-blur-md rounded-md p-4 text-white/90 w-full card-hover">
-                <div className="text-sm">Eco-first approach</div>
-                <div className="mt-3 text-lg font-semibold">Energy-efficient, smart homes</div>
+              <div className="soft-white rounded-xl p-6 w-80">
+                <div className="text-sm text-green-800/90">Eco-first approach</div>
+                <div className="mt-3 text-xl font-semibold text-slate-900">Energy-efficient, smart homes</div>
+                <p className="mt-3 text-sm text-slate-600">Designs that reduce running costs and enhance everyday comfort.</p>
               </div>
             </aside>
           </div>
@@ -275,8 +302,8 @@ export default function App() {
 
       {/* QUOTE POPUP */}
       {quoteOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" role="dialog" aria-modal="true">
-          <div className="relative bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
+          <div className="relative bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-8 shadow-xl">
             <button
               onClick={() => {
                 setQuoteOpen(false);
@@ -332,7 +359,7 @@ export default function App() {
               <textarea rows="4" className="border p-3 rounded w-full" placeholder="Project details" />
 
               <div className="flex justify-end">
-                <button type="submit" className="bg-[#6FA56F] text-white px-6 py-3 rounded-md font-semibold">
+                <button type="submit" className="cta-primary px-6 py-3 rounded-full font-semibold">
                   Submit Quote Request
                 </button>
               </div>
@@ -343,9 +370,9 @@ export default function App() {
 
       {/* ECO SMART LIVING */}
       <section className={`${sectionWrapper} relative`} id="eco-living">
-        <div className="absolute inset-0 bg-white/30" />
+        <div className="absolute inset-0 bg-white/10" />
         <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">Sustainable, Energy-Efficient & Smart Living Spaces</h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900 display-lg">Sustainable, Energy-Efficient & Smart Living Spaces</h2>
 
           <p className="mt-6 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
             Smarter, greener homes for Kerala. We blend AI technology with eco-friendly architecture to deliver energy-efficient living tailored to the local climate.
@@ -356,7 +383,7 @@ export default function App() {
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg h-full card-hover">
+            <div className="card-hover rounded-xl p-8 h-full">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Core Service</div>
@@ -384,13 +411,13 @@ export default function App() {
               ["Smart & AI-Enabled Homes", "Intelligent automation for lighting, security and climate — adapting to your lifestyle while reducing energy waste."],
               ["Hospitality & Café Design", "Eco-focused interiors for cafés, homestays and resorts — designed for guest comfort, operational efficiency and lower running costs."],
             ].map(([title, desc]) => (
-              <div key={title} className="bg-white rounded-xl p-6 shadow card-hover">
+              <article key={title} className="card-hover rounded-xl p-6">
                 <div className="flex items-center gap-3">
-                  <div className="text-xl"></div>
+                  <div className="text-xl" />
                   <h4 className="font-semibold text-slate-900">{title}</h4>
                 </div>
                 <p className="mt-3 text-sm text-slate-600">{desc}</p>
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -398,18 +425,17 @@ export default function App() {
 
       {/* AI-INTEGRATED LIVING */}
       <section id="ai" className={`${sectionWrapper} relative`}>
-        <div className="absolute inset-0 bg-white/20" />
+        <div className="absolute inset-0 bg-white/6" />
         <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">AI-Integrated Living</h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900 display-lg">AI-Integrated Living</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient. Systems learn your routine and automatically
-            manage lighting, security, climate and energy use — improving comfort while reducing unnecessary power consumption.
+            We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.
           </p>
         </div>
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg h-full animate-fadeInUp card-hover">
+            <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp">
               <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
               <p className="mt-4 text-slate-600">
                 Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.
@@ -429,7 +455,7 @@ export default function App() {
               ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
               ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
             ].map(([title, desc, icon]) => (
-              <div key={title} className="bg-white rounded-xl p-6 shadow card-hover">
+              <article key={title} className="card-hover rounded-xl p-6">
                 <div className="flex items-start gap-4">
                   <div className="text-2xl">{icon}</div>
                   <div>
@@ -437,7 +463,7 @@ export default function App() {
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -449,9 +475,9 @@ export default function App() {
 
       {/* SUSTAINABLE CONSTRUCTION */}
       <section id="sustainable-construction" className={`${sectionWrapper} relative`}>
-        <div className="absolute inset-0 bg-white/30" />
+        <div className="absolute inset-0 bg-white/10" />
         <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Sustainable Construction</h2>
+          <h2 className="text-4xl md:text-5xl font-serif text-slate-900 display-lg">Sustainable Construction</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
             Low-carbon materials, passive cooling strategies and on-site practices that reduce environmental impact while improving comfort and durability.
           </p>
@@ -459,14 +485,14 @@ export default function App() {
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg h-full card-hover">
+            <div className="card-hover rounded-xl p-8 h-full">
               <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
               <p className="mt-4 text-slate-600">
                 Material selection, insulation, breathable finishes and workmanship tailored to Kerala’s humidity and monsoon conditions.
               </p>
 
               <div className="mt-6">
-                <a href="#contact" className="inline-block bg-[#6FA56F] text-white px-5 py-2 rounded-md shadow">
+                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow">
                   Explore Sustainable Options →
                 </a>
               </div>
@@ -474,22 +500,22 @@ export default function App() {
           </div>
 
           <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-6 shadow card-hover">
+            <article className="card-hover rounded-xl p-6">
               <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
               <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
-            </div>
+            </article>
 
-            <div className="bg-white rounded-xl p-6 shadow card-hover">
+            <article className="card-hover rounded-xl p-6">
               <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
               <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
-            </div>
+            </article>
           </div>
         </div>
       </section>
 
       {/* EXTERIOR DESIGN & LANDSCAPING */}
       <section id="exterior" className={`${sectionWrapper} relative`}>
-        <div className="absolute inset-0 bg-white/30" />
+        <div className="absolute inset-0 bg-white/10" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -503,7 +529,7 @@ export default function App() {
             ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
             ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
           ].map(([title, desc, img]) => (
-            <article key={title} className="rounded-lg shadow overflow-hidden bg-[#f7f8f7] card-hover">
+            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-[#f7f8f7]">
               <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
               <div className="p-4">
                 <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
@@ -514,7 +540,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* SERVICES (full groups) */}
+      {/* SERVICES */}
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
         <section id="services" className="mt-6">
           <h2 className="text-3xl md:text-4xl font-poppins font-semibold">Our Services</h2>
@@ -522,7 +548,7 @@ export default function App() {
             Complete eco-conscious design & build solutions — integrating nature, technology and sustainability for homes and spaces across Kerala.
           </p>
 
-          {/* Group 1: Outdoor & Landscape */}
+          {/* Group 1 */}
           <div className="mt-6">
             <h3 className="text-xl font-semibold">Outdoor & Landscape</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
@@ -531,7 +557,7 @@ export default function App() {
                 ["Swimming Pools & Water Systems", "Natural pools, energy-efficient filtration and sustainable water systems.", "service_pool.webp"],
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -542,7 +568,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Group 2: Architecture & Interiors */}
+          {/* Group 2 */}
           <div className="mt-10">
             <h3 className="text-xl font-semibold">Architecture & Interiors</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
@@ -551,7 +577,7 @@ export default function App() {
                 ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
                 ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service_smallspace.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -562,7 +588,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Group 3: Smart & Sustainable Systems */}
+          {/* Group 3 */}
           <div className="mt-10">
             <h3 className="text-xl font-semibold">Smart & Sustainable Systems</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
@@ -571,7 +597,7 @@ export default function App() {
                 ["Energy-Efficient Design & Solar Planning", "Solar planning, daylighting and energy-saving strategies.", "service_energy.webp"],
                 ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -610,14 +636,14 @@ export default function App() {
               ].map(([title, img], index) => {
                 const bg = index % 2 === 0 ? "bg-[#eef4ef]" : "bg-[#f7f8f7]";
                 return (
-                  <div key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden card-hover`}>
+                  <article key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden card-hover`}>
                     <img src={`/images/${img}`} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" decoding="async" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40" />
                     <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
                       <div className="mt-16 h-1 w-full bg-gradient-to-r from-transparent via-[#6FA56F]/30 to-transparent" />
                       {title}
                     </div>
-                  </div>
+                  </article>
                 );
               })}
             </div>
@@ -636,7 +662,7 @@ export default function App() {
               ["project3_1.webp", "Café Outdoor Seating"],
               ["project4_1.webp", "Resort Pathway"],
             ].map(([img, title]) => (
-              <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
                 <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
@@ -666,7 +692,6 @@ export default function App() {
           </div>
 
           <div className="max-w-7xl mx-auto mt-8 relative">
-            {/* dotted connector line — position now responsive using connectorTop variable */}
             <div
               className={`hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)] connector-dots`}
               style={{ top: connectorTop, opacity: processVisible ? 1 : 0, transform: processVisible ? "translateY(0)" : "translateY(6px)" }}
@@ -684,7 +709,7 @@ export default function App() {
                 return (
                   <div
                     key={step}
-                    className={`bg-white rounded-xl p-8 shadow transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                    className={`card-hover rounded-xl p-8 transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
                     style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}
                   >
                     {keyStage && (
@@ -720,10 +745,10 @@ export default function App() {
               ["🏗 17+ Years Experience", "Ground-level execution knowledge across Kerala conditions."],
               ["📐 Practical Innovation", "Smart solutions that are realistic, serviceable and future-ready."],
             ].map(([title, desc]) => (
-              <div key={title} className="bg-[#f8f9f8] rounded-lg p-5 card-hover">
+              <article key={title} className="card-hover bg-[#f8f9f8] rounded-lg p-5">
                 <h4 className="font-semibold">{title}</h4>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </div>
+              </article>
             ))}
           </div>
         </section>
@@ -739,7 +764,7 @@ export default function App() {
               ["news2.webp", "500+ Completed Projects Milestone", "A major achievement in delivering sustainable outdoor spaces."],
               ["news3.webp", "Kerala Landscaping Trends 2025", "Emerging eco-friendly materials and design philosophies."],
             ].map(([img, title, desc]) => (
-              <article key={title} className="rounded-lg shadow overflow-hidden bg-white card-hover">
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
                 <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
@@ -773,11 +798,11 @@ export default function App() {
                 author: "Ananya R",
               },
             ].map((r) => (
-              <div key={r.author} className="bg-[#f7f8f7] rounded-lg shadow-sm p-6 card-hover">
+              <article key={r.author} className="card-hover bg-[#f7f8f7] rounded-lg shadow-sm p-6">
                 <div className="flex gap-1 text-yellow-400 text-lg">{r.stars}</div>
                 <p className="mt-3 text-sm text-slate-600">{r.text}</p>
                 <div className="mt-4 font-semibold text-slate-900">{r.author}</div>
-              </div>
+              </article>
             ))}
           </div>
         </section>
@@ -795,11 +820,11 @@ export default function App() {
               ["vision.webp", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
               ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
             ].map(([img, title, desc]) => (
-              <div key={title} className="bg-white text-center p-4 rounded-lg shadow-sm card-hover">
+              <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm">
                 <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" />
                 <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </div>
+              </article>
             ))}
           </div>
         </section>
@@ -865,10 +890,10 @@ export default function App() {
               ["Horticulturist / Plant Specialist", "Plant selection, soil and irrigation planning · References preferred."],
               ["3D Visualization Intern", "Assist in renders and CAD drawings · Portfolio required."],
             ].map(([title, desc]) => (
-              <div key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover">
+              <article key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover">
                 <h4 className="font-semibold text-slate-900">{title}</h4>
                 <p className="mt-1 text-sm text-slate-600">{desc}</p>
-              </div>
+              </article>
             ))}
           </div>
 
@@ -948,7 +973,7 @@ export default function App() {
       <div className="fixed bottom-6 right-6 z-50 contact-popup">
         <button
           onClick={() => setContactOpen(!contactOpen)}
-          className="w-14 h-14 rounded-full bg-[#6FA56F] text-white text-2xl shadow-lg flex items-center justify-center"
+          className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white text-2xl shadow-lg flex items-center justify-center"
           aria-label="Contact options"
           type="button"
         >
@@ -969,12 +994,12 @@ export default function App() {
       </div>
 
       {/* FOOTER */}
-      <footer className="bg-[#f7f8f7] border-t border-slate-200 mt-20">
-        <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="bg-transparent border-t border-slate-200 mt-20">
+        <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="font-poppins font-semibold text-lg">padanilathu</div>
-            <p className="text-sm mt-2 text-slate-600">Transforming Kerala’s outdoor spaces since 2008.</p>
-            <p className="text-sm text-slate-600 mt-1">17+ Years · 500+ Completed Sites</p>
+            <p className="text-sm mt-2 text-slate-700">Transforming Kerala’s outdoor spaces since 2008.</p>
+            <p className="text-sm text-slate-700 mt-1">17+ Years · 500+ Completed Sites</p>
 
             <div className="flex gap-3 mt-4">
               <a href="#" className="w-9 h-9 border rounded-md flex items-center justify-center text-slate-700 hover:bg-[#6FA56F] hover:text-white" aria-label="Instagram">
@@ -988,7 +1013,7 @@ export default function App() {
 
           <div>
             <h4 className="font-semibold">Navigation</h4>
-            <ul className="text-sm mt-3 space-y-2 text-slate-600">
+            <ul className="text-sm mt-3 space-y-2 text-slate-700">
               <li>
                 <a href="#sectors">Sectors</a>
               </li>
@@ -1012,7 +1037,7 @@ export default function App() {
 
           <div>
             <h4 className="font-semibold">Contact</h4>
-            <p className="text-sm mt-3 text-slate-600">Phone: +91-7907709032 <br />
+            <p className="text-sm mt-3 text-slate-700">Phone: +91-7907709032 <br />
               Email: hello@padanilathu.com <br />
               Service Area: Kerala (Focus: Ernakulam)
             </p>
@@ -1020,7 +1045,7 @@ export default function App() {
 
           <div>
             <h4 className="font-semibold">Quick Links</h4>
-            <ul className="text-sm mt-3 space-y-2 text-slate-600">
+            <ul className="text-sm mt-3 space-y-2 text-slate-700">
               <li>
                 <a href="#contact">Request a Free Site Visit</a>
               </li>
@@ -1034,7 +1059,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="border-t border-slate-200 py-4 text-center text-sm text-slate-500">© 2025 padanilathu — All Rights Reserved.</div>
+        <div className="border-t border-slate-200 py-4 text-center text-sm text-slate-600">© 2025 padanilathu — All Rights Reserved.</div>
       </footer>
     </div>
   );
