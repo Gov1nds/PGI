@@ -262,3 +262,8 @@ a:focus-visible {
   outline: 2px solid rgba(111,165,111,0.6);
   outline-offset: 3px;
 }
+:root {
+  --bg-white: #ffffff;
+  --bg-light: #f8f9f8;
+  --bg-accent: #eef4ef;
+}
