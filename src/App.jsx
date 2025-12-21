@@ -210,7 +210,13 @@ export default function App() {
             className="mt-5 text-lg md:text-xl text-white/90 max-w-3xl animate-fade-up"
             style={{ animationDelay: "150ms" }}
           >
-            Sustainable landscaping, exterior architecture & 3D design across Kerala.
+            Eco-friendly homes, interiors & outdoor environments — designed for
+            fresh air, maximum energy efficiency, and smart living across Kerala.
+          </p>
+
+          {/* CORE POSITIONING LINE (appears in hero as requested) */}
+          <p className="mt-3 text-sm md:text-base text-white/80 max-w-3xl">
+            We design and build eco-friendly, energy-efficient, smart homes and spaces — integrating nature, technology, and architecture for healthier living.
           </p>
 
           {/* BUTTONS */}
@@ -327,6 +333,65 @@ export default function App() {
       </section>
 
       {/* ================================================================
+    ECO SMART LIVING (NEW - ALT: GREEN)
+================================================================ */}
+      <section className="mt-16 bg-[#eef4ef] rounded-xl p-8 shadow-sm">
+        <h2 className="text-2xl font-poppins font-semibold">
+          Eco Smart Living
+        </h2>
+
+        {/* CORE POSITIONING LINE (also appears in this section as requested) */}
+        <p className="mt-2 text-sm text-slate-700 max-w-3xl">
+          We design and build eco-friendly, energy-efficient, smart homes and spaces — integrating nature, technology, and architecture for healthier living.
+        </p>
+
+        <p className="mt-3 text-sm text-slate-600 max-w-3xl">
+          We specialise in designing sustainable, energy-efficient and AI-enabled
+          living spaces that improve air quality, reduce energy consumption and
+          enhance everyday comfort.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {[
+            [
+              "♻️ Sustainable Construction",
+              "Low-carbon materials, passive cooling, natural ventilation & climate-responsive design.",
+            ],
+
+            [
+              "🌬 Fresh Air & Thermal Comfort",
+              "Cross-ventilation planning, breathable interiors & indoor air-quality optimisation.",
+            ],
+
+            [
+              "⚡ Maximum Energy Saving",
+              "Solar integration, daylight optimisation, insulation & low-energy systems.",
+            ],
+
+            [
+              "🏠 Smart & AI-Enabled Homes",
+              "Lighting, security, climate and appliance automation integrated into daily life.",
+            ],
+
+            [
+              "🏊 Swimming Pools (Eco-Optimised)",
+              "Low-chemical pools, energy-efficient filtration and natural water features.",
+            ],
+
+            [
+              "🏨 Hospitality & Café Design",
+              "Eco-focused interiors for homestays, cafés and resorts with operational efficiency.",
+            ],
+          ].map(([title, desc]) => (
+            <div key={title} className="bg-white rounded-lg p-6 shadow-sm">
+              <h4 className="font-semibold text-lg">{title}</h4>
+              <p className="mt-2 text-sm text-slate-600">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ================================================================
     MAIN WRAPPER (before sectors)
 ================================================================ */}
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
@@ -389,25 +454,27 @@ export default function App() {
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
         {/* Services, Projects, Gallery, Process, etc */}
         {/* ================================================================
-            SERVICES (ALT: GREEN)
+            SERVICES (ALT: GREEN) — updated services list & services intro includes core positioning
         ================================================================ */}
         <section id="services" className="mt-12">
           <h2 className="text-2xl font-poppins font-semibold">Services</h2>
+
+          {/* Services intro replaced with core positioning line as requested */}
           <p className="mt-2 text-sm text-slate-600">
-            From concept and 3D visualization to execution and maintenance.
+            We design and build eco-friendly, energy-efficient, smart homes and spaces — integrating nature, technology, and architecture for healthier living.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {[
               ["service_landscape.webp", "Landscaping & Gardening"],
-              ["service_stonepaving.webp", "Natural Stone Paving"],
               ["service_exterior.webp", "Exterior Architecture & 3D Design"],
-              ["service_waterfeatures.webp", "Water Features"],
-              ["service_playgrounds.webp", "Playgrounds & Sports Areas"],
-              ["service_commercial.webp", "Commercial & Resort Landscaping"],
-              ["service_renovation.webp", "Renovation & Maintenance"],
-              ["service_consulting.webp", "Outdoor Space Consulting"],
-              ["service_sustainability.webp", "Sustainable Outdoor Solutions"],
+              ["service_interior.webp", "Interior Design (Eco & Minimal)"],
+              ["service_smallspace.webp", "Small-Space Optimisation (Flats & Villas)"],
+              ["service_hospitality.webp", "Hospitality Interiors (Homestays & Cafés)"],
+              ["service_pool.webp", "Swimming Pools & Water Systems"],
+              ["service_smart.webp", "Home Automation & Smart Systems"],
+              ["service_energy.webp", "Energy-Efficient Design & Solar Planning"],
+              ["service_sustainable.webp", "Sustainable Construction Consulting"],
             ].map(([img, title], index) => {
               const cardBg = index % 2 === 0 ? altGreen : altGray;
               const textColor = "text-slate-900";
@@ -594,6 +661,29 @@ export default function App() {
         </section>
 
         {/* ================================================================
+    WHY US (NEW - TRUST BUILDER)
+================================================================ */}
+        <section className="mt-16 bg-white rounded-xl p-8 shadow">
+          <h2 className="text-2xl font-poppins font-semibold">
+            Why Padanilathu
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            {[
+              ["🌱 Eco-First Design", "Sustainability is built into every decision — not added later."],
+              ["🧠 Integrated Thinking", "Exterior, interior, energy and automation planned together."],
+              ["🏗 17+ Years Experience", "Ground-level execution knowledge across Kerala conditions."],
+              ["📐 Practical Innovation", "Smart solutions that are realistic, serviceable and future-ready."],
+            ].map(([title, desc]) => (
+              <div key={title} className="bg-[#f8f9f8] rounded-lg p-5">
+                <h4 className="font-semibold">{title}</h4>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================================================================
     NEWS (ALT: GREEN)
 ================================================================ */}
         <section id="news" className="mt-16">
@@ -691,14 +781,18 @@ export default function App() {
         </section>
 
         {/* ================================================================
-            ABOUT (ALT: GREEN)
+            ABOUT (ALT: GREEN) — updated strategic paragraph
         ================================================================ */}
         <section id="about" className={`mt-16 rounded-xl p-8 shadow ${altGreen}`}>
           <h2 className="text-2xl font-semibold" style={{ fontFamily: "Graphik, Inter, sans-serif" }}>
             About Padanilathu
           </h2>
+
           <p className="mt-3 text-sm text-slate-600">
-            Since 2008, Padanilathu has been shaping sustainable, high-quality outdoor spaces across Kerala.
+            Padanilathu is an eco-focused design and construction studio integrating
+            architecture, interiors, landscape, energy efficiency and smart automation.
+            Our mission is to create healthier, low-energy living environments that are
+            deeply connected to nature and future-ready.
           </p>
 
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
@@ -723,6 +817,30 @@ export default function App() {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        {/* ================================================================
+    POSITIONING SUMMARY (ADDED)
+================================================================ */}
+        <section className="mt-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h3 className="text-lg font-semibold">Positioning Summary</h3>
+            <p className="mt-3 text-sm text-slate-600">
+              After these updates, our brand positioning is clear and differentiated:
+            </p>
+
+            <div className="mt-4 inline-grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-700">
+              <div>✅ Eco Home Designer</div>
+              <div>✅ Interior + Exterior Studio</div>
+              <div>✅ Energy-Saving Specialist</div>
+              <div>✅ Smart Home Integrator</div>
+              <div>✅ Hospitality Design Partner</div>
+            </div>
+
+            <p className="mt-3 text-xs text-slate-500">
+              This separates us from 90% of competitors in Kerala.
+            </p>
           </div>
         </section>
 
@@ -931,12 +1049,14 @@ export default function App() {
               <a
                 href="#"
                 className="w-9 h-9 border rounded-md flex items-center justify-center text-slate-700 hover:bg-[#6FA56F] hover:text-white"
+                aria-label="Instagram"
               >
                 IG
               </a>
               <a
                 href="#"
                 className="w-9 h-9 border rounded-md flex items-center justify-center text-slate-700 hover:bg-[#6FA56F] hover:text-white"
+                aria-label="Facebook"
               >
                 FB
               </a>
