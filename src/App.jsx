@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Adjusted site-wide gradient to a softer, more professional texture (no harsh "green circles").
-  - Reduced section vertical padding for the top sections to tighten gaps.
-  - Improved process alignment: dotted connector line position tuned and cards set to stretch so connectors line up.
+  - Adjusted site-wide gradient to be slightly darker / more grounded.
+  - Tuned the process dotted connector line so it aligns better with the round step badges across breakpoints.
   - Everything else left intact.
 */
 
@@ -54,24 +53,27 @@ export default function App() {
   // Reduced vertical padding so the top sections sit closer together (was py-32)
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-20";
 
-  // Softer, more professional background texture:
-  // - bright, soft centre
-  // - very gentle, wide green vignettes with low opacity (no hard circles)
-  // - subtle overall linear tint to unify the look
+  // Slightly darker, more grounded background texture:
+  // - centre made a touch less bright
+  // - green vignettes increased slightly in opacity so the tonal depth is higher
+  // - linear wash moved slightly darker to anchor the page
   const siteGradient = {
     background:
-      // soft bright centre to keep content readable
-      "radial-gradient(60% 60% at 50% 36%, rgba(255,255,255,0.98) 0%, rgba(250,252,250,0.98) 30%, rgba(245,250,245,0.97) 55%, transparent 80%), " +
-      // very wide, low-opacity pale green vignette top-left (soft)
-      "radial-gradient(55% 50% at 12% 12%, rgba(20,90,50,0.06) 0%, rgba(20,90,50,0.03) 30%, transparent 80%), " +
-      // very wide, low-opacity pale green vignette bottom-right (soft)
-      "radial-gradient(65% 55% at 88% 90%, rgba(22,110,55,0.065) 0%, rgba(22,110,55,0.028) 35%, transparent 85%), " +
-      // gentle linear wash to tie tones together
-      "linear-gradient(180deg, rgba(245,250,246,0.95), rgba(235,245,238,0.98))",
+      // soft not-too-bright centre to keep content readable but slightly darker overall
+      "radial-gradient(60% 60% at 50% 36%, rgba(250,250,250,0.96) 0%, rgba(244,247,244,0.95) 28%, rgba(238,244,238,0.94) 52%, transparent 78%), " +
+      // very wide, low-opacity pale green vignette top-left (a touch stronger)
+      "radial-gradient(55% 50% at 12% 12%, rgba(20,90,50,0.08) 0%, rgba(20,90,50,0.04) 30%, transparent 80%), " +
+      // very wide, low-opacity pale green vignette bottom-right (a touch stronger)
+      "radial-gradient(65% 55% at 88% 90%, rgba(22,110,55,0.09) 0%, rgba(22,110,55,0.035) 35%, transparent 85%), " +
+      // slightly deeper linear wash to give overall anchoring
+      "linear-gradient(180deg, rgba(240,246,240,0.96), rgba(228,238,230,0.97))",
     backgroundAttachment: "fixed",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
   };
+
+  // connector top position adjusted dynamically for better alignment with the number badges
+  const connectorTop = isMobile ? "3.6rem" : "4.5rem";
 
   return (
     <div style={siteGradient} className="min-h-screen">
@@ -698,10 +700,10 @@ export default function App() {
           </div>
 
           <div className="max-w-7xl mx-auto mt-8 relative">
-            {/* dotted connector line — moved slightly lower for better alignment with number badges */}
+            {/* dotted connector line — position now responsive using connectorTop variable */}
             <div
-              className="hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#dfeee3,#dfeee3 8px,transparent 8px,transparent 16px)]"
-              style={{ top: "5.25rem" }}
+              className="hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)]"
+              style={{ top: connectorTop }}
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start lg:items-stretch">
