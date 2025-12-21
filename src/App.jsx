@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Updated per user request (Dec 2025):
-    • Hero heading weight reduced
-    • Background-image placeholders added for several sections (replace paths with uploaded images)
-    • Removed the "Request an Eco Design Consultation" CTA in the maintenance card
-    • Positioning Summary redesigned as a rounded background panel with cards (placeholder bg image)
-    • Increased section padding and headline sizes for better visual scale
+  - Changed site-wide background to a soft multi-colour gradient (radial) that shows through
+    sections that previously used fixed background images.
+  - Reduced some section overlay opacity so the gradient is visible while keeping text readable.
+  - If you want the gradient everywhere (including the hero), remove the hero video/image or make them semi-transparent.
 */
 
 export default function App() {
@@ -56,8 +54,16 @@ export default function App() {
   // Increased vertical padding (bigger sections)
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-32";
 
+  // Site-wide gradient style (radial, multi-colour). Adjust colours or position as needed.
+  const siteGradient = {
+    background:
+      // radial gradient centered left-topish with multiple soft stops to mimic the provided images
+      "radial-gradient(circle at 20% 40%, #baf0c9 0%, #9fe8ff 18%, #f6c9ff 42%, #f7a6d9 55%, #ffd28a 78%, #ffb07b 92%)",
+    backgroundAttachment: "fixed",
+  };
+
   return (
-    <>
+    <div style={siteGradient} className="min-h-screen">
       {/* HEADER */}
       <header
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
@@ -164,6 +170,7 @@ export default function App() {
             loading="eager"
           />
 
+          {/* keep hero overlay to preserve contrast for hero text */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
         </div>
 
@@ -290,18 +297,13 @@ export default function App() {
         </div>
       )}
 
-      {/* ECO SMART LIVING (with background image placeholder) */}
+      {/* ECO SMART LIVING (now relies on site gradient — overlay made lighter so gradient shows through) */}
       <section
         className={`${sectionWrapper} relative`}
         id="eco-living"
-        style={{
-          backgroundImage: "url('/images/sustainable-hero-bg.jpg')", // <-- replace with your uploaded image
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
       >
-        {/* soft overlay to keep the panel readable — change opacity if needed */}
-        <div className="absolute inset-0 bg-white/70" />
+        {/* softer overlay so gradient is visible */}
+        <div className="absolute inset-0 bg-white/30" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">
             Sustainable, Energy-Efficient & Smart Living Spaces
@@ -406,17 +408,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* AI-INTEGRATED LIVING (with background placeholder) */}
+      {/* AI-INTEGRATED LIVING (now uses site gradient; removed section-specific background so gradient shows through) */}
       <section
         id="ai"
         className={`${sectionWrapper} relative`}
-        style={{
-          backgroundImage: "url('/images/ai-bg.jpg')", // <-- replace with your uploaded AI section background
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),transparent)]" />
+        <div className="absolute inset-0 bg-white/20" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">AI-Integrated Living</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -465,17 +462,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* SUSTAINABLE CONSTRUCTION (with background placeholder) */}
+      {/* SUSTAINABLE CONSTRUCTION (overlay reduced so gradient shows) */}
       <section
         id="sustainable-construction"
         className={`${sectionWrapper} relative`}
-        style={{
-          backgroundImage: "url('/images/sustainable-construction-bg.jpg')", // <-- replace with your uploaded image
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
       >
-        <div className="absolute inset-0 bg-white/80" />
+        <div className="absolute inset-0 bg-white/30" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Sustainable Construction</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -513,17 +505,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* EXTERIOR DESIGN & LANDSCAPING (with background placeholder) */}
+      {/* EXTERIOR DESIGN & LANDSCAPING (overlay reduced) */}
       <section
         id="exterior"
         className={`${sectionWrapper} relative`}
-        style={{
-          backgroundImage: "url('/images/exterior-bg.jpg')", // <-- replace with your uploaded exterior bg
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
       >
-        <div className="absolute inset-0 bg-white/85" />
+        <div className="absolute inset-0 bg-white/30" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -835,18 +822,13 @@ export default function App() {
           </div>
         </section>
 
-        {/* POSITIONING SUMMARY (redesigned panel with bg image) */}
+        {/* POSITIONING SUMMARY (redesigned panel with bg image removed so gradient shows through) */}
         <section className="mt-10">
           <div
             className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg"
-            style={{
-              backgroundImage: "url('/images/positioning-bg.jpg')", // <-- replace with your uploaded positioning background
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
           >
-            {/* subtle inner overlay to soften the background */}
-            <div className="absolute inset-0 bg-white/80" />
+            {/* subtle inner overlay to soften the background and allow gradient to show */}
+            <div className="absolute inset-0 bg-white/25" />
             <div className="relative p-12">
               <div className="text-center max-w-3xl mx-auto">
                 <h3 className="text-4xl font-serif text-slate-900">Our Positioning</h3>
@@ -1079,6 +1061,6 @@ export default function App() {
 
         <div className="border-t border-slate-200 py-4 text-center text-sm text-slate-500">© 2025 padanilathu — All Rights Reserved.</div>
       </footer>
-    </>
+    </div>
   );
 }
