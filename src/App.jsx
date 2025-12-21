@@ -2,18 +2,14 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Full page component with updated hero and "Eco Smart Living" section
-  - Hero heading updated to:
-      "Sustainable Design for Better Living"
-    Subheading:
-      "Eco-friendly, smart homes and outdoor spaces designed for Kerala’s climate."
-  - "Eco Smart Living" section redesigned to match the second screenshot layout:
-      • Large centered heading + descriptive paragraph
-      • Left-featured "Core Service" card
-      • Grid of rounded cards with icons
-      • Bottom-right CTA card
-  - Preserves original functionality: auto quote popup, mobile menu, contact popup, process reveal
-  - Uses Tailwind-style utility classes (hex backgrounds used where dynamic classes would otherwise be needed)
+  - Adjusted per user request (Dec 2025):
+    • Process section updated to the 4-step visual with heading, subheading and CTA.
+    • Services section converted to grouped layout (Outdoor & Landscape, Architecture & Interiors, Smart & Sustainable Systems),
+      and moved above Sectors.
+    • Added AI-Integrated Living section (above Services).
+    • Added Sustainable Construction section (below AI).
+    • Added Exterior Design & Landscaping hero-level quick-links (chips) in the top hero area.
+    • Preserves original functionality: auto quote popup, mobile menu, contact popup, process reveal.
 */
 
 export default function App() {
@@ -186,6 +182,16 @@ export default function App() {
                 Eco-friendly, smart homes and outdoor spaces designed for Kerala’s climate.
               </p>
 
+              <div className="mt-6 flex flex-wrap gap-3">
+                {/* Top-level quick links requested by user */}
+                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md">
+                  🏡 Exterior Design
+                </span>
+                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md">
+                  🌿 Landscaping & Gardening
+                </span>
+              </div>
+
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => setQuoteOpen(true)}
@@ -282,7 +288,7 @@ export default function App() {
         </div>
       )}
 
-      {/* ECO SMART LIVING (converted to second image layout) */}
+      {/* ECO SMART LIVING (keeps existing redesigned block) */}
       <section className={`${sectionWrapper} bg-[#eef4ef]`}>
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-slate-900">
@@ -393,73 +399,228 @@ export default function App() {
         </div>
       </section>
 
-      {/* MAIN wrapper & remaining sections (kept similar to previous structure) */}
-      <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
-        {/* SECTORS */}
-        <section id="sectors" className="mt-12 bg-[#f7f8f7] py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="rounded-xl shadow p-8">
-              <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
-              <p className="text-sm text-slate-600 mt-2">
-                We design outdoor environments across residential, commercial, hospitality, public and institutional spaces.
+      {/* AI-INTEGRATED LIVING (new section placed above Services) */}
+      <section id="ai" className={`${sectionWrapper} bg-[linear-gradient(180deg,#f6fbf7,transparent)]`}>
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-slate-900">AI-Integrated Living</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient. Systems learn your routine and automatically
+            manage lighting, security, climate and energy use — improving comfort while reducing unnecessary power consumption.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-5 px-4">
+            <div className="bg-white rounded-xl p-8 shadow-lg h-full">
+              <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
+              <p className="mt-4 text-slate-600">
+                Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                {[
-                  ["Residential", "sector_residential.webp"],
-                  ["Commercial", "sector_commercial.webp"],
-                  ["Hospitality", "sector_hospitality.webp"],
-                  ["Public & Recreational", "sector_public.webp"],
-                  ["Institutional", "sector_institutional.webp"],
-                  ["Real Estate & Developers", "sector_developers.webp"],
-                  ["Industrial", "sector_industrial.webp"],
-                ].map(([title, img], index) => {
-                  const bg = index % 2 === 0 ? "bg-[#eef4ef]" : "bg-[#f7f8f7]";
-                  return (
-                    <div key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden`}>
-                      <img src={`/images/${img}`} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" decoding="async" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40" />
-                      <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
-                        <div className="mt-16 h-1 w-full bg-gradient-to-r from-transparent via-[#6FA56F]/30 to-transparent" />
-                        {title}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="mt-6 space-y-3">
+                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Smart Security</div>
+                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Comfort Automation</div>
               </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              ["Smart Security & Safety", "AI-enabled surveillance, alerts and access control", "🛡️"],
+              ["Comfort Automation", "Lighting, temperature & ventilation auto-adjust", "🌡️"],
+              ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
+              ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
+            ].map(([title, desc, icon]) => (
+              <div key={title} className="bg-white rounded-xl p-6 shadow">
+                <div className="flex items-start gap-4">
+                  <div className="text-2xl">{icon}</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">{title}</h4>
+                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center mt-10">
+          <p className="text-slate-700">Designed for Kerala’s climate — our AI solutions create homes that think ahead, saving energy and enhancing comfort.</p>
+        </div>
+      </section>
+
+      {/* SUSTAINABLE CONSTRUCTION (new; placed below AI section) */}
+      <section id="sustainable-construction" className={`${sectionWrapper} bg-[#f7f9f7]`}>
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-serif text-slate-900">Sustainable Construction</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            Low-carbon materials, passive cooling strategies and on-site practices that reduce environmental impact while improving comfort and durability.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-5 px-4">
+            <div className="bg-white rounded-xl p-8 shadow-lg h-full">
+              <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
+              <p className="mt-4 text-slate-600">
+                Material selection, insulation, breathable finishes and workmanship tailored to Kerala’s humidity and monsoon conditions.
+              </p>
+
+              <div className="mt-6">
+                <a href="#contact" className="inline-block bg-[#6FA56F] text-white px-5 py-2 rounded-md shadow">
+                  Explore Sustainable Options →
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl p-6 shadow">
+              <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
+              <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow">
+              <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
+              <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* EXTERIOR DESIGN & LANDSCAPING (new; placed below sustainable) */}
+      <section id="exterior" className={`${sectionWrapper} bg-white`}>
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            Exterior architecture, landscape design and garden planning that connect the home to nature and perform well year-round.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[
+            ["Landscaping & Gardening", "Eco-friendly gardens, water-wise planting and site-specific horticulture.", "landscape1.webp"],
+            ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
+            ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
+          ].map(([title, desc, img]) => (
+            <article key={title} className="rounded-lg shadow overflow-hidden bg-[#f7f8f7]">
+              <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+              <div className="p-4">
+                <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* SERVICES (converted & moved above Sectors) */}
+      <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
+        <section id="services" className="mt-6">
+          <h2 className="text-2xl font-poppins font-semibold">Our Services</h2>
+          <p className="mt-2 text-sm text-slate-600 max-w-3xl">
+            Complete eco-conscious design & build solutions — integrating nature, technology and sustainability for homes and spaces across Kerala.
+          </p>
+
+          {/* Group 1: Outdoor & Landscape */}
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold">Outdoor & Landscape</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+              {[
+                ["Landscaping & Gardening", "Eco-friendly gardens, fountains and outdoor landscaping designed for Kerala’s climate.", "service_landscape.webp"],
+                ["Swimming Pools & Water Systems", "Natural pools, energy-efficient filtration and sustainable water systems.", "service_pool.webp"],
+                ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
+              ].map(([title, desc, img]) => (
+                <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+                  <div className="p-4">
+                    <h4 className="font-semibold text-slate-900">{title}</h4>
+                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {/* Group 2: Architecture & Interiors */}
+          <div className="mt-10">
+            <h3 className="text-xl font-semibold">Architecture & Interiors</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+              {[
+                ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
+                ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
+                ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service_smallspace.webp"],
+              ].map(([title, desc, img]) => (
+                <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+                  <div className="p-4">
+                    <h4 className="font-semibold text-slate-900">{title}</h4>
+                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {/* Group 3: Smart & Sustainable Systems */}
+          <div className="mt-10">
+            <h3 className="text-xl font-semibold">Smart & Sustainable Systems</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+              {[
+                ["Home Automation & Smart Systems", "Intelligent automation for lighting, security and climate controls.", "service_smart.webp"],
+                ["Energy-Efficient Design & Solar Planning", "Solar planning, daylighting and energy-saving strategies.", "service_energy.webp"],
+                ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
+              ].map(([title, desc, img]) => (
+                <article key={title} className="rounded-lg shadow overflow-hidden bg-white">
+                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+                  <div className="p-4">
+                    <h4 className="font-semibold text-slate-900">{title}</h4>
+                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-8 rounded-md bg-[#eef4ef] p-6 flex items-center justify-between gap-4">
+              <div className="text-slate-700">Tell us about your space — we'll design the right solution.</div>
+              <a href="#contact" className="inline-flex items-center bg-[#2f5640] text-white px-5 py-2 rounded-md shadow">
+                Request a Free Consultation →
+              </a>
             </div>
           </div>
         </section>
 
-        {/* SERVICES */}
-        <section id="services" className="mt-14">
-          <h2 className="text-2xl font-poppins font-semibold">Services</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            We design and build eco-friendly, energy-efficient, smart homes and spaces — integrating nature, technology, and architecture for healthier living.
-          </p>
+        {/* SECTORS (moved below Services) */}
+        <section id="sectors" className="mt-14 bg-[#f7f8f7] py-16 rounded-xl p-8">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
+            <p className="text-sm text-slate-600 mt-2">
+              We design outdoor environments across residential, commercial, hospitality, public and institutional spaces.
+            </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-            {[
-              ["service_landscape.webp", "Landscaping & Gardening"],
-              ["service_exterior.webp", "Exterior Architecture & 3D Design"],
-              ["service_interior.webp", "Interior Design (Eco & Minimal)"],
-              ["service_smallspace.webp", "Small-Space Optimisation (Flats & Villas)"],
-              ["service_hospitality.webp", "Hospitality Interiors (Homestays & Cafés)"],
-              ["service_pool.webp", "Swimming Pools & Water Systems"],
-              ["service_smart.webp", "Home Automation & Smart Systems"],
-              ["service_energy.webp", "Energy-Efficient Design & Solar Planning"],
-              ["service_sustainable.webp", "Sustainable Construction Consulting"],
-            ].map(([img, title], index) => {
-              const bg = index % 2 === 0 ? "bg-[#eef4ef]" : "bg-[#f7f8f7]";
-              return (
-                <article key={title} className={`${bg} rounded-lg shadow overflow-hidden`}>
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover opacity-80" loading="lazy" decoding="async" />
-                  <div className="p-4">
-                    <h3 className="font-semibold text-slate-900">{title}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {[
+                ["Residential", "sector_residential.webp"],
+                ["Commercial", "sector_commercial.webp"],
+                ["Hospitality", "sector_hospitality.webp"],
+                ["Public & Recreational", "sector_public.webp"],
+                ["Institutional", "sector_institutional.webp"],
+                ["Real Estate & Developers", "sector_developers.webp"],
+                ["Industrial", "sector_industrial.webp"],
+              ].map(([title, img], index) => {
+                const bg = index % 2 === 0 ? "bg-[#eef4ef]" : "bg-[#f7f8f7]";
+                return (
+                  <div key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden`}>
+                    <img src={`/images/${img}`} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" decoding="async" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40" />
+                    <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
+                      <div className="mt-16 h-1 w-full bg-gradient-to-r from-transparent via-[#6FA56F]/30 to-transparent" />
+                      {title}
+                    </div>
                   </div>
-                </article>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -497,34 +658,52 @@ export default function App() {
           </div>
         </section>
 
-        {/* PROCESS */}
-        <section id="process" className="mt-16 bg-[#f7f8f7] rounded-xl p-8 shadow-sm">
-          <h2 className="text-2xl font-poppins font-semibold">Our Process</h2>
-          <p className="mt-2 text-sm text-slate-600">A simple, transparent workflow from concept to completion.</p>
+        {/* PROCESS (updated to match provided 4-step style) */}
+        <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-serif text-slate-900">Our Design & Build Process</h2>
+            <p className="mt-3 text-slate-700">A clear, structured approach from first consultation to final handover.</p>
+          </div>
 
-          <div className="relative mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {[
-              ["1", "Site Consultation", "On-site study & requirement discussion"],
-              ["2", "3D Design & Planning", "Photorealistic renders & approvals"],
-              ["3", "Material & Budgeting", "BOQs, samples & cost planning"],
-              ["4", "Execution & Quality", "Supervised execution & finishing"],
-              ["5", "Handover & Support", "Warranty & maintenance assistance"],
-            ].map(([step, title, desc], index) => {
-              const delay = index * (isMobile ? 80 : 120);
-              const duration = isMobile ? "400ms" : "700ms";
-              const bg = index % 2 === 0 ? "bg-[#eef4ef]" : "bg-[#f7f8f7]";
-              return (
-                <div
-                  key={step}
-                  className={`${bg} border rounded-xl p-6 text-center shadow-sm transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-                  style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}
-                >
-                  <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg">{step}</div>
-                  <h4 className="font-semibold text-slate-900">{title}</h4>
-                  <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                </div>
-              );
-            })}
+          <div className="max-w-7xl mx-auto mt-8 relative">
+            {/* dotted connector line */}
+            <div className="hidden lg:block absolute left-0 right-0 top-28 h-px bg-[repeating-linear-gradient(to right,#dfeee3,#dfeee3 8px,transparent 8px,transparent 16px)]" />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                ["1", "Site Consultation & Assessment", "On-site analysis and requirement discussion", true],
+                ["2", "3D Design & Spatial Planning", "Photorealistic 3D visuals, layouts and design approvals", false],
+                ["3", "Materials, BOQ & Cost Planning", "Material selection, BOQs and transparent budgeting", false],
+                ["4", "Execution & Quality Control", "Supervised construction, precision finishing and quality checks", true],
+              ].map(([step, title, desc, keyStage], index) => {
+                const delay = index * (isMobile ? 80 : 120);
+                const duration = isMobile ? "400ms" : "700ms";
+                return (
+                  <div
+                    key={step}
+                    className={`bg-white rounded-xl p-8 shadow transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                    style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}
+                  >
+                    {keyStage && (
+                      <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">Key Stage</div>
+                    )}
+
+                    <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg">{step}</div>
+                    <h4 className="font-semibold text-slate-900 text-lg">{title}</h4>
+                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="max-w-2xl mx-auto text-center mt-10">
+              <p className="text-slate-700">Every stage is transparent, supervised and tailored to Kerala’s climate.</p>
+              <div className="mt-6">
+                <a href="#contact" className="inline-block bg-[#2f5640] text-white px-8 py-3 rounded-md shadow">
+                  Book a Site Consultation →
+                </a>
+              </div>
+            </div>
           </div>
         </section>
 
