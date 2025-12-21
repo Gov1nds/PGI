@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Adjusted per user request (Dec 2025):
-    • Process section updated to the 4-step visual with heading, subheading and CTA.
-    • Services section converted to grouped layout (Outdoor & Landscape, Architecture & Interiors, Smart & Sustainable Systems),
-      and moved above Sectors.
-    • Added AI-Integrated Living section (above Services).
-    • Added Sustainable Construction section (below AI).
-    • Added Exterior Design & Landscaping hero-level quick-links (chips) in the top hero area.
-    • Preserves original functionality: auto quote popup, mobile menu, contact popup, process reveal.
+  - Updated per user request (Dec 2025):
+    • Hero heading weight reduced
+    • Background-image placeholders added for several sections (replace paths with uploaded images)
+    • Removed the "Request an Eco Design Consultation" CTA in the maintenance card
+    • Positioning Summary redesigned as a rounded background panel with cards (placeholder bg image)
+    • Increased section padding and headline sizes for better visual scale
 */
 
 export default function App() {
@@ -55,7 +53,8 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  const sectionWrapper = "max-w-7xl mx-auto px-6 py-24";
+  // Increased vertical padding (bigger sections)
+  const sectionWrapper = "max-w-7xl mx-auto px-6 py-32";
 
   return (
     <>
@@ -172,7 +171,7 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-white">
               <h1
-                className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight max-w-3xl"
+                className="text-4xl md:text-6xl lg:text-6xl font-semibold leading-tight max-w-3xl"
                 style={{ fontFamily: "Poppins, Inter, sans-serif" }}
               >
                 Sustainable Design for Better Living
@@ -189,6 +188,9 @@ export default function App() {
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md">
                   🌿 Landscaping & Gardening
+                </span>
+                <span className="inline-flex items-center gap-2 bg-white/9 text-white/95 px-3 py-2 rounded-md">
+                  🏠 Interior Design
                 </span>
               </div>
 
@@ -288,10 +290,20 @@ export default function App() {
         </div>
       )}
 
-      {/* ECO SMART LIVING (keeps existing redesigned block) */}
-      <section className={`${sectionWrapper} bg-[#eef4ef]`}>
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-slate-900">
+      {/* ECO SMART LIVING (with background image placeholder) */}
+      <section
+        className={`${sectionWrapper} relative`}
+        id="eco-living"
+        style={{
+          backgroundImage: "url('/images/sustainable-hero-bg.jpg')", // <-- replace with your uploaded image
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* soft overlay to keep the panel readable — change opacity if needed */}
+        <div className="absolute inset-0 bg-white/70" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">
             Sustainable, Energy-Efficient & Smart Living Spaces
           </h2>
 
@@ -303,7 +315,7 @@ export default function App() {
           <p className="mt-4 text-sm text-slate-600">Better air. Lower energy bills. Smarter everyday comfort.</p>
         </div>
 
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           {/* Large left featured card */}
           <div className="lg:col-span-5 px-4">
             <div className="bg-white rounded-xl p-8 shadow-lg h-full">
@@ -377,39 +389,43 @@ export default function App() {
               </p>
             </div>
 
-            <div className="md:col-span-1 bg-white rounded-xl p-6 shadow flex items-center justify-between">
+            <div className="md:col-span-1 bg-white rounded-xl p-6 shadow flex items-start justify-between">
               <div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <div className="text-xl">🍃</div>
-                  <h4 className="font-semibold text-slate-900">Maintenance & Long-Term Support</h4>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">Maintenance & Long-Term Support</h4>
+                    <p className="mt-3 text-sm text-slate-600">Practical maintenance plans to keep systems efficient and landscapes thriving year-round.</p>
+                  </div>
                 </div>
-                <p className="mt-3 text-sm text-slate-600">Practical maintenance plans to keep systems efficient and landscapes thriving year-round.</p>
               </div>
 
-              <div className="ml-6">
-                <a
-                  href="#contact"
-                  className="inline-block bg-slate-800 text-white px-6 py-3 rounded-full shadow hover:bg-slate-900"
-                >
-                  Request an Eco Design Consultation →
-                </a>
-              </div>
+              {/* Removed the "Request an Eco Design Consultation" CTA as requested */}
             </div>
           </div>
         </div>
       </section>
 
-      {/* AI-INTEGRATED LIVING (new section placed above Services) */}
-      <section id="ai" className={`${sectionWrapper} bg-[linear-gradient(180deg,#f6fbf7,transparent)]`}>
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-slate-900">AI-Integrated Living</h2>
+      {/* AI-INTEGRATED LIVING (with background placeholder) */}
+      <section
+        id="ai"
+        className={`${sectionWrapper} relative`}
+        style={{
+          backgroundImage: "url('/images/ai-bg.jpg')", // <-- replace with your uploaded AI section background
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),transparent)]" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900">AI-Integrated Living</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
             We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient. Systems learn your routine and automatically
             manage lighting, security, climate and energy use — improving comfort while reducing unnecessary power consumption.
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
             <div className="bg-white rounded-xl p-8 shadow-lg h-full">
               <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
@@ -449,16 +465,25 @@ export default function App() {
         </div>
       </section>
 
-      {/* SUSTAINABLE CONSTRUCTION (new; placed below AI section) */}
-      <section id="sustainable-construction" className={`${sectionWrapper} bg-[#f7f9f7]`}>
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-serif text-slate-900">Sustainable Construction</h2>
+      {/* SUSTAINABLE CONSTRUCTION (with background placeholder) */}
+      <section
+        id="sustainable-construction"
+        className={`${sectionWrapper} relative`}
+        style={{
+          backgroundImage: "url('/images/sustainable-construction-bg.jpg')", // <-- replace with your uploaded image
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-white/80" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Sustainable Construction</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
             Low-carbon materials, passive cooling strategies and on-site practices that reduce environmental impact while improving comfort and durability.
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
             <div className="bg-white rounded-xl p-8 shadow-lg h-full">
               <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
@@ -488,10 +513,19 @@ export default function App() {
         </div>
       </section>
 
-      {/* EXTERIOR DESIGN & LANDSCAPING (new; placed below sustainable) */}
-      <section id="exterior" className={`${sectionWrapper} bg-white`}>
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
+      {/* EXTERIOR DESIGN & LANDSCAPING (with background placeholder) */}
+      <section
+        id="exterior"
+        className={`${sectionWrapper} relative`}
+        style={{
+          backgroundImage: "url('/images/exterior-bg.jpg')", // <-- replace with your uploaded exterior bg
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-white/85" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
             Exterior architecture, landscape design and garden planning that connect the home to nature and perform well year-round.
           </p>
@@ -517,7 +551,7 @@ export default function App() {
       {/* SERVICES (converted & moved above Sectors) */}
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
         <section id="services" className="mt-6">
-          <h2 className="text-2xl font-poppins font-semibold">Our Services</h2>
+          <h2 className="text-3xl md:text-4xl font-poppins font-semibold">Our Services</h2>
           <p className="mt-2 text-sm text-slate-600 max-w-3xl">
             Complete eco-conscious design & build solutions — integrating nature, technology and sustainability for homes and spaces across Kerala.
           </p>
@@ -593,7 +627,7 @@ export default function App() {
         {/* SECTORS (moved below Services) */}
         <section id="sectors" className="mt-14 bg-[#f7f8f7] py-16 rounded-xl p-8">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-2xl font-poppins font-semibold">Sectors</h2>
+            <h2 className="text-3xl font-poppins font-semibold">Sectors</h2>
             <p className="text-sm text-slate-600 mt-2">
               We design outdoor environments across residential, commercial, hospitality, public and institutional spaces.
             </p>
@@ -626,7 +660,7 @@ export default function App() {
 
         {/* PROJECTS */}
         <section id="projects" className="mt-14">
-          <h2 className="text-2xl font-poppins font-semibold">Featured Projects</h2>
+          <h2 className="text-3xl font-poppins font-semibold">Featured Projects</h2>
           <p className="mt-2 text-sm text-slate-600">A curated look at some of our most iconic project deliveries.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
@@ -648,7 +682,7 @@ export default function App() {
 
         {/* GALLERY */}
         <section id="gallery" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
-          <h2 className="text-2xl font-poppins font-semibold">Gallery</h2>
+          <h2 className="text-3xl font-poppins font-semibold">Gallery</h2>
           <p className="mt-2 text-sm text-slate-600">Visual moments from our completed landscape projects.</p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
@@ -709,7 +743,7 @@ export default function App() {
 
         {/* WHY US */}
         <section className="mt-16 bg-white rounded-xl p-8 shadow">
-          <h2 className="text-2xl font-poppins font-semibold">Why Padanilathu</h2>
+          <h2 className="text-3xl font-poppins font-semibold">Why Padanilathu</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
             {[
               ["🌱 Eco-First Design", "Sustainability is built into every decision — not added later."],
@@ -727,7 +761,7 @@ export default function App() {
 
         {/* NEWS */}
         <section id="news" className="mt-16">
-          <h2 className="text-2xl font-semibold">News & Updates</h2>
+          <h2 className="text-3xl font-semibold">News & Updates</h2>
           <p className="mt-2 text-sm text-slate-600">Latest announcements & events.</p>
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -749,7 +783,7 @@ export default function App() {
 
         {/* REVIEWS */}
         <section id="reviews" className="mt-16">
-          <h2 className="text-2xl font-poppins font-semibold">What Our Clients Say</h2>
+          <h2 className="text-3xl font-poppins font-semibold">What Our Clients Say</h2>
           <p className="mt-2 text-sm text-slate-600">Genuine feedback from homeowners and long-term clients.</p>
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -781,7 +815,7 @@ export default function App() {
 
         {/* ABOUT */}
         <section id="about" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
-          <h2 className="text-2xl font-semibold">About Padanilathu</h2>
+          <h2 className="text-3xl font-semibold">About Padanilathu</h2>
           <p className="mt-3 text-sm text-slate-600">
             Padanilathu is an eco-focused design and construction studio integrating architecture, interiors, landscape, energy efficiency and smart automation. Our mission is to create healthier, low-energy living environments that are deeply connected to nature and future-ready.
           </p>
@@ -801,27 +835,70 @@ export default function App() {
           </div>
         </section>
 
-        {/* POSITIONING SUMMARY */}
+        {/* POSITIONING SUMMARY (redesigned panel with bg image) */}
         <section className="mt-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-lg font-semibold">Positioning Summary</h3>
-            <p className="mt-3 text-sm text-slate-600">After these updates, our brand positioning is clear and differentiated:</p>
+          <div
+            className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg"
+            style={{
+              backgroundImage: "url('/images/positioning-bg.jpg')", // <-- replace with your uploaded positioning background
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            {/* subtle inner overlay to soften the background */}
+            <div className="absolute inset-0 bg-white/80" />
+            <div className="relative p-12">
+              <div className="text-center max-w-3xl mx-auto">
+                <h3 className="text-4xl font-serif text-slate-900">Our Positioning</h3>
+                <p className="mt-4 text-lg text-slate-700">A design studio focused on sustainability, energy efficiency, and intelligent living.</p>
+              </div>
 
-            <div className="mt-4 inline-grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-700">
-              <div>✅ Eco Home Designer</div>
-              <div>✅ Interior + Exterior Studio</div>
-              <div>✅ Energy-Saving Specialist</div>
-              <div>✅ Smart Home Integrator</div>
-              <div>✅ Hospitality Design Partner</div>
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* card 1 */}
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                  <div className="text-3xl text-green-700">🍃</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Eco Home Designer</h4>
+                    <p className="mt-2 text-slate-600">Low-energy homes designed for Kerala’s climate.</p>
+                  </div>
+                </div>
+
+                {/* card 2 */}
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                  <div className="text-3xl text-slate-700">🏠</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Interior + Exterior Studio</h4>
+                    <p className="mt-2 text-slate-600">Seamless spaces — inside and out.</p>
+                  </div>
+                </div>
+
+                {/* card 3 */}
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                  <div className="text-3xl text-yellow-500">⚡</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Energy-Saving Specialist</h4>
+                    <p className="mt-2 text-slate-600">Designs that reduce long-term power costs.</p>
+                  </div>
+                </div>
+
+                {/* card 4 */}
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start">
+                  <div className="text-3xl text-emerald-700">🤖</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Smart Home Integrator</h4>
+                    <p className="mt-2 text-slate-600">AI-ready homes for comfort, safety and control.</p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-6 text-center text-sm text-slate-500">This integrated approach sets us apart from most conventional design firms in Kerala.</p>
             </div>
-
-            <p className="mt-3 text-xs text-slate-500">This separates us from 90% of competitors in Kerala.</p>
           </div>
         </section>
 
         {/* CAREERS */}
         <section id="careers" className="mt-16 bg-[#f7f8f7] rounded-xl p-6">
-          <h2 className="text-2xl font-poppins font-semibold">Careers</h2>
+          <h2 className="text-3xl font-poppins font-semibold">Careers</h2>
           <p className="mt-2 text-sm text-slate-600">Join our growing team — we hire designers, engineers, horticulturists and site specialists across Kerala.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
@@ -847,7 +924,7 @@ export default function App() {
 
         {/* CONTACT */}
         <section id="contact" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
-          <h2 className="text-2xl font-poppins font-semibold">Contact</h2>
+          <h2 className="text-3xl font-poppins font-semibold">Contact</h2>
           <p className="mt-2 text-sm text-slate-600">Request a free site visit and quotation. We serve clients across Kerala, with a strong presence in South Kerala.</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
