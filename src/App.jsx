@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Full page: apple-green + cream gradient, premium visual updates.
-  - Desktop/tablet: hero video. Mobile: hero poster image only (no video).
-  - Premium card styles, refined CTAs, improved typography & spacing.
-  - Preserves IntersectionObserver logic for process cards and other behaviour.
+  - Changes:
+    1. Added an animated smooth background gradient overlay (.animated-gradient).
+    2. Added a universal "animate-on-scroll" intersection observer to animate cards & images as they enter viewport.
+    3. Fixed the small-space service image by adding an onError fallback and more robust src usage.
+    4. Removed the heavy dark shade overlay from the Sectors tiles and replaced with a readable pill label so images show cleanly.
+    5. Improved several card/image entries to use .animate-on-scroll for a more professional, animated feel on mobile and desktop.
+    6. Mobile-specific spacing & typography tweaks for better phone UX.
 */
 
 export default function App() {
@@ -57,9 +60,38 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
+  // Animate-on-scroll observer for cards/images
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      // If user prefers reduced motion, immediately reveal
+      document.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
+      return;
+    }
+
+    const elems = Array.from(document.querySelectorAll(".animate-on-scroll"));
+    if (!elems.length) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    elems.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [mounted]);
+
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-20";
 
-  // Apple green + cream gradient — premium, slightly darker but still soft
+  // Soft animated gradient background (keeps inline siteGradient as fallback)
   const siteGradient = {
     background:
       // subtle cream highlight near top
@@ -78,8 +110,21 @@ export default function App() {
 
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
 
+  // small helper for robust image fallbacks
+  const onImgErrorSetPlaceholder = (e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/images/placeholder.webp";
+  };
+
   return (
-    <div style={siteGradient} className="min-h-screen relative font-sans text-slate-900">
+    <div style={siteGradient} className="min-h-screen relative font-sans text-slate-900 animated-background">
+      {/* Animated gradient overlay */}
+      <div
+        aria-hidden
+        className="absolute inset-0 animated-gradient -z-10"
+        style={{ pointerEvents: "none", opacity: 0.55 }}
+      />
+
       {/* Inline animation & premium styles */}
       <style>{`
         @keyframes fadeInUp {
@@ -90,6 +135,12 @@ export default function App() {
           0% { transform: translateY(0); }
           50% { transform: translateY(-6px); }
           100% { transform: translateY(0); }
+        }
+
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
 
         .animate-fadeInUp { animation: fadeInUp 600ms cubic-bezier(.2,.9,.3,1) both; }
@@ -118,11 +169,29 @@ export default function App() {
           background: rgba(255,255,255,0.6);
         }
 
+        /* Animated smooth background gradient overlay */
+        .animated-gradient {
+          background: linear-gradient(120deg, rgba(196,255,225,0.08), rgba(255,250,240,0.06), rgba(198,255,231,0.06), rgba(220,255,229,0.06));
+          background-size: 300% 300%;
+          animation: gradientShift 18s ease-in-out infinite;
+          mix-blend-mode: overlay;
+        }
+
+        /* scroll reveal */
+        .animate-on-scroll { opacity: 0; transform: translateY(10px); transition: opacity 700ms cubic-bezier(.2,.9,.3,1), transform 700ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
+        .animate-on-scroll.in-view { opacity: 1; transform: translateY(0); }
+
         @media (max-width: 640px) {
           .hero-overlay { background: linear-gradient(180deg, rgba(255,247,234,0.7), rgba(240,254,240,0.35)); }
           .hero-cta { width: 100%; padding-left: 1rem; padding-right: 1rem; }
           .header-pad { padding-top: 10px; padding-bottom: 10px; }
           .section-reduced-mobile { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+
+          /* Mobile improvements */
+          .display-lg { font-size: 2.2rem; }
+          .lead { font-size: 0.98rem; }
+
+          .animated-gradient { opacity: 0.6; }
         }
 
         .display-lg { font-family: "Playfair Display", serif; font-weight: 600; letter-spacing: -0.02em; }
@@ -383,7 +452,7 @@ export default function App() {
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
-            <div className="card-hover rounded-xl p-8 h-full">
+            <div className="card-hover rounded-xl p-8 h-full animate-on-scroll">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Core Service</div>
@@ -411,7 +480,7 @@ export default function App() {
               ["Smart & AI-Enabled Homes", "Intelligent automation for lighting, security and climate — adapting to your lifestyle while reducing energy waste."],
               ["Hospitality & Café Design", "Eco-focused interiors for cafés, homestays and resorts — designed for guest comfort, operational efficiency and lower running costs."],
             ].map(([title, desc]) => (
-              <article key={title} className="card-hover rounded-xl p-6">
+              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
                 <div className="flex items-center gap-3">
                   <div className="text-xl" />
                   <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -435,7 +504,7 @@ export default function App() {
 
         <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
           <div className="lg:col-span-5 px-4">
-            <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp">
+            <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
               <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
               <p className="mt-4 text-slate-600">
                 Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.
@@ -455,7 +524,7 @@ export default function App() {
               ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
               ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
             ].map(([title, desc, icon]) => (
-              <article key={title} className="card-hover rounded-xl p-6">
+              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
                 <div className="flex items-start gap-4">
                   <div className="text-2xl">{icon}</div>
                   <div>
@@ -500,12 +569,12 @@ export default function App() {
           </div>
 
           <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <article className="card-hover rounded-xl p-6">
+            <article className="card-hover rounded-xl p-6 animate-on-scroll">
               <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
               <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
             </article>
 
-            <article className="card-hover rounded-xl p-6">
+            <article className="card-hover rounded-xl p-6 animate-on-scroll">
               <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
               <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
             </article>
@@ -529,8 +598,15 @@ export default function App() {
             ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
             ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
           ].map(([title, desc, img]) => (
-            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-[#f7f8f7]">
-              <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-[#f7f8f7] animate-on-scroll">
+              <img
+                src={`/images/${img}`}
+                alt={title}
+                className="w-full h-44 object-cover"
+                loading="lazy"
+                decoding="async"
+                onError={onImgErrorSetPlaceholder}
+              />
               <div className="p-4">
                 <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -557,8 +633,15 @@ export default function App() {
                 ["Swimming Pools & Water Systems", "Natural pools, energy-efficient filtration and sustainable water systems.", "service_pool.webp"],
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                  <img
+                    src={`/images/${img}`}
+                    alt={title}
+                    className="w-full h-44 object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    onError={onImgErrorSetPlaceholder}
+                  />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -575,10 +658,28 @@ export default function App() {
               {[
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior1.webp"],
                 ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
+                // NOTE: Small-space image sometimes misnamed on deploy; add onError fallback
                 ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service_smallspace.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                  <img
+                    src={`/images/${img}`}
+                    alt={title}
+                    className="w-full h-44 object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      // try an alternate likely filename, then placeholder
+                      e.currentTarget.onerror = null;
+                      // attempt alternate name with underscore (common mismatch)
+                      if (e.currentTarget.src.indexOf("service_smallspace.webp") !== -1) {
+                        e.currentTarget.src = "/images/service_small_space.webp";
+                        e.currentTarget.onerror = (ev) => onImgErrorSetPlaceholder(ev);
+                      } else {
+                        onImgErrorSetPlaceholder(e);
+                      }
+                    }}
+                  />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -597,8 +698,15 @@ export default function App() {
                 ["Energy-Efficient Design & Solar Planning", "Solar planning, daylighting and energy-saving strategies.", "service_energy.webp"],
                 ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
               ].map(([title, desc, img]) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                  <img
+                    src={`/images/${img}`}
+                    alt={title}
+                    className="w-full h-44 object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    onError={onImgErrorSetPlaceholder}
+                  />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -636,12 +744,21 @@ export default function App() {
               ].map(([title, img], index) => {
                 const bg = index % 2 === 0 ? "bg-[#eef4ef]" : "bg-[#f7f8f7]";
                 return (
-                  <article key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden card-hover`}>
-                    <img src={`/images/${img}`} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" decoding="async" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40" />
-                    <div className="absolute bottom-4 left-4 text-white text-lg font-semibold">
-                      <div className="mt-16 h-1 w-full bg-gradient-to-r from-transparent via-[#6FA56F]/30 to-transparent" />
-                      {title}
+                  <article key={title} className={`${bg} relative h-44 rounded-lg overflow-hidden card-hover animate-on-scroll`}>
+                    <img
+                      src={`/images/${img}`}
+                      alt={title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      onError={onImgErrorSetPlaceholder}
+                    />
+                    {/* removed the heavy shade layer so images appear clean.
+                        added a readable pill label for accessibility/readability */}
+                    <div className="absolute bottom-4 left-4">
+                      <span className="bg-white/80 text-slate-900 text-lg font-semibold px-3 py-1 rounded-md shadow-sm">
+                        {title}
+                      </span>
                     </div>
                   </article>
                 );
@@ -662,8 +779,15 @@ export default function App() {
               ["project3_1.webp", "Café Outdoor Seating"],
               ["project4_1.webp", "Resort Pathway"],
             ].map(([img, title]) => (
-              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
-                <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" />
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                <img
+                  src={`/images/${img}`}
+                  alt={title}
+                  className="w-full h-44 object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  onError={onImgErrorSetPlaceholder}
+                />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
                 </div>
@@ -679,7 +803,15 @@ export default function App() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
             {["gallery1.webp", "gallery2.webp", "gallery5.webp", "gallery8.webp"].map((img, index) => (
-              <img key={img} src={`/images/${img}`} loading="lazy" decoding="async" className="h-40 w-full object-cover rounded-lg shadow card-hover" alt={`Gallery ${index + 1}`} />
+              <img
+                key={img}
+                src={`/images/${img}`}
+                loading="lazy"
+                decoding="async"
+                className="h-40 w-full object-cover rounded-lg shadow card-hover animate-on-scroll"
+                alt={`Gallery ${index + 1}`}
+                onError={onImgErrorSetPlaceholder}
+              />
             ))}
           </div>
         </section>
@@ -709,7 +841,7 @@ export default function App() {
                 return (
                   <div
                     key={step}
-                    className={`card-hover rounded-xl p-8 transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                    className={`card-hover rounded-xl p-8 transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} animate-on-scroll`}
                     style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}
                   >
                     {keyStage && (
@@ -745,7 +877,7 @@ export default function App() {
               ["🏗 17+ Years Experience", "Ground-level execution knowledge across Kerala conditions."],
               ["📐 Practical Innovation", "Smart solutions that are realistic, serviceable and future-ready."],
             ].map(([title, desc]) => (
-              <article key={title} className="card-hover bg-[#f8f9f8] rounded-lg p-5">
+              <article key={title} className="card-hover bg-[#f8f9f8] rounded-lg p-5 animate-on-scroll">
                 <h4 className="font-semibold">{title}</h4>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
               </article>
@@ -764,8 +896,15 @@ export default function App() {
               ["news2.webp", "500+ Completed Projects Milestone", "A major achievement in delivering sustainable outdoor spaces."],
               ["news3.webp", "Kerala Landscaping Trends 2025", "Emerging eco-friendly materials and design philosophies."],
             ].map(([img, title, desc]) => (
-              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white">
-                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" />
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                <img
+                  src={`/images/${img}`}
+                  alt={title}
+                  className="w-full h-40 object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  onError={onImgErrorSetPlaceholder}
+                />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
                   <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -798,7 +937,7 @@ export default function App() {
                 author: "Ananya R",
               },
             ].map((r) => (
-              <article key={r.author} className="card-hover bg-[#f7f8f7] rounded-lg shadow-sm p-6">
+              <article key={r.author} className="card-hover bg-[#f7f8f7] rounded-lg shadow-sm p-6 animate-on-scroll">
                 <div className="flex gap-1 text-yellow-400 text-lg">{r.stars}</div>
                 <p className="mt-3 text-sm text-slate-600">{r.text}</p>
                 <div className="mt-4 font-semibold text-slate-900">{r.author}</div>
@@ -820,8 +959,8 @@ export default function App() {
               ["vision.webp", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
               ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
             ].map(([img, title, desc]) => (
-              <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm">
-                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" />
+              <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm animate-on-scroll">
+                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
                 <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
               </article>
@@ -840,7 +979,7 @@ export default function App() {
               </div>
 
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
                   <div className="text-3xl text-green-700">🍃</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Eco Home Designer</h4>
@@ -848,7 +987,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
                   <div className="text-3xl text-slate-700">🏠</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Interior + Exterior Studio</h4>
@@ -856,7 +995,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
                   <div className="text-3xl text-yellow-500">⚡</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Energy-Saving Specialist</h4>
@@ -864,7 +1003,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
                   <div className="text-3xl text-emerald-700">🤖</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Smart Home Integrator</h4>
@@ -890,7 +1029,7 @@ export default function App() {
               ["Horticulturist / Plant Specialist", "Plant selection, soil and irrigation planning · References preferred."],
               ["3D Visualization Intern", "Assist in renders and CAD drawings · Portfolio required."],
             ].map(([title, desc]) => (
-              <article key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover">
+              <article key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover animate-on-scroll">
                 <h4 className="font-semibold text-slate-900">{title}</h4>
                 <p className="mt-1 text-sm text-slate-600">{desc}</p>
               </article>
