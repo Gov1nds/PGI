@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx
-  - Changed site-wide background to a darker, richer multi-stop radial gradient that matches the requested darker look.
-  - Everything else left as-is.
+  - Adjusted site-wide gradient to a softer, more professional texture (no harsh "green circles").
+  - Reduced section vertical padding for the top sections to tighten gaps.
+  - Improved process alignment: dotted connector line position tuned and cards set to stretch so connectors line up.
+  - Everything else left intact.
 */
 
 export default function App() {
@@ -49,23 +51,23 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Increased vertical padding (bigger sections)
-  const sectionWrapper = "max-w-7xl mx-auto px-6 py-32";
+  // Reduced vertical padding so the top sections sit closer together (was py-32)
+  const sectionWrapper = "max-w-7xl mx-auto px-6 py-20";
 
-  // Darker site-wide gradient:
-  // - deeper greens on top-left and bottom-right
-  // - reduced bright centre so the overall feel is darker and moodier
-  // - a subtle dark linear overlay to push contrast slightly down
+  // Softer, more professional background texture:
+  // - bright, soft centre
+  // - very gentle, wide green vignettes with low opacity (no hard circles)
+  // - subtle overall linear tint to unify the look
   const siteGradient = {
     background:
-      // deep green wash at top-left
-      "radial-gradient(42% 42% at 10% 12%, rgba(14,63,35,0.92) 0%, rgba(14,63,35,0.70) 28%, transparent 60%), " +
-      // richer green at bottom-right
-      "radial-gradient(62% 54% at 86% 88%, rgba(26,115,58,0.95) 0%, rgba(26,115,58,0.55) 32%, transparent 72%), " +
-      // slightly muted centre (not pure white)
-      "radial-gradient(circle at 50% 36%, rgba(245,249,246,0.86) 0%, rgba(236,243,237,0.78) 34%, rgba(230,240,232,0.65) 60%), " +
-      // gentle dark overlay to subtly deepen the overall tone
-      "linear-gradient(rgba(0,0,0,0.06), rgba(0,0,0,0.12))",
+      // soft bright centre to keep content readable
+      "radial-gradient(60% 60% at 50% 36%, rgba(255,255,255,0.98) 0%, rgba(250,252,250,0.98) 30%, rgba(245,250,245,0.97) 55%, transparent 80%), " +
+      // very wide, low-opacity pale green vignette top-left (soft)
+      "radial-gradient(55% 50% at 12% 12%, rgba(20,90,50,0.06) 0%, rgba(20,90,50,0.03) 30%, transparent 80%), " +
+      // very wide, low-opacity pale green vignette bottom-right (soft)
+      "radial-gradient(65% 55% at 88% 90%, rgba(22,110,55,0.065) 0%, rgba(22,110,55,0.028) 35%, transparent 85%), " +
+      // gentle linear wash to tie tones together
+      "linear-gradient(180deg, rgba(245,250,246,0.95), rgba(235,245,238,0.98))",
     backgroundAttachment: "fixed",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -688,7 +690,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* PROCESS (updated to match provided 4-step style) */}
+        {/* PROCESS (updated alignment and softer connector) */}
         <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-serif text-slate-900">Our Design & Build Process</h2>
@@ -696,10 +698,13 @@ export default function App() {
           </div>
 
           <div className="max-w-7xl mx-auto mt-8 relative">
-            {/* dotted connector line */}
-            <div className="hidden lg:block absolute left-0 right-0 top-28 h-px bg-[repeating-linear-gradient(to right,#dfeee3,#dfeee3 8px,transparent 8px,transparent 16px)]" />
+            {/* dotted connector line — moved slightly lower for better alignment with number badges */}
+            <div
+              className="hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#dfeee3,#dfeee3 8px,transparent 8px,transparent 16px)]"
+              style={{ top: "5.25rem" }}
+            />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start lg:items-stretch">
               {[
                 ["1", "Site Consultation & Assessment", "On-site analysis and requirement discussion", true],
                 ["2", "3D Design & Spatial Planning", "Photorealistic 3D visuals, layouts and design approvals", false],
