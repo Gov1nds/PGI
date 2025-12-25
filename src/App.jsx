@@ -533,9 +533,13 @@ export default function App() {
       nutrient-rich water systems for cleaner air, faster growth and
       long-lasting aesthetics.
     </p>
-    {/* Small Vertical Garden Image */}
-<div className="relative max-w-6xl mx-auto mt-6 flex justify-center">
-  <div className="card-hover rounded-xl overflow-hidden w-40 h-40 sm:w-44 sm:h-44">
+   {/* Small Vertical Garden Image */}
+<div className="relative max-w-6xl mx-auto mt-8 flex justify-center lg:justify-end">
+  <div className="card-hover rounded-2xl overflow-hidden 
+                  w-56 h-56 
+                  sm:w-64 sm:h-64 
+                  lg:w-72 lg:h-72 
+                  float-subtle lg:mr-12">
     <img
       src="/images/vertical-garden.webp"
       alt="Hydroponic Vertical Garden"
@@ -761,43 +765,49 @@ export default function App() {
             </div>
           </div>
 
-          {/* Group 2 */}
-          <div className="mt-10">
-            <h3 className="text-xl font-semibold">Architecture & Interiors</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
-              {[
-                ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior1.webp"],
-                ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
-                // NOTE: Small-space image sometimes misnamed on deploy; add onError fallback
-                ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service_smallspace.webp"],
-              ].map(([title, desc, img]) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                  <img
-                    src={`/images/${img}`}
-                    alt={title}
-                    className="w-full h-44 object-cover"
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      // try an alternate likely filename, then placeholder
-                      e.currentTarget.onerror = null;
-                      // attempt alternate name with underscore (common mismatch)
-                      if (e.currentTarget.src.indexOf("service_smallspace.webp") !== -1) {
-                        e.currentTarget.src = "/images/service_small_space.webp";
-                        e.currentTarget.onerror = (ev) => onImgErrorSetPlaceholder(ev);
-                      } else {
-                        onImgErrorSetPlaceholder(e);
-                      }
-                    }}
-                  />
-                  <div className="p-4">
-                    <h4 className="font-semibold text-slate-900">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
+        {/* Group 2 */}
+<div className="mt-10">
+  <h3 className="text-xl font-semibold">Architecture & Interiors</h3>
+
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+    {[
+      [
+        "Exterior Architecture & 3D Design",
+        "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.",
+        "service_exterior1.webp",
+      ],
+      [
+        "Interior Design (Eco & Minimal)",
+        "Clutter-free interiors using natural materials and passive cooling layouts.",
+        "service_interior.webp",
+      ],
+      [
+        "Small-Space Optimisation",
+        "Space-saving design solutions tailored for flats, villas and compact residences.",
+        "service-small-space.webp",
+      ],
+    ].map(([title, desc, img]) => (
+      <article
+        key={title}
+        className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll"
+      >
+        <img
+          src={`/images/${img}`}
+          alt={title}
+          className="w-full h-44 object-cover"
+          loading="lazy"
+          decoding="async"
+          onError={onImgErrorSetPlaceholder}
+        />
+        <div className="p-4">
+          <h4 className="font-semibold text-slate-900">{title}</h4>
+          <p className="mt-2 text-sm text-slate-600">{desc}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</div>
+
 
           {/* Group 3 */}
           <div className="mt-10">
@@ -950,10 +960,16 @@ export default function App() {
                 const duration = isMobile ? "400ms" : "700ms";
                 return (
                   <div
-                    key={step}
-                    className={`card-hover rounded-xl p-8 transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} animate-on-scroll`}
-                    style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}
-                  >
+  className={`card-hover rounded-xl p-8 transition-all ease-out ${
+    isMobile
+      ? "opacity-100 translate-y-0"
+      : processVisible
+      ? "opacity-100 translate-y-0 animate-on-scroll"
+      : "opacity-0 translate-y-6"
+  }`}
+  style={!isMobile ? { transitionDuration: duration, transitionDelay: `${delay}ms` } : {}}
+>
+
                     {keyStage && (
                       <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">Key Stage</div>
                     )}
