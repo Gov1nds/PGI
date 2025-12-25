@@ -521,63 +521,110 @@ export default function App() {
           </div>
         </div>
       </section>
-      {/* HYDROPONIC VERTICAL GARDENS */}
-<section id="hydroponic" className={`${sectionWrapper} relative`}>
-  <div className="absolute inset-0 bg-white/6" />
-  <div className="relative max-w-6xl mx-auto text-center">
+      {/* ===============================
+   HYDROPONIC VERTICAL GARDENS
+================================ */}
+<section id="hydroponic" className={`${sectionWrapper} relative overflow-hidden`}>
+  {/* soft background overlay */}
+  <div className="absolute inset-0 bg-white/6 pointer-events-none" />
+
+  {/* ===============================
+      HEADING + DESCRIPTION
+  ================================ */}
+  <div className="relative max-w-6xl mx-auto text-center px-4">
     <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900 display-lg">
       Hydroponic Vertical Gardens
     </h2>
+
     <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
       Smart greenery for modern spaces — soil-free vertical gardens using
       nutrient-rich water systems for cleaner air, faster growth and
       long-lasting aesthetics.
     </p>
-   {/* Small Vertical Garden Image */}
-<div className="relative max-w-6xl mx-auto mt-8 flex justify-center lg:justify-end">
-  <div className="card-hover rounded-2xl overflow-hidden 
-                  w-56 h-56 
-                  sm:w-64 sm:h-64 
-                  lg:w-72 lg:h-72 
-                  float-subtle lg:mr-12">
-    <img
-      src="/images/vertical-garden.webp"
-      alt="Hydroponic Vertical Garden"
-      className="w-full h-full object-cover"
-      loading="lazy"
-      onError={onImgErrorSetPlaceholder}
-    />
-  </div>
-</div>
-
   </div>
 
-  <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
+  {/* ===============================
+      IMAGE ROW (3 IMAGES)
+      Desktop: 3 in a row
+      Tablet: 2
+      Mobile: 1
+  ================================ */}
+  <div className="relative max-w-7xl mx-auto mt-12 px-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      {/* Image 1 */}
+      <div className="card-hover rounded-2xl overflow-hidden h-64 shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <img
+          src="/images/hydroponic-1.webp"
+          alt="Indoor Hydroponic Vertical Garden"
+          className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+          onError={onImgErrorSetPlaceholder}
+        />
+      </div>
+
+      {/* Image 2 */}
+      <div className="card-hover rounded-2xl overflow-hidden h-64 shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <img
+          src="/images/hydroponic-2.webp"
+          alt="Balcony Hydroponic Garden System"
+          className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+          onError={onImgErrorSetPlaceholder}
+        />
+      </div>
+
+      {/* Image 3 */}
+      <div className="card-hover rounded-2xl overflow-hidden h-64 shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <img
+          src="/images/hydroponic-3.webp"
+          alt="Commercial Hydroponic Green Wall"
+          className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+          onError={onImgErrorSetPlaceholder}
+        />
+      </div>
+
+    </div>
+  </div>
+
+  {/* ===============================
+      FEATURES SECTION
+  ================================ */}
+  <div className="max-w-7xl mx-auto mt-14 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative px-4">
+    
     {/* LEFT FEATURE CARD */}
-    <div className="lg:col-span-5 px-4">
-      <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
+    <div className="lg:col-span-5">
+      <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll bg-white/80 backdrop-blur">
         <h3 className="text-xl font-semibold text-slate-900">
           Smart Greenery Systems
         </h3>
-        <p className="mt-4 text-slate-600">
+
+        <p className="mt-4 text-slate-600 leading-relaxed">
           Our hydroponic vertical gardens grow plants without soil, using
           controlled water circulation and nutrients — ideal for homes,
           offices, apartments, hotels and commercial spaces.
         </p>
 
-        <div className="mt-6 space-y-3">
-          <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+        <div className="mt-6 flex flex-wrap gap-3">
+          <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
             Indoor & Outdoor Use
-          </div>
-          <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+          </span>
+          <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
             Low Maintenance
-          </div>
+          </span>
+          <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+            Modular Installation
+          </span>
         </div>
       </div>
     </div>
 
     {/* RIGHT FEATURE GRID */}
-    <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
       {[
         [
           "Space-Saving Design",
@@ -591,24 +638,26 @@ export default function App() {
         ],
         [
           "Improves Air Quality",
-          "Natural air purification, humidity balance and cooling effect indoors.",
+          "Natural air purification, humidity balance and indoor cooling effect.",
           "",
         ],
         [
           "Modern & Premium Look",
-          "Clean, elegant greenery that instantly enhances interiors and façades.",
+          "Clean, elegant greenery that enhances interiors and façades instantly.",
           "🌿",
         ],
       ].map(([title, desc, icon]) => (
         <article
           key={title}
-          className="card-hover rounded-xl p-6 animate-on-scroll"
+          className="card-hover rounded-xl p-6 bg-white/80 backdrop-blur animate-on-scroll"
         >
           <div className="flex items-start gap-4">
             <div className="text-2xl">{icon}</div>
             <div>
               <h4 className="font-semibold text-slate-900">{title}</h4>
-              <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+                {desc}
+              </p>
             </div>
           </div>
         </article>
@@ -616,13 +665,16 @@ export default function App() {
     </div>
   </div>
 
-  {/* FOOTER LINE */}
-  <div className="max-w-4xl mx-auto text-center mt-10">
-    <p className="text-slate-700">
+  {/* ===============================
+      FOOTER TAGLINE
+  ================================ */}
+  <div className="max-w-4xl mx-auto text-center mt-12 px-4">
+    <p className="text-slate-700 text-lg">
       Sustainable. Elegant. Future-ready green living.
     </p>
   </div>
 </section>
+
 
       {/* AI-INTEGRATED LIVING */}
       <section id="ai" className={`${sectionWrapper} relative`}>
