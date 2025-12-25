@@ -149,7 +149,15 @@ export default function App() {
         .hero-video { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
         .connector-dots { transition: transform 600ms ease, opacity 600ms ease; transform-origin: center; }
 
-        .hero-overlay { background: linear-gradient(180deg, rgba(255,247,234,0.5) 0%, rgba(230,252,236,0.25) 30%, rgba(12,93,61,0.12) 100%); }
+       .hero-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.35) 40%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+
 
         .cta-primary {
           background: linear-gradient(90deg, #2fa86a 0%, #6fd992 100%);
@@ -175,7 +183,15 @@ export default function App() {
         .animate-on-scroll.in-view { opacity: 1; transform: translateY(0); }
 
         @media (max-width: 640px) {
-          .hero-overlay { background: linear-gradient(180deg, rgba(255,247,234,0.7), rgba(240,254,240,0.35)); }
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.35)
+    );
+  }
+}
+
           .hero-cta { width: 100%; padding-left: 1rem; padding-right: 1rem; }
           .header-pad { padding-top: 10px; padding-bottom: 10px; }
           .section-reduced-mobile { padding-top: 3.5rem; padding-bottom: 3.5rem; }
@@ -278,6 +294,7 @@ export default function App() {
       {/* HERO (video on desktop/tablet, poster image on mobile) */}
       <section id="home" className="relative min-h-[84vh] flex items-center">
         <div className="absolute inset-0">
+
           {!isMobile ? (
             <video
               className="w-full h-full object-cover hero-video"
@@ -296,6 +313,8 @@ export default function App() {
               alt="Padanilathu — Sustainable design hero"
               className="w-full h-full object-cover"
               loading="eager"
+             
+
             />
           )}
 
@@ -304,6 +323,7 @@ export default function App() {
 
         <div className="relative z-20 max-w-7xl mx-auto px-6 py-24 sm:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                     
             <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"} ${isMobile ? "text-emerald-900" : "text-white"}`}>
               <h1
                 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight max-w-3xl display-lg"
