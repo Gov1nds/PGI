@@ -92,21 +92,14 @@ export default function App() {
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-20";
 
   // Soft animated gradient background (keeps inline siteGradient as fallback)
-  const siteGradient = {
-    background:
-      // subtle cream highlight near top
-      "radial-gradient(60% 35% at 50% 6%, rgba(255,247,234,0.95) 0%, rgba(255,247,234,0.25) 28%, rgba(255,247,234,0) 55%), " +
-      // main cream -> pale mint -> apple green -> deeper green vertical gradient
-      "linear-gradient(180deg, rgba(255,247,234,0.98) 0%, rgba(240,254,240,0.98) 18%, rgba(208,246,214,0.98) 38%, rgba(134,224,152,0.98) 62%, rgba(26,132,86,0.98) 100%), " +
-      // soft vignette for depth
-      "radial-gradient(80% 60% at 50% 105%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 35%), " +
-      // light texture grain (very subtle)
-      "repeating-linear-gradient(0deg, rgba(0,0,0,0.006), rgba(0,0,0,0.006) 1px, rgba(255,255,255,0) 1px, rgba(255,255,255,0) 8px)",
-    backgroundAttachment: "fixed",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundBlendMode: "normal, normal, overlay, normal",
-  };
+ const siteGradient = {
+  backgroundImage: "url('/images/gradient-bg.png')",
+  backgroundAttachment: "fixed",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+};
+
 
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
 
