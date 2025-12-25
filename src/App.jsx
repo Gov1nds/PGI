@@ -429,6 +429,213 @@ export default function App() {
           </div>
         </div>
       )}
+{/* EXTERIOR DESIGN & LANDSCAPING */}
+      <section id="exterior" className={`${sectionWrapper} relative`}>
+        <div className="absolute inset-0 bg-white/10" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            Exterior architecture, landscape design and garden planning that connect the home to nature and perform well year-round.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[
+            ["Landscaping & Gardening", "Eco-friendly gardens, water-wise planting and site-specific horticulture.", "landscape1.webp"],
+            ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
+            ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
+          ].map(([title, desc, img]) => (
+            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-[#f7f8f7] animate-on-scroll">
+              <img
+                src={`/images/${img}`}
+                alt={title}
+                className="w-full h-44 object-cover"
+                loading="lazy"
+                decoding="async"
+                onError={onImgErrorSetPlaceholder}
+              />
+              <div className="p-4">
+                <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+      {/* SUSTAINABLE CONSTRUCTION */}
+      <section id="sustainable-construction" className={`${sectionWrapper} relative`}>
+        <div className="absolute inset-0 bg-white/10" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-serif text-slate-900 display-lg">Sustainable Construction</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            Low-carbon materials, passive cooling strategies and on-site practices that reduce environmental impact while improving comfort and durability.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
+          <div className="lg:col-span-5 px-4">
+            <div className="card-hover rounded-xl p-8 h-full">
+              <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
+              <p className="mt-4 text-slate-600">
+                Material selection, insulation, breathable finishes and workmanship tailored to Kerala’s humidity and monsoon conditions.
+              </p>
+
+              <div className="mt-6">
+                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow">
+                  Explore Sustainable Options →
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <article className="card-hover rounded-xl p-6 animate-on-scroll">
+              <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
+              <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
+            </article>
+
+            <article className="card-hover rounded-xl p-6 animate-on-scroll">
+              <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
+              <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+      {/* HYDROPONIC VERTICAL GARDENS */}
+<section id="hydroponic" className={`${sectionWrapper} relative`}>
+  <div className="absolute inset-0 bg-white/6" />
+  <div className="relative max-w-6xl mx-auto text-center">
+    <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900 display-lg">
+      Hydroponic Vertical Gardens
+    </h2>
+    <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+      Smart greenery for modern spaces — soil-free vertical gardens using
+      nutrient-rich water systems for cleaner air, faster growth and
+      long-lasting aesthetics.
+    </p>
+  </div>
+
+  <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
+    {/* LEFT FEATURE CARD */}
+    <div className="lg:col-span-5 px-4">
+      <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
+        <h3 className="text-xl font-semibold text-slate-900">
+          Smart Greenery Systems
+        </h3>
+        <p className="mt-4 text-slate-600">
+          Our hydroponic vertical gardens grow plants without soil, using
+          controlled water circulation and nutrients — ideal for homes,
+          offices, apartments, hotels and commercial spaces.
+        </p>
+
+        <div className="mt-6 space-y-3">
+          <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+            Indoor & Outdoor Use
+          </div>
+          <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+            Low Maintenance
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* RIGHT FEATURE GRID */}
+    <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {[
+        [
+          "Space-Saving Design",
+          "Vertical systems perfect for small homes, balconies and compact urban walls.",
+          "📐",
+        ],
+        [
+          "90% Less Water Usage",
+          "Highly water-efficient systems with recirculation and minimal wastage.",
+          "💧",
+        ],
+        [
+          "Improves Air Quality",
+          "Natural air purification, humidity balance and cooling effect indoors.",
+          "🌬️",
+        ],
+        [
+          "Modern & Premium Look",
+          "Clean, elegant greenery that instantly enhances interiors and façades.",
+          "🌿",
+        ],
+      ].map(([title, desc, icon]) => (
+        <article
+          key={title}
+          className="card-hover rounded-xl p-6 animate-on-scroll"
+        >
+          <div className="flex items-start gap-4">
+            <div className="text-2xl">{icon}</div>
+            <div>
+              <h4 className="font-semibold text-slate-900">{title}</h4>
+              <p className="mt-2 text-sm text-slate-600">{desc}</p>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  {/* FOOTER LINE */}
+  <div className="max-w-4xl mx-auto text-center mt-10">
+    <p className="text-slate-700">
+      Sustainable. Elegant. Future-ready green living.
+    </p>
+  </div>
+</section>
+
+      {/* AI-INTEGRATED LIVING */}
+      <section id="ai" className={`${sectionWrapper} relative`}>
+        <div className="absolute inset-0 bg-white/6" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900 display-lg">AI-Integrated Living</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
+          <div className="lg:col-span-5 px-4">
+            <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
+              <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
+              <p className="mt-4 text-slate-600">
+                Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.
+              </p>
+
+              <div className="mt-6 space-y-3">
+                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Smart Security</div>
+                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Comfort Automation</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              ["Smart Security & Safety", "AI-enabled surveillance, alerts and access control", "🛡️"],
+              ["Comfort Automation", "Lighting, temperature & ventilation auto-adjust", "🌡️"],
+              ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
+              ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
+            ].map(([title, desc, icon]) => (
+              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
+                <div className="flex items-start gap-4">
+                  <div className="text-2xl">{icon}</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">{title}</h4>
+                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center mt-10">
+          <p className="text-slate-700">Designed for Kerala’s climate — our AI solutions create homes that think ahead, saving energy and enhancing comfort.</p>
+        </div>
+      </section>
 
       {/* ECO SMART LIVING */}
       <section className={`${sectionWrapper} relative`} id="eco-living">
@@ -485,129 +692,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* AI-INTEGRATED LIVING */}
-      <section id="ai" className={`${sectionWrapper} relative`}>
-        <div className="absolute inset-0 bg-white/6" />
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-900 display-lg">AI-Integrated Living</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
-          <div className="lg:col-span-5 px-4">
-            <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
-              <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
-              <p className="mt-4 text-slate-600">
-                Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.
-              </p>
-
-              <div className="mt-6 space-y-3">
-                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Smart Security</div>
-                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Comfort Automation</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              ["Smart Security & Safety", "AI-enabled surveillance, alerts and access control", "🛡️"],
-              ["Comfort Automation", "Lighting, temperature & ventilation auto-adjust", "🌡️"],
-              ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
-              ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
-            ].map(([title, desc, icon]) => (
-              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
-                <div className="flex items-start gap-4">
-                  <div className="text-2xl">{icon}</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center mt-10">
-          <p className="text-slate-700">Designed for Kerala’s climate — our AI solutions create homes that think ahead, saving energy and enhancing comfort.</p>
-        </div>
-      </section>
-
-      {/* SUSTAINABLE CONSTRUCTION */}
-      <section id="sustainable-construction" className={`${sectionWrapper} relative`}>
-        <div className="absolute inset-0 bg-white/10" />
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-serif text-slate-900 display-lg">Sustainable Construction</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            Low-carbon materials, passive cooling strategies and on-site practices that reduce environmental impact while improving comfort and durability.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
-          <div className="lg:col-span-5 px-4">
-            <div className="card-hover rounded-xl p-8 h-full">
-              <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
-              <p className="mt-4 text-slate-600">
-                Material selection, insulation, breathable finishes and workmanship tailored to Kerala’s humidity and monsoon conditions.
-              </p>
-
-              <div className="mt-6">
-                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow">
-                  Explore Sustainable Options →
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <article className="card-hover rounded-xl p-6 animate-on-scroll">
-              <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
-              <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
-            </article>
-
-            <article className="card-hover rounded-xl p-6 animate-on-scroll">
-              <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
-              <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* EXTERIOR DESIGN & LANDSCAPING */}
-      <section id="exterior" className={`${sectionWrapper} relative`}>
-        <div className="absolute inset-0 bg-white/10" />
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-serif text-slate-900">Exterior Design & Landscaping</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            Exterior architecture, landscape design and garden planning that connect the home to nature and perform well year-round.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            ["Landscaping & Gardening", "Eco-friendly gardens, water-wise planting and site-specific horticulture.", "landscape1.webp"],
-            ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
-            ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
-          ].map(([title, desc, img]) => (
-            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-[#f7f8f7] animate-on-scroll">
-              <img
-                src={`/images/${img}`}
-                alt={title}
-                className="w-full h-44 object-cover"
-                loading="lazy"
-                decoding="async"
-                onError={onImgErrorSetPlaceholder}
-              />
-              <div className="p-4">
-                <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
 
       {/* SERVICES */}
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
