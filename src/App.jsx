@@ -338,13 +338,13 @@ export default function App() {
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle">
-                  🏡 Exterior Design
+                   Exterior Design
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle" style={{ animationDelay: "180ms" }}>
                   🌿 Landscaping & Gardening
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle" style={{ animationDelay: "360ms" }}>
-                  🏠 Interior Design
+                   Interior Design
                 </span>
               </div>
 
@@ -533,6 +533,19 @@ export default function App() {
       nutrient-rich water systems for cleaner air, faster growth and
       long-lasting aesthetics.
     </p>
+    {/* Small Vertical Garden Image */}
+<div className="relative max-w-6xl mx-auto mt-6 flex justify-center">
+  <div className="card-hover rounded-xl overflow-hidden w-40 h-40 sm:w-44 sm:h-44">
+    <img
+      src="/images/vertical-garden.webp"
+      alt="Hydroponic Vertical Garden"
+      className="w-full h-full object-cover"
+      loading="lazy"
+      onError={onImgErrorSetPlaceholder}
+    />
+  </div>
+</div>
+
   </div>
 
   <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
@@ -575,7 +588,7 @@ export default function App() {
         [
           "Improves Air Quality",
           "Natural air purification, humidity balance and cooling effect indoors.",
-          "🌬️",
+          "",
         ],
         [
           "Modern & Premium Look",
