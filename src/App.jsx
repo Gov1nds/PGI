@@ -936,7 +936,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* PROCESS */}
+         {/* PROCESS */}
         <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-serif text-slate-900">Our Design & Build Process</h2>
@@ -960,16 +960,10 @@ export default function App() {
                 const duration = isMobile ? "400ms" : "700ms";
                 return (
                   <div
-  className={`card-hover rounded-xl p-8 transition-all ease-out ${
-    isMobile
-      ? "opacity-100 translate-y-0"
-      : processVisible
-      ? "opacity-100 translate-y-0 animate-on-scroll"
-      : "opacity-0 translate-y-6"
-  }`}
-  style={!isMobile ? { transitionDuration: duration, transitionDelay: `${delay}ms` } : {}}
->
-
+                    key={step}
+                    className={`card-hover rounded-xl p-8 transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} animate-on-scroll`}
+                    style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}
+                  >
                     {keyStage && (
                       <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">Key Stage</div>
                     )}
