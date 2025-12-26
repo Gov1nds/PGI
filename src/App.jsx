@@ -1012,6 +1012,104 @@ export default function App() {
           </div>
         </section>
       </main>
+{/* REQUEST QUOTE MODAL */}
+{quoteOpen && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative animate-fadeInUp">
+      
+      {/* Close Button */}
+      <button
+        onClick={() => setQuoteOpen(false)}
+        className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 text-xl"
+        aria-label="Close quote form"
+      >
+        ✕
+      </button>
+
+      <h3 className="text-2xl font-serif font-semibold text-slate-900">
+        Request a Quote
+      </h3>
+      <p className="mt-2 text-sm text-slate-600">
+        Fill the details — our team will contact you shortly.
+      </p>
+
+      <form
+        className="mt-6 space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+
+          const name = e.target.name.value;
+          const phone = e.target.phone.value;
+          const service = e.target.service.value;
+          const message = e.target.message.value;
+
+          const whatsappText = `
+Hello Padanilathu 👋
+I would like a quote.
+
+Name: ${name}
+Phone: ${phone}
+Service: ${service}
+Details: ${message || "Not provided"}
+          `.trim();
+
+          window.open(
+            `https://wa.me/917907709032?text=${encodeURIComponent(whatsappText)}`,
+            "_blank"
+          );
+
+          setQuoteOpen(false);
+        }}
+      >
+        <input
+          name="name"
+          type="text"
+          required
+          placeholder="Full Name"
+          className="w-full p-3 rounded-md border border-slate-200"
+        />
+
+        <input
+          name="phone"
+          type="tel"
+          required
+          placeholder="Phone Number"
+          className="w-full p-3 rounded-md border border-slate-200"
+        />
+
+        <select
+          name="service"
+          className="w-full p-3 rounded-md border border-slate-200"
+        >
+          <option>Service Required</option>
+          <option>Landscaping</option>
+          <option>Sustainable Construction</option>
+          <option>Hydroponic Vertical Garden</option>
+          <option>Interior / Exterior Design</option>
+          <option>AI / Smart Home</option>
+        </select>
+
+        <textarea
+          name="message"
+          rows="3"
+          placeholder="Project details (optional)"
+          className="w-full p-3 rounded-md border border-slate-200"
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-[#2f8a56] hover:bg-[#1f6b41] text-white py-3 rounded-md font-semibold"
+        >
+          Send via WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+)}
 
       {/* FLOATING CONTACT BUTTON + social quick links */}
       <div className="fixed bottom-6 right-6 z-50 contact-popup">
