@@ -85,12 +85,12 @@ export default function App() {
 
   // Social links provision (edit to your live profiles)
   const socialLinks = {
-    instagram: "https://instagram.com/padanilathu",
-    facebook: "https://facebook.com/padanilathu",
-    whatsapp: "https://wa.me/919446061029",
+    instagram: "https://www.instagram.com/padanilathu.co/",
+    facebook: "https://www.facebook.com/profile.php?id=61585658551823",
+    whatsapp: "https://wa.me/917907709032",
     x: "https://x.com/padanilathu",
     linkedin: "https://www.linkedin.com/company/padanilathu",
-    threads: "https://www.threads.net/@padanilathu",
+    threads: "https://www.threads.com/@padanilathu.co",
   };
 
   useEffect(() => setMounted(true), []);
@@ -272,7 +272,14 @@ export default function App() {
         }
         .hero-info-card .kicker { color: var(--brand); font-weight:600; font-size:0.95rem; }
         .hero-info-card h4 { margin: 8px 0 6px; font-size:1.5rem; color:var(--brand-text); font-weight:700; font-family: "Playfair Display", serif; }
-        .hero-info-card p { margin:0; color: #334155; font-size:0.95rem; line-height:1.45; }
+       .hero-info-card p { 
+  margin: 0;
+  color: #0f172a; /* solid black-ish (Tailwind slate-900) */
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
 
         /* Buttons matching uploaded style */
         .btn-primary {
@@ -979,7 +986,7 @@ export default function App() {
               <p className="text-sm text-slate-600">Quick contact</p>
               <ul className="mt-4 space-y-3 text-sm text-slate-700">
                 <li><strong>Phone:</strong> <a href="tel:+91-7907709032" className="text-slate-600">+91-7907709032</a></li>
-                <li><strong>Email:</strong> <a href="mailto:hello@padanilathu.com" className="text-slate-600">hello@padanilathu.com</a></li>
+                <li><strong>Email:</strong> <a href="mailto:Sales@padanilathu.com" className="text-slate-600">Sales@padanilathu.com</a></li>
                 <li><strong>Service area:</strong> All Kerala</li>
               </ul>
 
@@ -1065,7 +1072,7 @@ export default function App() {
 
           <div>
             <h4 className="font-semibold">Contact</h4>
-            <p className="text-sm mt-3 text-slate-700">Phone: +91-7907709032 <br /> Email: hello@padanilathu.com <br /> Service Area: Kerala (Focus: Ernakulam)</p>
+            <p className="text-sm mt-3 text-slate-700">Phone: +91-7907709032 <br /> Email: Sales@padanilathu.com <br /> Service Area: Kerala </p>
           </div>
 
           <div>
