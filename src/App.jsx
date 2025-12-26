@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 
 /*
-  App.jsx — Polished (2025-12-26) - alternating section backgrounds + improved hero + animations
-  - Alternating per-section backgrounds (images + overlay) including white sections.
-  - Hero: crossfade + subtle zoom, keyboard + swipe, pause on interaction, preloading first image.
-  - Uses only uploaded images that were present in the project assets.
+  App.jsx — Full component (2025-12-26)
+  - Full code with hero redesign, 3-image crossfade carousel, section palette applied, image fallback logic,
+    intersection observers and accessibility considerations.
+  - Replace the /images/* assets with your actual images.
 */
 
 export default function App() {
@@ -17,21 +17,14 @@ export default function App() {
   const [mounted, setMounted] = useState(false);
 
   // HERO carousel images (place your hero images in /images/)
-  const heroImages = useMemo(
-    () => [
-      { src: "/images/hero1.webp", alt: "Padanilathu — Sustainable design hero 1" },
-      { src: "/images/hero2.webp", alt: "Padanilathu — Sustainable design hero 2" },
-      { src: "/images/hero3.webp", alt: "Padanilathu — Sustainable design hero 3" },
-    ],
-    []
-  );
+  const heroImages = [
+    { src: "/images/hero1.webp", alt: "Padanilathu — Sustainable design hero 1" },
+    { src: "/images/hero2.webp", alt: "Padanilathu — Sustainable design hero 2" },
+    { src: "/images/hero3.webp", alt: "Padanilathu — Sustainable design hero 3" },
+  ];
   const [heroIndex, setHeroIndex] = useState(0);
-  const [heroPaused, setHeroPaused] = useState(false);
-  const heroTimerRef = useRef(null);
-  const heroRef = useRef(null);
-  const touchStartX = useRef(null);
 
-  // Social links
+  // Social links provision (edit to your live profiles)
   const socialLinks = {
     instagram: "https://instagram.com/padanilathu",
     facebook: "https://facebook.com/padanilathu",
@@ -45,23 +38,15 @@ export default function App() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    let tid = null;
-    const onResize = () => {
-      clearTimeout(tid);
-      tid = setTimeout(checkMobile, 120);
-    };
-    window.addEventListener("resize", onResize);
-    return () => {
-      clearTimeout(tid);
-      window.removeEventListener("resize", onResize);
-    };
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -74,24 +59,26 @@ export default function App() {
   // PROCESS observer - tuned to trigger reliably on mobile + desktop and reveal internal animate-on-scroll elements
   useEffect(() => {
     const section = document.getElementById("process");
-    if (!section || typeof IntersectionObserver === "undefined") return;
+    if (!section) return;
     const observer = new IntersectionObserver(
-      ([entry], obs) => {
+      ([entry]) => {
         if (entry.isIntersecting) {
           setProcessVisible(true);
+          // reveal any internal animate-on-scroll items immediately for reliability
           section.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
-          obs.disconnect();
+          observer.disconnect();
         }
       },
+      // lower threshold and a little rootMargin so it triggers reliably on small screens
       { threshold: 0.08, rootMargin: "0px 0px -10% 0px" }
     );
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
-  // Animate-on-scroll observer
+  // Animate-on-scroll observer for cards/images (keeps reduced-motion safe)
   useEffect(() => {
-    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") return;
+    if (typeof window === "undefined") return;
     const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
       document.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
@@ -102,11 +89,11 @@ export default function App() {
     if (!elems.length) return;
 
     const obs = new IntersectionObserver(
-      (entries, o) => {
+      (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("in-view");
-            o.unobserve(entry.target);
+            obs.unobserve(entry.target);
           }
         });
       },
@@ -117,127 +104,65 @@ export default function App() {
     return () => obs.disconnect();
   }, [mounted]);
 
-  // hero auto-cycle (pausable)
+  // hero auto-cycle
   useEffect(() => {
-    if (heroPaused) return;
-    heroTimerRef.current = setInterval(() => {
-      setHeroIndex((i) => (i + 1) % heroImages.length);
-    }, 6000);
-    return () => clearInterval(heroTimerRef.current);
-  }, [heroPaused, heroImages.length]);
+    const id = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 6000);
+    return () => clearInterval(id);
+  }, []);
 
-  // preload first hero image
-  useEffect(() => {
-    if (!heroImages || !heroImages[0]) return;
-    const img = new Image();
-    img.src = heroImages[0].src;
-  }, [heroImages]);
-
-  // improved image fallback: tries alternate filenames if provided, otherwise placeholder
-  const onImgErrorTryAlts = useCallback((e) => {
+  // small helper for robust image fallbacks: tries alternate filenames if provided, otherwise placeholder
+  const onImgErrorTryAlts = (e) => {
     const el = e.currentTarget;
+    // remove default onerror to avoid loop
     el.onerror = null;
+
+    // if a data-alts attribute exists (comma-separated), try the next alt
     const altsRaw = el.dataset.alts || "";
     const tried = el.dataset.tried ? el.dataset.tried.split(",").filter(Boolean) : [];
+
     const alts = altsRaw.split(",").map((s) => s.trim()).filter(Boolean);
     const nextAlt = alts.find((a) => !tried.includes(a));
+
     if (nextAlt) {
+      // mark tried
       el.dataset.tried = tried.concat([nextAlt]).join(",");
       el.src = `/images/${nextAlt}`;
+      // reattach onerror to continue trying
       el.onerror = onImgErrorTryAlts;
       return;
     }
-    el.src = "/images/placeholder.webp";
-  }, []);
 
+    // final fallback
+    el.src = "/images/placeholder.webp";
+  };
+
+  // connector top calculation
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
 
-  // Section background helpers — using only images that are already uploaded in the project
-  const sectionBgs = useMemo(
-    () => ({
-      "company-intro": { img: "/images/landscape1.webp", overlay: "rgba(238,248,239,0.68)" },
-      exterior: { img: "/images/exterior1.webp", overlay: "rgba(243,251,243,0.68)" },
-      "sustainable-construction": { img: "/images/service_sustainable.webp", overlay: "rgba(255,255,255,0.85)" },
-      hydroponic: { img: "/images/hydroponic-1.webp", overlay: "rgba(255,250,240,0.82)" },
-      ai: { img: "/images/service_smart.webp", overlay: "rgba(245,247,246,0.86)" },
-      "eco-living": { img: "/images/service_energy.webp", overlay: "rgba(255,255,255,0.92)" },
-      services: { img: "/images/service_landscape.webp", overlay: "rgba(255,255,255,0.96)" },
-      projects: { img: "/images/project1_1.webp", overlay: "rgba(255,255,255,0.96)" },
-      gallery: { img: "/images/gallery1.webp", overlay: "rgba(255,250,240,0.88)" },
-      process: { img: "/images/project2_1.webp", overlay: "rgba(251,254,253,0.92)" },
-      about: { img: "/images/about_office.webp", overlay: "rgba(238,244,239,0.92)" },
-      careers: { img: "/images/mission.webp", overlay: "rgba(247,248,247,0.92)" },
-      default: { img: "/images/gallery2.webp", overlay: "rgba(255,255,255,0.96)" },
-    }),
-    []
-  );
-
-  const getSectionStyle = useCallback(
-    (id) => {
-      const data = sectionBgs[id] || sectionBgs.default;
-      const isFixedBg = !isMobile;
-      return {
-        backgroundImage: `linear-gradient(${data.overlay}, ${data.overlay}), url('${data.img}')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: isFixedBg ? "fixed" : "scroll",
-        backgroundBlendMode: "overlay",
-      };
-    },
-    [sectionBgs, isMobile]
-  );
-
-  // HERO interactions: keyboard and swipe
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "ArrowLeft") setHeroIndex((i) => (i - 1 + heroImages.length) % heroImages.length);
-      if (e.key === "ArrowRight") setHeroIndex((i) => (i + 1) % heroImages.length);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [heroImages.length]);
-
-  // Swipe handlers
-  useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    const onTouchStart = (e) => {
-      touchStartX.current = e.touches[0].clientX;
-    };
-    const onTouchEnd = (e) => {
-      if (touchStartX.current === null) return;
-      const endX = e.changedTouches[0].clientX;
-      const dx = endX - touchStartX.current;
-      if (Math.abs(dx) > 40) {
-        if (dx > 0) setHeroIndex((i) => (i - 1 + heroImages.length) % heroImages.length);
-        else setHeroIndex((i) => (i + 1) % heroImages.length);
-        setHeroPaused(true);
-        setTimeout(() => setHeroPaused(false), 4500);
-      }
-      touchStartX.current = null;
-    };
-
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchend", onTouchEnd, { passive: true });
-    return () => {
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [heroImages.length]);
-
+  // Section wrapper helper
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-16";
+
+  // Small palette — you can edit or expand this to cycle backgrounds across sections.
+  const sectionPalette = {
+    apple: "#0f3b2e10" /* very light apple tint (kept subtle) */,
+    appleLight: "#eef8ef",
+    cream: "#fffaf0",
+    offWhite: "#ffffff",
+    grayLight: "#f5f7f6",
+    slateSoft: "#f3fbf3",
+  };
 
   return (
     <div className="min-h-screen relative font-sans text-slate-900">
+      {/* Inline styles & animations */}
       <style>{`
-        :root { --green-600:#2f5640; --accent:#6FA56F; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;600&display=swap');
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes floatY { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
         @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.03); } }
 
-        .animated-gradient { background: linear-gradient(120deg, rgba(196,255,225,0.04), rgba(255,250,240,0.02)); background-size: 300% 300%; animation: gradientShift 20s ease-in-out infinite; mix-blend-mode: overlay; position: absolute; inset: 0; z-index: -10; opacity: 0.45; pointer-events:none; }
+        .animated-gradient { background: linear-gradient(120deg, rgba(196,255,225,0.04), rgba(255,250,240,0.02)); background-size: 300% 300%; animation: gradientShift 18s ease-in-out infinite; mix-blend-mode: overlay; position: absolute; inset: 0; z-index: -10; opacity: 0.45; pointer-events:none; }
 
         .animate-fadeInUp { animation: fadeInUp 600ms cubic-bezier(.2,.9,.3,1) both; }
         .animate-fadeInUp-slow { animation: fadeInUp 900ms cubic-bezier(.2,.9,.3,1) both; }
@@ -249,65 +174,104 @@ export default function App() {
         .thumbline { border-radius: 12px; padding: 6px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,255,249,0.9)); box-shadow: 0 8px 20px rgba(15,23,42,0.06); display:block; overflow:hidden; }
         .thumbline img { display:block; border-radius:8px; width:100%; height:100%; object-fit:cover; }
 
-        .section-heading { font-family: "Playfair Display", serif; font-size: 1.9rem; line-height: 1.05; font-weight:600; color:#0f172a; margin:0; text-shadow: 0 1px 0 rgba(255,255,255,0.25); }
+        .section-heading { font-family: "Playfair Display", serif; font-size: 1.9rem; line-height: 1.05; font-weight:700; color:#0f172a; margin:0; }
         @media (min-width:1024px){ .section-heading { font-size:2.25rem; } }
 
         .animate-on-scroll { opacity:0; transform: translateY(8px); transition: opacity 640ms cubic-bezier(.2,.9,.3,1), transform 640ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
         .animate-on-scroll.in-view { opacity:1; transform: translateY(0); }
 
-        /* HERO carousel + polish */
+        /* HERO carousel */
         .hero-carousel { position: absolute; inset:0; overflow:hidden; display:block; }
-        .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease, transform 900ms ease; transform-origin: center center; }
-        .hero-carousel img.active { opacity:1; z-index:1; transform: scale(1.03); filter: saturate(1.03) contrast(1.02); }
-        .hero-overlay { position:absolute; inset:0; z-index:0; pointer-events:none; }
+        .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease; transform: scale(1.02); }
+        .hero-carousel img.active { opacity:1; z-index:1; transform: scale(1); }
 
-        .hero-card { background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.80)); border-radius:14px; box-shadow: 0 10px 40px rgba(2,6,23,0.35); backdrop-filter: blur(6px); padding:18px; }
+        /* hero overlay stronger for the photographed mood */
+        .hero-overlay { position:absolute; inset:0; background: linear-gradient(180deg, rgba(6,6,6,0.55), rgba(6,6,6,0.28)); z-index:0; }
 
+        /* hero info card (right) similar to uploaded design */
+        .hero-info-card {
+          width: 100%;
+          max-width: 420px;
+          background: rgba(255,255,255,0.9);
+          border-radius: 14px;
+          padding: 28px;
+          box-shadow: 0 20px 40px rgba(6,7,12,0.28);
+          border: 1px solid rgba(15,23,42,0.06);
+          backdrop-filter: blur(6px);
+        }
+        .hero-info-card .kicker { color: #2f6f4f; font-weight:600; font-size:0.95rem; }
+        .hero-info-card h4 { margin: 8px 0 6px; font-size:1.5rem; color:#0f172a; font-weight:700; font-family: "Playfair Display", serif; }
+        .hero-info-card p { margin:0; color: #334155; font-size:0.95rem; line-height:1.45; }
+
+        /* Buttons matching uploaded style */
+        .btn-primary {
+          background: linear-gradient(180deg,#2f8a56,#1f6b41);
+          color:white;
+          padding: 12px 22px;
+          border-radius: 12px;
+          font-weight:600;
+          box-shadow: 0 8px 20px rgba(15,23,42,0.18);
+          border: none;
+        }
+        .btn-outline {
+          background: transparent;
+          color: white;
+          padding: 12px 22px;
+          border-radius: 12px;
+          border: 2px solid rgba(255,255,255,0.28);
+          font-weight:600;
+        }
+
+        .logo-underline { display:block; height:3px; width:48px; background:#6FA56F; margin-top:6px; border-radius:2px; }
+
+        /* header dark translucent when at top */
+        .topbar-dark { background: rgba(6,6,6,0.55); backdrop-filter: blur(6px); }
+        .topbar-sticky { background: rgba(255,255,255,0.96); backdrop-filter: blur(6px); box-shadow: 0 6px 20px rgba(2,6,23,0.08); }
+
+        /* mobile spacing tighten */
         @media (max-width:640px) {
           .section-wrapper-mobile { padding-top: 1.75rem; padding-bottom: 1.75rem; }
           .section-heading { font-size: 1.5rem; text-align:center; }
           .positioning-grid-mobile { text-align:center; }
+          .hero-info-card { display:none; } /* hide right card on small screens to match screenshots */
         }
 
+        /* Our positioning: center on small screens */
         .positioning-center-mobile { text-align: center; }
-
-        .connector-dots { transition: opacity 420ms ease, transform 420ms ease; }
-
-        @media (prefers-reduced-motion: reduce) {
-          .hero-carousel img { transition: none !important; animation: none !important; transform: none !important; }
-          .animate-on-scroll { transition: none !important; }
-          .animated-gradient { animation: none !important; }
-        }
       `}</style>
 
+      {/* animated gradient overlay */}
       <div className="animated-gradient" aria-hidden />
 
-      {/* HEADER */}
-      <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-sm shadow" : "bg-transparent"}`} aria-label="Main header">
+      {/* HEADER - dark translucent at top, becomes light on scroll */}
+      <header
+        className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "topbar-sticky" : "topbar-dark"}`}
+        aria-label="Main header"
+      >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             <a href="#home" className="group inline-flex items-center gap-3">
-              <div className={`text-xl md:text-2xl font-semibold tracking-wide ${scrolled ? "text-slate-900" : (isMobile ? "text-emerald-900" : "text-white")}`} style={{ fontFamily: "Poppins, Inter, Arial, sans-serif" }}>
+              <div className={`text-xl md:text-2xl font-semibold tracking-wide text-white`} style={{ fontFamily: "Poppins, Inter, Arial, sans-serif" }}>
                 <span className="relative inline-block">
                   PADANILATHU
-                  <span aria-hidden className="absolute left-0 -bottom-1 h-[2px] w-2/3 bg-[#6FA56F] transition-all duration-300 group-hover:w-full" />
+                  <span aria-hidden className="logo-underline" />
                 </span>
               </div>
             </a>
 
-            <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : (isMobile ? "text-emerald-900" : "text-white")}`} aria-label="Primary navigation">
+            <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`} aria-label="Primary navigation">
               <a href="#services" className="nav-link">Services</a>
               <a href="#projects" className="nav-link">Projects</a>
               <a href="#gallery" className="nav-link">Gallery</a>
               <a href="#about" className="nav-link">About</a>
               <a href="#careers" className="nav-link">Careers</a>
 
-              <button onClick={() => setQuoteOpen(true)} className="ml-2 cta-primary px-4 py-2 rounded-md text-sm font-semibold">
-                Request Quote
+              <button onClick={() => setQuoteOpen(true)} className="ml-2" style={{ display: "inline-block" }}>
+                <span className="btn-primary" style={{ borderRadius: 8, padding: "8px 12px", fontSize: "0.92rem" }}>Request Quote</span>
               </button>
             </nav>
 
-            <button onClick={() => setMobileOpen(!mobileOpen)} className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-emerald-900 bg-white/10"}`} aria-label="Toggle mobile menu">
+            <button onClick={() => setMobileOpen(!mobileOpen)} className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-white bg-transparent"}`} aria-label="Toggle mobile menu">
               {mobileOpen ? "✕" : "☰"}
             </button>
           </div>
@@ -327,8 +291,8 @@ export default function App() {
         )}
       </header>
 
-      {/* HERO */}
-      <section id="home" className="relative min-h-[72vh] flex items-center" aria-label="Hero section" ref={heroRef}>
+      {/* HERO (3-image carousel with crossfade) */}
+      <section id="home" className="relative min-h-[72vh] flex items-center" aria-label="Hero section">
         <div className="absolute inset-0 hero-carousel" aria-hidden>
           {heroImages.map((h, idx) => (
             <img
@@ -339,60 +303,52 @@ export default function App() {
               loading={idx === 0 ? "eager" : "lazy"}
               decoding="async"
               onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/placeholder.webp"; }}
-              onMouseEnter={() => setHeroPaused(true)}
-              onMouseLeave={() => setHeroPaused(false)}
-              onFocus={() => setHeroPaused(true)}
-              onBlur={() => setHeroPaused(false)}
-              aria-hidden={idx === heroIndex ? "false" : "true"}
             />
           ))}
         </div>
 
-        <div className="absolute inset-0 hero-overlay" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.52), rgba(0,0,0,0.22))" }} />
+        <div className="absolute inset-0 hero-overlay" />
 
         <div className="relative z-20 max-w-7xl mx-auto px-6 py-20 sm:py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"} ${isMobile ? "text-emerald-900" : "text-white"}`}>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight max-w-3xl display-lg section-heading" style={{ lineHeight: 1.02, color: isMobile ? "#11402a" : "white" }}>
-                Sustainable Design for Better Living
-              </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7">
+              <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"} ${isMobile ? "text-emerald-900" : "text-white"}`}>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight max-w-3xl display-lg section-heading" style={{ lineHeight: 1.02, color: "white", fontFamily: "Playfair Display, Georgia, serif", fontWeight: 700 }}>
+                  Sustainable Design for Better Living
+                </h1>
 
-              <p className={`mt-4 sm:mt-6 text-base sm:text-lg md:text-xl max-w-2xl ${isMobile ? "lead" : "text-white/95"}`}>
-                Eco-first homes and outdoor spaces, crafted for Kerala’s climate — energy-saving, beautiful and future-ready.
-              </p>
+                <p className={`mt-4 sm:mt-6 text-base sm:text-lg md:text-xl max-w-2xl text-white/95`} style={{ color: "rgba(255,255,255,0.92)" }}>
+                  Eco-first homes and outdoor spaces, crafted for Kerala’s climate — energy-saving, beautiful and future-ready.
+                </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle">Exterior Design</span>
-                <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle">🌿 Landscaping</span>
-                <span className="inline-flex items-center gap-2 bg-white/12 text-white/95 px-4 py-2 rounded-full float-subtle">Interior Design</span>
-              </div>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Exterior Design</span>
+                  <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">🌿 Landscaping</span>
+                  <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Interior Design</span>
+                </div>
 
-              <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button onClick={() => setQuoteOpen(true)} className="cta-primary px-6 py-3 rounded-full font-semibold shadow-md hero-cta" onMouseEnter={() => setHeroPaused(true)} onMouseLeave={() => setHeroPaused(false)}>Request Quote</button>
+                <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                  <button onClick={() => setQuoteOpen(true)} className="btn-primary" style={{ borderRadius: 10 }}>Request Quote</button>
 
-                <a href="#projects" className="inline-flex items-center justify-center px-6 py-3 rounded-full cta-outline hero-cta">View Projects</a>
+                  <a href="#projects" className="btn-outline" style={{ borderRadius: 10 }}>View Projects</a>
+                </div>
               </div>
             </div>
 
-            <aside className="hidden lg:flex flex-col gap-6 items-start animate-fadeInUp-slow">
-              <div className="hero-card rounded-xl p-6 w-80">
-                <div className="text-sm text-green-800/90">17+ Years · 500+ Completed Sites</div>
-                <div className="mt-3 text-xl font-semibold text-slate-900">Trusted across Kerala</div>
-                <p className="mt-3 text-sm text-slate-600">We combine craft, climate knowledge and modern technology to deliver long-lasting results.</p>
-              </div>
-
-              <div className="hero-card rounded-xl p-6 w-80">
-                <div className="text-sm text-green-800/90">Eco-first approach</div>
-                <div className="mt-3 text-xl font-semibold text-slate-900">Energy-efficient, smart homes</div>
-                <p className="mt-3 text-sm text-slate-600">Designs that reduce running costs and enhance everyday comfort.</p>
+            {/* right info card */}
+            <aside className="hidden lg:block lg:col-span-5">
+              <div className="hero-info-card animate-fadeInUp-slow" role="note" aria-label="Trusted across Kerala">
+                <div className="kicker">17+ Years · 500+ Completed Sites</div>
+                <h4>Trusted across Kerala</h4>
+                <p className="mt-3">We combine craft, climate knowledge and modern technology to deliver long-lasting, energy-efficient spaces.</p>
               </div>
             </aside>
           </div>
         </div>
       </section>
 
-      {/* COMPANY INTRO */}
-      <section id="company-intro" className={`${sectionWrapper} section-wrapper-mobile relative`} style={getSectionStyle("company-intro")}>
+      {/* COMPANY INTRO (top text-only, removed the earlier 3 image tiles) */}
+      <section id="company-intro" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.appleLight }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">About Padanilathu</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -401,8 +357,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* EXTERIOR DESIGN & LANDSCAPING */}
-      <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={getSectionStyle("exterior")}>
+      {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
+      <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Exterior Design & Landscaping</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -416,7 +372,7 @@ export default function App() {
             ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
             ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
           ].map(([title, desc, img]) => (
-            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll" style={{ transitionDelay: "120ms" }}>
+            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
               <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
               <div className="p-4">
                 <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
@@ -427,8 +383,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* SUSTAINABLE CONSTRUCTION */}
-      <section id="sustainable-construction" className={`${sectionWrapper} section-wrapper-mobile relative`} style={getSectionStyle("sustainable-construction")}>
+      {/* SUSTAINABLE CONSTRUCTION — white */}
+      <section id="sustainable-construction" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.offWhite }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Sustainable Construction</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -464,8 +420,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* HYDROPONIC VERTICAL GARDENS */}
-      <section id="hydroponic" className={`${sectionWrapper} section-wrapper-mobile relative`} style={getSectionStyle("hydroponic")}>
+      {/* HYDROPONIC VERTICAL GARDENS — cream background */}
+      <section id="hydroponic" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.cream }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Hydroponic Vertical Gardens</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -475,15 +431,15 @@ export default function App() {
 
         <div className="relative max-w-7xl mx-auto mt-8 px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64 animate-on-scroll">
+            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
               <img src="/images/hydroponic-1.webp" alt="Indoor Hydroponic Vertical Garden" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-1.webp,hydro1.webp" />
             </div>
 
-            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64 animate-on-scroll">
+            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
               <img src="/images/hydroponic-2.webp" alt="Balcony Hydroponic Garden System" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-2.webp,hydro2.webp" />
             </div>
 
-            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64 animate-on-scroll">
+            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
               <img src="/images/hydroponic-3.webp" alt="Commercial Hydroponic Green Wall" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-3.webp,hydro3.webp" />
             </div>
           </div>
@@ -506,11 +462,11 @@ export default function App() {
           <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               ["Space-Saving Design", "Perfect for small homes, balconies and compact urban walls.", "📐"],
-              ["90% Less Water Usage", "Highly water efficient systems with recirculation.", "💧"],
+              ["90% Less Water Usage", "Highly water-efficient systems with recirculation.", "💧"],
               ["Improves Air Quality", "Natural air purification and humidity balance.", "🌱"],
               ["Modern & Premium Look", "Clean, elegant greenery that enhances interiors and façades.", "🌿"],
-            ].map(([title, desc, icon], idx) => (
-              <article key={title} className="card-hover rounded-xl p-6 bg-white/80 backdrop-blur animate-on-scroll" style={{ transitionDelay: `${120 + idx * 60}ms` }}>
+            ].map(([title, desc, icon]) => (
+              <article key={title} className="card-hover rounded-xl p-6 bg-white/80 backdrop-blur animate-on-scroll">
                 <div className="flex items-start gap-4">
                   <div className="text-2xl">{icon}</div>
                   <div>
@@ -528,8 +484,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* AI-INTEGRATED LIVING */}
-      <section id="ai" className={`${sectionWrapper} section-wrapper-mobile relative`} style={getSectionStyle("ai")}>
+      {/* AI-INTEGRATED LIVING — light gray */}
+      <section id="ai" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.grayLight }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">AI-Integrated Living</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.</p>
@@ -554,8 +510,8 @@ export default function App() {
               ["Comfort Automation", "Lighting, temperature & ventilation auto-adjust", "🌡️"],
               ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
               ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
-            ].map(([title, desc, icon], idx) => (
-              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll" style={{ transitionDelay: `${80 + idx * 60}ms` }}>
+            ].map(([title, desc, icon]) => (
+              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
                 <div className="flex items-start gap-4">
                   <div className="text-2xl">{icon}</div>
                   <div>
@@ -573,8 +529,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* ECO SMART LIVING */}
-      <section id="eco-living" className={`${sectionWrapper} section-wrapper-mobile relative`} style={getSectionStyle("eco-living")}>
+      {/* ECO SMART LIVING (white) */}
+      <section id="eco-living" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.offWhite }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Sustainable, Energy-Efficient & Smart Living Spaces</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">Smarter, greener homes for Kerala. We blend AI technology with eco-friendly architecture to deliver energy-efficient living tailored to the local climate.</p>
@@ -606,8 +562,8 @@ export default function App() {
               ["Maximum Energy Saving", "Solar integration, daylight optimisation and insulation strategies that significantly reduce electricity consumption."],
               ["Smart & AI-Enabled Homes", "Intelligent automation for lighting, security and climate — adapting to your lifestyle while reducing energy waste."],
               ["Hospitality & Café Design", "Eco-focused interiors for cafés, homestays and resorts — designed for guest comfort, operational efficiency and lower running costs."],
-            ].map(([title, desc], idx) => (
-              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll" style={{ transitionDelay: `${80 + idx * 70}ms` }}>
+            ].map(([title, desc]) => (
+              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
                 <div className="flex items-center gap-3">
                   <div className="text-xl" />
                   <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -619,9 +575,9 @@ export default function App() {
         </div>
       </section>
 
-      {/* MAIN CONTENT (services/projects/gallery/process/etc.) — styles are preserved; section backgrounds use uploaded images */}
+      {/* SERVICES, PROJECTS, GALLERY, PROCESS, ETC. */}
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
-        <section id="services" className="mt-6" style={getSectionStyle("services")}>
+        <section id="services" className="mt-6">
           <h2 className="section-heading">Our Services</h2>
           <p className="mt-2 text-sm text-slate-600 max-w-3xl">Complete eco-conscious design & build solutions — integrating nature, technology and sustainability for homes and spaces across Kerala.</p>
 
@@ -633,8 +589,8 @@ export default function App() {
                 ["Landscaping & Gardening", "Eco-friendly gardens, fountains and outdoor landscaping designed for Kerala’s climate.", "service_landscape.webp"],
                 ["Swimming Pools & Water Systems", "Natural pools, energy-efficient filtration and sustainable water systems.", "service_pool.webp"],
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
-              ].map(([title, desc, img], idx) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll" style={{ transitionDelay: `${idx * 70}ms` }}>
+              ].map(([title, desc, img]) => (
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -655,7 +611,7 @@ export default function App() {
                 // small-space image - added alternates to increase chance of loading
                 ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service-small-space.webp,service_small_space.webp,service-smallspace.webp"],
               ].map(([title, desc, img]) => {
-                const altAttr = img.includes(",") ? img.split(",").map((s) => s.trim()).join(",") : img;
+                const altAttr = img.includes(",") ? img.split(",").map(s => s.trim()).join(",") : img;
                 const src = img.includes(",") ? img.split(",")[0].trim() : img;
                 return (
                   <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
@@ -678,8 +634,8 @@ export default function App() {
                 ["Home Automation & Smart Systems", "Intelligent automation for lighting, security and climate controls.", "service_smart.webp"],
                 ["Energy-Efficient Design & Solar Planning", "Solar planning, daylighting and energy-saving strategies.", "service_energy.webp"],
                 ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
-              ].map(([title, desc, img], idx) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll" style={{ transitionDelay: `${idx * 70}ms` }}>
+              ].map(([title, desc, img]) => (
+                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
                   <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -697,7 +653,7 @@ export default function App() {
         </section>
 
         {/* PROJECTS */}
-        <section id="projects" className="mt-14" style={getSectionStyle("projects")}>
+        <section id="projects" className="mt-14">
           <h2 className="section-heading">Featured Projects</h2>
           <p className="mt-2 text-sm text-slate-600">A curated look at some of our most iconic project deliveries.</p>
 
@@ -707,8 +663,8 @@ export default function App() {
               ["project2_1.webp", "Waterfall Garden"],
               ["project3_1.webp", "Café Outdoor Seating"],
               ["project4_1.webp", "Resort Pathway"],
-            ].map(([img, title], idx) => (
-              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll" style={{ transitionDelay: `${idx * 60}ms` }}>
+            ].map(([img, title]) => (
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
                 <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
@@ -719,7 +675,7 @@ export default function App() {
         </section>
 
         {/* GALLERY */}
-        <section id="gallery" className="mt-16 bg-[#fffaf0] rounded-xl p-8" style={getSectionStyle("gallery")}>
+        <section id="gallery" className="mt-16 bg-[#fffaf0] rounded-xl p-8">
           <h2 className="section-heading">Gallery</h2>
           <p className="mt-2 text-sm text-slate-600">Visual moments from our completed landscape projects.</p>
 
@@ -730,8 +686,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* PROCESS */}
-        <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm" style={getSectionStyle("process")}>
+        {/* PROCESS (connector + steps) */}
+        <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="section-heading">Our Design & Build Process</h2>
             <p className="mt-3 text-slate-700">A clear, structured approach from first consultation to final handover.</p>
@@ -770,7 +726,7 @@ export default function App() {
         </section>
 
         {/* WHY US */}
-        <section className="mt-16 bg-white rounded-xl p-8 shadow" style={getSectionStyle("default")}>
+        <section className="mt-16 bg-white rounded-xl p-8 shadow">
           <h2 className="section-heading">Why Padanilathu</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
             {[
@@ -778,8 +734,8 @@ export default function App() {
               ["🧠 Integrated Thinking", "Exterior, interior, energy and automation planned together."],
               ["🏗 17+ Years Experience", "Ground-level execution knowledge across Kerala conditions."],
               ["📐 Practical Innovation", "Smart solutions that are realistic, serviceable and future-ready."],
-            ].map(([title, desc], idx) => (
-              <article key={title} className="card-hover bg-[#f8f9f8] rounded-lg p-5 animate-on-scroll" style={{ transitionDelay: `${idx * 70}ms` }}>
+            ].map(([title, desc]) => (
+              <article key={title} className="card-hover bg-[#f8f9f8] rounded-lg p-5 animate-on-scroll">
                 <h4 className="font-semibold">{title}</h4>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
               </article>
@@ -788,7 +744,7 @@ export default function App() {
         </section>
 
         {/* PROFESSIONAL FEATURES */}
-        <section className="mt-14" style={getSectionStyle("services")}>
+        <section className="mt-14">
           <h2 className="section-heading">Professional Capabilities & Credentials</h2>
           <p className="mt-2 text-sm text-slate-600 max-w-3xl">Certifications, partnerships and capabilities that make delivery predictable and high-quality.</p>
 
@@ -798,8 +754,8 @@ export default function App() {
               ["Project Management", "Dedicated PM & quality checkpoints on every site."],
               ["Sustainability Audit", "Lifecycle and embodied carbon assessments available."],
               ["Aftercare & Maintenance", "Planned maintenance packages to protect your investment."],
-            ].map(([title, desc], idx) => (
-              <div key={title} className="card-hover rounded-lg p-6 bg-white animate-on-scroll" style={{ transitionDelay: `${idx * 70}ms` }}>
+            ].map(([title, desc]) => (
+              <div key={title} className="card-hover rounded-lg p-6 bg-white animate-on-scroll">
                 <h4 className="font-semibold">{title}</h4>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
               </div>
@@ -807,8 +763,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* NEWS, REVIEWS, ABOUT */}
-        <section id="news" className="mt-16" style={getSectionStyle("default")}>
+        {/* NEWS, REVIEWS, ABOUT (kept) */}
+        <section id="news" className="mt-16">
           <h2 className="section-heading">News & Updates</h2>
           <p className="mt-2 text-sm text-slate-600">Latest announcements & events.</p>
 
@@ -817,8 +773,8 @@ export default function App() {
               ["news1.webp", "17 Years of Landscape Excellence", "Celebrating over 17 years of crafting sustainable, high-quality outdoor spaces across Kerala."],
               ["news2.webp", "500+ Completed Projects Milestone", "A major achievement in delivering sustainable outdoor spaces."],
               ["news3.webp", "Kerala Landscaping Trends 2025", "Emerging eco-friendly materials and design philosophies."],
-            ].map(([img, title, desc], idx) => (
-              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll" style={{ transitionDelay: `${idx * 70}ms` }}>
+            ].map(([img, title, desc]) => (
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
                 <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
@@ -829,7 +785,7 @@ export default function App() {
           </div>
         </section>
 
-        <section id="reviews" className="mt-16" style={getSectionStyle("default")}>
+        <section id="reviews" className="mt-16">
           <h2 className="section-heading">What Our Clients Say</h2>
           <p className="mt-2 text-sm text-slate-600">Genuine feedback from homeowners and long-term clients.</p>
 
@@ -838,8 +794,8 @@ export default function App() {
               { stars: "★ ★ ★ ★ ★", text: "Worked with them for my home front yard tile paving — extremely satisfying and value for money.", author: "Sanjith Pillai" },
               { stars: "★ ★ ★ ★ ★", text: "Padanilathu stood out for their honesty and dedication. Special thanks to Mr. Sudhakaran and the team.", author: "Sreekanth Haridasan" },
               { stars: "★ ★ ★ ★ ★", text: "Professional execution, transparent communication and eco-friendly approach throughout the project.", author: "Ananya R" },
-            ].map((r, idx) => (
-              <article key={r.author} className="card-hover bg-[#f7f8f7] rounded-lg shadow-sm p-6 animate-on-scroll" style={{ transitionDelay: `${idx * 70}ms` }}>
+            ].map((r) => (
+              <article key={r.author} className="card-hover bg-[#f7f8f7] rounded-lg shadow-sm p-6 animate-on-scroll">
                 <div className="flex gap-1 text-yellow-400 text-lg">{r.stars}</div>
                 <p className="mt-3 text-sm text-slate-600">{r.text}</p>
                 <div className="mt-4 font-semibold text-slate-900">{r.author}</div>
@@ -848,8 +804,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* ABOUT */}
-        <section id="about" className="mt-16 bg-[#eef4ef] rounded-xl p-8" style={getSectionStyle("about")}>
+        {/* ABOUT (kept lower section as-is) */}
+        <section id="about" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
           <h2 className="section-heading">About Padanilathu</h2>
           <p className="mt-3 text-sm text-slate-600">
             Padanilathu is an eco-focused design and construction studio integrating architecture, interiors, landscape, energy efficiency and smart automation. Our mission is to create healthier, low-energy living environments that are deeply connected to nature and future-ready.
@@ -860,8 +816,8 @@ export default function App() {
               ["mission.webp", "Mission", "Crafting eco-conscious, aesthetic outdoor environments that improve everyday living."],
               ["vision.webp", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
               ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
-            ].map(([img, title, desc], idx) => (
-              <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm animate-on-scroll" style={{ transitionDelay: `${idx * 70}ms` }}>
+            ].map(([img, title, desc]) => (
+              <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm animate-on-scroll">
                 <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                 <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -870,8 +826,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* POSITIONING SUMMARY */}
-        <section className="mt-10" style={getSectionStyle("default")}>
+        {/* POSITIONING SUMMARY (center text on phone) */}
+        <section className="mt-10">
           <div className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg">
             <div className="absolute inset-0 bg-white/25" />
             <div className="relative p-8 sm:p-12">
@@ -920,7 +876,7 @@ export default function App() {
         </section>
 
         {/* CAREERS */}
-        <section id="careers" className="mt-16 bg-[#f7f8f7] rounded-xl p-6" style={getSectionStyle("careers")}>
+        <section id="careers" className="mt-16 bg-[#f7f8f7] rounded-xl p-6">
           <h2 className="section-heading">Careers</h2>
           <p className="mt-2 text-sm text-slate-600">Join our growing team — we hire designers, engineers, horticulturists and site specialists across Kerala.</p>
 
@@ -930,8 +886,8 @@ export default function App() {
               ["Site Supervisor / Foreman", "Experience: 3+ years · Lead site teams and ensure quality delivery."],
               ["Horticulturist / Plant Specialist", "Plant selection, soil and irrigation planning · References preferred."],
               ["3D Visualization Intern", "Assist in renders and CAD drawings · Portfolio required."],
-            ].map(([title, desc], idx) => (
-              <article key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover animate-on-scroll" style={{ transitionDelay: `${idx * 60}ms` }}>
+            ].map(([title, desc]) => (
+              <article key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover animate-on-scroll">
                 <h4 className="font-semibold text-slate-900">{title}</h4>
                 <p className="mt-1 text-sm text-slate-600">{desc}</p>
               </article>
@@ -944,7 +900,7 @@ export default function App() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="mt-16 bg-[#eef4ef] rounded-xl p-8" style={getSectionStyle("default")}>
+        <section id="contact" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
           <h2 className="section-heading">Contact</h2>
           <p className="mt-2 text-sm text-slate-600">Request a free site visit and quotation. We serve clients across Kerala, with a strong presence in South Kerala.</p>
 
@@ -980,7 +936,7 @@ export default function App() {
         </section>
       </main>
 
-      {/* FLOATING CONTACT */}
+      {/* FLOATING CONTACT BUTTON + social quick links */}
       <div className="fixed bottom-6 right-6 z-50 contact-popup">
         <button onClick={() => setContactOpen(!contactOpen)} className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white text-2xl shadow-lg flex items-center justify-center" aria-label="Contact options" type="button">
           ☎
