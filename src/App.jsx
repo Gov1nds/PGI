@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 
 /*
-  App.jsx — Revised (2025-12-26)
-  Summary of key changes implemented:
-  1. Hero section rewritten for a cleaner, more professional layout and accessibility.
-  2. Added "Company Intro" section (styled like Exterior Design & Landscaping).
-  3. Unified section headings via a new .section-heading class (same font & size).
-  4. Added "thumbline" border style for images in Hydroponic Vertical Gardens.
-  5. Improved overall alignment and consistent spacing using a single sectionWrapper.
-  6. Removed the "Sectors" section and nav link.
-  7. Added a "Professional Features" section with certificates / capabilities to increase credibility.
-  8. Optimizations: consistent lazy loading, fallback image handler, prefers-reduced-motion handling preserved.
-  9. Improved mobile spacing & typography; reduced vertical gaps on small screens.
- 10. Added social media redirects (Instagram, Facebook, WhatsApp, X, LinkedIn, Threads) in footer & floating contact.
+  App.jsx — Revised (2025-12-26) - Carousel + per-section backgrounds + fixes
+  Changes in this edit:
+  1. Hero now uses 3 images that auto-cycle with a smooth cross-fade.
+  2. Removed the single abstract site background image; each major section now has its own background color (apple-green / white / cream / gray combos).
+  3. Improved image fallback logic for "Small-Space Optimisation" (tries alternate filenames before placeholder).
+  4. Improved the process IntersectionObserver: earlier triggering on mobile and "force-reveal" of process cards when the section becomes visible to avoid desktop/mobile loading issues.
+  5. Company intro (top) changed to text-only (removed the three image tiles there) per request.
+  6. Our Positioning: corrected text alignment on phone (centered on small screens).
+  7. Minor spacing/tightening for mobile to reduce excessive vertical gaps.
 */
 
 export default function App() {
@@ -24,6 +21,14 @@ export default function App() {
   const [processVisible, setProcessVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // HERO carousel images (place your hero images in /images/)
+  const heroImages = [
+    { src: "/images/hero1.webp", alt: "Padanilathu — Sustainable design hero 1" },
+    { src: "/images/hero2.webp", alt: "Padanilathu — Sustainable design hero 2" },
+    { src: "/images/hero3.webp", alt: "Padanilathu — Sustainable design hero 3" },
+  ];
+  const [heroIndex, setHeroIndex] = useState(0);
+
   // Social links provision (edit to your live profiles)
   const socialLinks = {
     instagram: "https://instagram.com/padanilathu",
@@ -34,9 +39,7 @@ export default function App() {
     threads: "https://www.threads.net/@padanilathu",
   };
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -58,6 +61,7 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // PROCESS observer - tuned to trigger reliably on mobile + desktop and reveal internal animate-on-scroll elements
   useEffect(() => {
     const section = document.getElementById("process");
     if (!section) return;
@@ -65,16 +69,19 @@ export default function App() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setProcessVisible(true);
+          // reveal any internal animate-on-scroll items immediately for reliability
+          section.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
           observer.disconnect();
         }
       },
-      { threshold: 0.2 }
+      // lower threshold and a little rootMargin so it triggers reliably on small screens
+      { threshold: 0.08, rootMargin: "0px 0px -10% 0px" }
     );
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
-  // Animate-on-scroll observer for cards/images
+  // Animate-on-scroll observer for cards/images (keeps reduced-motion safe)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -102,82 +109,91 @@ export default function App() {
     return () => obs.disconnect();
   }, [mounted]);
 
-  const sectionWrapper = "max-w-7xl mx-auto px-6 py-16";
+  // hero auto-cycle
+  useEffect(() => {
+    const id = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 6000);
+    return () => clearInterval(id);
+  }, []);
 
-  // Soft animated gradient background (keeps inline siteGradient as fallback)
-  const siteGradient = {
-    backgroundImage: "url('/images/gradient-bg.png')",
-    backgroundAttachment: "fixed",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+  // small helper for robust image fallbacks: tries alternate filenames if provided, otherwise placeholder
+  const onImgErrorTryAlts = (e) => {
+    const el = e.currentTarget;
+    // remove default onerror to avoid loop
+    el.onerror = null;
+
+    // if a data-alts attribute exists (comma-separated), try the next alt
+    const altsRaw = el.dataset.alts || "";
+    const tried = el.dataset.tried ? el.dataset.tried.split(",").filter(Boolean) : [];
+
+    const alts = altsRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    const nextAlt = alts.find((a) => !tried.includes(a));
+
+    if (nextAlt) {
+      // mark tried
+      el.dataset.tried = tried.concat([nextAlt]).join(",");
+      el.src = `/images/${nextAlt}`;
+      // reattach onerror to continue trying
+      el.onerror = onImgErrorTryAlts;
+      return;
+    }
+
+    // final fallback
+    el.src = "/images/placeholder.webp";
   };
 
+  // connector top calculation
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
 
-  // small helper for robust image fallbacks
-  const onImgErrorSetPlaceholder = (e) => {
-    e.currentTarget.onerror = null;
-    e.currentTarget.src = "/images/placeholder.webp";
-  };
+  // Section wrapper helper
+  const sectionWrapper = "max-w-7xl mx-auto px-6 py-16";
 
   return (
-    <div style={siteGradient} className="min-h-screen relative font-sans text-slate-900 animated-background">
-      {/* Animated gradient overlay */}
-      <div aria-hidden className="absolute inset-0 animated-gradient -z-10" style={{ pointerEvents: "none", opacity: 0.55 }} />
-
-      {/* Inline animation & premium styles */}
+    <div className="min-h-screen relative font-sans text-slate-900">
+      {/* Inline styles & animations */}
       <style>{`
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes floatY { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
         @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
+        .animated-gradient { background: linear-gradient(120deg, rgba(196,255,225,0.06), rgba(255,250,240,0.04)); background-size: 300% 300%; animation: gradientShift 18s ease-in-out infinite; mix-blend-mode: overlay; position: absolute; inset: 0; z-index: -10; opacity: 0.55; pointer-events:none; }
+
         .animate-fadeInUp { animation: fadeInUp 600ms cubic-bezier(.2,.9,.3,1) both; }
         .animate-fadeInUp-slow { animation: fadeInUp 900ms cubic-bezier(.2,.9,.3,1) both; }
         .float-subtle { animation: floatY 6s ease-in-out infinite; }
 
-        .card-hover { transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; border: 1px solid rgba(15,23,42,0.05); background: rgba(255,255,255,0.85); backdrop-filter: blur(4px); }
+        .card-hover { transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; border: 1px solid rgba(15,23,42,0.05); background: rgba(255,255,255,0.95); backdrop-filter: blur(3px); }
         .card-hover:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(15,23,42,0.08); }
 
-        .soft-white { background: rgba(255,255,255,0.96); box-shadow: 0 10px 30px rgba(15,23,42,0.04); border: 1px solid rgba(15,23,42,0.03); }
+        .thumbline { border-radius: 12px; padding: 6px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,255,249,0.9)); box-shadow: 0 8px 20px rgba(15,23,42,0.06); display:block; overflow:hidden; }
+        .thumbline img { display:block; border-radius:8px; width:100%; height:100%; object-fit:cover; }
 
-        .hero-overlay { background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.2)); }
+        .section-heading { font-family: "Playfair Display", serif; font-size: 1.9rem; line-height: 1.05; font-weight:600; color:#0f172a; margin:0; }
+        @media (min-width:1024px){ .section-heading { font-size:2.25rem; } }
 
-        .cta-primary { background: linear-gradient(90deg, #2fa86a 0%, #6fd992 100%); color: white; box-shadow: 0 12px 30px rgba(47,168,106,0.14); }
-        .cta-outline { border: 1px solid rgba(47,168,106,0.12); color: #11402a; background: rgba(255,255,255,0.82); }
+        .animate-on-scroll { opacity:0; transform: translateY(8px); transition: opacity 640ms cubic-bezier(.2,.9,.3,1), transform 640ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
+        .animate-on-scroll.in-view { opacity:1; transform: translateY(0); }
 
-        .animated-gradient { background: linear-gradient(120deg, rgba(196,255,225,0.06), rgba(255,250,240,0.04), rgba(198,255,231,0.04)); background-size: 300% 300%; animation: gradientShift 18s ease-in-out infinite; mix-blend-mode: overlay; }
+        /* HERO carousel */
+        .hero-carousel { position: absolute; inset:0; overflow:hidden; display:block; }
+        .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease; }
+        .hero-carousel img.active { opacity:1; z-index:1; }
 
-        .animate-on-scroll { opacity: 0; transform: translateY(8px); transition: opacity 640ms cubic-bezier(.2,.9,.3,1), transform 640ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
-        .animate-on-scroll.in-view { opacity: 1; transform: translateY(0); }
-
-        /* Unified section headings */
-        .section-heading { font-family: "Playfair Display", serif; font-size: 1.9rem; line-height: 1.05; font-weight: 600; color: #0f172a; margin: 0; }
-        @media (min-width: 1024px) { .section-heading { font-size: 2.25rem; } }
-
-        /* Hydroponic thumbnails 'thumbline' */
-        .thumbline { border-radius: 12px; padding: 6px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,255,249,0.9)); box-shadow: 0 8px 20px rgba(15,23,42,0.06); display: block; overflow: hidden; }
-        .thumbline img { display: block; border-radius: 8px; width: 100%; height: 100%; object-fit: cover; }
-
-        /* Mobile spacing improvements */
-        @media (max-width: 640px) {
-          .section-wrapper-mobile { padding-top: 2.25rem; padding-bottom: 2.25rem; }
-          .hero-cta { width: 100%; padding-left: 1rem; padding-right: 1rem; }
-          .display-lg { font-size: 1.9rem; }
-          .lead { font-size: 0.96rem; }
-          .animated-gradient { opacity: 0.6; }
+        /* mobile spacing tighten */
+        @media (max-width:640px) {
+          .section-wrapper-mobile { padding-top: 1.75rem; padding-bottom: 1.75rem; }
+          .section-heading { font-size: 1.5rem; text-align:center; }
+          .positioning-grid-mobile { text-align:center; }
         }
 
-        /* Small utility tweaks */
-        .nav-link { text-decoration: none; color: inherit; }
-        .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+        /* Our positioning: center on small screens */
+        .positioning-center-mobile { text-align: center; }
       `}</style>
 
+      {/* animated gradient overlay */}
+      <div className="animated-gradient" aria-hidden />
+
       {/* HEADER */}
-      <header
-        className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-sm shadow" : "bg-transparent"}`}
-        aria-label="Main header"
-      >
+      <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-sm shadow" : "bg-transparent"}`} aria-label="Main header">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             <a href="#home" className="group inline-flex items-center gap-3">
@@ -201,11 +217,7 @@ export default function App() {
               </button>
             </nav>
 
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-emerald-900 bg-white/10"}`}
-              aria-label="Toggle mobile menu"
-            >
+            <button onClick={() => setMobileOpen(!mobileOpen)} className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-emerald-900 bg-white/10"}`} aria-label="Toggle mobile menu">
               {mobileOpen ? "✕" : "☰"}
             </button>
           </div>
@@ -219,49 +231,29 @@ export default function App() {
                   {item.charAt(0).toUpperCase() + item.slice(1)}
                 </a>
               ))}
-              <button
-                onClick={() => {
-                  setQuoteOpen(true);
-                  setMobileOpen(false);
-                }}
-                className="mt-2 cta-primary px-4 py-2 rounded-md text-white"
-              >
-                Request Quote
-              </button>
+              <button onClick={() => { setQuoteOpen(true); setMobileOpen(false); }} className="mt-2 cta-primary px-4 py-2 rounded-md text-white">Request Quote</button>
             </div>
           </div>
         )}
       </header>
 
-      {/* HERO (desktop/video, mobile/poster) */}
+      {/* HERO (3-image carousel with crossfade) */}
       <section id="home" className="relative min-h-[72vh] flex items-center" aria-label="Hero section">
-        <div className="absolute inset-0">
-          {!isMobile ? (
-            <video
-              className="w-full h-full object-cover hero-video"
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster="/images/hero1.webp"
-              aria-hidden
-            >
-              <source src="/videos/hero1.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          ) : (
+        <div className="absolute inset-0 hero-carousel" aria-hidden>
+          {heroImages.map((h, idx) => (
             <img
-              src="/images/hero1.webp"
-              alt="Padanilathu — Sustainable design hero"
-              className="w-full h-full object-cover"
-              loading="eager"
+              key={h.src}
+              src={h.src}
+              alt={h.alt}
+              className={idx === heroIndex ? "active" : ""}
+              loading={idx === 0 ? "eager" : "lazy"}
               decoding="async"
-              onError={onImgErrorSetPlaceholder}
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/placeholder.webp"; }}
             />
-          )}
-
-          <div className="absolute inset-0 hero-overlay" />
+          ))}
         </div>
+
+        <div className="absolute inset-0 hero-overlay" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.25))" }} />
 
         <div className="relative z-20 max-w-7xl mx-auto px-6 py-20 sm:py-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -281,13 +273,9 @@ export default function App() {
               </div>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button onClick={() => setQuoteOpen(true)} className="cta-primary px-6 py-3 rounded-full font-semibold shadow-md hero-cta">
-                  Request Quote
-                </button>
+                <button onClick={() => setQuoteOpen(true)} className="cta-primary px-6 py-3 rounded-full font-semibold shadow-md hero-cta">Request Quote</button>
 
-                <a href="#projects" className="inline-flex items-center justify-center px-6 py-3 rounded-full cta-outline hero-cta">
-                  View Projects
-                </a>
+                <a href="#projects" className="inline-flex items-center justify-center px-6 py-3 rounded-full cta-outline hero-cta">View Projects</a>
               </div>
             </div>
 
@@ -308,102 +296,18 @@ export default function App() {
         </div>
       </section>
 
-      {/* COMPANY INTRO (new, same style as Exterior Design & Landscaping) */}
-      <section id="company-intro" className={`${sectionWrapper} relative section-wrapper-mobile`}>
-        <div className="absolute inset-0 bg-white/6 pointer-events-none" />
+      {/* COMPANY INTRO (top text-only, removed the earlier 3 image tiles) */}
+      <section id="company-intro" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: "#eef8ef" /* soft apple green */ }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">About Padanilathu</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            Padanilathu is an integrated design and build studio focused on sustainable outdoor environments, energy-efficient homes and intelligent living systems. We blend craft, horticulture expertise and modern technology to build resilient, beautiful spaces across Kerala.
+            Padanilathu is an integrated design-build studio specialising in sustainable outdoor environments, energy-efficient homes and AI-enabled living. We combine horticultural knowledge, practical construction experience and modern design tools to deliver resilient, beautiful spaces across Kerala.
           </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            ["Mission", "Craft eco-conscious outdoor environments that improve everyday living.", "mission.webp"],
-            ["Vision", "To be Kerala’s most trusted outdoor architecture & landscaping brand.", "vision.webp"],
-            ["Values", "Sustainability · Creativity · Craftsmanship · Transparency", "values.webp"],
-          ].map(([title, desc, img]) => (
-            <article key={title} className="soft-white rounded-lg p-6 text-center animate-on-scroll">
-              <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
-              <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
-              <p className="mt-2 text-sm text-slate-600">{desc}</p>
-            </article>
-          ))}
         </div>
       </section>
 
-      {/* QUOTE POPUP */}
-      {quoteOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
-          <div className="relative bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-8 shadow-xl">
-            <button
-              onClick={() => {
-                setQuoteOpen(false);
-                sessionStorage.setItem("quoteClosed", "true");
-              }}
-              className="absolute top-4 right-4 text-2xl"
-              aria-label="Close quote dialog"
-            >
-              ✕
-            </button>
-
-            <h2 className="text-2xl font-bold">Request a Quote</h2>
-            <p className="text-sm text-slate-600 mt-1">Share project details for accurate pricing.</p>
-
-            <form className="mt-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <label className="sr-only">Name</label>
-                <input className="border p-3 rounded" placeholder="Name*" />
-
-                <label className="sr-only">Phone</label>
-                <input className="border p-3 rounded" placeholder="Phone*" />
-
-                <label className="sr-only">Email</label>
-                <input className="border p-3 rounded" placeholder="Email" />
-
-                <label className="sr-only">Location</label>
-                <input className="border p-3 rounded" placeholder="Location*" />
-              </div>
-
-              <label className="sr-only">Service</label>
-              <select className="border p-3 rounded w-full" defaultValue="">
-                <option value="" disabled>
-                  Select Service
-                </option>
-                <option>Interior Design</option>
-                <option>Landscaping & Gardening</option>
-                <option>Home automation</option>
-                <option>Stone Paving</option>
-                <option>Swimming Pool</option>
-                <option>Exterior Design</option>
-                <option>Water Features</option>
-                <option>Maintenance</option>
-                <option>Consulting</option>
-              </select>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input className="border p-3 rounded" placeholder="Length" />
-                <input className="border p-3 rounded" placeholder="Width" />
-                <input className="border p-3 rounded" placeholder="Area" />
-              </div>
-
-              <label className="sr-only">Project details</label>
-              <textarea rows="4" className="border p-3 rounded w-full" placeholder="Project details" />
-
-              <div className="flex justify-end">
-                <button type="submit" className="cta-primary px-6 py-3 rounded-full font-semibold">
-                  Submit Quote Request
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* EXTERIOR DESIGN & LANDSCAPING */}
-      <section id="exterior" className={`${sectionWrapper} relative section-wrapper-mobile`}>
-        <div className="absolute inset-0 bg-white/6 pointer-events-none" />
+      {/* EXTERIOR DESIGN & LANDSCAPING — apple-green lighter */}
+      <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: "#f3fbf3" }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Exterior Design & Landscaping</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -418,7 +322,7 @@ export default function App() {
             ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
           ].map(([title, desc, img]) => (
             <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-              <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+              <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
               <div className="p-4">
                 <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -428,9 +332,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* SUSTAINABLE CONSTRUCTION */}
-      <section id="sustainable-construction" className={`${sectionWrapper} relative section-wrapper-mobile`}>
-        <div className="absolute inset-0 bg-white/6 pointer-events-none" />
+      {/* SUSTAINABLE CONSTRUCTION — white */}
+      <section id="sustainable-construction" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: "#ffffff" }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Sustainable Construction</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -447,9 +350,7 @@ export default function App() {
               </p>
 
               <div className="mt-6">
-                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow">
-                  Explore Sustainable Options →
-                </a>
+                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow">Explore Sustainable Options →</a>
               </div>
             </div>
           </div>
@@ -468,10 +369,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* HYDROPONIC VERTICAL GARDENS (thumbline added) */}
-      <section id="hydroponic" className={`${sectionWrapper} relative section-wrapper-mobile overflow-hidden`}>
-        <div className="absolute inset-0 bg-white/6 pointer-events-none" />
-
+      {/* HYDROPONIC VERTICAL GARDENS — cream background */}
+      <section id="hydroponic" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: "#fffaf0" }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Hydroponic Vertical Gardens</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
@@ -481,17 +380,16 @@ export default function App() {
 
         <div className="relative max-w-7xl mx-auto mt-8 px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Thumbline wrappers give a subtle frame & consistent image border */}
             <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
-              <img src="/images/hydroponic-1.webp" alt="Indoor Hydroponic Vertical Garden" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+              <img src="/images/hydroponic-1.webp" alt="Indoor Hydroponic Vertical Garden" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-1.webp,hydro1.webp" />
             </div>
 
             <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
-              <img src="/images/hydroponic-2.webp" alt="Balcony Hydroponic Garden System" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+              <img src="/images/hydroponic-2.webp" alt="Balcony Hydroponic Garden System" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-2.webp,hydro2.webp" />
             </div>
 
             <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
-              <img src="/images/hydroponic-3.webp" alt="Commercial Hydroponic Green Wall" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+              <img src="/images/hydroponic-3.webp" alt="Commercial Hydroponic Green Wall" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-3.webp,hydro3.webp" />
             </div>
           </div>
         </div>
@@ -535,9 +433,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* AI-INTEGRATED LIVING */}
-      <section id="ai" className={`${sectionWrapper} relative section-wrapper-mobile`}>
-        <div className="absolute inset-0 bg-white/6 pointer-events-none" />
+      {/* AI-INTEGRATED LIVING — light gray */}
+      <section id="ai" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: "#f5f7f6" }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">AI-Integrated Living</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.</p>
@@ -581,9 +478,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* ECO SMART LIVING */}
-      <section id="eco-living" className={`${sectionWrapper} relative section-wrapper-mobile`}>
-        <div className="absolute inset-0 bg-white/6 pointer-events-none" />
+      {/* ECO SMART LIVING (white) */}
+      <section id="eco-living" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: "#ffffff" }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">Sustainable, Energy-Efficient & Smart Living Spaces</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">Smarter, greener homes for Kerala. We blend AI technology with eco-friendly architecture to deliver energy-efficient living tailored to the local climate.</p>
@@ -628,7 +524,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* SERVICES */}
+      {/* SERVICES, PROJECTS, GALLERY, PROCESS, ETC. */}
       <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
         <section id="services" className="mt-6">
           <h2 className="section-heading">Our Services</h2>
@@ -644,7 +540,7 @@ export default function App() {
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
               ].map(([title, desc, img]) => (
                 <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -661,16 +557,21 @@ export default function App() {
               {[
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior1.webp"],
                 ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
-                ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service-small-space.webp"],
-              ].map(([title, desc, img]) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
-                  <div className="p-4">
-                    <h4 className="font-semibold text-slate-900">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  </div>
-                </article>
-              ))}
+                // small-space image - added alternates to increase chance of loading
+                ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service-small-space.webp,service_small_space.webp,service-smallspace.webp"],
+              ].map(([title, desc, img]) => {
+                const altAttr = img.includes(",") ? img.split(",").map(s => s.trim()).join(",") : img;
+                const src = img.includes(",") ? img.split(",")[0].trim() : img;
+                return (
+                  <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                    <img src={`/images/${src}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={altAttr} />
+                    <div className="p-4">
+                      <h4 className="font-semibold text-slate-900">{title}</h4>
+                      <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </div>
 
@@ -684,7 +585,7 @@ export default function App() {
                 ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
               ].map(([title, desc, img]) => (
                 <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                   <div className="p-4">
                     <h4 className="font-semibold text-slate-900">{title}</h4>
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -695,9 +596,7 @@ export default function App() {
 
             <div className="mt-8 rounded-md bg-[#eef4ef] p-6 flex items-center justify-between gap-4">
               <div className="text-slate-700">Tell us about your space — we'll design the right solution.</div>
-              <a href="#contact" className="inline-flex items-center bg-[#2f5640] text-white px-5 py-2 rounded-md shadow">
-                Request a Free Consultation →
-              </a>
+              <a href="#contact" className="inline-flex items-center bg-[#2f5640] text-white px-5 py-2 rounded-md shadow">Request a Free Consultation →</a>
             </div>
           </div>
         </section>
@@ -715,7 +614,7 @@ export default function App() {
               ["project4_1.webp", "Resort Pathway"],
             ].map(([img, title]) => (
               <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+                <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
                 </div>
@@ -725,18 +624,18 @@ export default function App() {
         </section>
 
         {/* GALLERY */}
-        <section id="gallery" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
+        <section id="gallery" className="mt-16 bg-[#fffaf0] rounded-xl p-8">
           <h2 className="section-heading">Gallery</h2>
           <p className="mt-2 text-sm text-slate-600">Visual moments from our completed landscape projects.</p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
             {["gallery1.webp", "gallery2.webp", "gallery5.webp", "gallery8.webp"].map((img, index) => (
-              <img key={img} src={`/images/${img}`} loading="lazy" decoding="async" className="h-40 w-full object-cover rounded-lg shadow card-hover animate-on-scroll" alt={`Gallery ${index + 1}`} onError={onImgErrorSetPlaceholder} />
+              <img key={img} src={`/images/${img}`} loading="lazy" decoding="async" className="h-40 w-full object-cover rounded-lg shadow card-hover animate-on-scroll" alt={`Gallery ${index + 1}`} onError={onImgErrorTryAlts} data-alts={`${img}`} />
             ))}
           </div>
         </section>
 
-        {/* PROCESS */}
+        {/* PROCESS (connector + steps) */}
         <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="section-heading">Our Design & Build Process</h2>
@@ -744,10 +643,7 @@ export default function App() {
           </div>
 
           <div className="max-w-7xl mx-auto mt-8 relative">
-            <div
-              className={`hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)] connector-dots`}
-              style={{ top: connectorTop, opacity: processVisible ? 1 : 0, transform: processVisible ? "translateY(0)" : "translateY(6px)" }}
-            />
+            <div className={`hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)] connector-dots`} style={{ top: connectorTop, opacity: processVisible ? 1 : 0, transform: processVisible ? "translateY(0)" : "translateY(6px)" }} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start lg:items-stretch">
               {[
@@ -759,9 +655,8 @@ export default function App() {
                 const delay = index * (isMobile ? 80 : 120);
                 const duration = isMobile ? "400ms" : "700ms";
                 return (
-                  <div key={step} className={`card-hover rounded-xl p-8 transition-all ease-out ${processVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} animate-on-scroll`} style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}>
+                  <div key={step} className={`card-hover rounded-xl p-8 transition-all ease-out animate-on-scroll`} style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}>
                     {keyStage && <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">Key Stage</div>}
-
                     <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg float-subtle">{step}</div>
                     <h4 className="font-semibold text-slate-900 text-lg">{title}</h4>
                     <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -797,7 +692,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* PROFESSIONAL FEATURES (new section) */}
+        {/* PROFESSIONAL FEATURES */}
         <section className="mt-14">
           <h2 className="section-heading">Professional Capabilities & Credentials</h2>
           <p className="mt-2 text-sm text-slate-600 max-w-3xl">Certifications, partnerships and capabilities that make delivery predictable and high-quality.</p>
@@ -817,7 +712,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* NEWS, REVIEWS, ABOUT, CAREERS, CONTACT (kept) */}
+        {/* NEWS, REVIEWS, ABOUT (kept) */}
         <section id="news" className="mt-16">
           <h2 className="section-heading">News & Updates</h2>
           <p className="mt-2 text-sm text-slate-600">Latest announcements & events.</p>
@@ -829,7 +724,7 @@ export default function App() {
               ["news3.webp", "Kerala Landscaping Trends 2025", "Emerging eco-friendly materials and design philosophies."],
             ].map(([img, title, desc]) => (
               <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{title}</h3>
                   <p className="mt-2 text-sm text-slate-600">{desc}</p>
@@ -858,9 +753,12 @@ export default function App() {
           </div>
         </section>
 
+        {/* ABOUT (kept lower section as-is) */}
         <section id="about" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
           <h2 className="section-heading">About Padanilathu</h2>
-          <p className="mt-3 text-sm text-slate-600">Padanilathu is an eco-focused design and construction studio integrating architecture, interiors, landscape, energy efficiency and smart automation. Our mission is to create healthier, low-energy living environments that are deeply connected to nature and future-ready.</p>
+          <p className="mt-3 text-sm text-slate-600">
+            Padanilathu is an eco-focused design and construction studio integrating architecture, interiors, landscape, energy efficiency and smart automation. Our mission is to create healthier, low-energy living environments that are deeply connected to nature and future-ready.
+          </p>
 
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
             {[
@@ -869,7 +767,7 @@ export default function App() {
               ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
             ].map(([img, title, desc]) => (
               <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm animate-on-scroll">
-                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                 <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{desc}</p>
               </article>
@@ -877,17 +775,18 @@ export default function App() {
           </div>
         </section>
 
+        {/* POSITIONING SUMMARY (center text on phone) */}
         <section className="mt-10">
           <div className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg">
             <div className="absolute inset-0 bg-white/25" />
-            <div className="relative p-12">
-              <div className="text-center max-w-3xl mx-auto">
+            <div className="relative p-8 sm:p-12">
+              <div className="text-center max-w-3xl mx-auto positioning-center-mobile">
                 <h3 className="text-3xl font-serif text-slate-900">Our Positioning</h3>
                 <p className="mt-4 text-lg text-slate-700">A design studio focused on sustainability, energy efficiency, and intelligent living.</p>
               </div>
 
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
                   <div className="text-3xl text-green-700">🍃</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Eco Home Designer</h4>
@@ -895,7 +794,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
                   <div className="text-3xl text-slate-700">🏠</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Interior + Exterior Studio</h4>
@@ -903,7 +802,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
                   <div className="text-3xl text-yellow-500">⚡</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Energy-Saving Specialist</h4>
@@ -911,7 +810,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
                   <div className="text-3xl text-emerald-700">🤖</div>
                   <div>
                     <h4 className="font-semibold text-slate-900 text-xl">Smart Home Integrator</h4>
@@ -925,6 +824,7 @@ export default function App() {
           </div>
         </section>
 
+        {/* CAREERS */}
         <section id="careers" className="mt-16 bg-[#f7f8f7] rounded-xl p-6">
           <h2 className="section-heading">Careers</h2>
           <p className="mt-2 text-sm text-slate-600">Join our growing team — we hire designers, engineers, horticulturists and site specialists across Kerala.</p>
@@ -944,9 +844,7 @@ export default function App() {
           </div>
 
           <div className="mt-6">
-            <a href="#contact" className="inline-flex items-center bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold">
-              Apply Now
-            </a>
+            <a href="#contact" className="inline-flex items-center bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold">Apply Now</a>
           </div>
         </section>
 
@@ -965,7 +863,7 @@ export default function App() {
               </ul>
 
               <div className="mt-6 rounded-md overflow-hidden">
-                <img src="/images/about_office.webp" alt="Padanilathu office" className="w-full h-56 object-cover rounded-md" loading="lazy" decoding="async" onError={onImgErrorSetPlaceholder} />
+                <img src="/images/about_office.webp" alt="Padanilathu office" className="w-full h-56 object-cover rounded-md" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="about_office.webp" />
               </div>
             </div>
 
