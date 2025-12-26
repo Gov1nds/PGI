@@ -4,8 +4,67 @@ import React, { useEffect, useState } from "react";
   App.jsx — Full component (2025-12-26)
   - Full code with hero redesign, 3-image crossfade carousel, section palette applied, image fallback logic,
     intersection observers and accessibility considerations.
+  - Includes an accessible inline SVG Logo component and CSS custom properties for consistent theming.
   - Replace the /images/* assets with your actual images.
 */
+
+function Logo({ compact = false, className = "" }) {
+  // Accessible inline SVG mark + wordmark; scales well and requires no external asset.
+  // Pass compact={true} to show just the mark.
+  return (
+    <svg
+      className={className}
+      width={compact ? 40 : 160}
+      height={compact ? 40 : 36}
+      viewBox="0 0 520 120"
+      role="img"
+      aria-label="Padanilathu — sustainable design"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMinYMid meet"
+    >
+      <title>Padanilathu — sustainable design studio</title>
+
+      {/* mark: stylized leaf + P monogram */}
+      <g transform="translate(10,12)">
+        <g transform="translate(0,0) scale(0.9)">
+          <path
+            d="M73.5 13c-14.7 5.6-28.6 16-38.8 29.3-7.8 10-14.8 21.2-20 34-0.9 2.6-1.6 5.4-2.1 8.1-0.1 0.7 0.4 1.3 1.1 1.3 0.1 0 0.3 0 0.4-0.1 5.9-2 11.6-4.6 17-7.8 9.4-5.6 18.3-12.8 26.2-21.4 10.1-11.2 17.9-25.1 21.5-40.6 0.4-1.8-0.9-3.6-2.8-3.7-1.1-0.1-2.1 0.1-3 0.4z"
+            fill="var(--brand-dark)"
+            opacity="0.98"
+          />
+          <path
+            d="M45 78c-6.2 4.6-12.6 8.6-19.2 11.9-0.5 0.3-0.9 0.6-1.3 1-0.9 0.9-0.6 2.5 0.6 3 9.3 3.4 19.1 5 29 5 15.4 0 30.3-3.9 43.3-11.1 1.5-0.9 1.8-3.2 0.6-4.6-0.6-0.7-1.5-1.1-2.3-1.2-1.7-0.2-3.4 0.2-5.1 0.5-14.7 3.5-30.5 2.9-44.6-3.5z"
+            fill="var(--brand)"
+            opacity="0.9"
+          />
+          {/* P monogram overlaid */}
+          <path
+            d="M120 12c-18.4 0-34 12.3-34 30.9V78h14V44.9c0-9.7 6.9-16.9 20-16.9 11.8 0 18.9 6.2 18.9 16.3 0 10.2-7.6 16.8-21.4 16.8H116v14h7.8c21 0 34.8-12.8 34.8-32.6C158.6 25.6 146.5 12 120 12z"
+            fill="var(--brand-text)"
+            opacity="0.98"
+          />
+        </g>
+      </g>
+
+      {/* wordmark — only display when not compact */}
+      {!compact && (
+        <g transform="translate(210,18)">
+          <text
+            x="0"
+            y="28"
+            fontFamily="'Playfair Display', serif"
+            fontWeight="700"
+            fontSize="34"
+            fill="var(--brand-text)"
+          >
+            Padanilathu
+          </text>
+          <rect x="0" y="34" rx="2" ry="2" width="84" height="4" fill="var(--brand-accent)" opacity="0.95" />
+        </g>
+      )}
+    </svg>
+  );
+}
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(false);
@@ -158,6 +217,18 @@ export default function App() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;600&display=swap');
 
+        :root {
+          --brand: #2f8a56;
+          --brand-dark: #1f6b41;
+          --brand-accent: #6FA56F;
+          --brand-accent-2: #9fd7a2;
+          --brand-text: #0f172a;
+          --muted-1: #eef8ef;
+          --muted-2: #f3fbf3;
+          --glass: rgba(255,255,255,0.88);
+          --elev: 0 14px 36px rgba(2,6,23,0.06);
+        }
+
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes floatY { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
         @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
@@ -168,13 +239,13 @@ export default function App() {
         .animate-fadeInUp-slow { animation: fadeInUp 900ms cubic-bezier(.2,.9,.3,1) both; }
         .float-subtle { animation: floatY 6s ease-in-out infinite; }
 
-        .card-hover { transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; border: 1px solid rgba(15,23,42,0.05); background: rgba(255,255,255,0.95); backdrop-filter: blur(3px); }
-        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(15,23,42,0.08); }
+        .card-hover { transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; border: 1px solid rgba(15,23,42,0.05); background: var(--glass); backdrop-filter: blur(3px); }
+        .card-hover:hover { transform: translateY(-6px); box-shadow: var(--elev); }
 
         .thumbline { border-radius: 12px; padding: 6px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,255,249,0.9)); box-shadow: 0 8px 20px rgba(15,23,42,0.06); display:block; overflow:hidden; }
         .thumbline img { display:block; border-radius:8px; width:100%; height:100%; object-fit:cover; }
 
-        .section-heading { font-family: "Playfair Display", serif; font-size: 1.9rem; line-height: 1.05; font-weight:700; color:#0f172a; margin:0; }
+        .section-heading { font-family: "Playfair Display", serif; font-size: 1.9rem; line-height: 1.05; font-weight:700; color:var(--brand-text); margin:0; }
         @media (min-width:1024px){ .section-heading { font-size:2.25rem; } }
 
         .animate-on-scroll { opacity:0; transform: translateY(8px); transition: opacity 640ms cubic-bezier(.2,.9,.3,1), transform 640ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
@@ -192,20 +263,20 @@ export default function App() {
         .hero-info-card {
           width: 100%;
           max-width: 420px;
-          background: rgba(255,255,255,0.9);
+          background: rgba(255,255,255,0.92);
           border-radius: 14px;
           padding: 28px;
-          box-shadow: 0 20px 40px rgba(6,7,12,0.28);
+          box-shadow: 0 20px 40px rgba(6,7,12,0.18);
           border: 1px solid rgba(15,23,42,0.06);
           backdrop-filter: blur(6px);
         }
-        .hero-info-card .kicker { color: #2f6f4f; font-weight:600; font-size:0.95rem; }
-        .hero-info-card h4 { margin: 8px 0 6px; font-size:1.5rem; color:#0f172a; font-weight:700; font-family: "Playfair Display", serif; }
+        .hero-info-card .kicker { color: var(--brand); font-weight:600; font-size:0.95rem; }
+        .hero-info-card h4 { margin: 8px 0 6px; font-size:1.5rem; color:var(--brand-text); font-weight:700; font-family: "Playfair Display", serif; }
         .hero-info-card p { margin:0; color: #334155; font-size:0.95rem; line-height:1.45; }
 
         /* Buttons matching uploaded style */
         .btn-primary {
-          background: linear-gradient(180deg,#2f8a56,#1f6b41);
+          background: linear-gradient(180deg,var(--brand),var(--brand-dark));
           color:white;
           padding: 12px 22px;
           border-radius: 12px;
@@ -222,7 +293,7 @@ export default function App() {
           font-weight:600;
         }
 
-        .logo-underline { display:block; height:3px; width:48px; background:#6FA56F; margin-top:6px; border-radius:2px; }
+        .logo-underline { display:block; height:3px; width:48px; background:var(--brand-accent); margin-top:6px; border-radius:2px; }
 
         /* header dark translucent when at top */
         .topbar-dark { background: rgba(6,6,6,0.55); backdrop-filter: blur(6px); }
@@ -238,6 +309,10 @@ export default function App() {
 
         /* Our positioning: center on small screens */
         .positioning-center-mobile { text-align: center; }
+
+        /* header logo sizing */
+        .site-logo { display:flex; align-items:center; gap:10px; }
+        .site-logo .wordmark { display:inline-block; vertical-align:middle; color:var(--brand-text); font-family: "Playfair Display", serif; font-weight:700; font-size:1.1rem; letter-spacing:0.6px; }
       `}</style>
 
       {/* animated gradient overlay */}
@@ -250,13 +325,8 @@ export default function App() {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
-            <a href="#home" className="group inline-flex items-center gap-3">
-              <div className={`text-xl md:text-2xl font-semibold tracking-wide text-white`} style={{ fontFamily: "Poppins, Inter, Arial, sans-serif" }}>
-                <span className="relative inline-block">
-                  PADANILATHU
-                  <span aria-hidden className="logo-underline" />
-                </span>
-              </div>
+            <a href="#home" className="group inline-flex items-center gap-3 site-logo" aria-label="Padanilathu home">
+              <Logo className="logo-svg" />
             </a>
 
             <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`} aria-label="Primary navigation">
@@ -285,7 +355,7 @@ export default function App() {
                   {item.charAt(0).toUpperCase() + item.slice(1)}
                 </a>
               ))}
-              <button onClick={() => { setQuoteOpen(true); setMobileOpen(false); }} className="mt-2 cta-primary px-4 py-2 rounded-md text-white">Request Quote</button>
+              <button onClick={() => { setQuoteOpen(true); setMobileOpen(false); }} className="mt-2 cta-primary px-4 py-2 rounded-md text-white" style={{ background: "var(--brand)" }}>Request Quote</button>
             </div>
           </div>
         )}
@@ -347,7 +417,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* COMPANY INTRO (top text-only, removed the earlier 3 image tiles) */}
+      {/* COMPANY INTRO (top text-only) */}
       <section id="company-intro" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.appleLight }}>
         <div className="relative max-w-6xl mx-auto text-center">
           <h2 className="section-heading">About Padanilathu</h2>
@@ -401,7 +471,7 @@ export default function App() {
               </p>
 
               <div className="mt-6">
-                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow">Explore Sustainable Options →</a>
+                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow" style={{ background: "var(--brand)" }}>Explore Sustainable Options →</a>
               </div>
             </div>
           </div>
@@ -963,9 +1033,14 @@ export default function App() {
       <footer className="bg-transparent border-t border-slate-200 mt-20">
         <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <div className="font-poppins font-semibold text-lg">padanilathu</div>
-            <p className="text-sm mt-2 text-slate-700">Transforming Kerala’s outdoor spaces since 2008.</p>
-            <p className="text-sm text-slate-700 mt-1">17+ Years · 500+ Completed Sites</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <Logo compact />
+              <div>
+                <div className="font-poppins font-semibold text-lg" style={{ textTransform: "lowercase" }}>padanilathu</div>
+                <p className="text-sm mt-2 text-slate-700">Transforming Kerala’s outdoor spaces since 2008.</p>
+                <p className="text-sm text-slate-700 mt-1">17+ Years · 500+ Completed Sites</p>
+              </div>
+            </div>
 
             <div className="flex gap-3 mt-4">
               <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 border rounded-md flex items-center justify-center text-slate-700 hover:bg-[#6FA56F] hover:text-white" aria-label="Instagram">IG</a>
