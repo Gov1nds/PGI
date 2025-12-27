@@ -511,7 +511,6 @@ export default function App() {
         </div>
       </section>
 
-
       {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
       <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
         <div className="relative max-w-6xl mx-auto text-center">
