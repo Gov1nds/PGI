@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 /*
-  App.jsx — Full component (2025-12-26)
-  - Full code with hero redesign, 3-image crossfade carousel, section palette applied, image fallback logic,
-    intersection observers and accessibility considerations.
-  - Includes an accessible inline SVG Logo component and CSS custom properties for consistent theming.
-  - Replace the /images/* assets with your actual images.
+  App.jsx — Full component (2025-12-26) — UPDATED hero contrast + blurred background panel
 */
 
 function Logo({ compact = false, className = "" }) {
-  // Accessible inline SVG mark + wordmark; scales well and requires no external asset.
-  // Pass compact={true} to show just the mark.
   return (
     <svg
       className={className}
@@ -23,8 +17,6 @@ function Logo({ compact = false, className = "" }) {
       preserveAspectRatio="xMinYMid meet"
     >
       <title>Padanilathu — sustainable design studio</title>
-
-      {/* mark: stylized leaf + P monogram */}
       <g transform="translate(10,12)">
         <g transform="translate(0,0) scale(0.9)">
           <path
@@ -37,7 +29,6 @@ function Logo({ compact = false, className = "" }) {
             fill="var(--brand)"
             opacity="0.9"
           />
-          {/* P monogram overlaid */}
           <path
             d="M120 12c-18.4 0-34 12.3-34 30.9V78h14V44.9c0-9.7 6.9-16.9 20-16.9 11.8 0 18.9 6.2 18.9 16.3 0 10.2-7.6 16.8-21.4 16.8H116v14h7.8c21 0 34.8-12.8 34.8-32.6C158.6 25.6 146.5 12 120 12z"
             fill="var(--brand-text)"
@@ -46,7 +37,6 @@ function Logo({ compact = false, className = "" }) {
         </g>
       </g>
 
-      {/* wordmark — only display when not compact */}
       {!compact && (
         <g transform="translate(210,18)">
           <text
@@ -75,7 +65,6 @@ export default function App() {
   const [processVisible, setProcessVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // HERO carousel images (place your hero images in /images/)
   const heroImages = [
     { src: "/images/hero1.webp", alt: "Padanilathu — Sustainable design hero 1" },
     { src: "/images/hero2.webp", alt: "Padanilathu — Sustainable design hero 2" },
@@ -83,7 +72,6 @@ export default function App() {
   ];
   const [heroIndex, setHeroIndex] = useState(0);
 
-  // Social links provision (edit to your live profiles)
   const socialLinks = {
     instagram: "https://www.instagram.com/padanilathu.co/",
     facebook: "https://www.facebook.com/profile.php?id=61585658551823",
@@ -115,7 +103,6 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // PROCESS observer - tuned to trigger reliably on mobile + desktop and reveal internal animate-on-scroll elements
   useEffect(() => {
     const section = document.getElementById("process");
     if (!section) return;
@@ -123,19 +110,16 @@ export default function App() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setProcessVisible(true);
-          // reveal any internal animate-on-scroll items immediately for reliability
           section.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
           observer.disconnect();
         }
       },
-      // lower threshold and a little rootMargin so it triggers reliably on small screens
       { threshold: 0.08, rootMargin: "0px 0px -10% 0px" }
     );
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
-  // Animate-on-scroll observer for cards/images (keeps reduced-motion safe)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -163,47 +147,31 @@ export default function App() {
     return () => obs.disconnect();
   }, [mounted]);
 
-  // hero auto-cycle
   useEffect(() => {
     const id = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 6000);
     return () => clearInterval(id);
   }, []);
 
-  // small helper for robust image fallbacks: tries alternate filenames if provided, otherwise placeholder
   const onImgErrorTryAlts = (e) => {
     const el = e.currentTarget;
-    // remove default onerror to avoid loop
     el.onerror = null;
-
-    // if a data-alts attribute exists (comma-separated), try the next alt
     const altsRaw = el.dataset.alts || "";
     const tried = el.dataset.tried ? el.dataset.tried.split(",").filter(Boolean) : [];
-
     const alts = altsRaw.split(",").map((s) => s.trim()).filter(Boolean);
     const nextAlt = alts.find((a) => !tried.includes(a));
-
     if (nextAlt) {
-      // mark tried
       el.dataset.tried = tried.concat([nextAlt]).join(",");
       el.src = `/images/${nextAlt}`;
-      // reattach onerror to continue trying
       el.onerror = onImgErrorTryAlts;
       return;
     }
-
-    // final fallback
     el.src = "/images/placeholder.webp";
   };
 
-  // connector top calculation
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
-
-  // Section wrapper helper
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-16";
-
-  // Small palette — you can edit or expand this to cycle backgrounds across sections.
   const sectionPalette = {
-    apple: "#0f3b2e10" /* very light apple tint (kept subtle) */,
+    apple: "#0f3b2e10",
     appleLight: "#eef8ef",
     cream: "#fffaf0",
     offWhite: "#ffffff",
@@ -213,7 +181,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen relative font-sans text-slate-900">
-      {/* Inline styles & animations */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;600&display=swap');
 
@@ -253,11 +220,31 @@ export default function App() {
 
         /* HERO carousel */
         .hero-carousel { position: absolute; inset:0; overflow:hidden; display:block; }
-        .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease; transform: scale(1.02); }
+        .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease, filter 900ms ease; transform: scale(1.02); }
         .hero-carousel img.active { opacity:1; z-index:1; transform: scale(1); }
 
-        /* hero overlay stronger for the photographed mood */
-        .hero-overlay { position:absolute; inset:0; background: linear-gradient(180deg, rgba(6,6,6,0.55), rgba(6,6,6,0.28)); z-index:0; }
+        /* Slight global image treatment so foreground text stands out */
+        .hero-carousel img { filter: saturate(0.95) contrast(0.98); }
+        .hero-carousel img.active { filter: saturate(0.95) contrast(0.98) blur(0px); }
+
+        /* hero overlay — made slightly stronger for contrast */
+        .hero-overlay { position:absolute; inset:0; background: linear-gradient(180deg, rgba(6,6,6,0.68), rgba(6,6,6,0.36)); z-index:0; }
+
+        /* NEW: localized frosted/blur panel behind hero copy to separate text from busy photos */
+        .hero-copy-panel {
+          display: inline-block;
+          background: rgba(6,10,12,0.46); /* dark glass for white text */
+          backdrop-filter: blur(8px) saturate(1.05);
+          -webkit-backdrop-filter: blur(8px) saturate(1.05);
+          border-radius: 14px;
+          padding: 20px 22px;
+          box-shadow: 0 18px 40px rgba(6,7,12,0.35);
+          border: 1px solid rgba(255,255,255,0.06);
+          max-width: 760px;
+        }
+
+        .hero-copy-panel .hero-headline { color: #ffffff; text-shadow: 0 10px 28px rgba(3,6,8,0.6); }
+        .hero-copy-panel .hero-lead { color: rgba(255,255,255,0.95); text-shadow: 0 6px 18px rgba(2,4,6,0.45); }
 
         /* hero info card (right) similar to uploaded design */
         .hero-info-card {
@@ -272,14 +259,7 @@ export default function App() {
         }
         .hero-info-card .kicker { color: var(--brand); font-weight:600; font-size:0.95rem; }
         .hero-info-card h4 { margin: 8px 0 6px; font-size:1.5rem; color:var(--brand-text); font-weight:700; font-family: "Playfair Display", serif; }
-       .hero-info-card p { 
-  margin: 0;
-  color: #0f172a; /* solid black-ish (Tailwind slate-900) */
-  font-size: 0.95rem;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
+        .hero-info-card p { margin: 0; color: #0f172a; font-size: 0.95rem; line-height: 1.5; font-weight: 400; }
 
         /* Buttons matching uploaded style */
         .btn-primary {
@@ -312,6 +292,10 @@ export default function App() {
           .section-heading { font-size: 1.5rem; text-align:center; }
           .positioning-grid-mobile { text-align:center; }
           .hero-info-card { display:none; } /* hide right card on small screens to match screenshots */
+
+          /* mobile: ensure hero copy panel is full width with comfortable padding */
+          .hero-copy-panel { display:block; width: calc(100% - 48px); margin: 0 auto; padding: 18px; }
+          .hero-copy-panel .hero-headline { font-size: 2.1rem; line-height:1.04; }
         }
 
         /* Our positioning: center on small screens */
@@ -322,10 +306,8 @@ export default function App() {
         .site-logo .wordmark { display:inline-block; vertical-align:middle; color:var(--brand-text); font-family: "Playfair Display", serif; font-weight:700; font-size:1.1rem; letter-spacing:0.6px; }
       `}</style>
 
-      {/* animated gradient overlay */}
       <div className="animated-gradient" aria-hidden />
 
-      {/* HEADER - dark translucent at top, becomes light on scroll */}
       <header
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "topbar-sticky" : "topbar-dark"}`}
         aria-label="Main header"
@@ -368,7 +350,6 @@ export default function App() {
         )}
       </header>
 
-      {/* HERO (3-image carousel with crossfade) */}
       <section id="home" className="relative min-h-[72vh] flex items-center" aria-label="Hero section">
         <div className="absolute inset-0 hero-carousel" aria-hidden>
           {heroImages.map((h, idx) => (
@@ -389,30 +370,32 @@ export default function App() {
         <div className="relative z-20 max-w-7xl mx-auto px-6 py-20 sm:py-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7">
-              <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"} ${isMobile ? "text-emerald-900" : "text-white"}`}>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight max-w-3xl display-lg section-heading" style={{ lineHeight: 1.02, color: "white", fontFamily: "Playfair Display, Georgia, serif", fontWeight: 700 }}>
-                  Sustainable Design for Better Living
-                </h1>
+              <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"}`}>
+                {/* NEW: frosted panel behind the main copy to improve legibility on busy images */}
+                <div className="hero-copy-panel">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight max-w-3xl display-lg section-heading hero-headline" style={{ lineHeight: 1.02, fontFamily: "Playfair Display, Georgia, serif", fontWeight: 700 }}>
+                    Sustainable Design for Better Living
+                  </h1>
 
-                <p className={`mt-4 sm:mt-6 text-base sm:text-lg md:text-xl max-w-2xl text-white/95`} style={{ color: "rgba(255,255,255,0.92)" }}>
-                  Eco-first homes and outdoor spaces, crafted for Kerala’s climate — energy-saving, beautiful and future-ready.
-                </p>
+                  <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl max-w-2xl hero-lead" style={{ color: "rgba(255,255,255,0.95)" }}>
+                    Eco-first homes and outdoor spaces, crafted for Kerala’s climate — energy-saving, beautiful and future-ready.
+                  </p>
 
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Exterior Design</span>
-                  <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">🌿 Landscaping</span>
-                  <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Interior Design</span>
-                </div>
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Exterior Design</span>
+                    <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">🌿 Landscaping</span>
+                    <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Interior Design</span>
+                  </div>
 
-                <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                  <button onClick={() => setQuoteOpen(true)} className="btn-primary" style={{ borderRadius: 10 }}>Request Quote</button>
+                  <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                    <button onClick={() => setQuoteOpen(true)} className="btn-primary" style={{ borderRadius: 10 }}>Request Quote</button>
 
-                  <a href="#projects" className="btn-outline" style={{ borderRadius: 10 }}>View Projects</a>
+                    <a href="#projects" className="btn-outline" style={{ borderRadius: 10 }}>View Projects</a>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* right info card */}
             <aside className="hidden lg:block lg:col-span-5">
               <div className="hero-info-card animate-fadeInUp-slow" role="note" aria-label="Trusted across Kerala">
                 <div className="kicker">17+ Years · 500+ Completed Sites</div>
