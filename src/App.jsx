@@ -460,7 +460,7 @@ export default function App() {
 
                   <div className="mt-8 flex flex-wrap gap-3">
                     <span className="pill">Exterior Design</span>
-                    <span className="pill">🌿 Landscaping</span>
+                    <span className="pill">Landscaping</span>
                     <span className="pill">Interior Design</span>
                   </div>
 
