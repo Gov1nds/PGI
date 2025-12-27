@@ -1,10 +1,32 @@
 import React, { useEffect, useState } from "react";
 
 /*
-  App.jsx — Full component (2025-12-26) — UPDATED hero contrast + blurred background panel
+  App.jsx — Updated: new logo support, mobile hero badges and improved legibility (2025-12-27)
+  - Place your new logo at: /images/padanilathu-logo.png (or change the path below)
 */
 
-function Logo({ compact = false, className = "" }) {
+function Logo({ compact = false, className = "", imgSrc = "" }) {
+  // If an image path is provided, render that image (good for raster logos),
+  // otherwise fall back to the inline accessible SVG mark + wordmark.
+  if (imgSrc) {
+    return (
+      <img
+        src={imgSrc}
+        alt="Padanilathu logo"
+        className={className}
+        style={{
+          height: compact ? 40 : 36,
+          width: compact ? 40 : 160,
+          objectFit: "contain",
+        }}
+        onError={(e) => {
+          // if logo image fails to load, remove it so SVG fallback will be used
+          e.currentTarget.style.display = "none";
+        }}
+      />
+    );
+  }
+
   return (
     <svg
       className={className}
@@ -17,6 +39,8 @@ function Logo({ compact = false, className = "" }) {
       preserveAspectRatio="xMinYMid meet"
     >
       <title>Padanilathu — sustainable design studio</title>
+
+      {/* mark: stylized leaf + P monogram */}
       <g transform="translate(10,12)">
         <g transform="translate(0,0) scale(0.9)">
           <path
@@ -29,6 +53,7 @@ function Logo({ compact = false, className = "" }) {
             fill="var(--brand)"
             opacity="0.9"
           />
+          {/* P monogram overlaid */}
           <path
             d="M120 12c-18.4 0-34 12.3-34 30.9V78h14V44.9c0-9.7 6.9-16.9 20-16.9 11.8 0 18.9 6.2 18.9 16.3 0 10.2-7.6 16.8-21.4 16.8H116v14h7.8c21 0 34.8-12.8 34.8-32.6C158.6 25.6 146.5 12 120 12z"
             fill="var(--brand-text)"
@@ -65,6 +90,7 @@ export default function App() {
   const [processVisible, setProcessVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // HERO carousel images (place your hero images in /images/)
   const heroImages = [
     { src: "/images/hero1.webp", alt: "Padanilathu — Sustainable design hero 1" },
     { src: "/images/hero2.webp", alt: "Padanilathu — Sustainable design hero 2" },
@@ -72,6 +98,7 @@ export default function App() {
   ];
   const [heroIndex, setHeroIndex] = useState(0);
 
+  // Social links provision (edit to your live profiles)
   const socialLinks = {
     instagram: "https://www.instagram.com/padanilathu.co/",
     facebook: "https://www.facebook.com/profile.php?id=61585658551823",
@@ -103,6 +130,7 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // PROCESS observer - tuned to trigger reliably on mobile + desktop and reveal internal animate-on-scroll elements
   useEffect(() => {
     const section = document.getElementById("process");
     if (!section) return;
@@ -110,16 +138,19 @@ export default function App() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setProcessVisible(true);
+          // reveal any internal animate-on-scroll items immediately for reliability
           section.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
           observer.disconnect();
         }
       },
+      // lower threshold and a little rootMargin so it triggers reliably on small screens
       { threshold: 0.08, rootMargin: "0px 0px -10% 0px" }
     );
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
+  // Animate-on-scroll observer for cards/images (keeps reduced-motion safe)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -147,31 +178,47 @@ export default function App() {
     return () => obs.disconnect();
   }, [mounted]);
 
+  // hero auto-cycle
   useEffect(() => {
     const id = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 6000);
     return () => clearInterval(id);
   }, []);
 
+  // small helper for robust image fallbacks: tries alternate filenames if provided, otherwise placeholder
   const onImgErrorTryAlts = (e) => {
     const el = e.currentTarget;
+    // remove default onerror to avoid loop
     el.onerror = null;
+
+    // if a data-alts attribute exists (comma-separated), try the next alt
     const altsRaw = el.dataset.alts || "";
     const tried = el.dataset.tried ? el.dataset.tried.split(",").filter(Boolean) : [];
+
     const alts = altsRaw.split(",").map((s) => s.trim()).filter(Boolean);
     const nextAlt = alts.find((a) => !tried.includes(a));
+
     if (nextAlt) {
+      // mark tried
       el.dataset.tried = tried.concat([nextAlt]).join(",");
       el.src = `/images/${nextAlt}`;
+      // reattach onerror to continue trying
       el.onerror = onImgErrorTryAlts;
       return;
     }
+
+    // final fallback
     el.src = "/images/placeholder.webp";
   };
 
+  // connector top calculation
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
+
+  // Section wrapper helper
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-16";
+
+  // Small palette — you can edit or expand this to cycle backgrounds across sections.
   const sectionPalette = {
-    apple: "#0f3b2e10",
+    apple: "#0f3b2e10" /* very light apple tint (kept subtle) */,
     appleLight: "#eef8ef",
     cream: "#fffaf0",
     offWhite: "#ffffff",
@@ -181,6 +228,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen relative font-sans text-slate-900">
+      {/* Inline styles & animations */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;600&display=swap');
 
@@ -243,6 +291,14 @@ export default function App() {
           max-width: 760px;
         }
 
+        .hero-meta {
+          color: var(--brand-accent);
+          font-weight: 700;
+          font-size: 0.95rem;
+          margin-bottom: 8px;
+          letter-spacing: 0.1px;
+        }
+
         .hero-copy-panel .hero-headline { color: #ffffff; text-shadow: 0 10px 28px rgba(3,6,8,0.6); }
         .hero-copy-panel .hero-lead { color: rgba(255,255,255,0.95); text-shadow: 0 6px 18px rgba(2,4,6,0.45); }
 
@@ -291,11 +347,30 @@ export default function App() {
           .section-wrapper-mobile { padding-top: 1.75rem; padding-bottom: 1.75rem; }
           .section-heading { font-size: 1.5rem; text-align:center; }
           .positioning-grid-mobile { text-align:center; }
-          .hero-info-card { display:none; } /* hide right card on small screens to match screenshots */
 
-          /* mobile: ensure hero copy panel is full width with comfortable padding */
-          .hero-copy-panel { display:block; width: calc(100% - 48px); margin: 0 auto; padding: 18px; }
-          .hero-copy-panel .hero-headline { font-size: 2.1rem; line-height:1.04; }
+          /* ensure hero copy panel is full width and stronger on mobile for legibility */
+          .hero-copy-panel {
+            display:block;
+            width: calc(100% - 48px);
+            margin: 0 auto;
+            padding: 16px 18px;
+            background: rgba(5,8,10,0.62);
+            backdrop-filter: blur(10px) saturate(1.05);
+          }
+          .hero-copy-panel .hero-headline {
+            font-size: 2.1rem;
+            line-height: 1.02;
+            text-align: center;
+          }
+          .hero-copy-panel .hero-lead {
+            text-align: center;
+          }
+          .hero-meta { text-align:center; font-size:0.9rem; }
+
+          /* slightly stronger overlay on phones to help contrast with bright hero photos */
+          .hero-overlay { background: linear-gradient(180deg, rgba(6,6,6,0.76), rgba(6,6,6,0.46)); }
+
+          .hero-info-card { display:none; } /* keep the right card hidden on small screens */
         }
 
         /* Our positioning: center on small screens */
@@ -306,16 +381,19 @@ export default function App() {
         .site-logo .wordmark { display:inline-block; vertical-align:middle; color:var(--brand-text); font-family: "Playfair Display", serif; font-weight:700; font-size:1.1rem; letter-spacing:0.6px; }
       `}</style>
 
+      {/* animated gradient overlay */}
       <div className="animated-gradient" aria-hidden />
 
+      {/* HEADER - dark translucent at top, becomes light on scroll */}
       <header
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "topbar-sticky" : "topbar-dark"}`}
         aria-label="Main header"
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
+            {/* Replace logo image path below with your new logo filename if different */}
             <a href="#home" className="group inline-flex items-center gap-3 site-logo" aria-label="Padanilathu home">
-              <Logo className="logo-svg" />
+              <Logo imgSrc="/images/padanilathu-logo.png" />
             </a>
 
             <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`} aria-label="Primary navigation">
@@ -350,6 +428,7 @@ export default function App() {
         )}
       </header>
 
+      {/* HERO (3-image carousel with crossfade) */}
       <section id="home" className="relative min-h-[72vh] flex items-center" aria-label="Hero section">
         <div className="absolute inset-0 hero-carousel" aria-hidden>
           {heroImages.map((h, idx) => (
@@ -372,7 +451,12 @@ export default function App() {
             <div className="lg:col-span-7">
               <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"}`}>
                 {/* NEW: frosted panel behind the main copy to improve legibility on busy images */}
-                <div className="hero-copy-panel">
+                <div className="hero-copy-panel" role="region" aria-label="Hero introduction">
+                  {/* Visible on both mobile and desktop */}
+                  <div className="hero-meta" aria-hidden>
+                    17+ Years · 500+ Completed Sites
+                  </div>
+
                   <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight max-w-3xl display-lg section-heading hero-headline" style={{ lineHeight: 1.02, fontFamily: "Playfair Display, Georgia, serif", fontWeight: 700 }}>
                     Sustainable Design for Better Living
                   </h1>
@@ -396,6 +480,7 @@ export default function App() {
               </div>
             </div>
 
+            {/* right info card (kept for desktop) */}
             <aside className="hidden lg:block lg:col-span-5">
               <div className="hero-info-card animate-fadeInUp-slow" role="note" aria-label="Trusted across Kerala">
                 <div className="kicker">17+ Years · 500+ Completed Sites</div>
@@ -404,16 +489,6 @@ export default function App() {
               </div>
             </aside>
           </div>
-        </div>
-      </section>
-
-      {/* COMPANY INTRO (top text-only) */}
-      <section id="company-intro" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.appleLight }}>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="section-heading">About Padanilathu</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            Padanilathu is an integrated design-build studio specialising in sustainable outdoor environments, energy-efficient homes and AI-enabled living. We combine horticultural knowledge, practical construction experience and modern design tools to deliver resilient, beautiful spaces across Kerala.
-          </p>
         </div>
       </section>
 
