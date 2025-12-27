@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 
 /*
-  App.jsx — Updated: new logo support, mobile hero badges and improved legibility (2025-12-27)
-  - Place your new logo at: /images/padanilathu-logo.png (or change the path below)
+  App.jsx — Polished / professional styling + larger logo (2025-12-27)
+  - Increased logo size & touch area
+  - Refined color palette, spacing, typography, and controls for a more professional look
+  - Stronger, but balanced hero contrast + frosted panel
+  - Subtle UI micro-interactions (button hover, nav underline)
+  - Keep your logic & image fallbacks intact — replace /images/padanilathu-logo.png with your new raster logo
 */
 
 function Logo({ compact = false, className = "", imgSrc = "" }) {
-  // If an image path is provided, render that image (good for raster logos),
-  // otherwise fall back to the inline accessible SVG mark + wordmark.
+  // Larger default size to satisfy "increase logo size" request.
+  // If imgSrc is provided we show the raster logo (recommended), otherwise fallback SVG.
+  const width = compact ? 56 : 220;
+  const height = compact ? 40 : 44;
+
   if (imgSrc) {
     return (
       <img
@@ -15,12 +22,13 @@ function Logo({ compact = false, className = "", imgSrc = "" }) {
         alt="Padanilathu logo"
         className={className}
         style={{
-          height: compact ? 40 : 36,
-          width: compact ? 40 : 160,
+          height,
+          width,
           objectFit: "contain",
+          display: "block",
         }}
+        // If the logo can't load we hide the image so the SVG fallback below is visible.
         onError={(e) => {
-          // if logo image fails to load, remove it so SVG fallback will be used
           e.currentTarget.style.display = "none";
         }}
       />
@@ -30,8 +38,8 @@ function Logo({ compact = false, className = "", imgSrc = "" }) {
   return (
     <svg
       className={className}
-      width={compact ? 40 : 160}
-      height={compact ? 40 : 36}
+      width={width}
+      height={height}
       viewBox="0 0 520 120"
       role="img"
       aria-label="Padanilathu — sustainable design"
@@ -216,13 +224,13 @@ export default function App() {
   // Section wrapper helper
   const sectionWrapper = "max-w-7xl mx-auto px-6 py-16";
 
-  // Small palette — you can edit or expand this to cycle backgrounds across sections.
+  // Polished palette
   const sectionPalette = {
-    apple: "#0f3b2e10" /* very light apple tint (kept subtle) */,
+    apple: "#f2fbf4",
     appleLight: "#eef8ef",
     cream: "#fffaf0",
     offWhite: "#ffffff",
-    grayLight: "#f5f7f6",
+    grayLight: "#f7faf9",
     slateSoft: "#f3fbf3",
   };
 
@@ -230,158 +238,142 @@ export default function App() {
     <div className="min-h-screen relative font-sans text-slate-900">
       {/* Inline styles & animations */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;600&display=swap');
+        /* Fonts: Playfair for headings, Inter/Poppins for UI (inter-pref not required but Poppins used here) */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;600;700&display=swap');
 
         :root {
           --brand: #2f8a56;
           --brand-dark: #1f6b41;
           --brand-accent: #6FA56F;
           --brand-accent-2: #9fd7a2;
-          --brand-text: #0f172a;
+          --brand-text: #071426;
           --muted-1: #eef8ef;
           --muted-2: #f3fbf3;
           --glass: rgba(255,255,255,0.88);
-          --elev: 0 14px 36px rgba(2,6,23,0.06);
+          --elev: 0 20px 50px rgba(2,6,23,0.09);
+          --radius: 14px;
         }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes floatY { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
-        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        /* Motion / micro animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeInUp { animation: fadeInUp 580ms cubic-bezier(.2,.9,.3,1) both; }
+        .animate-fadeInUp-slow { animation: fadeInUp 860ms cubic-bezier(.2,.9,.3,1) both; }
 
-        .animated-gradient { background: linear-gradient(120deg, rgba(196,255,225,0.04), rgba(255,250,240,0.02)); background-size: 300% 300%; animation: gradientShift 18s ease-in-out infinite; mix-blend-mode: overlay; position: absolute; inset: 0; z-index: -10; opacity: 0.45; pointer-events:none; }
+        /* Global resets for a cleaner, more professional baseline */
+        body { margin:0; font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: var(--brand-text); }
+        h1,h2,h3,h4 { font-family: 'Playfair Display', serif; color: var(--brand-text); margin:0; }
+        a { text-decoration: none; color: inherit; }
 
-        .animate-fadeInUp { animation: fadeInUp 600ms cubic-bezier(.2,.9,.3,1) both; }
-        .animate-fadeInUp-slow { animation: fadeInUp 900ms cubic-bezier(.2,.9,.3,1) both; }
-        .float-subtle { animation: floatY 6s ease-in-out infinite; }
+        /* Header */
+        header { transition: all 240ms ease; }
+        .topbar-dark { background: linear-gradient(180deg, rgba(6,6,6,0.48), rgba(6,6,6,0.18)); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .topbar-sticky { background: rgba(255,255,255,0.98); backdrop-filter: blur(6px); box-shadow: 0 6px 24px rgba(2,6,23,0.06); border-bottom: 1px solid rgba(15,23,42,0.04); }
 
-        .card-hover { transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; border: 1px solid rgba(15,23,42,0.05); background: var(--glass); backdrop-filter: blur(3px); }
-        .card-hover:hover { transform: translateY(-6px); box-shadow: var(--elev); }
+        .max-w-7xl { max-width: 1140px; }
 
-        .thumbline { border-radius: 12px; padding: 6px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,255,249,0.9)); box-shadow: 0 8px 20px rgba(15,23,42,0.06); display:block; overflow:hidden; }
-        .thumbline img { display:block; border-radius:8px; width:100%; height:100%; object-fit:cover; }
+        .site-logo { display:flex; align-items:center; gap:14px; }
+        .site-logo-img { display:block; height:auto; width:220px; max-width:40%; }
+        @media (max-width:768px) { .site-logo-img { width:160px; } }
 
-        .section-heading { font-family: "Playfair Display", serif; font-size: 1.9rem; line-height: 1.05; font-weight:700; color:var(--brand-text); margin:0; }
-        @media (min-width:1024px){ .section-heading { font-size:2.25rem; } }
+        /* Nav */
+        nav a.nav-link { position:relative; padding:6px 4px; color:inherit; opacity:0.95; transition: all 180ms ease; font-weight:600; }
+        nav a.nav-link::after { content: ""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:6px; background: transparent; transform: scaleX(0); transition: transform 220ms cubic-bezier(.2,.9,.3,1); transform-origin:left; }
+        nav a.nav-link:hover::after { background: var(--brand-accent); transform: scaleX(1); }
+        nav a.nav-link:hover { color: var(--brand-dark); }
 
-        .animate-on-scroll { opacity:0; transform: translateY(8px); transition: opacity 640ms cubic-bezier(.2,.9,.3,1), transform 640ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
-        .animate-on-scroll.in-view { opacity:1; transform: translateY(0); }
+        .header-cta { border-radius: 10px; padding:8px 14px; font-weight:600; box-shadow: 0 8px 30px rgba(47,138,86,0.12); transition: transform 160ms ease, box-shadow 160ms ease; }
+        .header-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(47,138,86,0.16); }
 
-        /* HERO carousel */
-        .hero-carousel { position: absolute; inset:0; overflow:hidden; display:block; }
-        .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease, filter 900ms ease; transform: scale(1.02); }
-        .hero-carousel img.active { opacity:1; z-index:1; transform: scale(1); }
+        /* HERO */
+        .hero { position: relative; min-height: 72vh; display:flex; align-items:center; }
+        .hero-carousel { position:absolute; inset:0; overflow:hidden; border-bottom-left-radius: 22px; border-bottom-right-radius: 22px;}
+        .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease, transform 1200ms ease, filter 900ms ease; transform: scale(1.03); }
+        .hero-carousel img.active { opacity:1; transform: scale(1); z-index:0; }
 
-        /* Slight global image treatment so foreground text stands out */
-        .hero-carousel img { filter: saturate(0.95) contrast(0.98); }
-        .hero-carousel img.active { filter: saturate(0.95) contrast(0.98) blur(0px); }
+        /* subtle global image treatment */
+        .hero-carousel img { filter: saturate(0.95) contrast(0.95); }
+        .hero-overlay { position:absolute; inset:0; z-index:1;
+          /* layered gradient for elegant contrast but not flat black */
+          background:
+            radial-gradient(closest-side at 16% 18%, rgba(8,12,10,0.18), transparent 22%),
+            linear-gradient(180deg, rgba(6,6,6,0.68), rgba(6,6,6,0.34));
+          backdrop-filter: saturate(0.95);
+        }
 
-        /* hero overlay — made slightly stronger for contrast */
-        .hero-overlay { position:absolute; inset:0; background: linear-gradient(180deg, rgba(6,6,6,0.68), rgba(6,6,6,0.36)); z-index:0; }
-
-        /* NEW: localized frosted/blur panel behind hero copy to separate text from busy photos */
+        /* frosted hero panel (center-left on desktop, centered on mobile) */
         .hero-copy-panel {
-          display: inline-block;
-          background: rgba(6,10,12,0.46); /* dark glass for white text */
-          backdrop-filter: blur(8px) saturate(1.05);
-          -webkit-backdrop-filter: blur(8px) saturate(1.05);
-          border-radius: 14px;
-          padding: 20px 22px;
-          box-shadow: 0 18px 40px rgba(6,7,12,0.35);
+          position: relative;
+          display:inline-block;
+          background: linear-gradient(180deg, rgba(6,10,12,0.46), rgba(6,10,12,0.38));
+          backdrop-filter: blur(10px) saturate(1.05);
+          -webkit-backdrop-filter: blur(10px) saturate(1.05);
+          border-radius: var(--radius);
+          padding: 26px 28px;
+          box-shadow: var(--elev);
           border: 1px solid rgba(255,255,255,0.06);
           max-width: 760px;
+          z-index: 2;
         }
 
         .hero-meta {
           color: var(--brand-accent);
-          font-weight: 700;
-          font-size: 0.95rem;
-          margin-bottom: 8px;
-          letter-spacing: 0.1px;
+          font-weight:700;
+          font-size:0.95rem;
+          margin-bottom: 10px;
+          letter-spacing: 0.12px;
         }
 
-        .hero-copy-panel .hero-headline { color: #ffffff; text-shadow: 0 10px 28px rgba(3,6,8,0.6); }
-        .hero-copy-panel .hero-lead { color: rgba(255,255,255,0.95); text-shadow: 0 6px 18px rgba(2,4,6,0.45); }
+        .hero-headline { color: white; text-shadow: 0 12px 36px rgba(2,6,8,0.6); font-weight:700; }
+        .hero-lead { color: rgba(255,255,255,0.95); opacity:0.95; }
 
-        /* hero info card (right) similar to uploaded design */
-        .hero-info-card {
-          width: 100%;
-          max-width: 420px;
-          background: rgba(255,255,255,0.92);
-          border-radius: 14px;
-          padding: 28px;
-          box-shadow: 0 20px 40px rgba(6,7,12,0.18);
-          border: 1px solid rgba(15,23,42,0.06);
-          backdrop-filter: blur(6px);
-        }
-        .hero-info-card .kicker { color: var(--brand); font-weight:600; font-size:0.95rem; }
-        .hero-info-card h4 { margin: 8px 0 6px; font-size:1.5rem; color:var(--brand-text); font-weight:700; font-family: "Playfair Display", serif; }
-        .hero-info-card p { margin: 0; color: #0f172a; font-size: 0.95rem; line-height: 1.5; font-weight: 400; }
+        .pill { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.95); padding:10px 14px; border-radius:999px; font-weight:600; }
 
-        /* Buttons matching uploaded style */
         .btn-primary {
           background: linear-gradient(180deg,var(--brand),var(--brand-dark));
           color:white;
           padding: 12px 22px;
           border-radius: 12px;
-          font-weight:600;
-          box-shadow: 0 8px 20px rgba(15,23,42,0.18);
+          font-weight:700;
+          box-shadow: 0 12px 34px rgba(15,23,42,0.16);
           border: none;
+          transition: transform 160ms ease, box-shadow 160ms ease;
         }
+        .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 26px 56px rgba(15,23,42,0.18); }
+
         .btn-outline {
           background: transparent;
-          color: white;
+          color: rgba(255,255,255,0.95);
           padding: 12px 22px;
           border-radius: 12px;
-          border: 2px solid rgba(255,255,255,0.28);
-          font-weight:600;
+          border: 2px solid rgba(255,255,255,0.12);
+          font-weight:700;
+          transition: background 160ms ease, color 160ms ease;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.06); color: white; }
+
+        /* Card polish */
+        .card-hover { background: #fff; border-radius: 12px; border: 1px solid rgba(12,17,23,0.04); transition: transform 200ms ease, box-shadow 200ms ease; overflow:hidden; }
+        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 48px rgba(12,17,23,0.06); }
+
+        /* animate-on-scroll baseline */
+        .animate-on-scroll { opacity:0; transform: translateY(6px); transition: opacity 520ms cubic-bezier(.2,.9,.3,1), transform 520ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
+        .animate-on-scroll.in-view { opacity:1; transform: translateY(0); }
+
+        /* Responsive tweaks */
+        @media (max-width: 768px) {
+          .hero-copy-panel { width: calc(100% - 48px); margin: 0 auto; padding: 18px; border-radius: 12px; background: rgba(4,8,10,0.72); }
+          .hero-headline { font-size: 2.1rem !important; line-height: 1.02; text-align:center; }
+          .hero-lead { text-align:center; font-size: 1rem; }
+          .hero-meta { text-align:center; display:block; margin-bottom: 6px; }
+          .site-logo-img { width:160px; }
         }
 
-        .logo-underline { display:block; height:3px; width:48px; background:var(--brand-accent); margin-top:6px; border-radius:2px; }
-
-        /* header dark translucent when at top */
-        .topbar-dark { background: rgba(6,6,6,0.55); backdrop-filter: blur(6px); }
-        .topbar-sticky { background: rgba(255,255,255,0.96); backdrop-filter: blur(6px); box-shadow: 0 6px 20px rgba(2,6,23,0.08); }
-
-        /* mobile spacing tighten */
-        @media (max-width:640px) {
-          .section-wrapper-mobile { padding-top: 1.75rem; padding-bottom: 1.75rem; }
-          .section-heading { font-size: 1.5rem; text-align:center; }
-          .positioning-grid-mobile { text-align:center; }
-
-          /* ensure hero copy panel is full width and stronger on mobile for legibility */
-          .hero-copy-panel {
-            display:block;
-            width: calc(100% - 48px);
-            margin: 0 auto;
-            padding: 16px 18px;
-            background: rgba(5,8,10,0.62);
-            backdrop-filter: blur(10px) saturate(1.05);
-          }
-          .hero-copy-panel .hero-headline {
-            font-size: 2.1rem;
-            line-height: 1.02;
-            text-align: center;
-          }
-          .hero-copy-panel .hero-lead {
-            text-align: center;
-          }
-          .hero-meta { text-align:center; font-size:0.9rem; }
-
-          /* slightly stronger overlay on phones to help contrast with bright hero photos */
-          .hero-overlay { background: linear-gradient(180deg, rgba(6,6,6,0.76), rgba(6,6,6,0.46)); }
-
-          .hero-info-card { display:none; } /* keep the right card hidden on small screens */
-        }
-
-        /* Our positioning: center on small screens */
-        .positioning-center-mobile { text-align: center; }
-
-        /* header logo sizing */
-        .site-logo { display:flex; align-items:center; gap:10px; }
-        .site-logo .wordmark { display:inline-block; vertical-align:middle; color:var(--brand-text); font-family: "Playfair Display", serif; font-weight:700; font-size:1.1rem; letter-spacing:0.6px; }
+        /* small polish for section headings */
+        .section-heading { font-size: 1.6rem; letter-spacing: -0.2px; }
+        @media (min-width:1024px){ .section-heading { font-size:1.95rem; } }
       `}</style>
 
-      {/* animated gradient overlay */}
+      {/* animated gradient overlay (subtle) */}
       <div className="animated-gradient" aria-hidden />
 
       {/* HEADER - dark translucent at top, becomes light on scroll */}
@@ -391,9 +383,9 @@ export default function App() {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
-            {/* Replace logo image path below with your new logo filename if different */}
+            {/* Larger logo area - change the path if your logo filename differs */}
             <a href="#home" className="group inline-flex items-center gap-3 site-logo" aria-label="Padanilathu home">
-              <Logo imgSrc="/images/padanilathu-logo.png" />
+              <Logo imgSrc="/images/padanilathu-logo.png" className="site-logo-img" />
             </a>
 
             <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`} aria-label="Primary navigation">
@@ -403,8 +395,8 @@ export default function App() {
               <a href="#about" className="nav-link">About</a>
               <a href="#careers" className="nav-link">Careers</a>
 
-              <button onClick={() => setQuoteOpen(true)} className="ml-2" style={{ display: "inline-block" }}>
-                <span className="btn-primary" style={{ borderRadius: 8, padding: "8px 12px", fontSize: "0.92rem" }}>Request Quote</span>
+              <button onClick={() => setQuoteOpen(true)} className="ml-2 header-cta" style={{ display: "inline-block" }}>
+                <span className="header-cta" style={{ background: "linear-gradient(180deg,var(--brand),var(--brand-dark))", color: "white", borderRadius: 10, padding: "8px 12px" }}>Request Quote</span>
               </button>
             </nav>
 
@@ -429,7 +421,7 @@ export default function App() {
       </header>
 
       {/* HERO (3-image carousel with crossfade) */}
-      <section id="home" className="relative min-h-[72vh] flex items-center" aria-label="Hero section">
+      <section id="home" className="hero relative" aria-label="Hero section">
         <div className="absolute inset-0 hero-carousel" aria-hidden>
           {heroImages.map((h, idx) => (
             <img
@@ -444,20 +436,21 @@ export default function App() {
           ))}
         </div>
 
-        <div className="absolute inset-0 hero-overlay" />
+        <div className="absolute inset-0 hero-overlay" aria-hidden />
 
         <div className="relative z-20 max-w-7xl mx-auto px-6 py-20 sm:py-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7">
               <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"}`}>
-                {/* NEW: frosted panel behind the main copy to improve legibility on busy images */}
+
+                {/* frosted panel behind the main copy to improve legibility on busy images */}
                 <div className="hero-copy-panel" role="region" aria-label="Hero introduction">
                   {/* Visible on both mobile and desktop */}
                   <div className="hero-meta" aria-hidden>
                     17+ Years · 500+ Completed Sites
                   </div>
 
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight max-w-3xl display-lg section-heading hero-headline" style={{ lineHeight: 1.02, fontFamily: "Playfair Display, Georgia, serif", fontWeight: 700 }}>
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-semibold leading-tight max-w-3xl display-lg section-heading hero-headline" style={{ lineHeight: 1.02, fontWeight: 700 }}>
                     Sustainable Design for Better Living
                   </h1>
 
@@ -466,9 +459,9 @@ export default function App() {
                   </p>
 
                   <div className="mt-8 flex flex-wrap gap-3">
-                    <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Exterior Design</span>
-                    <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">🌿 Landscaping</span>
-                    <span className="inline-flex items-center gap-2 bg-white/10 text-white/95 px-4 py-2 rounded-full float-subtle">Interior Design</span>
+                    <span className="pill">Exterior Design</span>
+                    <span className="pill">🌿 Landscaping</span>
+                    <span className="pill">Interior Design</span>
                   </div>
 
                   <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -491,6 +484,33 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
+      <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="section-heading">Exterior Design & Landscaping</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            Exterior architecture, landscape design and garden planning that connect the home to nature and perform well year-round.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[
+            ["Landscaping & Gardening", "Eco-friendly gardens, water-wise planting and site-specific horticulture.", "landscape1.webp"],
+            ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
+            ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
+          ].map(([title, desc, img]) => (
+            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+              <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
+              <div className="p-4">
+                <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
 
       {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
       <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
