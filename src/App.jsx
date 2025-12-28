@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
   - Premium typography: Playfair Display for headings and Poppins for body; increased sizes / letter-spacing
   - UI improvements: refined cards, consistent buttons, subtle elevation and animations
   - Keep existing logic, image fallback, and interactions intact
+  - Updated: section headings use a standard font (Poppins/system), larger sizes and high contrast color
 */
 
 function Logo({ compact = false, className = "", imgSrc = "" }) {
@@ -242,7 +243,7 @@ export default function App() {
           --radius-lg: 16px;
         }
 
-        /* Global typography: Poppins body, Playfair headings */
+        /* Global typography: Poppins body, Playfair headings (overridden for section-heading) */
         html,body { height:100%; }
         body {
           margin:0;
@@ -255,6 +256,18 @@ export default function App() {
         }
         h1,h2,h3,h4 { font-family: 'Playfair Display', serif; margin:0; color: var(--brand-text); letter-spacing: -0.01em; }
         p, li, a, input, textarea, select, button { font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+
+        /* Section headings - large, standard font for improved readability & contrast */
+        .section-heading {
+          font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+          font-weight: 700;
+          /* responsive large size */
+          font-size: clamp(1.6rem, 1.2rem + 2.0vw, 2.6rem);
+          line-height: 1.08;
+          color: var(--brand-dark);
+          margin-bottom: 0.6rem;
+          letter-spacing: -0.02em;
+        }
 
         /* Full-bleed section helpers */
         .full-bleed-section {
@@ -375,6 +388,9 @@ export default function App() {
           .hero-lead { text-align:center; font-size: 1rem; }
           .hero-meta { text-align:center; display:block; margin-bottom: 6px; }
           .site-logo-img { width:170px; }
+
+          /* slightly larger section headings on small screens for clarity */
+          .section-heading { font-size: clamp(1.4rem, 1.1rem + 3.0vw, 2.2rem); text-align: center; }
         }
 
         /* Accessibility */
