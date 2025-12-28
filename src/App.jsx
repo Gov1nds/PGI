@@ -485,32 +485,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
-      <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="section-heading">Exterior Design & Landscaping</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            Exterior architecture, landscape design and garden planning that connect the home to nature and perform well year-round.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            ["Landscaping & Gardening", "Eco-friendly gardens, water-wise planting and site-specific horticulture.", "landscape1.webp"],
-            ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
-            ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
-          ].map(([title, desc, img]) => (
-            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-              <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
-              <div className="p-4">
-                <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
+     
       {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
       <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
         <div className="relative max-w-6xl mx-auto text-center">
