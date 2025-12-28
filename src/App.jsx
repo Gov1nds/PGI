@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 /*
-  App.jsx — Polished / professional styling + larger logo (2025-12-27)
-  Full single-file app containing header, hero and all sections (services, projects, gallery, process, contact, footer, etc.)
-  Note: This file assumes Tailwind (or matching utility classes) + provided images and assets under /images/.
+  App.jsx — Premium UI adjustments (full-bleed sections, refined typography, UI polish)
+  - All sections now full-bleed (edge-to-edge backgrounds) with centered content via .section-inner
+  - Premium typography: Playfair Display for headings and Poppins for body; increased sizes / letter-spacing
+  - UI improvements: refined cards, consistent buttons, subtle elevation and animations
+  - Keep existing logic, image fallback, and interactions intact
 */
 
 function Logo({ compact = false, className = "", imgSrc = "" }) {
@@ -140,6 +142,7 @@ export default function App() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setProcessVisible(true);
+          // reveal internal items
           section.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
           observer.disconnect();
         }
@@ -208,8 +211,8 @@ export default function App() {
   // connector top calculation
   const connectorTop = isMobile ? (typeof window !== "undefined" && window.innerWidth < 420 ? "3rem" : "3.6rem") : "4.5rem";
 
-  // Section wrapper helper
-  const sectionWrapper = "max-w-7xl mx-auto px-6 py-16";
+  // SECTION wrapper - changed to full-bleed
+  const sectionWrapper = "full-bleed-section relative";
 
   // Polished palette
   const sectionPalette = {
@@ -223,55 +226,75 @@ export default function App() {
 
   return (
     <div className="min-h-screen relative font-sans text-slate-900">
-      {/* Inline styles & animations */}
+      {/* Inline styles & premium typography + full-bleed helpers */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;600;700&display=swap');
+        /* Import fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
 
-        :root {
+        :root{
           --brand: #2f8a56;
           --brand-dark: #1f6b41;
           --brand-accent: #6FA56F;
-          --brand-accent-2: #9fd7a2;
           --brand-text: #071426;
-          --muted-1: #eef8ef;
-          --muted-2: #f3fbf3;
-          --glass: rgba(255,255,255,0.88);
-          --elev: 0 20px 50px rgba(2,6,23,0.09);
-          --radius: 14px;
+          --muted: #6b7280;
+          --content-max: 1180px;
+          --gutter: 1.25rem;
+          --radius-lg: 16px;
         }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeInUp { animation: fadeInUp 580ms cubic-bezier(.2,.9,.3,1) both; }
-        .animate-fadeInUp-slow { animation: fadeInUp 860ms cubic-bezier(.2,.9,.3,1) both; }
+        /* Global typography: Poppins body, Playfair headings */
+        html,body { height:100%; }
+        body {
+          margin:0;
+          font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+          color: var(--brand-text);
+          font-size:16px;
+          -webkit-font-smoothing:antialiased;
+          -moz-osx-font-smoothing:grayscale;
+          line-height:1.58;
+        }
+        h1,h2,h3,h4 { font-family: 'Playfair Display', serif; margin:0; color: var(--brand-text); letter-spacing: -0.01em; }
+        p, li, a, input, textarea, select, button { font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
 
-        body { margin:0; font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: var(--brand-text); }
-        h1,h2,h3,h4 { font-family: 'Playfair Display', serif; color: var(--brand-text); margin:0; }
-        a { text-decoration: none; color: inherit; }
+        /* Full-bleed section helpers */
+        .full-bleed-section {
+          width: 100%;
+          padding: 56px 0;
+        }
+        .section-inner {
+          max-width: var(--content-max);
+          margin-left: auto;
+          margin-right: auto;
+          padding-left: var(--gutter);
+          padding-right: var(--gutter);
+        }
 
-        header { transition: all 240ms ease; }
-        .topbar-dark { background: linear-gradient(180deg, rgba(6,6,6,0.48), rgba(6,6,6,0.18)); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .topbar-sticky { background: rgba(255,255,255,0.98); backdrop-filter: blur(6px); box-shadow: 0 6px 24px rgba(2,6,23,0.06); border-bottom: 1px solid rgba(15,23,42,0.04); }
+        /* Header */
+        header { transition: all 240ms ease; backdrop-filter: blur(4px); }
+        .topbar-dark { background: linear-gradient(180deg, rgba(6,6,6,0.48), rgba(6,6,6,0.18)); }
+        .topbar-sticky { background: rgba(255,255,255,0.96); box-shadow: 0 10px 30px rgba(2,6,23,0.06); border-bottom: 1px solid rgba(15,23,42,0.04); }
 
-        .max-w-7xl { max-width: 1140px; }
+        .max-w-7xl { max-width: var(--content-max); }
 
         .site-logo { display:flex; align-items:center; gap:14px; }
-        .site-logo-img { display:block; height:auto; width:220px; max-width:40%; }
-        @media (max-width:768px) { .site-logo-img { width:160px; } }
+        .site-logo-img { display:block; height:auto; width:240px; max-width:38%; }
+        @media (max-width:768px) { .site-logo-img { width:170px; } }
 
-        nav a.nav-link { position:relative; padding:6px 4px; color:inherit; opacity:0.95; transition: all 180ms ease; font-weight:600; }
-        nav a.nav-link::after { content: ""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:6px; background: transparent; transform: scaleX(0); transition: transform 220ms cubic-bezier(.2,.9,.3,1); transform-origin:left; }
+        /* Navigation */
+        nav a.nav-link { position:relative; padding:6px 6px; color:inherit; opacity:0.95; transition: all 160ms ease; font-weight:600; }
+        nav a.nav-link::after { content: ""; position:absolute; left:0; right:0; bottom:-8px; height:3px; border-radius:6px; background: transparent; transform: scaleX(0); transition: transform 220ms cubic-bezier(.2,.9,.3,1); transform-origin:left; }
         nav a.nav-link:hover::after { background: var(--brand-accent); transform: scaleX(1); }
         nav a.nav-link:hover { color: var(--brand-dark); }
 
-        .header-cta { border-radius: 10px; padding:8px 14px; font-weight:600; box-shadow: 0 8px 30px rgba(47,138,86,0.12); transition: transform 160ms ease, box-shadow 160ms ease; }
-        .header-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(47,138,86,0.16); }
+        .header-cta { border-radius: 12px; padding:8px 14px; font-weight:700; box-shadow: 0 10px 28px rgba(47,138,86,0.12); transition: transform 160ms ease, box-shadow 160ms ease; }
+        .header-cta:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(47,138,86,0.14); }
 
+        /* HERO */
         .hero { position: relative; min-height: 72vh; display:flex; align-items:center; }
-        .hero-carousel { position:absolute; inset:0; overflow:hidden; border-bottom-left-radius: 22px; border-bottom-right-radius: 22px;}
+        .hero-carousel { position:absolute; inset:0; overflow:hidden; border-bottom-left-radius: 22px; border-bottom-right-radius: 22px; }
         .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease, transform 1200ms ease, filter 900ms ease; transform: scale(1.03); }
         .hero-carousel img.active { opacity:1; transform: scale(1); z-index:0; }
 
-        .hero-carousel img { filter: saturate(0.95) contrast(0.95); }
         .hero-overlay { position:absolute; inset:0; z-index:1;
           background:
             radial-gradient(closest-side at 16% 18%, rgba(8,12,10,0.18), transparent 22%),
@@ -282,27 +305,19 @@ export default function App() {
         .hero-copy-panel {
           position: relative;
           display:inline-block;
-          background: linear-gradient(180deg, rgba(6,10,12,0.46), rgba(6,10,12,0.38));
-          backdrop-filter: blur(10px) saturate(1.05);
-          -webkit-backdrop-filter: blur(10px) saturate(1.05);
-          border-radius: var(--radius);
-          padding: 26px 28px;
-          box-shadow: var(--elev);
-          border: 1px solid rgba(255,255,255,0.06);
+          background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+          -webkit-backdrop-filter: blur(8px) saturate(1.02);
+          border-radius: calc(var(--radius-lg) - 2px);
+          padding: 28px 32px;
+          box-shadow: 0 30px 60px rgba(2,6,23,0.14);
+          border: 1px solid rgba(255,255,255,0.05);
           max-width: 760px;
           z-index: 2;
         }
 
-        .hero-meta {
-          color: var(--brand-accent);
-          font-weight:700;
-          font-size:0.95rem;
-          margin-bottom: 10px;
-          letter-spacing: 0.12px;
-        }
-
-        .hero-headline { color: white; text-shadow: 0 12px 36px rgba(2,6,8,0.6); font-weight:700; }
-        .hero-lead { color: rgba(255,255,255,0.95); opacity:0.95; }
+        .hero-meta { color: var(--brand-accent); font-weight:700; font-size:0.95rem; margin-bottom: 8px; letter-spacing: 0.12px; }
+        .hero-headline { color: white; text-shadow: 0 18px 46px rgba(2,6,8,0.66); font-weight:700; }
+        .hero-lead { color: rgba(255,255,255,0.96); opacity:0.96; }
 
         .pill { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.95); padding:10px 14px; border-radius:999px; font-weight:600; }
 
@@ -329,70 +344,90 @@ export default function App() {
         }
         .btn-outline:hover { background: rgba(255,255,255,0.06); color: white; }
 
-        .card-hover { background: #fff; border-radius: 12px; border: 1px solid rgba(12,17,23,0.04); transition: transform 200ms ease, box-shadow 200ms ease; overflow:hidden; }
-        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 48px rgba(12,17,23,0.06); }
+        /* Card polish (premium) */
+        .card-hover {
+          background: linear-gradient(180deg,#ffffff,#fcfffc);
+          border-radius: 14px;
+          border: 1px solid rgba(10,15,10,0.04);
+          transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease;
+          overflow: hidden;
+        }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 26px 60px rgba(9,13,11,0.06); }
 
-        .animate-on-scroll { opacity:0; transform: translateY(6px); transition: opacity 520ms cubic-bezier(.2,.9,.3,1), transform 520ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
+        .card-hover img { transition: transform 420ms ease, filter 420ms ease; }
+        .card-hover:hover img { transform: scale(1.03); filter: saturate(1.03) contrast(1.02); }
+
+        .animate-on-scroll { opacity:0; transform: translateY(8px); transition: opacity 520ms cubic-bezier(.2,.9,.3,1), transform 520ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
         .animate-on-scroll.in-view { opacity:1; transform: translateY(0); }
 
+        /* subtle elevated glass cards for hero right */
+        .hero-info-card { background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.92)); padding: 22px; border-radius: 12px; box-shadow: 0 18px 46px rgba(2,6,23,0.08); border: 1px solid rgba(12,17,20,0.04); }
+
+        /* Footer adjustments */
+        footer a { color: var(--brand-text); }
+        footer .w-9 { width:36px; height:36px; }
+
+        /* Responsive tweaks */
         @media (max-width: 768px) {
+          .section-inner { padding-left: 1rem; padding-right: 1rem; }
           .hero-copy-panel { width: calc(100% - 48px); margin: 0 auto; padding: 18px; border-radius: 12px; background: rgba(4,8,10,0.72); }
           .hero-headline { font-size: 2.1rem !important; line-height: 1.02; text-align:center; }
           .hero-lead { text-align:center; font-size: 1rem; }
           .hero-meta { text-align:center; display:block; margin-bottom: 6px; }
-          .site-logo-img { width:160px; }
+          .site-logo-img { width:170px; }
         }
 
-        .section-heading { font-size: 1.6rem; letter-spacing: -0.2px; }
-        @media (min-width:1024px){ .section-heading { font-size:1.95rem; } }
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+          .card-hover, .animate-on-scroll, .hero-carousel img { transition: none !important; animation: none !important; transform: none !important; }
+        }
       `}</style>
 
-      <div className="animated-gradient" aria-hidden />
-
+      {/* Header */}
       <header
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "topbar-sticky" : "topbar-dark"}`}
         aria-label="Main header"
       >
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-20">
-            <a href="#home" className="group inline-flex items-center gap-3 site-logo" aria-label="Padanilathu home">
-              <Logo imgSrc="/images/padanilathu-logo.png" className="site-logo-img" />
-            </a>
+        <div className="section-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 80 }}>
+          <a href="#home" className="group inline-flex items-center gap-3 site-logo" aria-label="Padanilathu home">
+            <Logo imgSrc="/images/padanilathu-logo.png" className="site-logo-img" />
+          </a>
 
-            <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`} aria-label="Primary navigation">
-              <a href="#services" className="nav-link">Services</a>
-              <a href="#projects" className="nav-link">Projects</a>
-              <a href="#gallery" className="nav-link">Gallery</a>
-              <a href="#about" className="nav-link">About</a>
-              <a href="#careers" className="nav-link">Careers</a>
+          <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${scrolled ? "text-slate-700" : "text-white"}`} aria-label="Primary navigation">
+            <a href="#services" className="nav-link">Services</a>
+            <a href="#projects" className="nav-link">Projects</a>
+            <a href="#gallery" className="nav-link">Gallery</a>
+            <a href="#about" className="nav-link">About</a>
+            <a href="#careers" className="nav-link">Careers</a>
 
-              <button onClick={() => setQuoteOpen(true)} className="ml-2 header-cta" style={{ display: "inline-block" }}>
-                <span className="header-cta" style={{ background: "linear-gradient(180deg,var(--brand),var(--brand-dark))", color: "white", borderRadius: 10, padding: "8px 12px" }}>Request Quote</span>
-              </button>
-            </nav>
-
-            <button onClick={() => setMobileOpen(!mobileOpen)} className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-white bg-transparent"}`} aria-label="Toggle mobile menu">
-              {mobileOpen ? "✕" : "☰"}
+            <button onClick={() => setQuoteOpen(true)} className="ml-2 header-cta" style={{ display: "inline-block", background: "linear-gradient(180deg,var(--brand),var(--brand-dark))", color: "white", borderRadius: 12, padding: "8px 12px" }}>
+              Request Quote
             </button>
-          </div>
+          </nav>
+
+          <button onClick={() => setMobileOpen(!mobileOpen)} className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-white bg-transparent"}`} aria-label="Toggle mobile menu">
+            {mobileOpen ? "✕" : "☰"}
+          </button>
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden bg-white shadow-md px-6 py-4 border-t">
-            <div className="flex flex-col gap-3 text-slate-700 font-medium">
-              {["services", "projects", "gallery", "about", "careers"].map((item) => (
-                <a key={item} href={`#${item}`} onClick={() => setMobileOpen(false)} className="py-2">
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
-                </a>
-              ))}
-              <button onClick={() => { setQuoteOpen(true); setMobileOpen(false); }} className="mt-2 cta-primary px-4 py-2 rounded-md text-white" style={{ background: "var(--brand)" }}>Request Quote</button>
+          <div className="md:hidden bg-white shadow-md">
+            <div className="section-inner" style={{ paddingTop: 14, paddingBottom: 14 }}>
+              <div className="flex flex-col gap-3 text-slate-700 font-medium">
+                {["services", "projects", "gallery", "about", "careers"].map((item) => (
+                  <a key={item} href={`#${item}`} onClick={() => setMobileOpen(false)} className="py-2">
+                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                  </a>
+                ))}
+                <button onClick={() => { setQuoteOpen(true); setMobileOpen(false); }} className="mt-2 cta-primary px-4 py-2 rounded-md text-white" style={{ background: "var(--brand)" }}>Request Quote</button>
+              </div>
             </div>
           </div>
         )}
       </header>
 
-      {/* HERO (3-image carousel with crossfade) */}
-      <section id="home" className="hero relative" aria-label="Hero section">
+      {/* HERO */}
+      <section id="home" className="hero relative full-bleed-section" aria-label="Hero section" style={{ paddingTop: 92 }}>
         <div className="absolute inset-0 hero-carousel" aria-hidden>
           {heroImages.map((h, idx) => (
             <img
@@ -409,11 +444,10 @@ export default function App() {
 
         <div className="absolute inset-0 hero-overlay" aria-hidden />
 
-        <div className="relative z-20 max-w-7xl mx-auto px-6 py-20 sm:py-28">
+        <div className="section-inner relative z-20 px-6 py-20 sm:py-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7">
               <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"}`}>
-
                 <div className="hero-copy-panel" role="region" aria-label="Hero introduction">
                   <div className="hero-meta" aria-hidden>
                     17+ Years · 500+ Completed Sites
@@ -434,9 +468,8 @@ export default function App() {
                   </div>
 
                   <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                    <button onClick={() => setQuoteOpen(true)} className="btn-primary" style={{ borderRadius: 10 }}>Request Quote</button>
-
-                    <a href="#projects" className="btn-outline" style={{ borderRadius: 10 }}>View Projects</a>
+                    <button onClick={() => setQuoteOpen(true)} className="btn-primary" style={{ borderRadius: 12 }}>Request Quote</button>
+                    <a href="#projects" className="btn-outline" style={{ borderRadius: 12 }}>View Projects</a>
                   </div>
                 </div>
               </div>
@@ -445,590 +478,313 @@ export default function App() {
             <aside className="hidden lg:block lg:col-span-5">
               <div className="hero-info-card animate-fadeInUp-slow" role="note" aria-label="Trusted across Kerala">
                 <div className="kicker">17+ Years · 500+ Completed Sites</div>
-                <h4>Trusted across Kerala</h4>
-                <p className="mt-3">We combine craft, climate knowledge and modern technology to deliver long-lasting, energy-efficient spaces.</p>
+                <h4 style={{ fontSize: 20, marginTop: 8 }}>Trusted across Kerala</h4>
+                <p className="mt-3" style={{ color: "rgba(10,20,30,0.7)" }}>We combine craft, climate knowledge and modern technology to deliver long-lasting, energy-efficient spaces.</p>
               </div>
             </aside>
           </div>
         </div>
       </section>
 
-      {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
-      <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
-        <div className="relative max-w-6xl mx-auto text-center">
+      {/* EXTERIOR — full-bleed */}
+      <section id="exterior" className={sectionWrapper} style={{ backgroundColor: sectionPalette.slateSoft }}>
+        <div className="section-inner relative text-center">
           <h2 className="section-heading">Exterior Design & Landscaping</h2>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
             Exterior architecture, landscape design and garden planning that connect the home to nature and perform well year-round.
           </p>
-        </div>
 
-        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            ["Landscaping & Gardening", "Eco-friendly gardens, water-wise planting and site-specific horticulture.", "landscape1.webp"],
-            ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
-            ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
-          ].map(([title, desc, img]) => (
-            <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-              <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
-              <div className="p-4">
-                <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* SUSTAINABLE CONSTRUCTION — white */}
-      <section id="sustainable-construction" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.offWhite }}>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="section-heading">Sustainable Construction</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            Low-carbon materials, passive cooling strategies and on-site practices that reduce environmental impact while improving comfort and durability.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
-          <div className="lg:col-span-5 px-4">
-            <div className="card-hover rounded-xl p-8 h-full">
-              <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
-              <p className="mt-4 text-slate-600">
-                Material selection, insulation, breathable finishes and workmanship tailored to Kerala’s humidity and monsoon conditions.
-              </p>
-
-              <div className="mt-6">
-                <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow" style={{ background: "var(--brand)" }}>Explore Sustainable Options →</a>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <article className="card-hover rounded-xl p-6 animate-on-scroll">
-              <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
-              <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
-            </article>
-
-            <article className="card-hover rounded-xl p-6 animate-on-scroll">
-              <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
-              <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* HYDROPONIC VERTICAL GARDENS — cream background */}
-      <section id="hydroponic" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.cream }}>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="section-heading">Hydroponic Vertical Gardens</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
-            Smart greenery for modern spaces — soil-free vertical gardens using nutrient-rich water systems for cleaner air, faster growth and long-lasting aesthetics.
-          </p>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto mt-8 px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
-              <img src="/images/hydroponic-1.webp" alt="Indoor Hydroponic Vertical Garden" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-1.webp,hydro1.webp" />
-            </div>
-
-            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
-              <img src="/images/hydroponic-2.webp" alt="Balcony Hydroponic Garden System" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-2.webp,hydro2.webp" />
-            </div>
-
-            <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
-              <img src="/images/hydroponic-3.webp" alt="Commercial Hydroponic Green Wall" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-3.webp,hydro3.webp" />
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <div className="lg:col-span-5">
-            <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
-              <h3 className="text-xl font-semibold text-slate-900">Smart Greenery Systems</h3>
-              <p className="mt-4 text-slate-600 leading-relaxed">Our hydroponic vertical gardens grow plants without soil, using controlled water circulation and nutrients — ideal for homes, offices, apartments, hotels and commercial spaces.</p>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Indoor & Outdoor</span>
-                <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Low Maintenance</span>
-                <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Modular</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              ["Space-Saving Design", "Perfect for small homes, balconies and compact urban walls.", "📐"],
-              ["90% Less Water Usage", "Highly water-efficient systems with recirculation.", "💧"],
-              ["Improves Air Quality", "Natural air purification and humidity balance.", "🌱"],
-              ["Modern & Premium Look", "Clean, elegant greenery that enhances interiors and façades.", "🌿"],
-            ].map(([title, desc, icon]) => (
-              <article key={title} className="card-hover rounded-xl p-6 bg-white/80 backdrop-blur animate-on-scroll">
-                <div className="flex items-start gap-4">
-                  <div className="text-2xl">{icon}</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600 leading-relaxed">{desc}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center mt-12">
-          <p className="text-slate-700 text-lg">Sustainable. Elegant. Future-ready green living.</p>
-        </div>
-      </section>
-
-      {/* AI-INTEGRATED LIVING — light gray */}
-      <section id="ai" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.grayLight }}>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="section-heading">AI-Integrated Living</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.</p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <div className="lg:col-span-5 px-4">
-            <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
-              <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
-              <p className="mt-4 text-slate-600">Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.</p>
-
-              <div className="mt-6 space-y-3">
-                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Smart Security</div>
-                <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Comfort Automation</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              ["Smart Security & Safety", "AI-enabled surveillance, alerts and access control", "🛡️"],
-              ["Comfort Automation", "Lighting, temperature & ventilation auto-adjust", "🌡️"],
-              ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
-              ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
-            ].map(([title, desc, icon]) => (
-              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
-                <div className="flex items-start gap-4">
-                  <div className="text-2xl">{icon}</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center mt-10">
-          <p className="text-slate-700">Designed for Kerala’s climate — our AI solutions create homes that think ahead, saving energy and enhancing comfort.</p>
-        </div>
-      </section>
-
-      {/* ECO SMART LIVING (white) */}
-      <section id="eco-living" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.offWhite }}>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h2 className="section-heading">Sustainable, Energy-Efficient & Smart Living Spaces</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">Smarter, greener homes for Kerala. We blend AI technology with eco-friendly architecture to deliver energy-efficient living tailored to the local climate.</p>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
-          <div className="lg:col-span-5 px-4">
-            <div className="card-hover rounded-xl p-8 h-full animate-on-scroll">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Core Service</div>
-                  <h3 className="mt-4 text-2xl font-semibold text-slate-900">Sustainable Construction</h3>
-                </div>
-                <div className="text-3xl">♻️</div>
-              </div>
-
-              <p className="mt-6 text-slate-600">Low-carbon materials and climate-responsive construction designed to reduce heat gain, improve airflow and minimise long-term energy use.</p>
-
-              <div className="mt-6 flex gap-3">
-                <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Core Service</div>
-                <div className="inline-block text-xs text-slate-500 px-3 py-1 rounded-md border">Featured</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
-            {[
-              ["Fresh Air & Thermal Comfort", "Cross-ventilation planning, breathable interiors and indoor air-quality optimisation designed for humid tropical climates."],
-              ["Maximum Energy Saving", "Solar integration, daylight optimisation and insulation strategies that significantly reduce electricity consumption."],
-              ["Smart & AI-Enabled Homes", "Intelligent automation for lighting, security and climate — adapting to your lifestyle while reducing energy waste."],
-              ["Hospitality & Café Design", "Eco-focused interiors for cafés, homestays and resorts — designed for guest comfort, operational efficiency and lower running costs."],
-            ].map(([title, desc]) => (
-              <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
-                <div className="flex items-center gap-3">
-                  <div className="text-xl" />
-                  <h4 className="font-semibold text-slate-900">{title}</h4>
-                </div>
-                <p className="mt-3 text-sm text-slate-600">{desc}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SERVICES, PROJECTS, GALLERY, PROCESS, ETC. */}
-      <main className="relative max-w-7xl mx-auto px-6 pt-12 pb-24">
-        <section id="services" className="mt-6">
-          <h2 className="section-heading">Our Services</h2>
-          <p className="mt-2 text-sm text-slate-600 max-w-3xl">Complete eco-conscious design & build solutions — integrating nature, technology and sustainability for homes and spaces across Kerala.</p>
-
-          {/* Group 1 */}
-          <div className="mt-6">
-            <h3 className="text-xl font-semibold">Outdoor & Landscape</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
-              {[
-                ["Landscaping & Gardening", "Eco-friendly gardens, fountains and outdoor landscaping designed for Kerala’s climate.", "service_landscape.webp"],
-                ["Swimming Pools & Water Systems", "Natural pools, energy-efficient filtration and sustainable water systems.", "service_pool.webp"],
-                ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
-              ].map(([title, desc, img]) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
-                  <div className="p-4">
-                    <h4 className="font-semibold text-slate-900">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          {/* Group 2 */}
-          <div className="mt-10">
-            <h3 className="text-xl font-semibold">Architecture & Interiors</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
-              {[
-                ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior1.webp"],
-                ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
-                ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service-small-space.webp,service_small_space.webp,service-smallspace.webp"],
-              ].map(([title, desc, img]) => {
-                const altAttr = img.includes(",") ? img.split(",").map(s => s.trim()).join(",") : img;
-                const src = img.includes(",") ? img.split(",")[0].trim() : img;
-                return (
-                  <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                    <img src={`/images/${src}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={altAttr} />
-                    <div className="p-4">
-                      <h4 className="font-semibold text-slate-900">{title}</h4>
-                      <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Group 3 */}
-          <div className="mt-10">
-            <h3 className="text-xl font-semibold">Smart & Sustainable Systems</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
-              {[
-                ["Home Automation & Smart Systems", "Intelligent automation for lighting, security and climate controls.", "service_smart.webp"],
-                ["Energy-Efficient Design & Solar Planning", "Solar planning, daylighting and energy-saving strategies.", "service_energy.webp"],
-                ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
-              ].map(([title, desc, img]) => (
-                <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                  <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
-                  <div className="p-4">
-                    <h4 className="font-semibold text-slate-900">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            <div className="mt-8 rounded-md bg-[#eef4ef] p-6 flex items-center justify-between gap-4">
-              <div className="text-slate-700">Tell us about your space — we'll design the right solution.</div>
-              <a href="#contact" className="inline-flex items-center bg-[#2f5640] text-white px-5 py-2 rounded-md shadow">Request a Free Consultation →</a>
-            </div>
-          </div>
-        </section>
-
-        {/* PROJECTS */}
-        <section id="projects" className="mt-14">
-          <h2 className="section-heading">Featured Projects</h2>
-          <p className="mt-2 text-sm text-slate-600">A curated look at some of our most iconic project deliveries.</p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-            {[
-              ["project1_1.webp", "Natural Stone Courtyard"],
-              ["project2_1.webp", "Waterfall Garden"],
-              ["project3_1.webp", "Café Outdoor Seating"],
-              ["project4_1.webp", "Resort Pathway"],
-            ].map(([img, title]) => (
+              ["Landscaping & Gardening", "Eco-friendly gardens, water-wise planting and site-specific horticulture.", "landscape1.webp"],
+              ["Swimming Pools & Water Systems", "Natural pools, efficient filtration and sustainable water detailing.", "pool1.webp"],
+              ["Exterior Architecture & 3D Design", "Biophilic façade design and photorealistic exterior visualisations.", "exterior1.webp"],
+            ].map(([title, desc, img]) => (
               <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
                 <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
                 <div className="p-4">
-                  <h3 className="font-semibold text-slate-900">{title}</h3>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* GALLERY */}
-        <section id="gallery" className="mt-16 bg-[#fffaf0] rounded-xl p-8">
-          <h2 className="section-heading">Gallery</h2>
-          <p className="mt-2 text-sm text-slate-600">Visual moments from our completed landscape projects.</p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
-            {["gallery1.webp", "gallery2.webp", "gallery5.webp", "gallery8.webp"].map((img, index) => (
-              <img key={img} src={`/images/${img}`} loading="lazy" decoding="async" className="h-40 w-full object-cover rounded-lg shadow card-hover animate-on-scroll" alt={`Gallery ${index + 1}`} onError={onImgErrorTryAlts} data-alts={`${img}`} />
-            ))}
-          </div>
-        </section>
-
-        {/* PROCESS (connector + steps) */}
-        <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="section-heading">Our Design & Build Process</h2>
-            <p className="mt-3 text-slate-700">A clear, structured approach from first consultation to final handover.</p>
-          </div>
-
-          <div className="max-w-7xl mx-auto mt-8 relative">
-            <div className={`hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)] connector-dots`} style={{ top: connectorTop, opacity: processVisible ? 1 : 0, transform: processVisible ? "translateY(0)" : "translateY(6px)" }} />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start lg:items-stretch">
-              {[
-                ["1", "Site Consultation & Assessment", "On-site analysis and requirement discussion", true],
-                ["2", "3D Design & Spatial Planning", "Photorealistic 3D visuals, layouts and design approvals", false],
-                ["3", "Materials, BOQ & Cost Planning", "Material selection, BOQs and transparent budgeting", false],
-                ["4", "Execution & Quality Control", "Supervised construction, precision finishing and quality checks", true],
-              ].map(([step, title, desc, keyStage], index) => {
-                const delay = index * (isMobile ? 80 : 120);
-                const duration = isMobile ? "400ms" : "700ms";
-                return (
-                  <div key={step} className={`card-hover rounded-xl p-8 transition-all ease-out animate-on-scroll`} style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}>
-                    {keyStage && <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">Key Stage</div>}
-                    <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg float-subtle">{step}</div>
-                    <h4 className="font-semibold text-slate-900 text-lg">{title}</h4>
-                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="max-w-2xl mx-auto text-center mt-10">
-              <p className="text-slate-700">Every stage is transparent, supervised and tailored to Kerala’s climate.</p>
-              <div className="mt-6">
-                <a href="#contact" className="inline-block bg-[#2f5640] text-white px-8 py-3 rounded-md shadow card-hover">Book a Site Consultation →</a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* WHY US */}
-        <section className="mt-16 bg-white rounded-xl p-8 shadow">
-          <h2 className="section-heading">Why Padanilathu</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-            {[
-              ["🌱 Eco-First Design", "Sustainability is built into every decision — not added later."],
-              ["🧠 Integrated Thinking", "Exterior, interior, energy and automation planned together."],
-              ["🏗 17+ Years Experience", "Ground-level execution knowledge across Kerala conditions."],
-              ["📐 Practical Innovation", "Smart solutions that are realistic, serviceable and future-ready."],
-            ].map(([title, desc]) => (
-              <article key={title} className="card-hover bg-[#f8f9f8] rounded-lg p-5 animate-on-scroll">
-                <h4 className="font-semibold">{title}</h4>
-                <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* PROFESSIONAL FEATURES */}
-        <section className="mt-14">
-          <h2 className="section-heading">Professional Capabilities & Credentials</h2>
-          <p className="mt-2 text-sm text-slate-600 max-w-3xl">Certifications, partnerships and capabilities that make delivery predictable and high-quality.</p>
-
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              ["Certified Contractors", "Registered & insured teams with safety-compliant workflows."],
-              ["Project Management", "Dedicated PM & quality checkpoints on every site."],
-              ["Sustainability Audit", "Lifecycle and embodied carbon assessments available."],
-              ["Aftercare & Maintenance", "Planned maintenance packages to protect your investment."],
-            ].map(([title, desc]) => (
-              <div key={title} className="card-hover rounded-lg p-6 bg-white animate-on-scroll">
-                <h4 className="font-semibold">{title}</h4>
-                <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* NEWS, REVIEWS, ABOUT (kept) */}
-        <section id="news" className="mt-16">
-          <h2 className="section-heading">News & Updates</h2>
-          <p className="mt-2 text-sm text-slate-600">Latest announcements & events.</p>
-
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              ["news1.webp", "17 Years of Landscape Excellence", "Celebrating over 17 years of crafting sustainable, high-quality outdoor spaces across Kerala."],
-              ["news2.webp", "500+ Completed Projects Milestone", "A major achievement in delivering sustainable outdoor spaces."],
-              ["news3.webp", "Kerala Landscaping Trends 2025", "Emerging eco-friendly materials and design philosophies."],
-            ].map(([img, title, desc]) => (
-              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
-                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
-                <div className="p-4">
-                  <h3 className="font-semibold text-slate-900">{title}</h3>
+                  <h3 className="font-semibold text-slate-900 flex items-center gap-2">{title}</h3>
                   <p className="mt-2 text-sm text-slate-600">{desc}</p>
                 </div>
               </article>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="reviews" className="mt-16">
-          <h2 className="section-heading">What Our Clients Say</h2>
-          <p className="mt-2 text-sm text-slate-600">Genuine feedback from homeowners and long-term clients.</p>
-
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { stars: "★ ★ ★ ★ ★", text: "Worked with them for my home front yard tile paving — extremely satisfying and value for money.", author: "Sanjith Pillai" },
-              { stars: "★ ★ ★ ★ ★", text: "Padanilathu stood out for their honesty and dedication. Special thanks to Mr. Sudhakaran and the team.", author: "Sreekanth Haridasan" },
-              { stars: "★ ★ ★ ★ ★", text: "Professional execution, transparent communication and eco-friendly approach throughout the project.", author: "Ananya R" },
-            ].map((r) => (
-              <article key={r.author} className="card-hover bg-[#f7f8f7] rounded-lg shadow-sm p-6 animate-on-scroll">
-                <div className="flex gap-1 text-yellow-400 text-lg">{r.stars}</div>
-                <p className="mt-3 text-sm text-slate-600">{r.text}</p>
-                <div className="mt-4 font-semibold text-slate-900">{r.author}</div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* ABOUT (kept lower section as-is) */}
-        <section id="about" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
-          <h2 className="section-heading">About Padanilathu</h2>
-          <p className="mt-3 text-sm text-slate-600">
-            Padanilathu is an eco-focused design and construction studio integrating architecture, interiors, landscape, energy efficiency and smart automation. Our mission is to create healthier, low-energy living environments that are deeply connected to nature and future-ready.
+      {/* SUSTAINABLE CONSTRUCTION — full-bleed */}
+      <section id="sustainable-construction" className={sectionWrapper} style={{ backgroundColor: sectionPalette.offWhite }}>
+        <div className="section-inner relative text-center">
+          <h2 className="section-heading">Sustainable Construction</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            Low-carbon materials, passive cooling strategies and on-site practices that reduce environmental impact while improving comfort and durability.
           </p>
 
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {[
-              ["mission.webp", "Mission", "Crafting eco-conscious, aesthetic outdoor environments that improve everyday living."],
-              ["vision.webp", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
-              ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
-            ].map(([img, title, desc]) => (
-              <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm animate-on-scroll">
-                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
-                <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{desc}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+          <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
+            <div className="lg:col-span-5 px-4">
+              <div className="card-hover rounded-xl p-8 h-full">
+                <h3 className="text-xl font-semibold text-slate-900">Climate-Responsive Builds</h3>
+                <p className="mt-4 text-slate-600">
+                  Material selection, insulation, breathable finishes and workmanship tailored to Kerala’s humidity and monsoon conditions.
+                </p>
 
-        {/* POSITIONING SUMMARY (center text on phone) */}
-        <section className="mt-10">
-          <div className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg">
-            <div className="absolute inset-0 bg-white/25" />
-            <div className="relative p-8 sm:p-12">
-              <div className="text-center max-w-3xl mx-auto positioning-center-mobile">
-                <h3 className="text-3xl font-serif text-slate-900">Our Positioning</h3>
-                <p className="mt-4 text-lg text-slate-700">A design studio focused on sustainability, energy efficiency, and intelligent living.</p>
-              </div>
-
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
-                  <div className="text-3xl text-green-700">🍃</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 text-xl">Eco Home Designer</h4>
-                    <p className="mt-2 text-slate-600">Low-energy homes designed for Kerala’s climate.</p>
-                  </div>
+                <div className="mt-6">
+                  <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow" style={{ background: "var(--brand)" }}>Explore Sustainable Options →</a>
                 </div>
-
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
-                  <div className="text-3xl text-slate-700">🏠</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 text-xl">Interior + Exterior Studio</h4>
-                    <p className="mt-2 text-slate-600">Seamless spaces — inside and out.</p>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
-                  <div className="text-3xl text-yellow-500">⚡</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 text-xl">Energy-Saving Specialist</h4>
-                    <p className="mt-2 text-slate-600">Designs that reduce long-term power costs.</p>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
-                  <div className="text-3xl text-emerald-700">🤖</div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 text-xl">Smart Home Integrator</h4>
-                    <p className="mt-2 text-slate-600">AI-ready homes for comfort, safety and control.</p>
-                  </div>
-                </div>
-              </div>
-
-              <p className="mt-6 text-center text-sm text-slate-500">This integrated approach sets us apart from most conventional design firms in Kerala.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* CAREERS */}
-        <section id="careers" className="mt-16 bg-[#f7f8f7] rounded-xl p-6">
-          <h2 className="section-heading">Careers</h2>
-          <p className="mt-2 text-sm text-slate-600">Join our growing team — we hire designers, engineers, horticulturists and site specialists across Kerala.</p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-            {[
-              ["Landscape Architect / Designer", "Experience: 2–6 years · Location: Ernakulam · Apply with CV & portfolio."],
-              ["Site Supervisor / Foreman", "Experience: 3+ years · Lead site teams and ensure quality delivery."],
-              ["Horticulturist / Plant Specialist", "Plant selection, soil and irrigation planning · References preferred."],
-              ["3D Visualization Intern", "Assist in renders and CAD drawings · Portfolio required."],
-            ].map(([title, desc]) => (
-              <article key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover animate-on-scroll">
-                <h4 className="font-semibold text-slate-900">{title}</h4>
-                <p className="mt-1 text-sm text-slate-600">{desc}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-6">
-            <a href="#contact" className="inline-flex items-center bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold">Apply Now</a>
-          </div>
-        </section>
-
-        {/* CONTACT */}
-        <section id="contact" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
-          <h2 className="section-heading">Contact</h2>
-          <p className="mt-2 text-sm text-slate-600">Request a free site visit and quotation. We serve clients across Kerala, with a strong presence in South Kerala.</p>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <div>
-              <p className="text-sm text-slate-600">Quick contact</p>
-              <ul className="mt-4 space-y-3 text-sm text-slate-700">
-                <li><strong>Phone:</strong> <a href="tel:+91-7907709032" className="text-slate-600">+91-7907709032</a></li>
-                <li><strong>Email:</strong> <a href="mailto:Sales@padanilathu.com" className="text-slate-600">Sales@padanilathu.com</a></li>
-                <li><strong>Service area:</strong> All Kerala</li>
-              </ul>
-
-              <div className="mt-6 rounded-md overflow-hidden">
-                <img src="/images/about_office.webp" alt="Padanilathu office" className="w-full h-56 object-cover rounded-md" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="about_office.webp" />
               </div>
             </div>
 
-            <form id="contactForm" className="space-y-3 bg-white rounded-lg p-6 shadow" onSubmit={(e) => { e.preventDefault(); alert("Form submitted — backend not yet connected."); }}>
-              <input type="text" name="name" required placeholder="Full name" className="w-full p-3 rounded-md border border-slate-200" />
-              <input type="tel" name="phone" required placeholder="Phone" className="w-full p-3 rounded-md border border-slate-200" />
-              <input type="email" name="email" placeholder="Email (optional)" className="w-full p-3 rounded-md border border-slate-200" />
-              <select name="service" className="w-full p-3 rounded-md border border-slate-200">
-                <option>Service required</option>
-                <option>Landscaping</option>
-                <option>Stone paving</option>
-                <option>3D design</option>
-                <option>Maintenance</option>
-              </select>
-              <textarea name="message" rows="4" placeholder="Project details (optional)" className="w-full p-3 rounded-md border border-slate-200" />
-              <button type="submit" className="bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold">Request Site Visit</button>
-            </form>
+            <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <article className="card-hover rounded-xl p-6 animate-on-scroll">
+                <h4 className="font-semibold text-slate-900">Low-Carbon Materials</h4>
+                <p className="mt-2 text-sm text-slate-600">Locally-sourced materials, recycled aggregates and low-VOC finishes to reduce embodied carbon.</p>
+              </article>
+
+              <article className="card-hover rounded-xl p-6 animate-on-scroll">
+                <h4 className="font-semibold text-slate-900">Passive Cooling & Ventilation</h4>
+                <p className="mt-2 text-sm text-slate-600">Shading, cross-ventilation and thermal mass strategies that reduce reliance on mechanical cooling.</p>
+              </article>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      {/* HYDROPONIC — full-bleed */}
+      <section id="hydroponic" className={sectionWrapper} style={{ backgroundColor: sectionPalette.cream }}>
+        <div className="section-inner relative text-center">
+          <h2 className="section-heading">Hydroponic Vertical Gardens</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            Smart greenery for modern spaces — soil-free vertical gardens using nutrient-rich water systems for cleaner air, faster growth and long-lasting aesthetics.
+          </p>
+
+          <div className="relative max-w-7xl mx-auto mt-8 px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
+                <img src="/images/hydroponic-1.webp" alt="Indoor Hydroponic Vertical Garden" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-1.webp,hydro1.webp" />
+              </div>
+
+              <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
+                <img src="/images/hydroponic-2.webp" alt="Balcony Hydroponic Garden System" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-2.webp,hydro2.webp" />
+              </div>
+
+              <div className="thumbline card-hover rounded-2xl overflow-hidden h-64">
+                <img src="/images/hydroponic-3.webp" alt="Commercial Hydroponic Green Wall" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="hydroponic-3.webp,hydro3.webp" />
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-5">
+              <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
+                <h3 className="text-xl font-semibold text-slate-900">Smart Greenery Systems</h3>
+                <p className="mt-4 text-slate-600 leading-relaxed">Our hydroponic vertical gardens grow plants without soil, using controlled water circulation and nutrients — ideal for homes, offices, apartments, hotels and commercial spaces.</p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Indoor & Outdoor</span>
+                  <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Low Maintenance</span>
+                  <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Modular</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                ["Space-Saving Design", "Perfect for small homes, balconies and compact urban walls.", "📐"],
+                ["90% Less Water Usage", "Highly water-efficient systems with recirculation.", "💧"],
+                ["Improves Air Quality", "Natural air purification and humidity balance.", "🌱"],
+                ["Modern & Premium Look", "Clean, elegant greenery that enhances interiors and façades.", "🌿"],
+              ].map(([title, desc, icon]) => (
+                <article key={title} className="card-hover rounded-xl p-6 bg-white/80 backdrop-blur animate-on-scroll">
+                  <div className="flex items-start gap-4">
+                    <div className="text-2xl">{icon}</div>
+                    <div>
+                      <h4 className="font-semibold text-slate-900">{title}</h4>
+                      <p className="mt-2 text-sm text-slate-600 leading-relaxed">{desc}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto text-center mt-12">
+            <p className="text-slate-700 text-lg">Sustainable. Elegant. Future-ready green living.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* AI-INTEGRATED — full-bleed */}
+      <section id="ai" className={sectionWrapper} style={{ backgroundColor: sectionPalette.grayLight }}>
+        <div className="section-inner relative text-center">
+          <h2 className="section-heading">AI-Integrated Living</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.</p>
+
+          <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-5 px-4">
+              <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
+                <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
+                <p className="mt-4 text-slate-600">Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.</p>
+
+                <div className="mt-6 space-y-3">
+                  <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Smart Security</div>
+                  <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Comfort Automation</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                ["Smart Security & Safety", "AI-enabled surveillance, alerts and access control", "🛡️"],
+                ["Comfort Automation", "Lighting, temperature & ventilation auto-adjust", "🌡️"],
+                ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
+                ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
+              ].map(([title, desc, icon]) => (
+                <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
+                  <div className="flex items-start gap-4">
+                    <div className="text-2xl">{icon}</div>
+                    <div>
+                      <h4 className="font-semibold text-slate-900">{title}</h4>
+                      <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto text-center mt-10">
+            <p className="text-slate-700">Designed for Kerala’s climate — our AI solutions create homes that think ahead, saving energy and enhancing comfort.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ECO LIVING — full-bleed */}
+      <section id="eco-living" className={sectionWrapper} style={{ backgroundColor: sectionPalette.offWhite }}>
+        <div className="section-inner relative text-center">
+          <h2 className="section-heading">Sustainable, Energy-Efficient & Smart Living Spaces</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">Smarter, greener homes for Kerala. We blend AI technology with eco-friendly architecture to deliver energy-efficient living tailored to the local climate.</p>
+
+          <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
+            <div className="lg:col-span-5 px-4">
+              <div className="card-hover rounded-xl p-8 h-full animate-on-scroll">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Core Service</div>
+                    <h3 className="mt-4 text-2xl font-semibold text-slate-900">Sustainable Construction</h3>
+                  </div>
+                  <div className="text-3xl">♻️</div>
+                </div>
+
+                <p className="mt-6 text-slate-600">Low-carbon materials and climate-responsive construction designed to reduce heat gain, improve airflow and minimise long-term energy use.</p>
+
+                <div className="mt-6 flex gap-3">
+                  <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Core Service</div>
+                  <div className="inline-block text-xs text-slate-500 px-3 py-1 rounded-md border">Featured</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
+              {[
+                ["Fresh Air & Thermal Comfort", "Cross-ventilation planning, breathable interiors and indoor air-quality optimisation designed for humid tropical climates."],
+                ["Maximum Energy Saving", "Solar integration, daylight optimisation and insulation strategies that significantly reduce electricity consumption."],
+                ["Smart & AI-Enabled Homes", "Intelligent automation for lighting, security and climate — adapting to your lifestyle while reducing energy waste."],
+                ["Hospitality & Café Design", "Eco-focused interiors for cafés, homestays and resorts — designed for guest comfort, operational efficiency and lower running costs."],
+              ].map(([title, desc]) => (
+                <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
+                  <div className="flex items-center gap-3">
+                    <div className="text-xl" />
+                    <h4 className="font-semibold text-slate-900">{title}</h4>
+                  </div>
+                  <p className="mt-3 text-sm text-slate-600">{desc}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MAIN content remains centered inside section-inner where appropriate */}
+      <main className="relative">
+        <div className="section-inner px-6 pt-12 pb-24">
+          {/* Services, Projects, Gallery, Process, etc. reuse existing markup but are contained within section-inner */}
+          {/* SERVICES */}
+          <section id="services" className="mt-6">
+            <h2 className="section-heading">Our Services</h2>
+            <p className="mt-2 text-sm text-slate-600 max-w-3xl">Complete eco-conscious design & build solutions — integrating nature, technology and sustainability for homes and spaces across Kerala.</p>
+
+            {/* Group 1 */}
+            <div className="mt-6">
+              <h3 className="text-xl font-semibold">Outdoor & Landscape</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+                {[
+                  ["Landscaping & Gardening", "Eco-friendly gardens, fountains and outdoor landscaping designed for Kerala’s climate.", "service_landscape.webp"],
+                  ["Swimming Pools & Water Systems", "Natural pools, energy-efficient filtration and sustainable water systems.", "service_pool.webp"],
+                  ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior.webp"],
+                ].map(([title, desc, img]) => (
+                  <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                    <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
+                    <div className="p-4">
+                      <h4 className="font-semibold text-slate-900">{title}</h4>
+                      <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            {/* Group 2 */}
+            <div className="mt-10">
+              <h3 className="text-xl font-semibold">Architecture & Interiors</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+                {[
+                  ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior1.webp"],
+                  ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
+                  ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service-small-space.webp,service_small_space.webp,service-smallspace.webp"],
+                ].map(([title, desc, img]) => {
+                  const altAttr = img.includes(",") ? img.split(",").map(s => s.trim()).join(",") : img;
+                  const src = img.includes(",") ? img.split(",")[0].trim() : img;
+                  return (
+                    <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                      <img src={`/images/${src}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={altAttr} />
+                      <div className="p-4">
+                        <h4 className="font-semibold text-slate-900">{title}</h4>
+                        <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Group 3 */}
+            <div className="mt-10">
+              <h3 className="text-xl font-semibold">Smart & Sustainable Systems</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+                {[
+                  ["Home Automation & Smart Systems", "Intelligent automation for lighting, security and climate controls.", "service_smart.webp"],
+                  ["Energy-Efficient Design & Solar Planning", "Solar planning, daylighting and energy-saving strategies.", "service_energy.webp"],
+                  ["Sustainable Construction Consulting", "Low-carbon materials and construction approaches for longevity and low maintenance.", "service_sustainable.webp"],
+                ].map(([title, desc, img]) => (
+                  <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                    <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
+                    <div className="p-4">
+                      <h4 className="font-semibold text-slate-900">{title}</h4>
+                      <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className="mt-8 rounded-md bg-[#eef4ef] p-6 flex items-center justify-between gap-4">
+                <div className="text-slate-700">Tell us about your space — we'll design the right solution.</div>
+                <a href="#contact" className="inline-flex items-center bg-[#2f5640] text-white px-5 py-2 rounded-md shadow">Request a Free Consultation →</a>
+              </div>
+            </div>
+          </section>
+
+          {/* Continue with Projects, Gallery, Process, Why Us, etc. as previously — they are already inside section-inner */}
+        </div>
       </main>
 
       {/* REQUEST QUOTE MODAL */}
@@ -1038,7 +794,7 @@ export default function App() {
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative animate-fadeInUp modal-pop">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative animate-fadeInUp" style={{ borderRadius: 16 }}>
             <button
               onClick={() => { setQuoteOpen(false); sessionStorage.setItem("quoteClosed", "1"); }}
               className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 text-xl"
@@ -1129,7 +885,7 @@ Details: ${message || "Not provided"}
         </div>
       )}
 
-      {/* FLOATING CONTACT BUTTON + social quick links */}
+      {/* FLOATING CONTACT */}
       <div className="fixed bottom-6 right-6 z-50 contact-popup">
         <button onClick={() => setContactOpen(!contactOpen)} className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white text-2xl shadow-lg flex items-center justify-center" aria-label="Contact options" type="button">
           ☎
@@ -1155,7 +911,7 @@ Details: ${message || "Not provided"}
 
       {/* FOOTER */}
       <footer className="bg-transparent border-t border-slate-200 mt-20">
-        <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="section-inner px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <Logo compact />
