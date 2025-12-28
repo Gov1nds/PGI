@@ -2,16 +2,11 @@ import React, { useEffect, useState } from "react";
 
 /*
   App.jsx — Polished / professional styling + larger logo (2025-12-27)
-  - Increased logo size & touch area
-  - Refined color palette, spacing, typography, and controls for a more professional look
-  - Stronger, but balanced hero contrast + frosted panel
-  - Subtle UI micro-interactions (button hover, nav underline)
-  - Keep your logic & image fallbacks intact — replace /images/padanilathu-logo.png with your new raster logo
+  Full single-file app containing header, hero and all sections (services, projects, gallery, process, contact, footer, etc.)
+  Note: This file assumes Tailwind (or matching utility classes) + provided images and assets under /images/.
 */
 
 function Logo({ compact = false, className = "", imgSrc = "" }) {
-  // Larger default size to satisfy "increase logo size" request.
-  // If imgSrc is provided we show the raster logo (recommended), otherwise fallback SVG.
   const width = compact ? 56 : 220;
   const height = compact ? 40 : 44;
 
@@ -27,7 +22,6 @@ function Logo({ compact = false, className = "", imgSrc = "" }) {
           objectFit: "contain",
           display: "block",
         }}
-        // If the logo can't load we hide the image so the SVG fallback below is visible.
         onError={(e) => {
           e.currentTarget.style.display = "none";
         }}
@@ -146,12 +140,10 @@ export default function App() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setProcessVisible(true);
-          // reveal any internal animate-on-scroll items immediately for reliability
           section.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("in-view"));
           observer.disconnect();
         }
       },
-      // lower threshold and a little rootMargin so it triggers reliably on small screens
       { threshold: 0.08, rootMargin: "0px 0px -10% 0px" }
     );
     observer.observe(section);
@@ -195,10 +187,8 @@ export default function App() {
   // small helper for robust image fallbacks: tries alternate filenames if provided, otherwise placeholder
   const onImgErrorTryAlts = (e) => {
     const el = e.currentTarget;
-    // remove default onerror to avoid loop
     el.onerror = null;
 
-    // if a data-alts attribute exists (comma-separated), try the next alt
     const altsRaw = el.dataset.alts || "";
     const tried = el.dataset.tried ? el.dataset.tried.split(",").filter(Boolean) : [];
 
@@ -206,15 +196,12 @@ export default function App() {
     const nextAlt = alts.find((a) => !tried.includes(a));
 
     if (nextAlt) {
-      // mark tried
       el.dataset.tried = tried.concat([nextAlt]).join(",");
       el.src = `/images/${nextAlt}`;
-      // reattach onerror to continue trying
       el.onerror = onImgErrorTryAlts;
       return;
     }
 
-    // final fallback
     el.src = "/images/placeholder.webp";
   };
 
@@ -238,7 +225,6 @@ export default function App() {
     <div className="min-h-screen relative font-sans text-slate-900">
       {/* Inline styles & animations */}
       <style>{`
-        /* Fonts: Playfair for headings, Inter/Poppins for UI (inter-pref not required but Poppins used here) */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;600;700&display=swap');
 
         :root {
@@ -254,17 +240,14 @@ export default function App() {
           --radius: 14px;
         }
 
-        /* Motion / micro animations */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fadeInUp { animation: fadeInUp 580ms cubic-bezier(.2,.9,.3,1) both; }
         .animate-fadeInUp-slow { animation: fadeInUp 860ms cubic-bezier(.2,.9,.3,1) both; }
 
-        /* Global resets for a cleaner, more professional baseline */
         body { margin:0; font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: var(--brand-text); }
         h1,h2,h3,h4 { font-family: 'Playfair Display', serif; color: var(--brand-text); margin:0; }
         a { text-decoration: none; color: inherit; }
 
-        /* Header */
         header { transition: all 240ms ease; }
         .topbar-dark { background: linear-gradient(180deg, rgba(6,6,6,0.48), rgba(6,6,6,0.18)); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(255,255,255,0.02); }
         .topbar-sticky { background: rgba(255,255,255,0.98); backdrop-filter: blur(6px); box-shadow: 0 6px 24px rgba(2,6,23,0.06); border-bottom: 1px solid rgba(15,23,42,0.04); }
@@ -275,7 +258,6 @@ export default function App() {
         .site-logo-img { display:block; height:auto; width:220px; max-width:40%; }
         @media (max-width:768px) { .site-logo-img { width:160px; } }
 
-        /* Nav */
         nav a.nav-link { position:relative; padding:6px 4px; color:inherit; opacity:0.95; transition: all 180ms ease; font-weight:600; }
         nav a.nav-link::after { content: ""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:6px; background: transparent; transform: scaleX(0); transition: transform 220ms cubic-bezier(.2,.9,.3,1); transform-origin:left; }
         nav a.nav-link:hover::after { background: var(--brand-accent); transform: scaleX(1); }
@@ -284,23 +266,19 @@ export default function App() {
         .header-cta { border-radius: 10px; padding:8px 14px; font-weight:600; box-shadow: 0 8px 30px rgba(47,138,86,0.12); transition: transform 160ms ease, box-shadow 160ms ease; }
         .header-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(47,138,86,0.16); }
 
-        /* HERO */
         .hero { position: relative; min-height: 72vh; display:flex; align-items:center; }
         .hero-carousel { position:absolute; inset:0; overflow:hidden; border-bottom-left-radius: 22px; border-bottom-right-radius: 22px;}
         .hero-carousel img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 900ms ease, transform 1200ms ease, filter 900ms ease; transform: scale(1.03); }
         .hero-carousel img.active { opacity:1; transform: scale(1); z-index:0; }
 
-        /* subtle global image treatment */
         .hero-carousel img { filter: saturate(0.95) contrast(0.95); }
         .hero-overlay { position:absolute; inset:0; z-index:1;
-          /* layered gradient for elegant contrast but not flat black */
           background:
             radial-gradient(closest-side at 16% 18%, rgba(8,12,10,0.18), transparent 22%),
             linear-gradient(180deg, rgba(6,6,6,0.68), rgba(6,6,6,0.34));
           backdrop-filter: saturate(0.95);
         }
 
-        /* frosted hero panel (center-left on desktop, centered on mobile) */
         .hero-copy-panel {
           position: relative;
           display:inline-block;
@@ -351,15 +329,12 @@ export default function App() {
         }
         .btn-outline:hover { background: rgba(255,255,255,0.06); color: white; }
 
-        /* Card polish */
         .card-hover { background: #fff; border-radius: 12px; border: 1px solid rgba(12,17,23,0.04); transition: transform 200ms ease, box-shadow 200ms ease; overflow:hidden; }
         .card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 48px rgba(12,17,23,0.06); }
 
-        /* animate-on-scroll baseline */
         .animate-on-scroll { opacity:0; transform: translateY(6px); transition: opacity 520ms cubic-bezier(.2,.9,.3,1), transform 520ms cubic-bezier(.2,.9,.3,1); will-change: transform, opacity; }
         .animate-on-scroll.in-view { opacity:1; transform: translateY(0); }
 
-        /* Responsive tweaks */
         @media (max-width: 768px) {
           .hero-copy-panel { width: calc(100% - 48px); margin: 0 auto; padding: 18px; border-radius: 12px; background: rgba(4,8,10,0.72); }
           .hero-headline { font-size: 2.1rem !important; line-height: 1.02; text-align:center; }
@@ -368,22 +343,18 @@ export default function App() {
           .site-logo-img { width:160px; }
         }
 
-        /* small polish for section headings */
         .section-heading { font-size: 1.6rem; letter-spacing: -0.2px; }
         @media (min-width:1024px){ .section-heading { font-size:1.95rem; } }
       `}</style>
 
-      {/* animated gradient overlay (subtle) */}
       <div className="animated-gradient" aria-hidden />
 
-      {/* HEADER - dark translucent at top, becomes light on scroll */}
       <header
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${scrolled ? "topbar-sticky" : "topbar-dark"}`}
         aria-label="Main header"
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
-            {/* Larger logo area - change the path if your logo filename differs */}
             <a href="#home" className="group inline-flex items-center gap-3 site-logo" aria-label="Padanilathu home">
               <Logo imgSrc="/images/padanilathu-logo.png" className="site-logo-img" />
             </a>
@@ -443,9 +414,7 @@ export default function App() {
             <div className="lg:col-span-7">
               <div className={`${mounted ? "animate-fadeInUp" : "opacity-0"}`}>
 
-                {/* frosted panel behind the main copy to improve legibility on busy images */}
                 <div className="hero-copy-panel" role="region" aria-label="Hero introduction">
-                  {/* Visible on both mobile and desktop */}
                   <div className="hero-meta" aria-hidden>
                     17+ Years · 500+ Completed Sites
                   </div>
@@ -473,7 +442,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* right info card (kept for desktop) */}
             <aside className="hidden lg:block lg:col-span-5">
               <div className="hero-info-card animate-fadeInUp-slow" role="note" aria-label="Trusted across Kerala">
                 <div className="kicker">17+ Years · 500+ Completed Sites</div>
@@ -485,7 +453,6 @@ export default function App() {
         </div>
       </section>
 
-     
       {/* EXTERIOR DESIGN & LANDSCAPING — soft slate tint */}
       <section id="exterior" className={`${sectionWrapper} section-wrapper-mobile relative`} style={{ backgroundColor: sectionPalette.slateSoft }}>
         <div className="relative max-w-6xl mx-auto text-center">
@@ -737,7 +704,6 @@ export default function App() {
               {[
                 ["Exterior Architecture & 3D Design", "Biophilic architecture and realistic 3D visualizations for custom exterior spaces.", "service_exterior1.webp"],
                 ["Interior Design (Eco & Minimal)", "Clutter-free interiors using natural materials and passive cooling layouts.", "service_interior.webp"],
-                // small-space image - added alternates to increase chance of loading
                 ["Small-Space Optimisation", "Space-saving design solutions tailored for flats, villas and compact residences.", "service-small-space.webp,service_small_space.webp,service-smallspace.webp"],
               ].map(([title, desc, img]) => {
                 const altAttr = img.includes(",") ? img.split(",").map(s => s.trim()).join(",") : img;
@@ -1064,42 +1030,41 @@ export default function App() {
           </div>
         </section>
       </main>
-{/* REQUEST QUOTE MODAL */}
-{quoteOpen && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-    role="dialog"
-    aria-modal="true"
-  >
-    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative animate-fadeInUp">
-      
-      {/* Close Button */}
-      <button
-        onClick={() => setQuoteOpen(false)}
-        className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 text-xl"
-        aria-label="Close quote form"
-      >
-        ✕
-      </button>
 
-      <h3 className="text-2xl font-serif font-semibold text-slate-900">
-        Request a Quote
-      </h3>
-      <p className="mt-2 text-sm text-slate-600">
-        Fill the details — our team will contact you shortly.
-      </p>
+      {/* REQUEST QUOTE MODAL */}
+      {quoteOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative animate-fadeInUp modal-pop">
+            <button
+              onClick={() => { setQuoteOpen(false); sessionStorage.setItem("quoteClosed", "1"); }}
+              className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 text-xl"
+              aria-label="Close quote form"
+            >
+              ✕
+            </button>
 
-      <form
-        className="mt-6 space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault();
+            <h3 className="text-2xl font-serif font-semibold text-slate-900">
+              Request a Quote
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Fill the details — our team will contact you shortly.
+            </p>
 
-          const name = e.target.name.value;
-          const phone = e.target.phone.value;
-          const service = e.target.service.value;
-          const message = e.target.message.value;
+            <form
+              className="mt-6 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
 
-          const whatsappText = `
+                const name = e.target.name.value;
+                const phone = e.target.phone.value;
+                const service = e.target.service.value;
+                const message = e.target.message.value;
+
+                const whatsappText = `
 Hello Padanilathu 👋
 I would like a quote.
 
@@ -1107,61 +1072,62 @@ Name: ${name}
 Phone: ${phone}
 Service: ${service}
 Details: ${message || "Not provided"}
-          `.trim();
+                `.trim();
 
-          window.open(
-            `https://wa.me/917907709032?text=${encodeURIComponent(whatsappText)}`,
-            "_blank"
-          );
+                window.open(
+                  `https://wa.me/917907709032?text=${encodeURIComponent(whatsappText)}`,
+                  "_blank"
+                );
 
-          setQuoteOpen(false);
-        }}
-      >
-        <input
-          name="name"
-          type="text"
-          required
-          placeholder="Full Name"
-          className="w-full p-3 rounded-md border border-slate-200"
-        />
+                setQuoteOpen(false);
+                sessionStorage.setItem("quoteClosed", "1");
+              }}
+            >
+              <input
+                name="name"
+                type="text"
+                required
+                placeholder="Full Name"
+                className="w-full p-3 rounded-md border border-slate-200"
+              />
 
-        <input
-          name="phone"
-          type="tel"
-          required
-          placeholder="Phone Number"
-          className="w-full p-3 rounded-md border border-slate-200"
-        />
+              <input
+                name="phone"
+                type="tel"
+                required
+                placeholder="Phone Number"
+                className="w-full p-3 rounded-md border border-slate-200"
+              />
 
-        <select
-          name="service"
-          className="w-full p-3 rounded-md border border-slate-200"
-        >
-          <option>Service Required</option>
-          <option>Landscaping</option>
-          <option>Sustainable Construction</option>
-          <option>Hydroponic Vertical Garden</option>
-          <option>Interior / Exterior Design</option>
-          <option>AI / Smart Home</option>
-        </select>
+              <select
+                name="service"
+                className="w-full p-3 rounded-md border border-slate-200"
+              >
+                <option>Service Required</option>
+                <option>Landscaping</option>
+                <option>Sustainable Construction</option>
+                <option>Hydroponic Vertical Garden</option>
+                <option>Interior / Exterior Design</option>
+                <option>AI / Smart Home</option>
+              </select>
 
-        <textarea
-          name="message"
-          rows="3"
-          placeholder="Project details (optional)"
-          className="w-full p-3 rounded-md border border-slate-200"
-        />
+              <textarea
+                name="message"
+                rows="3"
+                placeholder="Project details (optional)"
+                className="w-full p-3 rounded-md border border-slate-200"
+              />
 
-        <button
-          type="submit"
-          className="w-full bg-[#2f8a56] hover:bg-[#1f6b41] text-white py-3 rounded-md font-semibold"
-        >
-          Send via WhatsApp
-        </button>
-      </form>
-    </div>
-  </div>
-)}
+              <button
+                type="submit"
+                className="w-full bg-[#2f8a56] hover:bg-[#1f6b41] text-white py-3 rounded-md font-semibold"
+              >
+                Send via WhatsApp
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* FLOATING CONTACT BUTTON + social quick links */}
       <div className="fixed bottom-6 right-6 z-50 contact-popup">
@@ -1180,6 +1146,7 @@ Details: ${message || "Not provided"}
                 <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-sm px-2 py-1 rounded hover:bg-slate-100">FB</a>
                 <a href={socialLinks.x} target="_blank" rel="noopener noreferrer" className="text-sm px-2 py-1 rounded hover:bg-slate-100">X</a>
                 <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm px-2 py-1 rounded hover:bg-slate-100">In</a>
+                <a href={socialLinks.threads} target="_blank" rel="noopener noreferrer" className="text-sm px-2 py-1 rounded hover:bg-slate-100">Th</a>
               </div>
             </div>
           </div>
