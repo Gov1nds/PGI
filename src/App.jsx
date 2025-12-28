@@ -782,10 +782,291 @@ export default function App() {
               </div>
             </div>
           </section>
+  {/* PROJECTS */}
+        <section id="projects" className="mt-14">
+          <h2 className="section-heading">Featured Projects</h2>
+          <p className="mt-2 text-sm text-slate-600">A curated look at some of our most iconic project deliveries.</p>
 
-          {/* Continue with Projects, Gallery, Process, Why Us, etc. as previously — they are already inside section-inner */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            {[
+              ["project1_1.webp", "Natural Stone Courtyard"],
+              ["project2_1.webp", "Waterfall Garden"],
+              ["project3_1.webp", "Café Outdoor Seating"],
+              ["project4_1.webp", "Resort Pathway"],
+            ].map(([img, title]) => (
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
+                <div className="p-4">
+                  <h3 className="font-semibold text-slate-900">{title}</h3>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* GALLERY */}
+        <section id="gallery" className="mt-16 bg-[#fffaf0] rounded-xl p-8">
+          <h2 className="section-heading">Gallery</h2>
+          <p className="mt-2 text-sm text-slate-600">Visual moments from our completed landscape projects.</p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+            {["gallery1.webp", "gallery2.webp", "gallery5.webp", "gallery8.webp"].map((img, index) => (
+              <img key={img} src={`/images/${img}`} loading="lazy" decoding="async" className="h-40 w-full object-cover rounded-lg shadow card-hover animate-on-scroll" alt={`Gallery ${index + 1}`} onError={onImgErrorTryAlts} data-alts={`${img}`} />
+            ))}
+          </div>
+        </section>
+
+        {/* PROCESS (connector + steps) */}
+        <section id="process" className="mt-16 bg-[linear-gradient(180deg,#fbfefd,transparent)] rounded-xl p-12 shadow-sm">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="section-heading">Our Design & Build Process</h2>
+            <p className="mt-3 text-slate-700">A clear, structured approach from first consultation to final handover.</p>
+          </div>
+
+          <div className="max-w-7xl mx-auto mt-8 relative">
+            <div className={`hidden lg:block absolute left-0 right-0 h-px bg-[repeating-linear-gradient(to right,#cfdfcc,#cfdfcc 8px,transparent 8px,transparent 16px)] connector-dots`} style={{ top: connectorTop, opacity: processVisible ? 1 : 0, transform: processVisible ? "translateY(0)" : "translateY(6px)" }} />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start lg:items-stretch">
+              {[
+                ["1", "Site Consultation & Assessment", "On-site analysis and requirement discussion", true],
+                ["2", "3D Design & Spatial Planning", "Photorealistic 3D visuals, layouts and design approvals", false],
+                ["3", "Materials, BOQ & Cost Planning", "Material selection, BOQs and transparent budgeting", false],
+                ["4", "Execution & Quality Control", "Supervised construction, precision finishing and quality checks", true],
+              ].map(([step, title, desc, keyStage], index) => {
+                const delay = index * (isMobile ? 80 : 120);
+                const duration = isMobile ? "400ms" : "700ms";
+                return (
+                  <div key={step} className={`card-hover rounded-xl p-8 transition-all ease-out animate-on-scroll`} style={{ transitionDuration: duration, transitionDelay: `${delay}ms` }}>
+                    {keyStage && <div className="inline-block bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">Key Stage</div>}
+                    <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-[#6FA56F] text-white flex items-center justify-center font-bold text-lg float-subtle">{step}</div>
+                    <h4 className="font-semibold text-slate-900 text-lg">{title}</h4>
+                    <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="max-w-2xl mx-auto text-center mt-10">
+              <p className="text-slate-700">Every stage is transparent, supervised and tailored to Kerala’s climate.</p>
+              <div className="mt-6">
+                <a href="#contact" className="inline-block bg-[#2f5640] text-white px-8 py-3 rounded-md shadow card-hover">Book a Site Consultation →</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* WHY US */}
+        <section className="mt-16 bg-white rounded-xl p-8 shadow">
+          <h2 className="section-heading">Why Padanilathu</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            {[
+              ["🌱 Eco-First Design", "Sustainability is built into every decision — not added later."],
+              ["🧠 Integrated Thinking", "Exterior, interior, energy and automation planned together."],
+              ["🏗 17+ Years Experience", "Ground-level execution knowledge across Kerala conditions."],
+              ["📐 Practical Innovation", "Smart solutions that are realistic, serviceable and future-ready."],
+            ].map(([title, desc]) => (
+              <article key={title} className="card-hover bg-[#f8f9f8] rounded-lg p-5 animate-on-scroll">
+                <h4 className="font-semibold">{title}</h4>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* PROFESSIONAL FEATURES */}
+        <section className="mt-14">
+          <h2 className="section-heading">Professional Capabilities & Credentials</h2>
+          <p className="mt-2 text-sm text-slate-600 max-w-3xl">Certifications, partnerships and capabilities that make delivery predictable and high-quality.</p>
+
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              ["Certified Contractors", "Registered & insured teams with safety-compliant workflows."],
+              ["Project Management", "Dedicated PM & quality checkpoints on every site."],
+              ["Sustainability Audit", "Lifecycle and embodied carbon assessments available."],
+              ["Aftercare & Maintenance", "Planned maintenance packages to protect your investment."],
+            ].map(([title, desc]) => (
+              <div key={title} className="card-hover rounded-lg p-6 bg-white animate-on-scroll">
+                <h4 className="font-semibold">{title}</h4>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* NEWS, REVIEWS, ABOUT (kept) */}
+        <section id="news" className="mt-16">
+          <h2 className="section-heading">News & Updates</h2>
+          <p className="mt-2 text-sm text-slate-600">Latest announcements & events.</p>
+
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              ["news1.webp", "17 Years of Landscape Excellence", "Celebrating over 17 years of crafting sustainable, high-quality outdoor spaces across Kerala."],
+              ["news2.webp", "500+ Completed Projects Milestone", "A major achievement in delivering sustainable outdoor spaces."],
+              ["news3.webp", "Kerala Landscaping Trends 2025", "Emerging eco-friendly materials and design philosophies."],
+            ].map(([img, title, desc]) => (
+              <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
+                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
+                <div className="p-4">
+                  <h3 className="font-semibold text-slate-900">{title}</h3>
+                  <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="reviews" className="mt-16">
+          <h2 className="section-heading">What Our Clients Say</h2>
+          <p className="mt-2 text-sm text-slate-600">Genuine feedback from homeowners and long-term clients.</p>
+
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { stars: "★ ★ ★ ★ ★", text: "Worked with them for my home front yard tile paving — extremely satisfying and value for money.", author: "Sanjith Pillai" },
+              { stars: "★ ★ ★ ★ ★", text: "Padanilathu stood out for their honesty and dedication. Special thanks to Mr. Sudhakaran and the team.", author: "Sreekanth Haridasan" },
+              { stars: "★ ★ ★ ★ ★", text: "Professional execution, transparent communication and eco-friendly approach throughout the project.", author: "Ananya R" },
+            ].map((r) => (
+              <article key={r.author} className="card-hover bg-[#f7f8f7] rounded-lg shadow-sm p-6 animate-on-scroll">
+                <div className="flex gap-1 text-yellow-400 text-lg">{r.stars}</div>
+                <p className="mt-3 text-sm text-slate-600">{r.text}</p>
+                <div className="mt-4 font-semibold text-slate-900">{r.author}</div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* ABOUT (kept lower section as-is) */}
+        <section id="about" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
+          <h2 className="section-heading">About Padanilathu</h2>
+          <p className="mt-3 text-sm text-slate-600">
+            Padanilathu is an eco-focused design and construction studio integrating architecture, interiors, landscape, energy efficiency and smart automation. Our mission is to create healthier, low-energy living environments that are deeply connected to nature and future-ready.
+          </p>
+
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {[
+              ["mission.webp", "Mission", "Crafting eco-conscious, aesthetic outdoor environments that improve everyday living."],
+              ["vision.webp", "Vision", "To be Kerala’s most trusted outdoor architecture and landscaping brand."],
+              ["values.webp", "Values", "Sustainability · Creativity · Craftsmanship · Transparency"],
+            ].map(([img, title, desc]) => (
+              <article key={title} className="soft-white bg-white text-center p-4 rounded-lg shadow-sm animate-on-scroll">
+                <img src={`/images/${img}`} alt={title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
+                <h3 className="font-semibold text-lg text-slate-900">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* POSITIONING SUMMARY (center text on phone) */}
+        <section className="mt-10">
+          <div className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-lg">
+            <div className="absolute inset-0 bg-white/25" />
+            <div className="relative p-8 sm:p-12">
+              <div className="text-center max-w-3xl mx-auto positioning-center-mobile">
+                <h3 className="text-3xl font-serif text-slate-900">Our Positioning</h3>
+                <p className="mt-4 text-lg text-slate-700">A design studio focused on sustainability, energy efficiency, and intelligent living.</p>
+              </div>
+
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
+                  <div className="text-3xl text-green-700">🍃</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Eco Home Designer</h4>
+                    <p className="mt-2 text-slate-600">Low-energy homes designed for Kerala’s climate.</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
+                  <div className="text-3xl text-slate-700">🏠</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Interior + Exterior Studio</h4>
+                    <p className="mt-2 text-slate-600">Seamless spaces — inside and out.</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
+                  <div className="text-3xl text-yellow-500">⚡</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Energy-Saving Specialist</h4>
+                    <p className="mt-2 text-slate-600">Designs that reduce long-term power costs.</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow flex gap-4 items-start card-hover animate-on-scroll positioning-center-mobile">
+                  <div className="text-3xl text-emerald-700">🤖</div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 text-xl">Smart Home Integrator</h4>
+                    <p className="mt-2 text-slate-600">AI-ready homes for comfort, safety and control.</p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-6 text-center text-sm text-slate-500">This integrated approach sets us apart from most conventional design firms in Kerala.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* CAREERS */}
+        <section id="careers" className="mt-16 bg-[#f7f8f7] rounded-xl p-6">
+          <h2 className="section-heading">Careers</h2>
+          <p className="mt-2 text-sm text-slate-600">Join our growing team — we hire designers, engineers, horticulturists and site specialists across Kerala.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+            {[
+              ["Landscape Architect / Designer", "Experience: 2–6 years · Location: Ernakulam · Apply with CV & portfolio."],
+              ["Site Supervisor / Foreman", "Experience: 3+ years · Lead site teams and ensure quality delivery."],
+              ["Horticulturist / Plant Specialist", "Plant selection, soil and irrigation planning · References preferred."],
+              ["3D Visualization Intern", "Assist in renders and CAD drawings · Portfolio required."],
+            ].map(([title, desc]) => (
+              <article key={title} className="bg-white rounded-lg shadow-sm p-4 card-hover animate-on-scroll">
+                <h4 className="font-semibold text-slate-900">{title}</h4>
+                <p className="mt-1 text-sm text-slate-600">{desc}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <a href="#contact" className="inline-flex items-center bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold">Apply Now</a>
+          </div>
+        </section>
+
+        {/* CONTACT */}
+        <section id="contact" className="mt-16 bg-[#eef4ef] rounded-xl p-8">
+          <h2 className="section-heading">Contact</h2>
+          <p className="mt-2 text-sm text-slate-600">Request a free site visit and quotation. We serve clients across Kerala, with a strong presence in South Kerala.</p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div>
+              <p className="text-sm text-slate-600">Quick contact</p>
+              <ul className="mt-4 space-y-3 text-sm text-slate-700">
+                <li><strong>Phone:</strong> <a href="tel:+91-7907709032" className="text-slate-600">+91-7907709032</a></li>
+                <li><strong>Email:</strong> <a href="mailto:Sales@padanilathu.com" className="text-slate-600">Sales@padanilathu.com</a></li>
+                <li><strong>Service area:</strong> All Kerala</li>
+              </ul>
+
+              <div className="mt-6 rounded-md overflow-hidden">
+                <img src="/images/about_office.webp" alt="Padanilathu office" className="w-full h-56 object-cover rounded-md" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts="about_office.webp" />
+              </div>
+            </div>
+
+            <form id="contactForm" className="space-y-3 bg-white rounded-lg p-6 shadow" onSubmit={(e) => { e.preventDefault(); alert("Form submitted — backend not yet connected."); }}>
+              <input type="text" name="name" required placeholder="Full name" className="w-full p-3 rounded-md border border-slate-200" />
+              <input type="tel" name="phone" required placeholder="Phone" className="w-full p-3 rounded-md border border-slate-200" />
+              <input type="email" name="email" placeholder="Email (optional)" className="w-full p-3 rounded-md border border-slate-200" />
+              <select name="service" className="w-full p-3 rounded-md border border-slate-200">
+                <option>Service required</option>
+                <option>Landscaping</option>
+                <option>Stone paving</option>
+                <option>3D design</option>
+                <option>Maintenance</option>
+              </select>
+              <textarea name="message" rows="4" placeholder="Project details (optional)" className="w-full p-3 rounded-md border border-slate-200" />
+              <button type="submit" className="bg-[#6FA56F] hover:bg-[#507953] text-white px-4 py-2 rounded-md text-sm font-semibold">Request Site Visit</button>
+            </form>
+          </div>
+        </section>
         </div>
       </main>
+
 
       {/* REQUEST QUOTE MODAL */}
       {quoteOpen && (
