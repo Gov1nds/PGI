@@ -807,8 +807,8 @@ export default function App() {
             {[
               ["project1_1.webp", "Natural Stone Courtyard"],
               ["project2_1.webp", "Waterfall Garden"],
-              ["project3_1.webp", "Café Outdoor Seating"],
-              ["project4_1.webp", "Resort Pathway"],
+              ["project3_1.webp", "Modern Minimal Living Room"],
+              ["project4_1.webp", "Kitchen+"],
             ].map(([img, title]) => (
               <article key={title} className="card-hover rounded-lg shadow overflow-hidden bg-white animate-on-scroll">
                 <img src={`/images/${img}`} alt={title} className="w-full h-44 object-cover" loading="lazy" decoding="async" onError={onImgErrorTryAlts} data-alts={`${img}`} />
