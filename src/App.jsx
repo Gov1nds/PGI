@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 /*
-  App.jsx — Premium UI adjustments (full-bleed sections, refined typography, UI polish)
-  - All sections now full-bleed (edge-to-edge backgrounds) with centered content via .section-inner
-  - Premium typography: Playfair Display for headings and Poppins for body; increased sizes / letter-spacing
-  - UI improvements: refined cards, consistent buttons, subtle elevation and animations
-  - Keep existing logic, image fallback, and interactions intact
-  - Updated: section headings use a standard font (Poppins/system), larger sizes and high contrast color
+  App.jsx — Combined parts with edits:
+  - Replaced "AI-Integrated Living" section with "Gardening, Fruit Gardens & Plantations"
+  - Standardised typography to use Poppins for both headings and body (removed Playfair)
+  - Slightly refined the theme (earthy / green tones) via CSS variables
+  - Kept existing logic, image fallback and interactions intact
 */
 
 function Logo({ compact = false, className = "", imgSrc = "" }) {
@@ -72,7 +71,7 @@ function Logo({ compact = false, className = "", imgSrc = "" }) {
           <text
             x="0"
             y="28"
-            fontFamily="'Playfair Display', serif"
+            fontFamily="'Poppins', system-ui, -apple-system, Roboto, Arial"
             fontWeight="700"
             fontSize="34"
             fill="var(--brand-text)"
@@ -215,7 +214,7 @@ export default function App() {
   // SECTION wrapper - changed to full-bleed
   const sectionWrapper = "full-bleed-section relative";
 
-  // Polished palette
+  // Polished palette (refined earthy greens + neutrals)
   const sectionPalette = {
     apple: "#f2fbf4",
     appleLight: "#eef8ef",
@@ -227,23 +226,24 @@ export default function App() {
 
   return (
     <div className="min-h-screen relative font-sans text-slate-900">
-      {/* Inline styles & premium typography + full-bleed helpers */}
+      {/* Inline styles & unified typography + full-bleed helpers */}
       <style>{`
-        /* Import fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+        /* Import Poppins only — unified standard font for headings & body */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
         :root{
-          --brand: #2f8a56;
-          --brand-dark: #1f6b41;
+          --brand: #297a4a; /* earthy green */
+          --brand-dark: #1f5b37;
           --brand-accent: #6FA56F;
           --brand-text: #071426;
           --muted: #6b7280;
           --content-max: 1180px;
           --gutter: 1.25rem;
           --radius-lg: 16px;
+          --surface: #ffffff;
         }
 
-        /* Global typography: Poppins body, Playfair headings (overridden for section-heading) */
+        /* Global typography: Poppins used everywhere for consistency */
         html,body { height:100%; }
         body {
           margin:0;
@@ -254,14 +254,13 @@ export default function App() {
           -moz-osx-font-smoothing:grayscale;
           line-height:1.58;
         }
-        h1,h2,h3,h4 { font-family: 'Playfair Display', serif; margin:0; color: var(--brand-text); letter-spacing: -0.01em; }
+        h1,h2,h3,h4 { font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; color: var(--brand-text); letter-spacing: -0.01em; }
         p, li, a, input, textarea, select, button { font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
 
-        /* Section headings - large, standard font for improved readability & contrast */
+        /* Section headings - standardized (Poppins) */
         .section-heading {
           font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
           font-weight: 700;
-          /* responsive large size */
           font-size: clamp(1.6rem, 1.2rem + 2.0vw, 2.6rem);
           line-height: 1.08;
           color: var(--brand-dark);
@@ -359,7 +358,7 @@ export default function App() {
 
         /* Card polish (premium) */
         .card-hover {
-          background: linear-gradient(180deg,#ffffff,#fcfffc);
+          background: linear-gradient(180deg,var(--surface),#fcfffc);
           border-radius: 14px;
           border: 1px solid rgba(10,15,10,0.04);
           transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease;
@@ -421,7 +420,12 @@ export default function App() {
             </button>
           </nav>
 
-          <button onClick={() => setMobileOpen(!mobileOpen)} className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-white bg-transparent"}`} aria-label="Toggle mobile menu">
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-expanded={mobileOpen}
+            className={`md:hidden text-2xl p-2 rounded-md ${scrolled ? "text-slate-900 bg-white/0" : "text-white bg-transparent"}`}
+            aria-label="Toggle mobile menu"
+          >
             {mobileOpen ? "✕" : "☰"}
           </button>
         </div>
@@ -453,7 +457,10 @@ export default function App() {
               className={idx === heroIndex ? "active" : ""}
               loading={idx === 0 ? "eager" : "lazy"}
               decoding="async"
-              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/placeholder.webp"; }}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/images/placeholder.webp";
+              }}
             />
           ))}
         </div>
@@ -629,38 +636,65 @@ export default function App() {
         </div>
       </section>
 
-      {/* AI-INTEGRATED — full-bleed */}
-      <section id="ai" className={sectionWrapper} style={{ backgroundColor: sectionPalette.grayLight }}>
+      {/* GARDENING, FRUITS & PLANTATION — replaces AI-Integrated */}
+      <section id="gardening" className={sectionWrapper} style={{ backgroundColor: sectionPalette.grayLight }}>
         <div className="section-inner relative text-center">
-          <h2 className="section-heading">AI-Integrated Living</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">We integrate AI into everyday home life to make spaces safer, smarter and more energy-efficient.</p>
+          <h2 className="section-heading">Gardening, Fruit Gardens & Plantation</h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 leading-relaxed">
+            From ornamental gardens to productive fruit orchards — we design planting schemes, plantation systems and maintenance plans tailored to Kerala's soils and climate.
+          </p>
 
           <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div className="lg:col-span-5 px-4">
-              <div className="card-hover rounded-xl p-8 h-full animate-fadeInUp animate-on-scroll">
-                <h3 className="text-xl font-semibold text-slate-900">AI-Integrated Systems</h3>
-                <p className="mt-4 text-slate-600">Intelligent automation for lighting, HVAC, security and energy — personalised schedules, adaptive control and remote monitoring via app.</p>
+              <div className="card-hover rounded-xl p-8 h-full animate-on-scroll">
+                <h3 className="text-xl font-semibold text-slate-900">Fruit Gardens & Small Orchards</h3>
+                <p className="mt-4 text-slate-600">Design and establish fruit gardens, kitchen orchards and small-scale plantations — with species selection, spacing, irrigation and phased harvesting plans.</p>
 
-                <div className="mt-6 space-y-3">
-                  <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Smart Security</div>
-                  <div className="inline-flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Comfort Automation</div>
+                <div className="mt-6">
+                  <a href="#contact" className="inline-block cta-primary text-white px-5 py-2 rounded-md shadow" style={{ background: "var(--brand)" }}>Plan My Orchard →</a>
                 </div>
               </div>
             </div>
 
             <div className="lg:col-span-7 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <article className="card-hover rounded-xl p-6 animate-on-scroll">
+                <h4 className="font-semibold text-slate-900">Edible Landscaping</h4>
+                <p className="mt-2 text-sm text-slate-600">Combine beauty and yield: edible hedges, mixed borders and fruiting shrubs that look great and feed the family.</p>
+              </article>
+
+              <article className="card-hover rounded-xl p-6 animate-on-scroll">
+                <h4 className="font-semibold text-slate-900">Plantation Planning</h4>
+                <p className="mt-2 text-sm text-slate-600">Site-appropriate plantation strategies, soil prep, companion planting and low-maintenance understory designs.</p>
+              </article>
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-5 px-4">
+              <div className="card-hover rounded-xl p-8 h-full animate-on-scroll">
+                <h3 className="text-xl font-semibold text-slate-900">Maintenance & Aftercare</h3>
+                <p className="mt-4 text-slate-600">Seasonal care plans, pruning, nutrient management and pest control using eco-friendly methods.</p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Native Species</span>
+                  <span className="inline-flex items-center bg-green-50 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Low Water Needs</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                ["Smart Security & Safety", "AI-enabled surveillance, alerts and access control", "🛡️"],
-                ["Comfort Automation", "Lighting, temperature & ventilation auto-adjust", "🌡️"],
-                ["Effortless Living", "Voice + app-based control for hands-free living", "🎙️"],
-                ["Energy Saving", "Intelligent control of appliances and solar systems", "💡"],
+                ["Seasonal Planting Plans", "Scripting planting phases to ensure year-round yields and bloom cycles.", "🍂"],
+                ["Irrigation & Mulching", "Efficient water use and soil health via drip irrigation and organic mulches.", "💧"],
+                ["Pollinator-friendly Designs", "Plant palettes that attract bees, butterflies and beneficial insects.", "🐝"],
+                ["Nursery Setup Guidance", "For clients wanting to scale to larger plantations or commercial orchards.", "🌱"],
               ].map(([title, desc, icon]) => (
-                <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll">
+                <article key={title} className="card-hover rounded-xl p-6 animate-on-scroll bg-white/80">
                   <div className="flex items-start gap-4">
                     <div className="text-2xl">{icon}</div>
                     <div>
                       <h4 className="font-semibold text-slate-900">{title}</h4>
-                      <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                      <p className="mt-2 text-sm text-slate-600 leading-relaxed">{desc}</p>
                     </div>
                   </div>
                 </article>
@@ -668,8 +702,8 @@ export default function App() {
             </div>
           </div>
 
-          <div className="max-w-4xl mx-auto text-center mt-10">
-            <p className="text-slate-700">Designed for Kerala’s climate — our AI solutions create homes that think ahead, saving energy and enhancing comfort.</p>
+          <div className="max-w-4xl mx-auto text-center mt-12">
+            <p className="text-slate-700 text-lg">Create productive, beautiful and climate-resilient gardens that last.</p>
           </div>
         </div>
       </section>
@@ -723,7 +757,6 @@ export default function App() {
       {/* MAIN content remains centered inside section-inner where appropriate */}
       <main className="relative">
         <div className="section-inner px-6 pt-12 pb-24">
-          {/* Services, Projects, Gallery, Process, etc. reuse existing markup but are contained within section-inner */}
           {/* SERVICES */}
           <section id="services" className="mt-6">
             <h2 className="section-heading">Our Services</h2>
@@ -798,6 +831,7 @@ export default function App() {
               </div>
             </div>
           </section>
+
   {/* PROJECTS */}
         <section id="projects" className="mt-14">
           <h2 className="section-heading">Featured Projects</h2>
