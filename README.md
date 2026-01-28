@@ -1,70 +1,57 @@
-# Getting Started with Create React App
+# Padanilath — React (JavaScript) Multi‑Page Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Built with **Vite + React (JS) + React Router + Tailwind**.
+Green theme is already applied.
 
-## Available Scripts
+## Pages
+- Home: `/`
+- Services: `/services`
+- Outdoor Works: `/outdoor-works`
+- Insights: `/insights` and `/insights/:slug`
+- News: `/news` and `/news/:slug`
+- About: `/about` (Mission, Vision, Values)
+- Contact: `/contact`
 
-In the project directory, you can run:
+## Hero KPIs (already added)
+- **17+ Years of experience**
+- **700+ Completed projects**
 
-### `npm start`
+Update these in: `src/content/siteData.js`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Update content frequently (easy)
+Edit:
+- `src/content/siteData.js` (services, outdoor works, insights, news, contact)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Replace images
+Put your images in:
+- `public/images`
 
-### `npm test`
+Keep the same filenames:
+- hero.jpg
+- about-hero.jpg
+- service-planning.jpg
+- service-design.jpg
+- service-cost.jpg
+- service-quality.jpg
+- service-procurement.jpg
+- service-reporting.jpg
+- outdoor-construction.jpg
+- outdoor-landscape.jpg
+- outdoor-utilities.jpg
+- outdoor-living.jpg
+- insight-1.jpg
+- insight-2.jpg
+- insight-3.jpg
+- news-1.jpg
+- news-2.jpg
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Run locally
+```bash
+npm install
+npm run dev
+```
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Deploy (Vercel)
+- Import this repo in Vercel
+- Build command: `npm run build`
+- Output: `dist`
