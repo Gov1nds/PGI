@@ -2,7 +2,7 @@ export const site = {
   name: "Padanilath",
   tagline: "Project Management Consultancy for Sustainable Construction",
   contact: {
-    email: "sales@padanilathu",
+    email: "sales@padanilathu.com",
     phone: "+91 8921983250",
     location: "Kerala, India",
   },
