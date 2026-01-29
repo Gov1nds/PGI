@@ -11,6 +11,7 @@ export default function Insights() {
         title="Latest thinking"
         desc="Practical insights on planning, budgeting, procurement, quality and outdoor works."
       />
+
       <div className="mt-10 grid gap-6 md:grid-cols-3">
         {insights.map((i) => (
           <ImageCard
@@ -22,14 +23,6 @@ export default function Insights() {
             tag={i.category}
           />
         ))}
-      </div>
-
-      <div className="mt-14 rounded-3xl bg-white/5 p-8 ring-1 ring-white/10">
-        <div className="text-sm font-semibold text-white/80">How to update content</div>
-        <p className="mt-2 text-sm text-white/70">
-          Edit <span className="font-mono">src/content/siteData.js</span> to add new insights and update text.
-          Replace images in <span className="font-mono">public/images</span>.
-        </p>
       </div>
     </Container>
   );
