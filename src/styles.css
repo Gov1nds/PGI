@@ -1,4 +1,4 @@
-@tailwind base;
+only styl css -@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -24,3 +24,50 @@
     radial-gradient(600px 500px at 50% 80%, rgba(var(--brand-600) / 0.10), transparent 70%),
     linear-gradient(180deg, #ffffff 0%, #f4fbf6 60%, #eef8f1 100%);
 }
+/* ---------- HERO STAT CARDS 3D EFFECT ---------- */
+
+/* Target the small stat cards under hero */
+.bg-hero .rounded-2xl {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  will-change: transform;
+}
+
+/* 3D tilt on hover */
+.bg-hero .rounded-2xl:hover {
+  transform: translateY(-8px) rotateX(6deg) rotateY(-6deg) scale(1.03);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+}
+
+/* Soft glowing highlight */
+.bg-hero .rounded-2xl::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: radial-gradient(circle at 25% 15%, rgba(var(--brand-500) / 0.35), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.bg-hero .rounded-2xl:hover::before {
+  opacity: 1;
+}
+
+/* ---------- FLOATING ANIMATION (subtle) ---------- */
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Make all hero stat cards gently float */
+.bg-hero .rounded-2xl {
+  animation: heroFloat 6s ease-in-out infinite;
+}
+
+/* Stagger animation for nicer effect */
+.bg-hero .rounded-2xl:nth-child(2) { animation-delay: 0.8s; }
+.bg-hero .rounded-2xl:nth-child(3) { animation-delay: 1.6s; }
+.bg-hero .rounded-2xl:nth-child(4) { animation-delay: 2.4s; }
