@@ -7,16 +7,19 @@ import { heroStats, services, outdoorWorks, insights } from "../content/siteData
 export default function Home() {
   return (
     <div>
-      <section className="bg-hero border-b border-white/10">
+      {/* HERO (now light background) */}
+      <section className="bg-hero border-b border-black/10">
         <Container className="py-14 sm:py-20">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div>
-              <p className="text-sm text-white/70">Project management consultancy</p>
-              <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+              <p className="text-sm text-slate-600">Project management consultancy</p>
+
+              <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
                 Sustainable construction.
-                <span className="block text-[rgba(var(--brand-500))]">Delivered on time.</span>
+                <span className="block text-[rgba(var(--brand-700))]">Delivered on time.</span>
               </h1>
-              <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/70">
+
+              <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-600">
                 We provide expert project management consultancy for sustainable and high-quality construction projects,
                 with specialized experience in outdoor and infrastructure works. From planning and design coordination to
                 budgeting, procurement and on-site execution, we keep delivery predictable.
@@ -27,28 +30,34 @@ export default function Home() {
                 <SecondaryButton to="/services">Explore services</SecondaryButton>
               </div>
 
+              {/* KPI STATS (light cards on light background) */}
               <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
                 {heroStats.map((h) => (
-                  <div key={h.label} className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <div className="text-lg font-semibold">{h.kpi}</div>
-                    <div className="mt-1 text-xs text-white/60">{h.label}</div>
+                  <div
+                    key={h.label}
+                    className="rounded-2xl bg-white/70 p-4 ring-1 ring-black/10 backdrop-blur"
+                  >
+                    <div className="text-lg font-semibold text-slate-900">{h.kpi}</div>
+                    <div className="mt-1 text-xs text-slate-600">{h.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-              <div className="absolute inset-0 bg-[rgba(var(--brand-600)/0.12)]" />
+            {/* HERO IMAGE CARD (still glassy, but adjusted for light bg) */}
+            <div className="relative overflow-hidden rounded-3xl bg-white/70 ring-1 ring-black/10 backdrop-blur">
+              <div className="absolute inset-0 bg-[rgba(var(--brand-600)/0.10)]" />
               <img
                 src="/images/hero.jpg"
                 alt="Padanilath project management"
-                className="h-full w-full object-cover opacity-90"
+                className="h-full w-full object-cover opacity-95"
               />
             </div>
           </div>
         </Container>
       </section>
 
+      {/* SERVICES */}
       <section>
         <Container className="py-14">
           <SectionHeading
@@ -67,6 +76,7 @@ export default function Home() {
         </Container>
       </section>
 
+      {/* OUTDOOR WORKS */}
       <section className="border-y border-white/10 bg-black/20">
         <Container className="py-14">
           <SectionHeading
@@ -82,6 +92,7 @@ export default function Home() {
         </Container>
       </section>
 
+      {/* INSIGHTS */}
       <section>
         <Container className="py-14">
           <SectionHeading
@@ -107,6 +118,7 @@ export default function Home() {
         </Container>
       </section>
 
+      {/* CTA (still dark) */}
       <section className="border-t border-white/10 bg-black/30">
         <Container className="py-14">
           <div className="grid gap-8 rounded-3xl bg-white/5 p-8 ring-1 ring-white/10 md:grid-cols-2 md:items-center">

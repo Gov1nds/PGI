@@ -19,7 +19,8 @@
 
 .bg-hero {
   background:
-    radial-gradient(900px 600px at 10% 10%, rgba(var(--brand-600) / 0.35), transparent 55%),
-    radial-gradient(700px 480px at 80% 20%, rgba(var(--brand-500) / 0.25), transparent 60%),
-    linear-gradient(180deg, rgba(var(--bg-900) / 0.35), rgba(var(--bg-950) / 1));
+    radial-gradient(1000px 700px at 0% 0%, rgba(var(--brand-600) / 0.30), transparent 60%),
+    radial-gradient(800px 600px at 100% 10%, rgba(var(--brand-500) / 0.22), transparent 65%),
+    radial-gradient(600px 500px at 50% 80%, rgba(var(--brand-600) / 0.10), transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #f4fbf6 60%, #eef8f1 100%);
 }
