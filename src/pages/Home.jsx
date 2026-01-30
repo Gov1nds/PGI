@@ -15,7 +15,7 @@ export default function Home() {
               <p className="text-sm text-slate-600">Project management consultancy</p>
 
               <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-                Turning your vision into reality.
+                Turning your vision into reality
                 <span className="block text-[rgba(var(--brand-700))]">with expert guidance at every step.</span>
               </h1>
 
