@@ -12,7 +12,7 @@ export default function Home() {
         <Container className="py-14 sm:py-20">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div>
-              <p className="text-sm text-slate-600">Sustainable construction</p>
+              <p className="text-sm text-slate-600">Project management consultancy</p>
 
               <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
                 Turning your vision into reality
