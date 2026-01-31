@@ -55,7 +55,7 @@ export default function Contact() {
 
         {/* RIGHT CARD */}
         <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold">Request a consultation</div>
+          <div className="text-sm font-semibold">Request a Quote</div>
           <p className="mt-2 text-sm text-white/70">
             Share your project details and we’ll respond on WhatsApp.
           </p>

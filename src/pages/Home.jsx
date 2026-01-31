@@ -12,7 +12,7 @@ export default function Home() {
         <Container className="py-14 sm:py-20">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div>
-              <p className="text-sm text-slate-600">Project management consultancy</p>
+              <p className="text-sm text-slate-600">Sustainable construction</p>
 
               <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
                 Turning your vision into reality
@@ -20,7 +20,7 @@ export default function Home() {
               </h1>
 
               <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-600">
-                We provide expert project management consultancy for sustainable and high-quality construction projects,
+                We provide expert project management for sustainable and high-quality construction projects,
                 with specialized experience in outdoor and infrastructure works. From planning and design coordination to
                 budgeting, procurement and on-site execution, we keep delivery predictable.
               </p>
