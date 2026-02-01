@@ -5,39 +5,39 @@ import { insights } from "../content/siteData.js";
 const insightBodyBySlug = {
   "cost-control": {
     intro:
-      "Cost overruns in construction usually come from unclear scope, late decisions, and unmanaged procurement lead-times. This insight explains a practical system to keep budgets stable—without compromising quality—using BOQ discipline, vendor planning, and weekly cost tracking.",
+      "Outdoor and landscaping budgets go out of control when scope keeps changing, materials are selected late, or execution happens without a clear sequence. This guide shows a practical way to control cost in landscaping projects—without reducing quality—using item-wise budgeting, vendor planning, and simple weekly tracking.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Freeze scope early and control changes through a simple approval process.",
-          "Create a BOQ-based procurement plan with lead times and delivery sequence.",
-          "Track cost weekly using planned vs. committed vs. actual spend.",
-          "Use value engineering to reduce cost without reducing performance or durability.",
-          "Avoid “site stoppage” costs by planning materials and cashflow together."
+          "Freeze your outdoor scope early (areas, materials, finishes, plants) and control changes with approvals.",
+          "Budget item-wise: paving, drainage, irrigation, lighting, plants, soil, edging, and labor separately.",
+          "Track weekly: Planned vs Ordered vs Installed vs Paid (so you spot overruns early).",
+          "Choose value engineering options that preserve durability (sub-base, slopes, jointing) not just looks.",
+          "Avoid rework costs by finalizing levels, slopes, and drainage before any paving or turf."
         ]
       },
       {
-        title: "A simple cost-control system (that works on site)",
+        title: "A simple outdoor cost-control system (works on site)",
         type: "ol",
         items: [
-          "Scope lock: define what is included/excluded + acceptance criteria.",
-          "BOQ baseline: prepare BOQ with clear specs (brand, grade, thickness, finish).",
-          "Procurement map: list vendors, lead times, transport, and storage needs.",
-          "Cost tracker: weekly update (Budget vs Committed vs Paid vs Pending).",
-          "Change control: any change must include cost + schedule impact before approval."
+          "Scope lock: define areas, finishes, and clear inclusions/exclusions (pavers type, turf type, plant list).",
+          "Material baseline: list specs (thickness, grade, brand) for pavers, kerbs, geotextile, soil, pipes, lights.",
+          "Sequence plan: drainage → sub-base → compaction → edging → paving/turf → planting → lighting.",
+          "Weekly tracker: budget vs committed (ordered) vs installed vs paid vs balance.",
+          "Change control: any change must show cost + time impact before you approve."
         ]
       },
       {
-        title: "Common causes of overruns (Kerala projects)",
+        title: "Common reasons landscaping budgets overrun",
         type: "ul",
         items: [
-          "Last-minute design changes after work starts",
-          "Price volatility in cement/steel/tiles and transport",
-          "Material mismatch (spec not followed, rework happens)",
-          "Poor sequencing—finishes get damaged and repeated",
-          "Rain delays without buffer planning and drainage readiness"
+          "Changing paver style/size after sub-base is done (layout changes waste material)",
+          "No clear plant list—extra plants keep getting added mid-way",
+          "Irrigation added late (lines cut through completed paving)",
+          "Lighting changes after finishing (trenching damages completed areas)",
+          "No drainage plan (waterlogging forces redesign and rework)"
         ]
       }
     ]
@@ -45,28 +45,28 @@ const insightBodyBySlug = {
 
   "outdoor-drainage": {
     intro:
-      "Outdoor works fail when drainage is treated as an afterthought. In Kerala, monsoon cycles demand slope planning, water flow control, and material choices that handle moisture. This insight outlines a practical approach to outdoor project planning for long-term performance.",
+      "Outdoor works fail when drainage is treated as an afterthought. In Kerala’s monsoon conditions, slope planning, outlet confirmation, and sub-base preparation decide whether paving stays strong and lawns stay healthy. This guide explains a practical drainage-first approach for long-term performance.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Drainage planning must come before paving, landscaping and outdoor finishes.",
-          "Always confirm slope direction and outlet points (where water exits).",
-          "Separate surface runoff from wastewater lines and avoid mixing flows.",
-          "Choose materials for humidity, algae growth and long monsoon exposure.",
-          "Document maintenance: cleaning points, drains, grates, and irrigation checks."
+          "Drainage must be planned before paving, turf, and landscaping finishes.",
+          "Always confirm slope directions and outlet points (where water safely exits).",
+          "Separate rainwater runoff from wastewater; never mix flows.",
+          "Choose outdoor materials for humidity, algae growth, and long monsoon exposure.",
+          "Document maintenance points: inspection chambers, grates, irrigation filters, and cleaning access."
         ]
       },
       {
         title: "Outdoor drainage checklist (before execution)",
         type: "ol",
         items: [
-          "Site levels: measure existing ground levels and identify low points.",
-          "Water path: map how rainwater flows today and where it gets stuck.",
-          "Slope plan: ensure correct slope away from structures (paving/paths).",
-          "Outlets: confirm drain outlets (stormwater line, soak pit, natural exit).",
-          "Construction sequence: drainage first → sub-base → paving → finishes."
+          "Site levels: identify low points and existing water collection zones.",
+          "Water path: map how rainwater moves today and where it stagnates.",
+          "Slope plan: ensure slopes away from structures and toward drains/outlets.",
+          "Outlets: confirm stormwater outlets (soak pit, drain line, natural exit).",
+          "Execution order: drainage first → sub-base → compaction → paving/turf → planting."
         ]
       },
       {
@@ -75,9 +75,9 @@ const insightBodyBySlug = {
         items: [
           "Waterlogging on pavers or near compound walls",
           "Erosion and soil washout during heavy rain",
-          "Cracks due to weak sub-base and poor compaction",
-          "Algae/slippery surfaces because of shade + moisture",
-          "Planting failure due to wrong soil prep and irrigation placement"
+          "Cracked pavers due to weak sub-base and poor compaction",
+          "Algae/slippery surfaces from shade + moisture",
+          "Plant/turf failure from poor soil prep and wrong irrigation placement"
         ]
       }
     ]
@@ -85,39 +85,39 @@ const insightBodyBySlug = {
 
   "quality-systems": {
     intro:
-      "Quality doesn’t improve with more rules—it improves with simple checks done consistently. This insight shares a lightweight quality system for small-to-medium construction projects: clear checklists, inspection points, documentation, and a daily routine that reduces rework.",
+      "Outdoor quality doesn’t come from more rules—it comes from a few high-impact checks done consistently. This guide shares a lightweight quality system for landscaping works: levels, compaction, sub-base thickness, drainage checks, and planting standards that reduce rework and improve long-term durability.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Quality problems are expensive because rework affects time, labor and finishes.",
-          "Define hold points (inspection before covering work).",
-          "Use checklists for each stage: civil, waterproofing, electrical, finishing.",
-          "Keep photo records and daily site notes to avoid disputes.",
-          "Fix root causes (training + materials + method), not just the visible defect."
+          "Outdoor rework is expensive because it damages finished surfaces and delays completion.",
+          "Define hold points: inspect before covering sub-base, before laying pavers, before planting soil is finalized.",
+          "Use simple checklists for: drainage, compaction, paving, turf, planting, and lighting.",
+          "Keep photo records + daily notes to avoid disputes and ensure accountability.",
+          "Fix root causes: poor compaction, wrong slope, low-quality materials, or bad sequencing."
         ]
       },
       {
         title: "Simple quality system you can run weekly",
         type: "ol",
         items: [
-          "Stage checklist: define what “good” looks like for each item.",
-          "Hold points: inspect before plastering, tiling, waterproofing cover-up etc.",
-          "Site diary: daily notes + progress photos + issues log.",
-          "Non-conformance log: record defects, responsible party, deadline to fix.",
-          "Weekly review: verify closure, update risks, plan next week’s inspections."
+          "Stage checklist: define what “good” looks like (levels, thickness, joint spacing, slope).",
+          "Hold points: inspect drainage lines, sub-base compaction, and levels before paving starts.",
+          "Site diary: daily notes + photos + issues list (helps control quality and scope).",
+          "Defect log: record issues, owner, and closure date (cracks, uneven paving, weak turf spots).",
+          "Weekly review: verify closure + plan inspections for next week’s activities."
         ]
       },
       {
-        title: "High-impact checks (most common rework areas)",
+        title: "High-impact outdoor checks (most common rework areas)",
         type: "ul",
         items: [
-          "Waterproofing slope and curing before tile/finish",
-          "Electrical conduits placement before plastering",
-          "Tile alignment, spacers, adhesive method, and edge finishing",
-          "Plaster thickness uniformity and curing schedule",
-          "Door/window level alignment before final fixing"
+          "Sub-base thickness + compaction (pavers last only if the base is strong)",
+          "Slope confirmation before paving (water should flow to drains, not stagnate)",
+          "Edging/kerb alignment (prevents paver movement and edge collapse)",
+          "Joint filling method (sand/polymeric) to avoid weed growth and shifting",
+          "Soil preparation + plant spacing + irrigation coverage (plants fail without basics)"
         ]
       }
     ]
@@ -194,15 +194,16 @@ export default function InsightDetail() {
             ))}
 
             <div className="mt-10 rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
-              <div className="text-sm font-semibold text-white">Need support on a live project?</div>
+              <div className="text-sm font-semibold text-white">Need help with outdoor works or landscaping?</div>
               <p className="mt-2 text-sm text-white/70">
-                We can help with planning, BOQ, procurement scheduling, quality routines and weekly reporting to keep delivery stable.
+                Share your site location and scope. We can help with planning, material selection, drainage-first execution,
+                paving/turf quality checks, and delivery coordination for a clean finish that lasts.
               </p>
               <Link
                 to="/contact"
                 className="mt-4 inline-flex text-sm font-semibold text-[rgba(var(--brand-500))] hover:underline"
               >
-                Contact sales →
+                Contact us →
               </Link>
             </div>
           </div>
@@ -211,7 +212,8 @@ export default function InsightDetail() {
         <aside className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
           <div className="text-sm font-semibold">Work with us</div>
           <p className="mt-2 text-sm text-white/70">
-            Share project location, scope and target timeline. We’ll advise on planning, budgeting and execution governance.
+            Send your outdoor scope (paving/turf/planting/irrigation/lighting), site location, and target timeline.
+            We’ll suggest a practical execution plan.
           </p>
           <Link
             to="/contact"
@@ -221,7 +223,6 @@ export default function InsightDetail() {
           </Link>
 
           <div className="mt-8 text-xs text-white/50">
-            Tip: You can add more insights by adding new objects in src/content/siteData.js and creating matching content in insightBodyBySlug.
           </div>
         </aside>
       </div>

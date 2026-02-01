@@ -12,7 +12,7 @@ export default function About() {
               <SectionHeading
                 eyebrow="About Padanilath"
                 title="Built for real-world delivery"
-                desc="We help clients plan, control and deliver construction projects—with special attention to outdoor works and sustainable outcomes."
+                desc="We help clients plan, control and deliver landscaping works projects—with special attention to outdoor works and sustainable outcomes."
               />
               <div className="mt-7 flex flex-wrap gap-3">
                 <PrimaryButton to="/contact">Contact sales</PrimaryButton>
