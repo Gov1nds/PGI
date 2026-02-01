@@ -36,19 +36,13 @@
   position: relative;
   overflow: hidden;
 
-  background:
-   
+  /* Plain white background */
+  background-color: #ffffff;
 
-    /* Background image */
-    url("/images/hero-bg.jpg");
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  /* Premium slow movement */
-  animation: glowDrift 22s ease-in-out infinite;
+  /* Remove image animation */
+  animation: none;
 }
+
 
 /* Vignette for depth */
 .bg-hero::after {
