@@ -59,6 +59,24 @@ export default function Home() {
           </div>
         </Container>
       </section>
+{/* TESTIMONIALS SECTION */}
+<section className="border-b border-white/10 bg-black/20">
+  <Container className="py-14">
+    <SectionHeading
+      eyebrow="Testimonials"
+      title="What our clients say about working with Padanilath"
+      desc="Real feedback from project owners and collaborators who trusted us with their Landscaping and outdoor works."
+    />
+
+    <div className="mt-10 overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
+      <img
+        src="/images/testimonials.jpg"
+        alt="Client testimonials and reviews"
+        className="w-full object-cover"
+      />
+    </div>
+  </Container>
+</section>
 
       {/* SERVICES */}
       <section>
