@@ -10,7 +10,7 @@ export default function Footer() {
           <div>
             <div className="text-lg font-semibold">{site.name}</div>
             <p className="mt-2 text-sm text-white/65">
-              Project management consultancy for sustainable construction and outdoor infrastructure works.
+             Sustainable Landscaping and Outdoor Infrastructure Project Execution & Management.
             </p>
             <div className="mt-4 space-y-1 text-sm text-white/70">
               <div>
