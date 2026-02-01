@@ -68,13 +68,16 @@ export default function Home() {
       desc="Real feedback from project owners and collaborators who trusted us with their Landscaping and outdoor works."
     />
 
-    <div className="mt-10 overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-      <img
-        src="/images/testimonials.jpg"
-        alt="Client testimonials and reviews"
-        className="w-full object-cover"
-      />
-    </div>
+    <div className="mt-10 flex justify-center">
+  <div className="w-full max-w-4xl overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10 shadow-soft">
+    <img
+      src="/images/testimonials.jpg"
+      alt="Client testimonials and reviews"
+      className="w-full h-auto object-contain"
+    />
+  </div>
+</div>
+
   </Container>
 </section>
 
