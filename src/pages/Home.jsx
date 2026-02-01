@@ -7,49 +7,52 @@ import { heroStats, services, outdoorWorks, insights } from "../content/siteData
 export default function Home() {
   return (
     <div>
-      {/* HERO (now light background) */}
+      {/* HERO (light + premium + animated) */}
       <section className="bg-hero border-b border-black/10">
         <Container className="py-14 sm:py-20">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div>
-              <p className="text-sm text-slate-600">Outdoor Development & Landscaping</p>
-
-              <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-                Turning your vision into reality
-                <span className="block text-[rgba(var(--brand-700))]">with expert guidance at every step.</span>
-              </h1>
-
-              <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-600">
-                We provide expert project management for sustainable and high-quality Landscaping projects,
-                with specialized experience in outdoor and Landscaping works. From planning and design coordination to
-                budgeting, procurement and on-site execution, we keep delivery predictable.
+              <p className="text-sm text-slate-700 hero-anim-1">
+                Outdoor Development & Landscaping
               </p>
 
-              <div className="mt-7 flex flex-wrap gap-3">
-                <PrimaryButton to="/contact">Talk to us</PrimaryButton>
+              <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl hero-anim-2">
+                Turning your vision into reality
+                <span className="block text-[rgba(var(--brand-700))]">
+                  with expert guidance at every step.
+                </span>
+              </h1>
+
+              <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-700 hero-anim-3">
+                We deliver premium outdoor and landscaping works with a focus on planning, drainage-first execution,
+                quality finishing, and predictable timelines. From design coordination to procurement and on-site execution,
+                we keep delivery smooth and long-lasting.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3 hero-anim-4">
+                <div className="hero-cta">
+                  <PrimaryButton to="/contact">Talk to us</PrimaryButton>
+                </div>
                 <SecondaryButton to="/services">Explore services</SecondaryButton>
               </div>
 
-              {/* KPI STATS (light cards on light background) */}
-              <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {/* KPI STATS */}
+              <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 hero-anim-4">
                 {heroStats.map((h) => (
-                  <div
-                    key={h.label}
-                    className="rounded-2xl bg-white/70 p-4 ring-1 ring-black/10 backdrop-blur"
-                  >
-                    <div className="text-lg font-semibold text-slate-900">{h.kpi}</div>
-                    <div className="mt-1 text-xs text-slate-600">{h.label}</div>
+                  <div key={h.label} className="hero-kpi rounded-2xl p-4">
+                    <div className="kpi-num text-lg">{h.kpi}</div>
+                    <div className="kpi-label mt-1 text-xs">{h.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* HERO IMAGE CARD (still glassy, but adjusted for light bg) */}
-            <div className="relative overflow-hidden rounded-3xl bg-white/70 ring-1 ring-black/10 backdrop-blur">
-              <div className="absolute inset-0 bg-[rgba(var(--brand-600)/0.10)]" />
+            {/* HERO IMAGE */}
+            <div className="hero-media relative overflow-hidden rounded-3xl bg-white/60 ring-1 ring-black/10 backdrop-blur">
+              <div className="absolute inset-0 bg-white/10" />
               <img
                 src="/images/hero.jpg"
-                alt="Padanilath project management"
+                alt="Outdoor and landscaping works"
                 className="h-full w-full object-cover opacity-95"
               />
             </div>
@@ -62,12 +65,18 @@ export default function Home() {
         <Container className="py-14">
           <SectionHeading
             eyebrow="What we do"
-            title="Project governance that makes execution easier"
-            desc="Clarity, accountability and predictable delivery—built with simple systems that work on real sites."
+            title="Outdoor execution that stays clean and durable"
+            desc="Drainage-first planning, strong material choices, sharp finishing, and smooth site coordination."
           />
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {services.slice(0, 3).map((s) => (
-              <ImageCard key={s.title} title={s.title} desc={s.desc} image={s.image} to="/services" />
+              <ImageCard
+                key={s.title}
+                title={s.title}
+                desc={s.desc}
+                image={s.image}
+                to="/services"
+              />
             ))}
           </div>
           <div className="mt-6">
@@ -86,7 +95,13 @@ export default function Home() {
           />
           <div className="mt-8 grid gap-6 md:grid-cols-4">
             {outdoorWorks.map((o) => (
-              <ImageCard key={o.title} title={o.title} desc={o.desc} image={o.image} to="/outdoor-works" />
+              <ImageCard
+                key={o.title}
+                title={o.title}
+                desc={o.desc}
+                image={o.image}
+                to="/outdoor-works"
+              />
             ))}
           </div>
         </Container>
@@ -118,7 +133,7 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* CTA (still dark) */}
+      {/* CTA (dark) */}
       <section className="border-t border-white/10 bg-black/30">
         <Container className="py-14">
           <div className="grid gap-8 rounded-3xl bg-white/5 p-8 ring-1 ring-white/10 md:grid-cols-2 md:items-center">
