@@ -4,7 +4,7 @@ export default function FloatingActions() {
       {/* WhatsApp */}
       <div className="group relative">
         <a
-          href="https://wa.me/918921983250"
+          href="https://wa.me/919446061029"
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-14 w-14 items-center justify-center rounded-full
@@ -38,7 +38,7 @@ export default function FloatingActions() {
         <span className="absolute inset-0 rounded-full bg-[rgba(var(--brand-600)/0.25)] blur-md animate-[pulse_2.2s_ease-in-out_infinite]" />
 
         <a
-          href="tel:+918921983250"
+          href="tel:+917907709032"
           className="relative flex h-14 w-14 items-center justify-center rounded-full
                      bg-[rgba(var(--brand-700))] text-white
                      ring-1 ring-white/20

@@ -77,7 +77,7 @@ export default function Contact() {
                 `Phone: ${encodeURIComponent(phone)}%0A%0A` +
                 `Project details:%0A${encodeURIComponent(details)}`;
 
-              const waPhone = "918921983250"; // no +, no spaces
+              const waPhone = "919446061029"; // no +, no spaces
               const url = `https://wa.me/${waPhone}?text=${msg}`;
 
               alert("Redirecting to WhatsApp…");

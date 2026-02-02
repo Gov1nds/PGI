@@ -3,7 +3,7 @@ export const site = {
   tagline: "Outdoor Development & Landscaping",
   contact: {
     email: "sales@padanilathu.com",
-    phone: "+91 8921983250",
+    phone: "+91 7907709032",
     location: "Kerala, India",
   },
 };
