@@ -13,6 +13,7 @@ import NewsDetail from "./pages/NewsDetail.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import ConsultPopup from "./components/ConsultPopup.jsx";
 
 export default function App() {
   return (
@@ -26,7 +27,7 @@ export default function App() {
       </a>
 
       <Navbar />
-
+<ConsultPopup delayMs={10000} />
       <main id="content" className="min-h-[70vh]">
         <Routes>
           <Route path="/" element={<Home />} />

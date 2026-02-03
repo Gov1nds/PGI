@@ -3,6 +3,8 @@ import SectionHeading from "../components/SectionHeading.jsx";
 import ImageCard from "../components/ImageCard.jsx";
 import { PrimaryButton, SecondaryButton } from "../components/Buttons.jsx";
 import { heroStats, services, outdoorWorks, insights } from "../content/siteData.js";
+import CountUp from "../components/CountUp.jsx";
+
 
 export default function Home() {
   return (
@@ -48,14 +50,60 @@ export default function Home() {
             </div>
 
             {/* HERO IMAGE */}
-            <div className="hero-media relative overflow-hidden rounded-3xl bg-white/60 ring-1 ring-black/10 backdrop-blur">
-              <div className="absolute inset-0 bg-white/10" />
-              <img
-                src="/images/hero.jpg"
-                alt="Outdoor and landscaping works"
-                className="h-full w-full object-cover opacity-95"
-              />
-            </div>
+           <div className="relative overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
+  {/* soft gradient glow */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,197,94,0.22),transparent_55%),radial-gradient(circle_at_80%_70%,rgba(22,163,74,0.18),transparent_60%)]" />
+
+  <div className="relative p-7 sm:p-10">
+    {/* Animated tagline */}
+    <div className="inline-flex items-center gap-2 rounded-full bg-black/30 px-4 py-2 text-xs font-semibold ring-1 ring-white/10">
+      <span className="h-2 w-2 rounded-full bg-[rgba(var(--brand-500))] animate-pulse" />
+      Green Today, Greener Tomorrow
+    </div>
+
+    <h3 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl">
+      Measurable impact,
+      <span className="block text-[rgba(var(--brand-500))]">not just nice visuals.</span>
+    </h3>
+
+    <p className="mt-3 text-sm leading-relaxed text-white/70">
+      We plan outdoor works with drainage-first execution, durable materials, and greener outcomes that last.
+    </p>
+
+    {/* Counters */}
+    <div className="mt-7 grid gap-4 sm:grid-cols-3">
+      <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
+        <div className="text-xs text-white/60">Plants installed</div>
+        <div className="mt-1 text-xl font-semibold text-white">
+          <CountUp value={100000} suffix="+" format="indian" />
+        </div>
+        <div className="mt-1 text-xs text-white/55">Across projects</div>
+      </div>
+
+      <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
+        <div className="text-xs text-white/60">CO₂ reduced</div>
+        <div className="mt-1 text-xl font-semibold text-white">
+          <CountUp value={250} suffix="+ t" format="number" />
+        </div>
+        <div className="mt-1 text-xs text-white/55">Estimated savings</div>
+      </div>
+
+      <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
+        <div className="text-xs text-white/60">Carbon footprint</div>
+        <div className="mt-1 text-xl font-semibold text-white">
+          <CountUp value={35} suffix="%" format="number" />
+        </div>
+        <div className="mt-1 text-xs text-white/55">Reduction goal</div>
+      </div>
+    </div>
+
+    {/* small animated line */}
+    <div className="mt-7 h-[2px] w-full overflow-hidden rounded-full bg-white/10">
+      <div className="h-full w-1/3 animate-[slide_2.4s_ease-in-out_infinite] rounded-full bg-[rgba(var(--brand-500))]" />
+    </div>
+  </div>
+</div>
+
           </div>
         </Container>
       </section>

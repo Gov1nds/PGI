@@ -138,3 +138,8 @@
   color: rgba(15, 23, 42, 0.70);
   font-weight: 500;
 }
+@keyframes slide {
+  0% { transform: translateX(-120%); opacity: 0.2; }
+  40% { opacity: 1; }
+  100% { transform: translateX(320%); opacity: 0.2; }
+}
