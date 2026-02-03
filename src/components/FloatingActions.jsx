@@ -119,7 +119,7 @@ export default function FloatingActions() {
         {/* WhatsApp */}
         <div className="fa-wrap relative group">
           <a
-            href="https://wa.me/919446061029"
+            href="https://wa.me/918921983250"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat on WhatsApp"
@@ -154,7 +154,7 @@ export default function FloatingActions() {
         <div className="fa-wrap relative group">
           <div aria-hidden className="fa-pulse-elem" style={{ width: 56, height: 56 }} />
           <a
-            href="tel:+917907709032"
+            href="tel:+918921983250"
             className="fa-button fa-float"
             aria-label="Call now"
             title="Call"
@@ -190,7 +190,7 @@ export default function FloatingActions() {
       >
         <div className="fa-bottom-bar mx-auto max-w-3xl rounded-t-xl">
           <a
-            href="tel:+917907709032"
+            href="tel:+918921983250"
             aria-label="Call now"
             className="inline-flex items-center gap-3 px-4 py-3 rounded-xl"
             style={{
@@ -215,7 +215,7 @@ export default function FloatingActions() {
           </a>
 
           <a
-            href="https://wa.me/919446061029"
+            href="https://wa.me/918921983250"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat on WhatsApp"

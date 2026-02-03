@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const WHATSAPP_NUMBER = "919446061029"; // country code + number (no +, no spaces)
+const WHATSAPP_NUMBER = "918921983250"; // country code + number (no +, no spaces)
 
 export default function ConsultPopup({ delayMs = 10000 }) {
   const [open, setOpen] = useState(false);
