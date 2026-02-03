@@ -67,8 +67,7 @@ export default function Home() {
     >
       Measurable impact,
       <span className="block" style={{ color: "rgba(var(--brand-600))" }}>
-        not just nice visuals.
-      </span>
+Sustainable & Eco-Friendly Practices      </span>
     </h3>
 
     <p
