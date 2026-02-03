@@ -49,7 +49,7 @@ export default function Home() {
               </div>
             </div>
 
-           {/* HERO IMAGE */}
+         {/* HERO IMAGE */}
 <div className="relative overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
   {/* soft gradient glow */}
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,197,94,0.22),transparent_55%),radial-gradient(circle_at_80%_70%,rgba(22,163,74,0.18),transparent_60%)]" />
@@ -83,7 +83,7 @@ export default function Home() {
       <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
         <div className="text-xs text-white/60">Plants installed</div>
         <div className="mt-1 text-xl font-semibold text-white">
-          <CountUp value={100000} suffix="+" format="indian" />
+          <CountUp className="text-emerald-700" value={100000} suffix="+" format="indian" />
         </div>
         <div className="mt-1 text-xs text-white/55">Across projects</div>
       </div>
@@ -91,7 +91,7 @@ export default function Home() {
       <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
         <div className="text-xs text-white/60">CO₂ reduced</div>
         <div className="mt-1 text-xl font-semibold text-white">
-          <CountUp value={250} suffix="+ t" format="number" />
+          <CountUp className="text-emerald-700" value={250} suffix="+ t" format="number" />
         </div>
         <div className="mt-1 text-xs text-white/55">Estimated savings</div>
       </div>
@@ -99,7 +99,7 @@ export default function Home() {
       <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
         <div className="text-xs text-white/60">Carbon footprint</div>
         <div className="mt-1 text-xl font-semibold text-white">
-          <CountUp value={35} suffix="%" format="number" />
+          <CountUp className="text-emerald-700" value={35} suffix="%" format="number" />
         </div>
         <div className="mt-1 text-xs text-white/55">Reduction goal</div>
       </div>
