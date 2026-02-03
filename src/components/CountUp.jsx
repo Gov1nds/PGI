@@ -1,7 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
+/**
+ * CountUp
+ *
+ * Props:
+ *  - value: number final value
+ *  - suffix: string to append (default "+")
+ *  - duration: animation duration in ms
+ *  - format: "indian" | "number"
+ *  - startOnView: boolean (use IntersectionObserver)
+ *  - className: optional CSS class for styling the output (e.g., "text-emerald-700")
+ *  - ariaLive: aria-live value ("polite" | "assertive" | "off")
+ */
 function formatIndian(n) {
-  // 100000 -> 1,00,000
   return new Intl.NumberFormat("en-IN").format(Math.round(n));
 }
 
@@ -11,6 +22,8 @@ export default function CountUp({
   duration = 1400,
   format = "indian", // "indian" | "number"
   startOnView = true,
+  className = "",
+  ariaLive = "polite",
 }) {
   const ref = useRef(null);
   const [seen, setSeen] = useState(!startOnView);
@@ -44,15 +57,25 @@ export default function CountUp({
   useEffect(() => {
     if (!seen) return;
 
+    const prefersReduced = typeof window !== "undefined" && window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false;
+
+    const to = Number(value) || 0;
+
+    if (prefersReduced) {
+      setDisplay(to);
+      return;
+    }
+
     let raf = 0;
     const start = performance.now();
     const from = 0;
-    const to = Number(value) || 0;
 
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
     const tick = (now) => {
-      const t = Math.min(1, (now - start) / duration);
+      const t = Math.min(1, (now - start) / Math.max(16, duration));
       const eased = easeOutCubic(t);
       const current = from + (to - from) * eased;
       setDisplay(current);
@@ -65,7 +88,7 @@ export default function CountUp({
   }, [seen, value, duration]);
 
   return (
-    <span ref={ref}>
+    <span ref={ref} className={className} aria-live={ariaLive}>
       {formatter(display)}
       {suffix}
     </span>
