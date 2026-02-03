@@ -1,135 +1,246 @@
 import React from "react";
 
+/**
+ * FloatingActions.jsx
+ *
+ * - Responsive: vertical floating buttons on md+; full-width bottom bar on small screens.
+ * - Accessible: keyboard focus, aria-labels, respects prefers-reduced-motion.
+ * - Visual: premium glass, subtle gradients, stronger contrast.
+ *
+ * Usage: import FloatingActions from "./FloatingActions";
+ * Place near page root (e.g., inside <body> or layout) so it's above other content.
+ */
+
 export default function FloatingActions() {
   return (
     <>
       <style>{`
-        /* small local keyframes for the floating and pulse ring */
+        /* Gentle float used on desktop buttons */
         @keyframes fa-float {
           0% { transform: translateY(0); }
           50% { transform: translateY(-6px); }
           100% { transform: translateY(0); }
         }
-        @keyframes fa-pulse-ring {
-          0% { transform: scale(1); opacity: 0.45; }
+
+        /* Pulse for primary call button */
+        @keyframes fa-pulse {
+          0% { transform: scale(1); opacity: 0.6; }
           70% { transform: scale(1.9); opacity: 0; }
           100% { transform: scale(1.9); opacity: 0; }
         }
 
-        .fa-float { animation: fa-float 3.6s ease-in-out infinite; transform-origin: center; }
-        .fa-pulse-ring {
+        .fa-button {
+          display: inline-grid;
+          place-items: center;
+          height: 56px;
+          width: 56px;
+          border-radius: 9999px;
+          position: relative;
+          z-index: 50;
+          transform-origin: center;
+          transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .fa-button:focus { outline: none; box-shadow: 0 0 0 4px rgba(16,185,129,0.12); }
+
+        /* desktop float animation */
+        @media (min-width: 768px) {
+          .fa-float { animation: fa-float 3.6s ease-in-out infinite; }
+        }
+
+        /* reduced motion respects user preference */
+        @media (prefers-reduced-motion: reduce) {
+          .fa-float { animation: none; }
+          .fa-pulse-elem { animation: none; opacity: 1; }
+        }
+
+        /* pulse element behind primary */
+        .fa-pulse-elem {
           position: absolute;
           inset: 0;
           border-radius: 9999px;
-          background: rgba(34,197,94,0.22); /* green-500/35% */
+          background: rgba(16,185,129,0.22);
           filter: blur(10px);
-          z-index: 0;
-          animation: fa-pulse-ring 2.6s cubic-bezier(.4,0,.2,1) infinite;
+          z-index: -1;
+          animation: fa-pulse 2.6s cubic-bezier(.4,0,.2,1) infinite;
         }
 
-        /* tooltip animation fallback (non-tailwind keyframes) */
+        /* small-screen bottom bar */
+        .fa-bottom-bar {
+          display: flex;
+          gap: 12px;
+          padding: 10px;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+          backdrop-filter: blur(6px);
+          border-radius: 12px 12px 0 0;
+          box-shadow: 0 -6px 30px rgba(0,0,0,0.12);
+        }
+
+        /* tooltips (desktop) */
         .fa-tooltip {
-          transition: transform .18s ease, opacity .18s ease;
-          transform: translateX(6px);
+          position: absolute;
+          right: 70px;
+          top: 50%;
+          transform: translateY(-50%) translateX(6px);
+          background: rgba(0,0,0,0.8);
+          color: #fff;
+          padding: 6px 10px;
+          border-radius: 8px;
+          font-size: 12px;
           opacity: 0;
           pointer-events: none;
+          transition: opacity .14s ease, transform .14s ease;
+          white-space: nowrap;
         }
-        .group:hover .fa-tooltip,
-        .group:focus-within .fa-tooltip {
-          transform: translateX(0);
+        .fa-wrap:hover .fa-tooltip,
+        .fa-wrap:focus-within .fa-tooltip {
           opacity: 1;
+          transform: translateY(-50%) translateX(0);
+        }
+
+        /* nice focus-visible fallback */
+        .fa-button:focus-visible { box-shadow: 0 0 0 4px rgba(34,197,94,0.14); }
+
+        /* visually hide but keep accessible */
+        .sr-only {
+          position: absolute !important;
+          height: 1px; width: 1px;
+          overflow: hidden;
+          clip: rect(1px, 1px, 1px, 1px);
+          white-space: nowrap;
         }
       `}</style>
 
-      <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+      {/* Desktop: vertical floating buttons (md+) */}
+      <div className="hidden md:flex fixed right-5 bottom-8 z-50 flex-col items-end gap-3">
         {/* WhatsApp */}
-        <div className="group relative">
+        <div className="fa-wrap relative group">
           <a
-            href="https://wa.me/918921983250"
+            href="https://wa.me/919446061029"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat on WhatsApp"
             title="WhatsApp"
-            className="relative flex h-14 w-14 items-center justify-center rounded-full
-                       bg-gradient-to-br from-emerald-500 to-emerald-600 text-white
-                       ring-1 ring-black/10 shadow-[0_12px_30px_rgba(16,185,129,0.12)]
-                       transform-gpu transition-transform duration-200 ease-out
-                       hover:scale-110 active:scale-95 fa-float"
+            className="fa-button fa-float"
+            style={{
+              background: "linear-gradient(180deg,#10B981,#059669)",
+              color: "white",
+              boxShadow: "0 10px 30px rgba(6,95,70,0.18)",
+            }}
           >
-            {/* soft inner highlight */}
-            <span className="absolute inset-0 rounded-full bg-white/6 mix-blend-screen pointer-events-none" />
-
-            {/* WhatsApp icon (clean, bold) */}
+            {/* refined WhatsApp glyph — filled phone-speech bubble */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="relative z-10 h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              width="22"
+              height="22"
+              fill="white"
+              aria-hidden="true"
             >
-              <defs>
-                {/* accessible: defs are ignored by most renderers, safe to include */}
-              </defs>
-              <path
-                d="M21 12.1A9 9 0 1 1 11.9 3a9 9 0 0 1 9.1 9.1z"
-                stroke="none"
-                fill="rgba(255,255,255,0.06)"
-              />
-              <path d="M17.5 16.5c-.6 1.6-1.5 1.9-2.6 2.2-.7.2-1.5.3-3.9-1.2C8 16.9 6.6 16 5.8 15.3c-.8-.6-1.1-1.1-.9-1.9.2-.8.9-1.7 1.4-2.1.5-.4 1.1-.9 1.6-.6.6.3 1.3.9 2 .9.7 0 1.1-.4 1.6-.4.5 0 .9.1 1.5.8.6.6.9 1 .9 1.9 0 .9-.2 1.5-.2 1.9z" 
-                    fill="white" opacity="0.95"/>
-              <path d="M16 8.5c0 .83-.67 1.5-1.5 1.5S13 9.33 13 8.5 13.67 7 14.5 7 16 7.67 16 8.5z" fill="white" opacity="0.95"/>
+              <path d="M20.5 3.5A11.9 11.9 0 0012 .5 11.9 11.9 0 003.5 9.2c0 2.1.6 4.1 1.7 5.9L3 22l7-1.9c1.7 1 3.6 1.5 5.5 1.5 6.6 0 12-5.4 12-12 0-1.6-.3-3.1-.8-4.5zM12 20.3c-1.6 0-3.2-.4-4.6-1.2l-.3-.2-4.1 1.1 1.1-4.1-.2-.3A8.9 8.9 0 013.7 9.2 8.8 8.8 0 1112 20.3z" />
+              <path d="M16.2 13.9c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.2-.5.1s-.5.6-.6.7c-.1.1-.2.1-.4 0-.4-.2-1.3-.8-2.1-1.6-.6-.6-1-1.2-1.2-1.6-.1-.3 0-.5.2-.7.2-.2.4-.4.6-.6.2-.2.3-.4.4-.6.1-.2.1-.4 0-.6-.1-.2-.3-1.2-.5-1.6-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.8.4-.3.3-1 .9-1 2.2 0 1.3.8 2.4.9 2.6.1.2 1.4 2.2 3.3 3.1.5.2.9.3 1.2.4.5.1 1 .1 1.4.1.4 0 1.1-.3 1.4-.9.3-.6.3-1.1.2-1.3-.1-.1-.1-.2-.3-.3z" />
             </svg>
           </a>
 
-          {/* Tooltip */}
-          <div className="absolute right-16 top-1/2 -translate-y-1/2 hidden md:block">
-            <div className="fa-tooltip rounded-lg bg-black/85 px-3 py-1 text-xs text-white">
-              WhatsApp
-            </div>
+          <div className="fa-tooltip" role="status" aria-hidden>
+            WhatsApp
           </div>
         </div>
 
-        {/* Call (primary) */}
-        <div className="group relative">
-          {/* Pulse ring (absolute, behind button) */}
-          <span className="fa-pulse-ring" aria-hidden="true" />
-
+        {/* Primary Call */}
+        <div className="fa-wrap relative group">
+          <div aria-hidden className="fa-pulse-elem" style={{ width: 56, height: 56 }} />
           <a
-            href="tel:+918921983250"
+            href="tel:+917907709032"
+            className="fa-button fa-float"
             aria-label="Call now"
             title="Call"
-            className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full
-                       bg-gradient-to-br from-emerald-700 to-emerald-600 text-white
-                       ring-1 ring-white/20
-                       shadow-[0_18px_50px_rgba(6,95,70,0.22)]
-                       transform-gpu transition-transform duration-200 ease-out
-                       hover:scale-110 active:scale-95 fa-float"
+            style={{
+              background: "linear-gradient(180deg,#065f46,#047857)",
+              color: "white",
+              boxShadow: "0 16px 50px rgba(6,95,70,0.22)",
+            }}
           >
-            {/* Phone icon (clean handset) */}
+            {/* cleaner phone icon with bold silhouette */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
               viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              width="20"
+              height="20"
+              fill="white"
+              aria-hidden="true"
             >
-              <path d="M2 7.2c.1-1.1.7-2.2 1.7-3 1.3-1.1 3.1-1.3 4.7-.6l2 .8a1 1 0 01.6.9v2.1a1 1 0 01-.5.9L9.6 9.9c-.2.1-.3.3-.2.5.6 1.6 1.9 3.8 3.5 5.3 1.6 1.6 3.7 2.9 5.3 3.5.2.1.4 0 .5-.2l1.1-1.1c.3-.3.7-.4 1.1-.5h2.1a1 1 0 01.9.6l.8 2c.7 1.6.5 3.4-.6 4.7-1 1-2 1.7-3 1.7-6.1 0-11-4.9-11-11 0-1 .6-2 1.7-3z"
-                    fill="white" opacity="0.98"/>
+              <path d="M3 5a2 2 0 012-2h2.2a1 1 0 01.97.76l.6 2.4a1 1 0 01-.27.98L7.9 8.1a16 16 0 006 6l.95-.6a1 1 0 01.98-.27l2.4.6a1 1 0 01.76.97V19a2 2 0 01-2 2h-1C8.8 21 3 15.2 3 8V5z" />
             </svg>
           </a>
 
-          {/* Tooltip */}
-          <div className="absolute right-16 top-1/2 -translate-y-1/2 hidden md:block">
-            <div className="fa-tooltip rounded-lg bg-black/85 px-3 py-1 text-xs text-white">
-              Call now
-            </div>
+          <div className="fa-tooltip" role="status" aria-hidden>
+            Call now
           </div>
+        </div>
+      </div>
+
+      {/* Mobile: bottom bar (visible < md) */}
+      <div
+        className="md:hidden fixed left-0 right-0 bottom-0 z-50 px-4 pb-safe"
+        aria-hidden={false}
+      >
+        <div className="fa-bottom-bar mx-auto max-w-3xl rounded-t-xl">
+          <a
+            href="tel:+917907709032"
+            aria-label="Call now"
+            className="inline-flex items-center gap-3 px-4 py-3 rounded-xl"
+            style={{
+              background: "linear-gradient(90deg,#065f46,#059669)",
+              color: "white",
+              boxShadow: "0 8px 24px rgba(6,95,70,0.18)",
+              flex: 1,
+              justifyContent: "center",
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="white"
+              aria-hidden="true"
+            >
+              <path d="M3 5a2 2 0 012-2h2.2a1 1 0 01.97.76l.6 2.4a1 1 0 01-.27.98L7.9 8.1a16 16 0 006 6l.95-.6a1 1 0 01.98-.27l2.4.6a1 1 0 01.76.97V19a2 2 0 01-2 2h-1C8.8 21 3 15.2 3 8V5z" />
+            </svg>
+            <span style={{ fontWeight: 600 }}>Call</span>
+          </a>
+
+          <a
+            href="https://wa.me/919446061029"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp"
+            className="inline-flex items-center gap-3 px-4 py-3 rounded-xl"
+            style={{
+              background: "white",
+              color: "#065f46",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+              flex: 1,
+              justifyContent: "center",
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="#065f46"
+              aria-hidden="true"
+            >
+              <path d="M20.5 3.5A11.9 11.9 0 0012 .5 11.9 11.9 0 003.5 9.2c0 2.1.6 4.1 1.7 5.9L3 22l7-1.9c1.7 1 3.6 1.5 5.5 1.5 6.6 0 12-5.4 12-12 0-1.6-.3-3.1-.8-4.5zM12 20.3c-1.6 0-3.2-.4-4.6-1.2l-.3-.2-4.1 1.1 1.1-4.1-.2-.3A8.9 8.9 0 013.7 9.2 8.8 8.8 0 1112 20.3z" />
+              <path d="M16.2 13.9c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.2-.5.1s-.5.6-.6.7c-.1.1-.2.1-.4 0-.4-.2-1.3-.8-2.1-1.6-.6-.6-1-1.2-1.2-1.6-.1-.3 0-.5.2-.7.2-.2.4-.4.6-.6.2-.2.3-.4.4-.6.1-.2.1-.4 0-.6-.1-.2-.3-1.2-.5-1.6-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.8.4-.3.3-1 .9-1 2.2 0 1.3.8 2.4.9 2.6.1.2 1.4 2.2 3.3 3.1.5.2.9.3 1.2.4.5.1 1 .1 1.4.1.4 0 1.1-.3 1.4-.9.3-.6.3-1.1.2-1.3-.1-.1-.1-.2-.3-.3z" />
+            </svg>
+            <span style={{ fontWeight: 600 }}>WhatsApp</span>
+          </a>
         </div>
       </div>
     </>

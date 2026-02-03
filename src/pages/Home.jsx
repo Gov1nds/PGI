@@ -5,7 +5,6 @@ import { PrimaryButton, SecondaryButton } from "../components/Buttons.jsx";
 import { heroStats, services, outdoorWorks, insights } from "../content/siteData.js";
 import CountUp from "../components/CountUp.jsx";
 
-
 export default function Home() {
   return (
     <div>
@@ -49,85 +48,147 @@ export default function Home() {
               </div>
             </div>
 
-            {/* HERO IMAGE */}
-           <div className="relative overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-  {/* soft gradient glow */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,197,94,0.22),transparent_55%),radial-gradient(circle_at_80%_70%,rgba(22,163,74,0.18),transparent_60%)]" />
+            {/* HERO IMAGE — upgraded visual & UX for premium look */}
+            <div className="relative overflow-hidden rounded-3xl bg-white/3 ring-1 ring-white/10">
+              {/* Decorative ambient layers for depth */}
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(40% 40% at 20% 20%, rgba(34,197,94,0.14), transparent 22%)," +
+                    "radial-gradient(30% 30% at 80% 70%, rgba(16,185,129,0.10), transparent 25%)," +
+                    "linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02))",
+                  mixBlendMode: "screen",
+                }}
+              />
 
-  <div className="relative p-7 sm:p-10">
-    {/* Animated tagline */}
-    <div className="inline-flex items-center gap-2 rounded-full bg-black/30 px-4 py-2 text-xs font-semibold ring-1 ring-white/10">
-      <span className="h-2 w-2 rounded-full bg-[rgba(var(--brand-500))] animate-pulse" />
-      Green Today, Greener Tomorrow
-    </div>
+              {/* Subtle border stroke using an overlay for premium glass edge */}
+              <div
+                aria-hidden
+                className="absolute -inset-px rounded-3xl pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
+                  mask:
+                    "linear-gradient(#000, #000)",
+                  WebkitMask:
+                    "linear-gradient(#000, #000)",
+                }}
+              />
 
-    <h3 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl">
-      Measurable impact,
-      <span className="block text-[rgba(var(--brand-500))]">not just nice visuals.</span>
-    </h3>
+              <div className="relative p-7 sm:p-10 bg-transparent">
+                {/* Animated tagline — elevated pill */}
+                <div className="inline-flex items-center gap-3 rounded-full bg-black/40 px-4 py-2 text-xs font-semibold ring-1 ring-white/8 backdrop-blur-sm">
+                  <span
+                    className="h-2.5 w-2.5 rounded-full bg-[rgba(var(--brand-500))] animate-ping-slow"
+                    aria-hidden
+                  />
+                  <span className="text-white/90">Green Today, Greener Tomorrow</span>
+                </div>
 
-    <p className="mt-3 text-sm leading-relaxed text-white/70">
-      We plan outdoor works with drainage-first execution, durable materials, and greener outcomes that last.
-    </p>
+                <h3 className="mt-6 text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+                  Measurable impact,
+                  <span className="block text-[rgba(var(--brand-600))]">not just nice visuals.</span>
+                </h3>
 
-    {/* Counters */}
-    <div className="mt-7 grid gap-4 sm:grid-cols-3">
-      <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
-        <div className="text-xs text-white/60">Plants installed</div>
-        <div className="mt-1 text-xl font-semibold text-white">
-          <CountUp value={100000} suffix="+" format="indian" />
-        </div>
-        <div className="mt-1 text-xs text-white/55">Across projects</div>
-      </div>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/80">
+                  We plan outdoor works with drainage-first execution, durable materials, and greener outcomes that last.
+                </p>
 
-      <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
-        <div className="text-xs text-white/60">CO₂ reduced</div>
-        <div className="mt-1 text-xl font-semibold text-white">
-          <CountUp value={250} suffix="+ t" format="number" />
-        </div>
-        <div className="mt-1 text-xs text-white/55">Estimated savings</div>
-      </div>
+                {/* Counters — brighter, premium cards */}
+                <div className="mt-7 grid gap-4 sm:grid-cols-3">
+                  <div className="rounded-2xl bg-white/6 backdrop-blur-sm p-5 ring-1 ring-white/8 transition-transform hover:-translate-y-1 hover:shadow-lg">
+                    <div className="text-xs text-white/60">Plants installed</div>
+                    <div className="mt-2 text-2xl font-bold text-[rgba(var(--brand-500))]">
+                      <CountUp value={100000} suffix="+" format="indian" />
+                    </div>
+                    <div className="mt-1 text-xs text-white/60">Across projects</div>
+                  </div>
 
-      <div className="rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 transition hover:ring-[rgba(var(--brand-500)/0.35)]">
-        <div className="text-xs text-white/60">Carbon footprint</div>
-        <div className="mt-1 text-xl font-semibold text-white">
-          <CountUp value={35} suffix="%" format="number" />
-        </div>
-        <div className="mt-1 text-xs text-white/55">Reduction goal</div>
-      </div>
-    </div>
+                  <div className="rounded-2xl bg-white/6 backdrop-blur-sm p-5 ring-1 ring-white/8 transition-transform hover:-translate-y-1 hover:shadow-lg">
+                    <div className="text-xs text-white/60">CO₂ reduced</div>
+                    <div className="mt-2 text-2xl font-bold text-[rgba(var(--brand-500))]">
+                      <CountUp value={250} suffix="+ t" format="number" />
+                    </div>
+                    <div className="mt-1 text-xs text-white/60">Estimated savings</div>
+                  </div>
 
-    {/* small animated line */}
-    <div className="mt-7 h-[2px] w-full overflow-hidden rounded-full bg-white/10">
-      <div className="h-full w-1/3 animate-[slide_2.4s_ease-in-out_infinite] rounded-full bg-[rgba(var(--brand-500))]" />
-    </div>
-  </div>
-</div>
+                  <div className="rounded-2xl bg-white/6 backdrop-blur-sm p-5 ring-1 ring-white/8 transition-transform hover:-translate-y-1 hover:shadow-lg">
+                    <div className="text-xs text-white/60">Carbon footprint</div>
+                    <div className="mt-2 text-2xl font-bold text-[rgba(var(--brand-500))]">
+                      <CountUp value={35} suffix="%" format="number" />
+                    </div>
+                    <div className="mt-1 text-xs text-white/60">Reduction goal</div>
+                  </div>
+                </div>
 
+                {/* Progress-line — refined & premium */}
+                <div className="mt-8">
+                  <div className="h-1 w-full rounded-full bg-white/8 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-[rgba(var(--brand-500))] transition-[width] duration-1500 ease-in-out"
+                      style={{ width: "34%" }}
+                    />
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-3 text-xs text-white/60">
+                    <div className="h-0.5 w-8 rounded bg-[rgba(var(--brand-500))]" />
+                    <div>Our approach focuses on drainage-first planning and durable delivery</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* subtle drop shadow vignette */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-3xl"
+                style={{
+                  boxShadow: "inset 0 30px 80px rgba(0,0,0,0.12)",
+                }}
+              />
+
+              {/* Motion styles (reduced motion aware) */}
+              <style>{`
+                @keyframes ping-slow {
+                  0% { transform: scale(1); opacity: 0.9; }
+                  70% { transform: scale(2.2); opacity: 0; }
+                  100% { transform: scale(2.2); opacity: 0; }
+                }
+                .animate-ping-slow { animation: ping-slow 2.8s cubic-bezier(.4,0,.2,1) infinite; }
+
+                @media (prefers-reduced-motion: reduce) {
+                  .animate-ping-slow { animation: none; opacity: 1; transform: none; }
+                }
+
+                /* small helper to soften the progress width animation on mount */
+                .duration-1500 { transition-duration: 1500ms; }
+              `}</style>
+            </div>
           </div>
         </Container>
       </section>
-{/* TESTIMONIALS SECTION */}
-<section className="border-b border-white/10 bg-black/20">
-  <Container className="py-14">
-    <SectionHeading
-      eyebrow="Testimonials"
-      title="What our clients say about working with Padanilath"
-      desc="Real feedback from project owners and collaborators who trusted us with their Landscaping and outdoor works."
-    />
 
-    <div className="mt-10 flex justify-center">
-  <div className="w-full max-w-4xl overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10 shadow-soft">
-    <img
-      src="/images/testimonials.jpg"
-      alt="Client testimonials and reviews"
-      className="w-full h-auto object-contain"
-    />
-  </div>
-</div>
+      {/* TESTIMONIALS SECTION */}
+      <section className="border-b border-white/10 bg-black/20">
+        <Container className="py-14">
+          <SectionHeading
+            eyebrow="Testimonials"
+            title="What our clients say about working with Padanilath"
+            desc="Real feedback from project owners and collaborators who trusted us with their Landscaping and outdoor works."
+          />
 
-  </Container>
-</section>
+          <div className="mt-10 flex justify-center">
+            <div className="w-full max-w-4xl overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10 shadow-soft">
+              <img
+                src="/images/testimonials.jpg"
+                alt="Client testimonials and reviews"
+                className="w-full h-auto object-contain"
+              />
+            </div>
+          </div>
+        </Container>
+      </section>
 
       {/* SERVICES */}
       <section>
