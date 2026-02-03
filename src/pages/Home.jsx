@@ -93,7 +93,7 @@ export default function Home() {
       <div className="rounded-2xl bg-white/80 backdrop-blur p-5 ring-1 ring-emerald-100 transition hover:ring-emerald-300 shadow-sm">
         <div className="text-xs text-emerald-900/60">Carbon footprint</div>
         <div className="mt-1 text-xl font-semibold text-emerald-700">
-          <CountUp value={25} suffix="%" format="number" />
+          <CountUp value={35} suffix="%" format="number" />
         </div>
         <div className="mt-1 text-xs text-emerald-900/55">Reduction goal</div>
       </div>
@@ -105,6 +105,7 @@ export default function Home() {
     </div>
   </div>
 </div>
+
 
           </div>
         </Container>
