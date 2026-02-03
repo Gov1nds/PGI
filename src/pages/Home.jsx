@@ -65,9 +65,9 @@ export default function Home() {
       className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl"
       style={{ color: "#0f172a" }} /* strong slate-black for good contrast */
     >
-      Measurable impact,
+      Lowering footprints,
       <span className="block" style={{ color: "rgba(var(--brand-600))" }}>
-Sustainable & Eco-Friendly Practices      </span>
+Raising standards      </span>
     </h3>
 
     <p
