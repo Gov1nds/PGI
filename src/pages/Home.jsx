@@ -19,9 +19,9 @@ export default function Home() {
               </p>
 
               <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl hero-anim-2">
-                Keep procurement and deliveries
+                Ensuring your procurement and deliveries
                 <span className="block text-[rgba(var(--brand-700))]">
-                  on time, on budget, and under control.
+                  stay on time, cost-efficient, and fully controlled
                 </span>
               </h1>
 
@@ -69,7 +69,7 @@ export default function Home() {
 
                 {/* PARAGRAPH */}
                 <p className="mt-3 text-sm leading-relaxed text-emerald-950/70">
-                  We bring structure to unorganized daily requirements—clear trackers, vendor coordination, transport planning,
+                  We bring structure to unorganized daily requirements-clear trackers, vendor coordination, transport planning,
                   and documentation support (including customs and compliance coordination via partners when needed).
                 </p>
 
@@ -134,7 +134,7 @@ export default function Home() {
     <SectionHeading
       eyebrow="Technical Expertise"
       title="Engineering-grade sourcing for electronics & mechanical components"
-      desc="We help clients secure the right technical parts—faster and with fewer mistakes—by combining vendor intelligence, spec verification, and disciplined procurement execution."
+      desc="We help clients secure the right technical parts faster and with fewer mistakes by combining vendor intelligence, spec verification, and disciplined procurement execution."
     />
 
     {/* KPI + Proof */}
@@ -181,7 +181,7 @@ export default function Home() {
         <div className="text-sm font-semibold text-white">Electronics + AI-assisted sourcing</div>
         <p className="mt-2 text-sm leading-relaxed text-white/70">
           We support electronics requirements with structured RFQs, BOM clean-up, alternates mapping,
-          and AI-assisted vendor discovery—so availability improves without compromising specs.
+          and AI-assisted vendor discovery, so availability improves without compromising specs.
         </p>
         <ul className="mt-4 space-y-2 text-sm text-white/70">
           <li>• PCB/boards, sensors, controllers, drives, automation parts</li>
@@ -206,7 +206,7 @@ export default function Home() {
       <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
         <div className="text-sm font-semibold text-white">Spec verification & compliance control</div>
         <p className="mt-2 text-sm leading-relaxed text-white/70">
-          We reduce costly errors by ensuring offered items match your exact specification—before ordering.
+          We reduce costly errors by ensuring offered items match your exact specification before ordering.
           Documentation and customs coordination are supported through trusted partners when applicable.
         </p>
         <ul className="mt-4 space-y-2 text-sm text-white/70">
@@ -221,7 +221,7 @@ export default function Home() {
     <div className="mt-12 grid gap-8 rounded-3xl bg-black/30 p-8 ring-1 ring-white/10 md:grid-cols-2 md:items-center">
       <div>
         <div className="text-sm text-[rgba(var(--brand-500))]">For electronics & engineering procurement</div>
-        <h3 className="mt-2 text-2xl font-semibold text-white">Send your BOM / part list — we’ll structure it and source it</h3>
+        <h3 className="mt-2 text-2xl font-semibold text-white">Send your BOM - we’ll structure it and source it</h3>
         <p className="mt-3 text-sm leading-relaxed text-white/70">
           Share part numbers, specs/drawings, required quantities, and target delivery dates.
           We’ll respond with a sourcing plan, vendor options, lead times, and a coordination model.
@@ -244,7 +244,6 @@ export default function Home() {
     </div>
   </Container>
 </section>
-
 
       {/* SERVICES */}
       <section>
@@ -271,7 +270,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Capabilities"
             title="Built for fast-moving requirements"
-            desc="From local procurement to multi-location deliveries—plus documentation and customs coordination via trusted partners when required."
+            desc="From local procurement to multi-location deliveries plus documentation and customs coordination via trusted partners when required."
           />
           <div className="mt-8 grid gap-6 md:grid-cols-4">
             {outdoorWorks.map((o) => (
@@ -315,7 +314,7 @@ export default function Home() {
               <h3 className="text-2xl font-semibold">Need faster procurement and on-time deliveries?</h3>
               <p className="mt-3 text-sm leading-relaxed text-white/70">
                 Share your BOQ or daily requirements, preferred brands/specs, pickup & delivery locations, and timeline.
-                We’ll respond with a clear coordination plan, reporting format, and next steps—including documentation and
+                We’ll respond with a clear coordination plan, reporting format, and next steps including documentation and
                 customs coordination support when needed.
               </p>
             </div>
