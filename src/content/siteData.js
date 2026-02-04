@@ -59,7 +59,8 @@ export const services = [
   },
 ];
 
-export const Capabilities = [
+export const outdoorWorks = [
+
   {
     title: "Procurement Process Management",
     desc: "BOQ tracking, vendor alignment, rate comparison, and purchase coordination for timely supply.",
