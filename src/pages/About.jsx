@@ -10,7 +10,7 @@ export default function About() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <SectionHeading
-                eyebrow="About Padanilath"
+                eyebrow="About PGI"
                 title="Built for real-world delivery"
                 desc="We help clients plan, control and deliver landscaping works projects—with special attention to outdoor works and sustainable outcomes."
               />
@@ -20,7 +20,7 @@ export default function About() {
             </div>
 
             <div className="relative aspect-[16/10] overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-              <img src="/images/about-hero.jpg" alt="About Padanilath" className="h-full w-full object-cover" />
+              <img src="/images/about-hero.jpg" alt="About PGI" className="h-full w-full object-cover" />
             </div>
           </div>
         </Container>

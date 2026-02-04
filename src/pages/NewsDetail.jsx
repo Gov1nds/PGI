@@ -5,7 +5,7 @@ import { newsItems, site } from "../content/siteData.js";
 const newsBodyBySlug = {
   "procurement-logistics-expansion": {
     intro:
-      "Padanilath has formally launched Procurement & Logistics Coordination Services to help businesses manage BOQs, daily requirements, vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking. We operate as a service team that brings structure, speed, and visibility—without clients needing to add internal headcount.",
+      "PGI has formally launched Procurement & Logistics Coordination Services to help businesses manage BOQs, daily requirements, vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking. We operate as a service team that brings structure, speed, and visibility—without clients needing to add internal headcount.",
     highlights: [
       "BOQ intake + daily requirement structuring (turn unorganized requests into an actionable tracker)",
       "Quotation coordination and comparison (rates, lead times, availability, delivery scope)",

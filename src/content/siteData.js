@@ -113,7 +113,7 @@ export const insights = [
 export const newsItems = [
   {
     slug: "procurement-logistics-expansion",
-    title: "Padanilath launches Procurement & Logistics Coordination Services",
+    title: "PGI launches Procurement & Logistics Coordination Services",
     date: "2026-01-25",
     excerpt: "Now offering structured vendor follow-up, transport coordination, and delivery tracking for business clients.",
     image: "/images/news-1.jpg",

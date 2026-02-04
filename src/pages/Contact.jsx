@@ -45,7 +45,7 @@ export default function Contact() {
             </p>
 
             <a
-              href={`mailto:${site.contact.email}?subject=Project%20Enquiry%20-%20Padanilath&body=Hello%20Padanilath%2C%0A%0AProject%20Location%3A%0AScope%3A%0ATimeline%3A%0ABudget%20Range%3A%0A%0ARegards%2C`}
+              href={`mailto:${site.contact.email}?subject=Project%20Enquiry%20-%20PGI&body=Hello%20PGI%2C%0A%0AProject%20Location%3A%0AScope%3A%0ATimeline%3A%0ABudget%20Range%3A%0A%0ARegards%2C`}
               className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-[rgba(var(--brand-600)/0.25)] px-4 py-2 text-sm font-semibold ring-1 ring-[rgba(var(--brand-500)/0.35)] transition hover:bg-[rgba(var(--brand-600)/0.35)]"
             >
               Email sales
@@ -71,7 +71,7 @@ export default function Contact() {
               const details = e.currentTarget.details.value || "";
 
               const msg =
-                `Hi Padanilath, I want a consultation.%0A%0A` +
+                `Hi PGI, I want a consultation.%0A%0A` +
                 `Name: ${encodeURIComponent(name)}%0A` +
                 `Email: ${encodeURIComponent(email)}%0A` +
                 `Phone: ${encodeURIComponent(phone)}%0A%0A` +
