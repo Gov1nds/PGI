@@ -128,26 +128,123 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="border-b border-white/10 bg-black/20">
-        <Container className="py-14">
-          <SectionHeading
-            eyebrow="Testimonials"
-            title="What clients say about our coordination"
-            desc="Feedback from teams who needed faster follow-ups, cleaner reporting, and on-time deliveries."
-          />
+      {/* TECHNICAL EXPERTISE SECTION */}
+<section className="border-b border-white/10 bg-black/20">
+  <Container className="py-14">
+    <SectionHeading
+      eyebrow="Technical Expertise"
+      title="Engineering-grade sourcing for electronics & mechanical components"
+      desc="We help clients secure the right technical parts—faster and with fewer mistakes—by combining vendor intelligence, spec verification, and disciplined procurement execution."
+    />
 
-          <div className="mt-10 flex justify-center">
-            <div className="w-full max-w-4xl overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10 shadow-soft">
-              <img
-                src="/images/testimonials.jpg"
-                alt="Client testimonials and reviews"
-                className="w-full h-auto object-contain"
-              />
-            </div>
-          </div>
-        </Container>
-      </section>
+    {/* KPI + Proof */}
+    <div className="mt-10 grid gap-6 md:grid-cols-3">
+      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="text-xs text-white/60">Components & spares sourced</div>
+        <div className="mt-2 text-3xl font-semibold text-white">
+          <CountUp value={2500} suffix="+" format="number" />
+        </div>
+        <div className="mt-2 text-sm text-white/70">
+          Across electronics, mechanical, and engineered items
+        </div>
+      </div>
+
+      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="text-xs text-white/60">Vendors evaluated</div>
+        <div className="mt-2 text-3xl font-semibold text-white">
+          <CountUp value={300} suffix="+" format="number" />
+        </div>
+        <div className="mt-2 text-sm text-white/70">
+          Shortlist + capability matching + compliance checks
+        </div>
+      </div>
+
+      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="text-xs text-white/60">OTD / delivery discipline</div>
+        <div className="mt-2 text-3xl font-semibold text-white">
+          <CountUp value={92} suffix="%" format="number" />
+        </div>
+        <div className="mt-2 text-sm text-white/70">
+          Order follow-ups, dispatch planning, and tracking control
+        </div>
+      </div>
+    </div>
+
+    {/* Animated progress line */}
+    <div className="mt-8 h-[2px] w-full overflow-hidden rounded-full bg-white/10">
+      <div className="h-full w-1/3 animate-[slide_2.4s_ease-in-out_infinite] rounded-full bg-[rgba(var(--brand-500))]" />
+    </div>
+
+    {/* Expertise Cards */}
+    <div className="mt-10 grid gap-6 md:grid-cols-3">
+      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="text-sm font-semibold text-white">Electronics + AI-assisted sourcing</div>
+        <p className="mt-2 text-sm leading-relaxed text-white/70">
+          We support electronics requirements with structured RFQs, BOM clean-up, alternates mapping,
+          and AI-assisted vendor discovery—so availability improves without compromising specs.
+        </p>
+        <ul className="mt-4 space-y-2 text-sm text-white/70">
+          <li>• PCB/boards, sensors, controllers, drives, automation parts</li>
+          <li>• Alternate part identification + lead time visibility</li>
+          <li>• Vendor capability matching (quality, test, documentation)</li>
+        </ul>
+      </div>
+
+      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="text-sm font-semibold text-white">Mechanical & engineered components</div>
+        <p className="mt-2 text-sm leading-relaxed text-white/70">
+          From machined items to industrial spares, we coordinate suppliers and validate the technical
+          details that decide fit, performance, and lifecycle reliability.
+        </p>
+        <ul className="mt-4 space-y-2 text-sm text-white/70">
+          <li>• Bearings, seals, gearboxes, motors, pumps, couplings</li>
+          <li>• Fabrication, machining, casting/forging coordination</li>
+          <li>• Material grade + dimensional requirement alignment</li>
+        </ul>
+      </div>
+
+      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="text-sm font-semibold text-white">Spec verification & compliance control</div>
+        <p className="mt-2 text-sm leading-relaxed text-white/70">
+          We reduce costly errors by ensuring offered items match your exact specification—before ordering.
+          Documentation and customs coordination are supported through trusted partners when applicable.
+        </p>
+        <ul className="mt-4 space-y-2 text-sm text-white/70">
+          <li>• Spec match: part numbers, drawings, revisions, approvals</li>
+          <li>• Datasheets, CoC/CoA, test reports, packaging requirements</li>
+          <li>• Import/export docs coordination via partners</li>
+        </ul>
+      </div>
+    </div>
+
+    {/* CTA card */}
+    <div className="mt-12 grid gap-8 rounded-3xl bg-black/30 p-8 ring-1 ring-white/10 md:grid-cols-2 md:items-center">
+      <div>
+        <div className="text-sm text-[rgba(var(--brand-500))]">For electronics & engineering procurement</div>
+        <h3 className="mt-2 text-2xl font-semibold text-white">Send your BOM / part list — we’ll structure it and source it</h3>
+        <p className="mt-3 text-sm leading-relaxed text-white/70">
+          Share part numbers, specs/drawings, required quantities, and target delivery dates.
+          We’ll respond with a sourcing plan, vendor options, lead times, and a coordination model.
+        </p>
+      </div>
+
+      <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="text-sm font-semibold text-white">What you’ll get</div>
+        <ul className="mt-3 space-y-2 text-sm text-white/70">
+          <li>• Clear RFQ + quote comparison (spec / lead time / price)</li>
+          <li>• Vendor shortlist + alternates for faster availability</li>
+          <li>• Follow-ups + dispatch planning + delivery confirmation</li>
+          <li>• Structured updates: pending, ETA, risks, next actions</li>
+        </ul>
+
+        <div className="mt-5">
+          <PrimaryButton to="/contact">Request sourcing support</PrimaryButton>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
 
       {/* SERVICES */}
       <section>
