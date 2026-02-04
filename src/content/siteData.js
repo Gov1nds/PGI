@@ -1,7 +1,7 @@
 // siteData.js
 
 export const site = {
-  name: "Padanilath",
+  name: "PGI",
   tagline: "Procurement & Logistics Coordination Services",
   contact: {
     email: "sales@padanilathu.com",
