@@ -10,8 +10,7 @@ export default function Footer() {
           <div>
             <div className="text-lg font-semibold">{site.name}</div>
             <p className="mt-2 text-sm text-white/65">
-             Sustainable Landscaping and Outdoor Infrastructure Project Execution & Management.
-            </p>
+Strategic Sourcing & Flow Management            </p>
             <div className="mt-4 space-y-1 text-sm text-white/70">
               <div>
                 <span className="text-white/50">Email:</span>{" "}
@@ -43,7 +42,7 @@ export default function Footer() {
           <div>
             <div className="text-sm font-semibold text-white/90">Get in touch</div>
             <p className="mt-3 text-sm text-white/65">
-              Share your project goals. We can support planning, budgeting, procurement and execution governance.
+              From strategy to execution. We lead your planning, budgeting, and procurement with rigorous governance and precision.
             </p>
             <Link
               to="/contact"

@@ -2,122 +2,220 @@ import { useParams, Link } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { insights } from "../content/siteData.js";
 
+/**
+ * Keep slugs here aligned with `insights` in siteData.js
+ * Suggested slugs (from our updated content):
+ * - boq-to-delivery
+ * - vendor-transport-coordination
+ * - delivery-delay-prevention
+ */
 const insightBodyBySlug = {
-  "cost-control": {
+  "boq-to-delivery": {
     intro:
-      "Outdoor and landscaping budgets go out of control when scope keeps changing, materials are selected late, or execution happens without a clear sequence. This guide shows a practical way to control cost in landscaping projects—without reducing quality—using item-wise budgeting, vendor planning, and simple weekly tracking.",
+      "Most procurement delays happen because BOQ items are not converted into an actionable control system. People quote late, approvals are unclear, orders are not tracked, and dispatch updates are scattered across calls and WhatsApp. This guide shows a simple, practical BOQ-to-Delivery system you can run daily—without expensive software.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Freeze your outdoor scope early (areas, materials, finishes, plants) and control changes with approvals.",
-          "Budget item-wise: paving, drainage, irrigation, lighting, plants, soil, edging, and labor separately.",
-          "Track weekly: Planned vs Ordered vs Installed vs Paid (so you spot overruns early).",
-          "Choose value engineering options that preserve durability (sub-base, slopes, jointing) not just looks.",
-          "Avoid rework costs by finalizing levels, slopes, and drainage before any paving or turf."
+          "Turn every BOQ into a live tracker with one status per line item (Quoted → Approved → Ordered → Ready → Dispatched → Delivered).",
+          "Separate responsibility: client approves + pays vendors, you coordinate follow-ups + logistics to ensure delivery.",
+          "Create a single ‘truth sheet’ that everyone follows (avoid multiple versions on WhatsApp).",
+          "Track 4 critical dates per item: quote received, approval, expected dispatch, expected delivery.",
+          "Use escalation rules: if vendor misses a date, you switch to backup vendor or alternate transporter fast."
         ]
       },
       {
-        title: "A simple outdoor cost-control system (works on site)",
+        title: "The BOQ to Delivery control workflow",
         type: "ol",
         items: [
-          "Scope lock: define areas, finishes, and clear inclusions/exclusions (pavers type, turf type, plant list).",
-          "Material baseline: list specs (thickness, grade, brand) for pavers, kerbs, geotextile, soil, pipes, lights.",
-          "Sequence plan: drainage → sub-base → compaction → edging → paving/turf → planting → lighting.",
-          "Weekly tracker: budget vs committed (ordered) vs installed vs paid vs balance.",
-          "Change control: any change must show cost + time impact before you approve."
+          "BOQ intake: capture item name, spec/brand, unit, qty, required-by date, delivery location.",
+          "Quote collection: get at least 2–3 quotes for key items (price + lead time + dispatch terms).",
+          "Comparison sheet: compare price, availability, lead time, payment terms, warranty, delivery scope.",
+          "Approval checkpoint: client selects option + approves (record approval date and final spec).",
+          "Order release: vendor receives confirmed order details + expected dispatch date.",
+          "Dispatch readiness: confirm packing, loading plan, invoice/ewaybill readiness (if applicable), and pickup timing.",
+          "Transport arrangement: allocate vehicle, share pickup contact, share delivery contact, fix delivery window.",
+          "Shipment tracking: check-in at critical milestones (pickup → transit midpoint → delivery gate).",
+          "Delivery confirmation: POD/photo/receipt confirmation + close item status in tracker."
         ]
       },
       {
-        title: "Common reasons landscaping budgets overrun",
+        title: "What your tracker must include (minimum columns)",
         type: "ul",
         items: [
-          "Changing paver style/size after sub-base is done (layout changes waste material)",
-          "No clear plant list—extra plants keep getting added mid-way",
-          "Irrigation added late (lines cut through completed paving)",
-          "Lighting changes after finishing (trenching damages completed areas)",
-          "No drainage plan (waterlogging forces redesign and rework)"
+          "Item code / line no.",
+          "Item description + spec/brand",
+          "Qty + unit",
+          "Vendor name + contact",
+          "Quoted rate + quote date",
+          "Approved rate + approval date",
+          "Order date",
+          "Expected dispatch date",
+          "Transporter + vehicle no.",
+          "Expected delivery date + delivery location",
+          "Status (Quoted / Approved / Ordered / Ready / Dispatched / Delivered)",
+          "Remarks (issues, changes, pending actions)"
+        ]
+      },
+      {
+        title: "Common failure points (and how to prevent them)",
+        type: "ul",
+        items: [
+          "BOQ lacks specs: fix by adding brand/grade/thickness/model before quotation.",
+          "Approvals happen on phone: fix by confirming approval on email/WhatsApp with final rate + delivery date.",
+          "Vendor says ‘tomorrow dispatch’ repeatedly: fix with a confirmed dispatch slot + escalation if missed.",
+          "Transport arranged late: fix by pre-booking vehicle once item is ‘Ready’ (not after invoice generation).",
+          "No delivery window coordination: fix by confirming site receiving time + unloading constraints in advance."
+        ]
+      },
+      {
+        title: "Simple reporting format (daily / weekly)",
+        type: "ul",
+        items: [
+          "Today dispatch list (items + vehicle + ETA)",
+          "Pending approvals list (items + decision required)",
+          "Vendor follow-up list (items + next action)",
+          "Delayed items list (reason + revised dispatch/delivery)",
+          "Next 7 days requirement plan (high-risk items needing early action)"
         ]
       }
     ]
   },
 
-  "outdoor-drainage": {
+  "vendor-transport-coordination": {
     intro:
-      "Outdoor works fail when drainage is treated as an afterthought. In Kerala’s monsoon conditions, slope planning, outlet confirmation, and sub-base preparation decide whether paving stays strong and lawns stay healthy. This guide explains a practical drainage-first approach for long-term performance.",
+      "Procurement succeeds when vendors and transporters are aligned on dispatch readiness, pickup timing, documents, and delivery window. Without a system, you get last-minute calls, missed pickups, demurrage risk, and blame-shifting. This guide provides a clean coordination system you can run with WhatsApp + a tracker.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Drainage must be planned before paving, turf, and landscaping finishes.",
-          "Always confirm slope directions and outlet points (where water safely exits).",
-          "Separate rainwater runoff from wastewater; never mix flows.",
-          "Choose outdoor materials for humidity, algae growth, and long monsoon exposure.",
-          "Document maintenance points: inspection chambers, grates, irrigation filters, and cleaning access."
+          "Vendor readiness must be confirmed before booking vehicle: packing + loading + invoice readiness.",
+          "Transport booking must include: pickup address, loading hours, material type/weight, delivery window.",
+          "Use a ‘Dispatch Confirmation Message’ template to avoid misunderstandings.",
+          "Create a single communication thread per dispatch (vendor + transporter + client/site contact).",
+          "Build backups: at least 2 alternate vendors and 2 alternate transport options for key items."
         ]
       },
       {
-        title: "Outdoor drainage checklist (before execution)",
+        title: "Dispatch confirmation checklist (vendor side)",
         type: "ol",
         items: [
-          "Site levels: identify low points and existing water collection zones.",
-          "Water path: map how rainwater moves today and where it stagnates.",
-          "Slope plan: ensure slopes away from structures and toward drains/outlets.",
-          "Outlets: confirm stormwater outlets (soak pit, drain line, natural exit).",
-          "Execution order: drainage first → sub-base → compaction → paving/turf → planting."
+          "Material packed and ready? (yes/no, time)",
+          "Loading support available? (forklift/manual, manpower)",
+          "Invoice/dispatch note ready? (yes/no)",
+          "Any special handling required? (fragile, moisture-sensitive, stacking limits)",
+          "Pickup contact name + phone confirmed",
+          "Gate/entry rules at pickup location confirmed",
+          "Final pickup slot agreed (date + time window)"
         ]
       },
       {
-        title: "Typical outdoor failures we prevent",
+        title: "Transport booking checklist (transporter side)",
+        type: "ol",
+        items: [
+          "Vehicle type (pickup/LCV/mini-truck/lorry/container) decided based on volume/weight",
+          "Pickup address + pin + landmark + loading time window shared",
+          "Delivery address + receiving time window shared",
+          "Material details shared (weight/packaging/stacking)",
+          "Rate + payment terms agreed (advance/balance, toll, unloading)",
+          "Driver name + phone + vehicle number captured",
+          "Transit ETA plan agreed (including night halt if long route)"
+        ]
+      },
+      {
+        title: "A simple 3-message system that reduces chaos",
         type: "ul",
         items: [
-          "Waterlogging on pavers or near compound walls",
-          "Erosion and soil washout during heavy rain",
-          "Cracked pavers due to weak sub-base and poor compaction",
-          "Algae/slippery surfaces from shade + moisture",
-          "Plant/turf failure from poor soil prep and wrong irrigation placement"
+          "Message 1 (Vendor): 'Confirm material readiness + exact pickup slot + loading support.'",
+          "Message 2 (Transporter): 'Vehicle details + driver + pickup time + delivery ETA.'",
+          "Message 3 (Client/Site): 'Dispatch details + vehicle + ETA + receiving coordination.'"
+        ]
+      },
+      {
+        title: "Common coordination issues (and fixes)",
+        type: "ul",
+        items: [
+          "Vehicle reaches before material is ready → confirm ‘Ready’ status before booking vehicle.",
+          "Vendor changes pickup timing last minute → set a firm slot + escalation after 1 reschedule.",
+          "Wrong vehicle size booked → maintain a quick reference table for item categories and vehicle types.",
+          "No unloading manpower at site → confirm unloading responsibility before dispatch.",
+          "Driver unreachable mid-transit → share alternate driver number + transporter office number."
+        ]
+      },
+      {
+        title: "Quality control during dispatch (practical)",
+        type: "ul",
+        items: [
+          "Verify quantity by count/weight before loading where possible.",
+          "Take photos of packing + loaded vehicle (proof for disputes).",
+          "Ensure labeling for multi-item loads (avoid missing items on delivery).",
+          "Confirm fragile items are protected (corner guards, wrap, pallets if needed)."
         ]
       }
     ]
   },
 
-  "quality-systems": {
+  "delivery-delay-prevention": {
     intro:
-      "Outdoor quality doesn’t come from more rules—it comes from a few high-impact checks done consistently. This guide shares a lightweight quality system for landscaping works: levels, compaction, sub-base thickness, drainage checks, and planting standards that reduce rework and improve long-term durability.",
+      "Delivery delays rarely happen ‘suddenly’. They build up from small misses: late approvals, vendor dispatch uncertainty, transport availability, traffic windows, and receiving constraints. This guide gives a practical delay-prevention playbook you can use for daily procurement and logistics coordination.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Outdoor rework is expensive because it damages finished surfaces and delays completion.",
-          "Define hold points: inspect before covering sub-base, before laying pavers, before planting soil is finalized.",
-          "Use simple checklists for: drainage, compaction, paving, turf, planting, and lighting.",
-          "Keep photo records + daily notes to avoid disputes and ensure accountability.",
-          "Fix root causes: poor compaction, wrong slope, low-quality materials, or bad sequencing."
+          "Treat lead time as a risk: confirm realistic dispatch dates, not optimistic promises.",
+          "Maintain a 7-day lookahead plan for high-risk items (long lead, imported, custom, limited stock).",
+          "Use buffers: dispatch buffer + delivery buffer + receiving buffer.",
+          "Always confirm receiving constraints: unloading time, gate entry, permits, holiday blocks, labor availability.",
+          "Create a delay escalation ladder (vendor → vendor owner → alternate vendor → client decision)."
         ]
       },
       {
-        title: "Simple quality system you can run weekly",
+        title: "The 7-day lookahead system (simple and powerful)",
         type: "ol",
         items: [
-          "Stage checklist: define what “good” looks like (levels, thickness, joint spacing, slope).",
-          "Hold points: inspect drainage lines, sub-base compaction, and levels before paving starts.",
-          "Site diary: daily notes + photos + issues list (helps control quality and scope).",
-          "Defect log: record issues, owner, and closure date (cracks, uneven paving, weak turf spots).",
-          "Weekly review: verify closure + plan inspections for next week’s activities."
+          "List items needed in the next 7 days (required-by date).",
+          "Mark risk level: High (lead time > 3 days or limited stock), Medium, Low.",
+          "For High-risk items: confirm vendor readiness date + backup vendor option.",
+          "Pre-book transport when item is within 48 hours of readiness.",
+          "Send daily status to client: what is safe, what is at risk, what needs decision today."
         ]
       },
       {
-        title: "High-impact outdoor checks (most common rework areas)",
+        title: "Top reasons deliveries get delayed",
         type: "ul",
         items: [
-          "Sub-base thickness + compaction (pavers last only if the base is strong)",
-          "Slope confirmation before paving (water should flow to drains, not stagnate)",
-          "Edging/kerb alignment (prevents paver movement and edge collapse)",
-          "Joint filling method (sand/polymeric) to avoid weed growth and shifting",
-          "Soil preparation + plant spacing + irrigation coverage (plants fail without basics)"
+          "Late approvals on quotations",
+          "Vendor stock mismatch (they quote without confirming stock)",
+          "Packing/loading not ready on pickup day",
+          "Transport shortage / wrong vehicle choice",
+          "Receiving team not ready (no unloading / gate delays / wrong delivery window)",
+          "Documentation delays (invoice, e-waybill, dispatch note where applicable)"
+        ]
+      },
+      {
+        title: "Delay prevention checklist (run this before dispatch)",
+        type: "ol",
+        items: [
+          "Approval confirmed? (yes/no) + final spec locked",
+          "Payment status clear? (client/vendor confirmation if required)",
+          "Material ready time confirmed? (not just 'tomorrow')",
+          "Transport booked with correct vehicle? (yes/no)",
+          "Pickup + delivery windows confirmed? (yes/no)",
+          "Unloading responsibility confirmed? (yes/no)",
+          "Driver contact + live location sharing setup? (optional but useful)"
+        ]
+      },
+      {
+        title: "Escalation rules (make it professional)",
+        type: "ul",
+        items: [
+          "If vendor misses dispatch once → ask for revised dispatch date + reason + confirmation.",
+          "If vendor misses twice → activate backup vendor quote + inform client of impact.",
+          "If transporter fails pickup slot → switch transporter from backup list immediately.",
+          "If receiving issue causes delay → confirm revised delivery window + share with driver to prevent waiting charges."
         ]
       }
     ]
@@ -187,17 +285,23 @@ export default function InsightDetail() {
           </div>
 
           <div className="mt-8 text-sm leading-relaxed text-white/75">
-            <p>{body?.intro || "Update this insight content in InsightDetail.jsx."}</p>
+            <p>
+              {body?.intro ||
+                "This insight is published, but the detailed body is not added yet. Add content for this slug in InsightDetail.jsx."}
+            </p>
 
             {(body?.sections || []).map((s) => (
               <Section key={s.title} title={s.title} type={s.type} items={s.items} />
             ))}
 
             <div className="mt-10 rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
-              <div className="text-sm font-semibold text-white">Need help with outdoor works or landscaping?</div>
+              <div className="text-sm font-semibold text-white">
+                Need help with procurement and logistics coordination?
+              </div>
               <p className="mt-2 text-sm text-white/70">
-                Share your site location and scope. We can help with planning, material selection, drainage-first execution,
-                paving/turf quality checks, and delivery coordination for a clean finish that lasts.
+                Share your BOQ or daily requirements, delivery location, and timeline. We’ll coordinate quotations,
+                vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking—so materials arrive
+                on time without daily chaos.
               </p>
               <Link
                 to="/contact"
@@ -212,8 +316,8 @@ export default function InsightDetail() {
         <aside className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
           <div className="text-sm font-semibold">Work with us</div>
           <p className="mt-2 text-sm text-white/70">
-            Send your outdoor scope (paving/turf/planting/irrigation/lighting), site location, and target timeline.
-            We’ll suggest a practical execution plan.
+            Send your BOQ (or item list), preferred brands/specs, delivery location, and required dates.
+            We’ll share a clear coordination plan and reporting format.
           </p>
           <Link
             to="/contact"
@@ -222,7 +326,15 @@ export default function InsightDetail() {
             Contact sales
           </Link>
 
-          <div className="mt-8 text-xs text-white/50">
+          <div className="mt-8 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+            <div className="text-xs font-semibold text-white/80">What to send</div>
+            <ul className="mt-2 list-disc pl-5 text-xs text-white/60 space-y-1">
+              <li>BOQ / item list (qty + unit)</li>
+              <li>Specs / brands (if any)</li>
+              <li>Required-by dates</li>
+              <li>Pickup & delivery locations</li>
+              <li>Any constraints (receiving time, unloading)</li>
+            </ul>
           </div>
         </aside>
       </div>

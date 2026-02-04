@@ -3,47 +3,58 @@ import Container from "../components/Container.jsx";
 import { newsItems, site } from "../content/siteData.js";
 
 const newsBodyBySlug = {
-  "outdoor-works-practice": {
+  "procurement-logistics-expansion": {
     intro:
-      "Padanilath & Company has launched a dedicated Outdoor Works practice to support clients planning outdoor construction, site development, and infrastructure coordination across Kerala. This update expands our capability in drainage-first planning, material durability, and execution governance.",
+      "Padanilath has formally launched Procurement & Logistics Coordination Services to help businesses manage BOQs, daily requirements, vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking. We operate as a service team that brings structure, speed, and visibility—without clients needing to add internal headcount.",
     highlights: [
-      "Outdoor construction planning: sequencing, schedule and vendor alignment",
-      "Drainage-first approach for monsoon conditions and long-term performance",
-      "Better coordination for utilities: irrigation, lighting, water lines and site services",
-      "Quality checklists and inspection points for outdoor finishing works",
-      "Clear reporting: weekly updates, risks, and next actions"
+      "BOQ intake + daily requirement structuring (turn unorganized requests into an actionable tracker)",
+      "Quotation coordination and comparison (rates, lead times, availability, delivery scope)",
+      "Vendor follow-ups for readiness, dispatch dates, and issue resolution",
+      "Dispatch planning + transport coordination (pickup slots, vehicle planning, delivery windows)",
+      "Shipment tracking + proof of delivery (POD) confirmation",
+      "Documentation coordination support (invoice/dispatch docs + compliance guidance; customs support via partners where needed)"
     ],
     whyItMatters: [
-      "Outdoor works often fail due to weak sub-base, poor slope planning, and incorrect material selection.",
-      "A dedicated team and process reduces rework, waterlogging, cracks, and early deterioration.",
-      "Clients get predictable timelines because materials and sequencing are planned properly."
+      "Most delays are not caused by suppliers alone—delays happen due to missed follow-ups, unclear approvals, and transport misalignment.",
+      "Businesses lose money when urgent requirements are handled on calls/WhatsApp without a single tracker and escalation system.",
+      "A structured coordination layer improves delivery predictability, reduces last-minute firefighting, and helps prevent cost overruns from delays and rework."
     ],
     nextSteps: [
-      "Share site location + photos + rough scope (paths, paving, drainage, landscaping etc.)",
-      "We will propose a planning and execution approach with milestones",
-      "If needed, we can support BOQ, procurement and on-site governance"
+      "Share your BOQ or requirement list (qty + unit), preferred brands/specs, and required-by dates",
+      "Send pickup & delivery locations and receiving constraints (timings, unloading, site contact)",
+      "We’ll propose a coordination workflow + reporting format (daily/weekly) and start with a pilot scope"
+    ],
+    extras: [
+      "We do not replace your existing vendors—we coordinate them and maintain backup options to reduce risk.",
+      "Client payments can remain direct to vendors; our role is coordination, tracking, and delivery control.",
+      "For imports/port-side movements, we can coordinate with your CHA/freight partners or connect you to verified partners for documentation and customs processes."
     ]
   },
 
-  "weekly-reporting": {
+  "live-delivery-tracking": {
     intro:
-      "We introduced a new weekly project reporting format to make progress clearer for clients, contractors, and vendors. The goal is simple: reduce confusion, document decisions, and prevent delays caused by missed actions.",
+      "We introduced a clearer delivery tracking and reporting system to reduce confusion across vendors, transporters, and receiving teams. Clients now get a single source of truth showing what’s quoted, approved, ordered, ready, dispatched, and delivered—with ETAs and pending actions.",
     highlights: [
-      "Plan vs Actual progress summary (weekly)",
-      "Material and procurement status (lead time + delivery readiness)",
-      "Open issues list with owners and deadlines",
-      "Risk log: what can delay the project and mitigation actions",
-      "Photo-based site updates for transparency"
+      "Single tracker view: Quoted → Approved → Ordered → Ready → Dispatched → Delivered",
+      "Dispatch details captured: vehicle number, driver contact, pickup time slot, ETA",
+      "Pending actions list: approvals required, payment confirmation pending, vendor readiness pending",
+      "Delay flags with reason + revised dates (so teams can act early)",
+      "Proof of delivery capture (POD/photo/receipt confirmation) for closure"
     ],
     whyItMatters: [
-      "Many delays happen not on site—but because decisions and follow-ups aren’t tracked.",
-      "A structured update helps stakeholders align quickly and solve problems before they become expensive.",
-      "Weekly documentation reduces disputes and improves accountability."
+      "Delivery delays usually build up quietly; a tracker catches risk early and enables escalation before deadlines are missed.",
+      "A single reporting format reduces repeated calls and prevents wrong information spreading across teams.",
+      "Documented updates reduce disputes and improve accountability between supplier, transporter, and receiving team."
     ],
     nextSteps: [
-      "If you’re starting a new build or outdoor project, request our reporting template",
-      "We can set up weekly governance calls + on-site inspection routines",
-      "You’ll receive a consistent dashboard: progress, risks, procurement, and next actions"
+      "Request our reporting format (daily or weekly) and we’ll set it up for your project",
+      "Start with 10–20 BOQ lines as a pilot to demonstrate control and speed",
+      "Scale to full requirements once the workflow is stable"
+    ],
+    extras: [
+      "For compliance-sensitive shipments, we include a documentation checklist (invoice/dispatch documents, transport documents, and coordination notes).",
+      "Where customs is involved, we coordinate status updates and document readiness through your CHA/freight team or verified partners.",
+      "If your receiving site has time restrictions, we plan delivery windows to avoid waiting charges and re-routing."
     ]
   }
 };
@@ -103,7 +114,7 @@ export default function NewsDetail() {
         <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
           <div className="text-sm font-semibold text-white">Update overview</div>
           <p className="mt-3 text-sm text-white/75">
-            {body?.intro || "Update this news content in NewsDetail.jsx (newsBodyBySlug)."}
+            {body?.intro || "This update is published, but detailed content is not added yet. Add content for this slug in newsBodyBySlug."}
           </p>
         </div>
 
@@ -117,6 +128,21 @@ export default function NewsDetail() {
           <BulletList items={body?.whyItMatters || ["Explain why this update matters to clients."]} />
         </div>
 
+        {/* Extra detail block */}
+        <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+          <div className="text-sm font-semibold text-white">How we typically work</div>
+          <BulletList
+            items={
+              body?.extras || [
+                "Share BOQ / requirements and required-by dates.",
+                "We coordinate quotations and follow-ups and propose dispatch/delivery plan.",
+                "Client pays vendors directly; we track readiness, transport, and delivery.",
+                "You receive daily/weekly reports and a single tracker view."
+              ]
+            }
+          />
+        </div>
+
         <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
           <div className="text-sm font-semibold text-white">Next steps</div>
           <NumberList items={body?.nextSteps || ["Add next steps for interested clients."]} />
@@ -125,7 +151,7 @@ export default function NewsDetail() {
         <div className="rounded-3xl bg-black/30 p-6 ring-1 ring-white/10">
           <div className="text-sm font-semibold text-white">Talk to us</div>
           <p className="mt-2 text-sm text-white/70">
-            For partnerships and new work enquiries, reach us directly:
+            For partnerships, procurement support, transport coordination, or documentation/customs coordination enquiries:
           </p>
           <div className="mt-4 text-sm text-white/75 space-y-1">
             <div>
@@ -136,10 +162,17 @@ export default function NewsDetail() {
             </div>
             <div>
               Phone:{" "}
-              <a className="text-[rgba(var(--brand-500))] hover:underline" href={`tel:${site.contact.phone.replace(/\s+/g, "")}`}>
+              <a
+                className="text-[rgba(var(--brand-500))] hover:underline"
+                href={`tel:${site.contact.phone.replace(/\s+/g, "")}`}
+              >
                 {site.contact.phone}
               </a>
             </div>
+          </div>
+
+          <div className="mt-4 text-xs text-white/50">
+            Note: Customs and specialized compliance activities are coordinated through verified partners/agents as applicable.
           </div>
         </div>
       </div>

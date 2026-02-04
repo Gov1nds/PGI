@@ -5,14 +5,14 @@ import { insights } from "../content/siteData.js";
 
 export default function Insights() {
   return (
-    <Container className="py-14">
+    <Container className="py-20">
       <SectionHeading
         eyebrow="Insights"
-        title="Latest thinking"
-        desc="Practical insights on planning, budgeting, procurement, quality and outdoor works."
+        title="Procurement & Logistics Intelligence"
+        desc="Structured thinking and field-proven systems for BOQ management, vendor coordination, dispatch planning, shipment tracking, and documentation support — including customs coordination through trusted partners."
       />
 
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
+      <div className="mt-14 grid gap-7 md:grid-cols-3">
         {insights.map((i) => (
           <ImageCard
             key={i.slug}
@@ -23,6 +23,12 @@ export default function Insights() {
             tag={i.category}
           />
         ))}
+      </div>
+
+      {/* Professional credibility footer note */}
+      <div className="mt-16 max-w-3xl text-xs leading-relaxed text-white/50">
+        Our insights are drawn from hands-on coordination across suppliers, transporters, project teams, and delivery locations. 
+        The focus is always on improving visibility, preventing delays, strengthening compliance, and building dependable procurement and logistics workflows for growing businesses.
       </div>
     </Container>
   );

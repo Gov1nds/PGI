@@ -5,7 +5,10 @@ import FloatingActions from "./components/FloatingActions.jsx";
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
-import OutdoorWorks from "./pages/OutdoorWorks.jsx";
+
+// ✅ Change this import (use the correct filename + component name)
+import Capabilities from "./pages/capabilities.jsx";
+
 import Insights from "./pages/Insights.jsx";
 import InsightDetail from "./pages/InsightDetail.jsx";
 import News from "./pages/News.jsx";
@@ -27,12 +30,19 @@ export default function App() {
       </a>
 
       <Navbar />
-<ConsultPopup delayMs={10000} />
+      <ConsultPopup delayMs={10000} />
+
       <main id="content" className="min-h-[70vh]">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/outdoor-works" element={<OutdoorWorks />} />
+
+          {/* ✅ Route renamed */}
+          <Route path="/capabilities" element={<Capabilities />} />
+
+          {/* (Optional) keep old route redirect for old links, see below */}
+          {/* <Route path="/outdoor-works" element={<Navigate to="/capabilities" replace />} /> */}
+
           <Route path="/insights" element={<Insights />} />
           <Route path="/insights/:slug" element={<InsightDetail />} />
           <Route path="/news" element={<News />} />

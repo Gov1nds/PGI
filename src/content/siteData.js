@@ -1,6 +1,8 @@
+// siteData.js
+
 export const site = {
   name: "Padanilath",
-  tagline: "Outdoor Development & Landscaping",
+  tagline: "Procurement & Logistics Coordination Services",
   contact: {
     email: "sales@padanilathu.com",
     phone: "+91 8921983250",
@@ -11,115 +13,115 @@ export const site = {
 export const navLinks = [
   { to: "/insights", label: "Insights" },
   { to: "/services", label: "What we do" },
-  { to: "/outdoor-works", label: "Outdoor Works" },
-  { to: "/news", label: "News" },
+  { to: "/capabilities", label: "Capabilities" },
+  { to: "/news", label: "Updates" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
 
 export const heroStats = [
-  { kpi: "17+", label: "Years of experience" },
-  { kpi: "700+", label: "Completed projects" },
-  { kpi: "Kerala", label: "Trusted locally" },
-  { kpi: "E2E", label: "Plan → Deliver" },
+  { kpi: "BOQ", label: "Requirement → Order Control" },
+  { kpi: "Vendors", label: "Follow-ups Managed" },
+  { kpi: "Logistics", label: "Pickup → Delivery Tracking" },
+  { kpi: "E2E", label: "Sourcing → Dispatch → Delivery" },
 ];
 
 export const services = [
   {
-    title: "Project Planning & Scheduling",
-    desc: "WBS, timelines, critical path tracking, and on-site coordination.",
-    image: "/images/service-planning.jpg",
+    title: "Procurement Requirement Planning",
+    desc: "Receive BOQs and daily requirements, structure items, define quantities, and plan procurement timelines.",
+    image: "/images/service-boq.jpg",
   },
   {
-    title: "Design Coordination",
-    desc: "Align architects, engineers, vendors and contractors—reduce rework and delays.",
-    image: "/images/service-design.jpg",
+    title: "Quotation, Comparison & Sourcing Support",
+    desc: "Collect quotations, compare brands/specifications/lead times, and provide clear purchase options.",
+    image: "/images/service-quotes.jpg",
   },
   {
-    title: "Costing, BOQ & Budget Control",
-    desc: "BOQ preparation, procurement planning, cost tracking, and value engineering.",
-    image: "/images/service-cost.jpg",
+    title: "Vendor Coordination & Order Follow-ups",
+    desc: "Continuous vendor follow-ups for confirmations, production readiness, dispatch planning, and issue resolution.",
+    image: "/images/service-vendor.jpg",
   },
   {
-    title: "Quality & HSE Management",
-    desc: "Site inspections, checklists, documentation, and safety-first execution.",
-    image: "/images/service-quality.jpg",
+    title: "Dispatch Planning & Transport Arrangement",
+    desc: "Schedule material pickups, arrange transporters, coordinate loading, and manage dispatch documentation.",
+    image: "/images/service-dispatch.jpg",
   },
   {
-    title: "Procurement & Vendor Management",
-    desc: "Supplier selection, negotiations, delivery monitoring, and material availability.",
-    image: "/images/service-procurement.jpg",
+    title: "Shipment Tracking & Delivery Coordination",
+    desc: "Track goods in transit, share live status updates, coordinate unloading, and confirm delivery completion.",
+    image: "/images/service-logistics.jpg",
   },
   {
-    title: "Project Reporting",
-    desc: "Weekly updates, dashboards, risk logs, and stakeholder communication.",
+    title: "Procurement & Logistics Reporting",
+    desc: "Daily and weekly reports showing order status, pending items, expected dispatches, and delivery confirmations.",
     image: "/images/service-reporting.jpg",
   },
 ];
 
-export const outdoorWorks = [
+export const Capabilities = [
   {
-    title: "Outdoor Construction",
-    desc: "Paths, paving, kerbs, boundaries, and structural outdoor works.",
-    image: "/images/outdoor-construction.jpg",
+    title: "Procurement Process Management",
+    desc: "BOQ tracking, vendor alignment, rate comparison, and purchase coordination for timely supply.",
+    image: "/images/capability-procurement.jpg",
   },
   {
-    title: "Landscape & Site Development",
-    desc: "Grading, drainage planning, planting strategy, and long-term maintenance approach.",
-    image: "/images/outdoor-landscape.jpg",
+    title: "Logistics & Transport Coordination",
+    desc: "Vehicle arrangement, pickup scheduling, transit monitoring, and last-mile delivery coordination.",
+    image: "/images/capability-logistics.jpg",
   },
   {
-    title: "Water Features & Utilities",
-    desc: "Irrigation, lighting, water features and site services—planned responsibly.",
-    image: "/images/outdoor-utilities.jpg",
+    title: "Vendor & Transport Network",
+    desc: "Access to multiple suppliers and transporters to reduce delays and manage urgent requirements.",
+    image: "/images/capability-network.jpg",
   },
   {
-    title: "Outdoor Living Spaces",
-    desc: "Decks, pergolas, seating and functional outdoor zones—built for durability.",
-    image: "/images/outdoor-living.jpg",
+    title: "Systems, Documentation & Control",
+    desc: "Trackers, checklists, dispatch records, and structured reporting for businesses with unorganized daily needs.",
+    image: "/images/capability-systems.jpg",
   },
 ];
 
 export const insights = [
   {
-    slug: "cost-control",
-    title: "Cost control in sustainable construction",
-    category: "Budgeting",
-    date: "2026-01-10",
-    excerpt: "How early BOQ discipline and procurement strategy reduce overruns without compromising quality.",
+    slug: "boq-to-delivery",
+    title: "From BOQ to Delivery: controlling the full supply process",
+    category: "Procurement & Logistics",
+    date: "2026-01-18",
+    excerpt: "How structured tracking from requirement stage to delivery prevents delays and confusion.",
     image: "/images/insight-1.jpg",
   },
   {
-    slug: "outdoor-drainage",
-    title: "Outdoor works: planning for drainage and longevity",
-    category: "Outdoor Works",
-    date: "2026-01-05",
-    excerpt: "A practical checklist for Kerala conditions—soil, slope, drainage and material choices.",
+    slug: "vendor-transport-coordination",
+    title: "Coordinating vendors and transporters without chaos",
+    category: "Operations",
+    date: "2026-01-09",
+    excerpt: "A simple communication system that keeps suppliers, drivers, and site teams aligned.",
     image: "/images/insight-2.jpg",
   },
   {
-    slug: "quality-systems",
-    title: "Quality systems that actually work on site",
-    category: "Delivery",
-    date: "2025-12-20",
-    excerpt: "Simple inspection routines and documentation that help teams build right the first time.",
+    slug: "delivery-delay-prevention",
+    title: "Preventing delivery delays through logistics planning",
+    category: "Logistics",
+    date: "2025-12-22",
+    excerpt: "Pickup planning, buffer time, and transport follow-ups that keep projects on schedule.",
     image: "/images/insight-3.jpg",
   },
 ];
 
 export const newsItems = [
   {
-    slug: "outdoor-works-practice",
-    title: "Padanilath launches a dedicated Outdoor Works practice",
-    date: "2026-01-20",
-    excerpt: "Expanded capability for outdoor construction and infrastructure coordination across Kerala.",
+    slug: "procurement-logistics-expansion",
+    title: "Padanilath launches Procurement & Logistics Coordination Services",
+    date: "2026-01-25",
+    excerpt: "Now offering structured vendor follow-up, transport coordination, and delivery tracking for business clients.",
     image: "/images/news-1.jpg",
   },
   {
-    slug: "weekly-reporting",
-    title: "New reporting format for weekly project updates",
-    date: "2026-01-02",
-    excerpt: "Clearer progress dashboards for clients, contractors and vendors.",
+    slug: "live-delivery-tracking",
+    title: "New live delivery tracking and reporting system introduced",
+    date: "2026-01-06",
+    excerpt: "Clients now receive clearer updates on pending orders, dispatch schedules, and delivery confirmations.",
     image: "/images/news-2.jpg",
   },
 ];
