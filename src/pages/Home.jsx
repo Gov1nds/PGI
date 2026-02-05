@@ -28,9 +28,7 @@ export default function Home() {
           </h1>
 
           <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/85 hero-anim-3">
-            We coordinate your BOQ and daily requirements end-to-end: quotations, vendor follow-ups, dispatch planning,
-            transport arrangement, shipment tracking, and delivery confirmation. For imports and regulated shipments,
-            we also support documentation and customs coordination through verified partners.
+            Smart Procurement. Smooth Logistics. Zero Hassle.
           </p>
 
           <div className="mt-7 flex flex-wrap gap-3 hero-anim-4">
@@ -86,8 +84,7 @@ export default function Home() {
 
     {/* PARAGRAPH */}
     <p className="mt-3 text-sm leading-relaxed text-white/80">
-      We bring structure to unorganized daily requirements—clear trackers, vendor coordination, transport planning,
-      and documentation support (including customs and compliance coordination via partners when needed).
+      Where Procurement Drives Performance
     </p>
 
     {/* KPI COUNTERS */}
