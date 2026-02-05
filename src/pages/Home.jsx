@@ -47,98 +47,102 @@ export default function Home() {
             </SecondaryButton>
           </div>
 
-          {/* KPI STATS */}
-          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 hero-anim-4">
-            {heroStats.map((h) => (
-              <div
-                key={h.label}
-                className="hero-kpi rounded-2xl p-4 !bg-white/10 !border-white/15 !shadow-none"
-              >
-                <div className="kpi-num text-lg !text-white">{h.kpi}</div>
-                <div className="kpi-label mt-1 text-xs !text-white/75">{h.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+          {/* KPI STATS (readable on image) */}
+<div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 hero-anim-4">
+  {heroStats.map((h) => (
+    <div
+      key={h.label}
+      className="rounded-2xl p-4 bg-black/55 backdrop-blur-md ring-1 ring-white/15 shadow-[0_10px_26px_rgba(0,0,0,0.35)]"
+    >
+      <div className="text-lg font-semibold tracking-tight text-white">
+        {h.kpi}
       </div>
-
-      {/* RIGHT: HERO IMPACT */}
-      <div className="relative overflow-hidden rounded-3xl bg-white ring-1 ring-black/10 shadow-lg">
-        {/* Soft light-green glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,197,94,0.12),transparent_55%),radial-gradient(circle_at_80%_70%,rgba(22,163,74,0.10),transparent_60%)]" />
-
-        <div className="relative p-7 sm:p-10">
-          {/* TAGLINE */}
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
-            <span className="h-2 w-2 rounded-full bg-[rgba(var(--brand-500))] animate-pulse" />
-            BOQ → Dispatch → Delivery
-          </div>
-
-          {/* HEADLINE */}
-          <h3 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl text-emerald-900">
-            Fewer delays,
-            <span className="block text-emerald-600">better control</span>
-          </h3>
-
-          {/* PARAGRAPH */}
-          <p className="mt-3 text-sm leading-relaxed text-emerald-950/70">
-            We bring structure to unorganized daily requirements-clear trackers, vendor coordination, transport planning,
-            and documentation support (including customs and compliance coordination via partners when needed).
-          </p>
-
-          {/* KPI COUNTERS (LOGISTICS) */}
-          <div className="mt-7 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white/80 backdrop-blur p-5 ring-1 ring-emerald-100 transition hover:ring-emerald-300 shadow-sm">
-              <div className="text-xs text-emerald-900/60">RFQs & quotations coordinated</div>
-              <div className="mt-1 text-xl font-semibold text-emerald-700">
-                <CountUp value={2500} suffix="+" format="number" />
-              </div>
-              <div className="mt-1 text-xs text-emerald-900/55">Across suppliers</div>
-            </div>
-
-            <div className="rounded-2xl bg-white/80 backdrop-blur p-5 ring-1 ring-emerald-100 transition hover:ring-emerald-300 shadow-sm">
-              <div className="text-xs text-emerald-900/60">Dispatches tracked</div>
-              <div className="mt-1 text-xl font-semibold text-emerald-700">
-                <CountUp value={1200} suffix="+" format="number" />
-              </div>
-              <div className="mt-1 text-xs text-emerald-900/55">Pickup → delivery</div>
-            </div>
-
-            <div className="rounded-2xl bg-white/80 backdrop-blur p-5 ring-1 ring-emerald-100 transition hover:ring-emerald-300 shadow-sm">
-              <div className="text-xs text-emerald-900/60">Cost overruns avoided</div>
-              <div className="mt-1 text-xl font-semibold text-emerald-700">
-                <CountUp value={18} suffix="%" format="number" />
-              </div>
-              <div className="mt-1 text-xs text-emerald-900/55">Typical improvement</div>
-            </div>
-          </div>
-
-          {/* Compliance chips */}
-          <div className="mt-6 flex flex-wrap gap-2">
-            {[
-              "Invoice & dispatch docs",
-              "E-waybill support",
-              "Customs coordination (partners)",
-              "Shipping / freight assistance",
-              "Delivery confirmation (POD)",
-            ].map((t) => (
-              <span
-                key={t}
-                className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-100"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-
-          {/* Animated progress line */}
-          <div className="mt-7 h-[2px] w-full overflow-hidden rounded-full bg-emerald-200">
-            <div className="h-full w-1/3 animate-[slide_2.4s_ease-in-out_infinite] rounded-full bg-emerald-600" />
-          </div>
-        </div>
+      <div className="mt-1 text-xs font-medium text-white/80">
+        {h.label}
       </div>
     </div>
-  </Container>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: HERO IMPACT (match left dark-glass style) */}
+<div className="relative overflow-hidden rounded-3xl bg-black/55 backdrop-blur-md ring-1 ring-white/15 shadow-[0_18px_46px_rgba(0,0,0,0.45)]">
+  {/* subtle brand glow */}
+  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,197,94,0.18),transparent_55%),radial-gradient(circle_at_80%_70%,rgba(22,163,74,0.14),transparent_60%)]" />
+
+  <div className="relative p-7 sm:p-10">
+    {/* TAGLINE */}
+    <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-white ring-1 ring-white/15">
+      <span className="h-2 w-2 rounded-full bg-[rgba(var(--brand-500))] animate-pulse" />
+      BOQ → Dispatch → Delivery
+    </div>
+
+    {/* HEADLINE */}
+    <h3 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl text-white">
+      Fewer delays,
+      <span className="block text-[rgba(var(--brand-500))]">better control</span>
+    </h3>
+
+    {/* PARAGRAPH */}
+    <p className="mt-3 text-sm leading-relaxed text-white/80">
+      We bring structure to unorganized daily requirements—clear trackers, vendor coordination, transport planning,
+      and documentation support (including customs and compliance coordination via partners when needed).
+    </p>
+
+    {/* KPI COUNTERS */}
+    <div className="mt-7 grid gap-4 sm:grid-cols-3">
+      <div className="rounded-2xl bg-white/10 backdrop-blur-md p-5 ring-1 ring-white/15 transition hover:ring-white/25 shadow-[0_10px_26px_rgba(0,0,0,0.35)]">
+        <div className="text-xs text-white/70">RFQs & quotations coordinated</div>
+        <div className="mt-1 text-xl font-semibold text-white">
+          <CountUp value={2500} suffix="+" format="number" />
+        </div>
+        <div className="mt-1 text-xs text-white/65">Across suppliers</div>
+      </div>
+
+      <div className="rounded-2xl bg-white/10 backdrop-blur-md p-5 ring-1 ring-white/15 transition hover:ring-white/25 shadow-[0_10px_26px_rgba(0,0,0,0.35)]">
+        <div className="text-xs text-white/70">Dispatches tracked</div>
+        <div className="mt-1 text-xl font-semibold text-white">
+          <CountUp value={1200} suffix="+" format="number" />
+        </div>
+        <div className="mt-1 text-xs text-white/65">Pickup → delivery</div>
+      </div>
+
+      <div className="rounded-2xl bg-white/10 backdrop-blur-md p-5 ring-1 ring-white/15 transition hover:ring-white/25 shadow-[0_10px_26px_rgba(0,0,0,0.35)]">
+        <div className="text-xs text-white/70">Cost overruns avoided</div>
+        <div className="mt-1 text-xl font-semibold text-white">
+          <CountUp value={18} suffix="%" format="number" />
+        </div>
+        <div className="mt-1 text-xs text-white/65">Typical improvement</div>
+      </div>
+    </div>
+
+    {/* Compliance chips */}
+    <div className="mt-6 flex flex-wrap gap-2">
+      {[
+        "Invoice & dispatch docs",
+        "E-waybill support",
+        "Customs coordination (partners)",
+        "Shipping / freight assistance",
+        "Delivery confirmation (POD)",
+      ].map((t) => (
+        <span
+          key={t}
+          className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/15"
+        >
+          {t}
+        </span>
+      ))}
+    </div>
+
+       {/* Progress line */}
+    <div className="mt-7 h-[2px] w-full overflow-hidden rounded-full bg-white/15">
+      <div className="h-full w-1/3 animate-[slide_2.4s_ease-in-out_infinite] rounded-full bg-[rgba(var(--brand-500))]" />
+    </div>
+ </div>   
+</div>  
+</div>  
+</Container>
 </section>
 
       {/* TECHNICAL EXPERTISE SECTION */}
