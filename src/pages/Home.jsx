@@ -23,7 +23,7 @@ export default function Home() {
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl hero-anim-2">
             Ensuring your procurement and deliveries
             <span className="block text-emerald-300">
-              stay on time, cost-efficient, and fully controlled
+            fully controlled
             </span>
           </h1>
 
