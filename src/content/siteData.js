@@ -126,3 +126,69 @@ export const newsItems = [
     image: "/images/news-2.jpg",
   },
 ];
+export const pricingPlans = [
+  {
+    key: "basic",
+    name: "Basic",
+    price: "₹25,000 + GST / month",
+    note: "For small contractors and small project buyers.",
+    cta: "Get started",
+    to: "/contact",
+    highlight: false,
+    poSupport: "Option A — Standard: Client issues PO in ERP; PGI coordinates and follows up.",
+    demandTaskSupport: "₹30,000 / month",
+  },
+  {
+    key: "standard",
+    name: "Standard",
+    price: "₹50,000 + GST / month",
+    note: "For MSMEs and growing construction teams.",
+    cta: "Choose Standard",
+    to: "/contact",
+    highlight: true, // POPULAR
+    poSupport: "Option B — SME Fast-Track: Client shares PO format; PGI drafts PO for approval and release.",
+    demandTaskSupport: "₹60,000 / month",
+  },
+  {
+    key: "premium",
+    name: "Premium",
+    price: "₹1,00,000 + GST / month",
+    note: "For large projects with higher risk and urgency.",
+    cta: "Talk to us",
+    to: "/contact",
+    highlight: false,
+    poSupport:
+      "Option C — Assisted ERP Drafting: PGI drafts PO in client ERP/vendor portal (if access allowed); purchase manager approves.",
+    demandTaskSupport: "₹1,00,000 / month",
+  },
+];
+
+// feature matrix based on your Excel
+export const pricingFeatures = [
+  { label: "BOQ-based Sourcing", basic: true, standard: true, premium: true },
+  { label: "Vendor Identification & Comparison", basic: true, standard: true, premium: true },
+  { label: "Rate Analysis & Negotiation", basic: true, standard: true, premium: true },
+  { label: "PO Preparation Support", basic: true, standard: true, premium: true },
+  { label: "Vendor Follow-up till Dispatch", basic: true, standard: true, premium: true },
+
+  { label: "Datasheet Matching", basic: true, standard: true, premium: true },
+  { label: "Equivalent Brand Suggestions", basic: true, standard: true, premium: true },
+  { label: "Certification & Compatibility Checks", basic: true, standard: true, premium: true },
+
+  { label: "Procurement Planning", basic: true, standard: true, premium: true },
+  { label: "Logistics & Delivery Coordination", basic: true, standard: true, premium: true },
+  { label: "Pan-India Logistics Support", basic: true, standard: true, premium: true },
+  { label: "Customs & Import Documentation Support", basic: true, standard: true, premium: true },
+
+  { label: "Weekly + Monthly Reports", basic: false, standard: true, premium: true },
+  { label: "Inventory Movement & Purchase Insights", basic: false, standard: true, premium: true },
+  { label: "Global Vendor Network Access", basic: false, standard: true, premium: true },
+
+  { label: "Daily Status Dashboard (shared sheet)", basic: false, standard: true, premium: true },
+  { label: "Backup Vendor Strategy (Primary + Secondary)", basic: false, standard: true, premium: true },
+  { label: "Cost Saving Log (proof of value)", basic: false, standard: true, premium: true },
+  { label: "SLA-Based Execution", basic: false, standard: true, premium: true },
+{ to: "/pricing", label: "Pricing" },
+
+  { label: "Risk Alerts (delay/port/docs)", basic: false, standard: false, premium: true },
+];

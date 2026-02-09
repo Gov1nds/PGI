@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import FloatingActions from "./components/FloatingActions.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import Pricing from "./pages/Pricing.jsx";
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
@@ -44,6 +45,7 @@ export default function App() {
 
           {/* (Optional) keep old route redirect for old links, see below */}
           {/* <Route path="/outdoor-works" element={<Navigate to="/capabilities" replace />} /> */}
+<Route path="/pricing" element={<Pricing />} />
 
           <Route path="/insights" element={<Insights />} />
           <Route path="/insights/:slug" element={<InsightDetail />} />
