@@ -21,9 +21,9 @@ export default function Home() {
           </p>
 
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl hero-anim-2">
-            Ensuring your procurement and deliveries
+            Ensuring Your Procurement & Deliveries
             <span className="block text-emerald-300">
-            fully controlled
+            Fully Controlled
             </span>
           </h1>
 
@@ -78,8 +78,8 @@ export default function Home() {
 
     {/* HEADLINE */}
     <h3 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl text-white">
-      Fewer delays,
-      <span className="block text-[rgba(var(--brand-500))]">better control</span>
+      Fewer Delays,
+      <span className="block text-[rgba(var(--brand-500))]">Better Control</span>
     </h3>
 
     {/* PARAGRAPH */}
