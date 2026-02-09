@@ -137,8 +137,8 @@ export const pricingPlans = [
     cta: "Get started",
     to: "/contact",
     highlight: false,
-    poSupport: "Option A — Standard: Client issues PO in ERP; PGI coordinates and follows up.",
-    demandTaskSupport: "₹30,000 / month",
+    poSupport: "Standard: Client issues PO in ERP; PGI coordinates and follows up.",
+    demandTaskSupport: "₹25,000 / month",
   },
   {
     key: "standard",
@@ -148,8 +148,8 @@ export const pricingPlans = [
     cta: "Choose Standard",
     to: "/contact",
     highlight: true, // POPULAR
-    poSupport: "Option B — SME Fast-Track: Client shares PO format; PGI drafts PO for approval and release.",
-    demandTaskSupport: "₹60,000 / month",
+    poSupport: "SME Fast-Track: Client shares PO format; PGI drafts PO for approval and release.",
+    demandTaskSupport: "₹50,000 / month",
   },
   {
     key: "premium",
@@ -160,7 +160,7 @@ export const pricingPlans = [
     to: "/contact",
     highlight: false,
     poSupport:
-      "Option C — Assisted ERP Drafting: PGI drafts PO in client ERP/vendor portal (if access allowed); purchase manager approves.",
+      "Assisted ERP Drafting: PGI drafts PO in client ERP/vendor portal (if access allowed); purchase manager approves.",
     demandTaskSupport: "₹1,00,000 / month",
   },
 ];
