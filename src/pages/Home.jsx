@@ -78,7 +78,7 @@ export default function Home() {
 
     {/* HEADLINE */}
     <h3 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl text-white">
-      Fewer Delays,
+      Fewer Delays
       <span className="block text-[rgba(var(--brand-500))]">Better Control</span>
     </h3>
 
