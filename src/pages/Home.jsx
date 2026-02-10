@@ -153,89 +153,162 @@ export default function Home() {
 
     {/* KPI + Proof */}
     <div className="mt-10 grid gap-6 md:grid-cols-3">
-      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-        <div className="text-xs text-white/60">Components & spares sourced</div>
-        <div className="mt-2 text-3xl font-semibold text-white">
-          <CountUp value={2500} suffix="+" format="number" />
-        </div>
-        <div className="mt-2 text-sm text-white/70">
-          Across electronics, mechanical, and engineered items
-        </div>
-      </div>
+      {[
+        {
+          label: "Components & spares sourced",
+          value: <CountUp value={2500} suffix="+" format="number" />,
+          note: "Across electronics, mechanical, and engineered items",
+          icon: "⚙️",
+        },
+        {
+          label: "Vendors evaluated",
+          value: <CountUp value={300} suffix="+" format="number" />,
+          note: "Shortlist + capability matching + compliance checks",
+          icon: "🧩",
+        },
+        {
+          label: "OTD / delivery discipline",
+          value: <CountUp value={92} suffix="%" format="number" />,
+          note: "Order follow-ups, dispatch planning, and tracking control",
+          icon: "📦",
+        },
+      ].map((k) => (
+        <div
+          key={k.label}
+          className="group relative overflow-hidden rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
+        >
+          {/* subtle glow */}
+          <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_20%_10%,rgba(34,197,94,0.14),transparent_55%)]" />
 
-      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-        <div className="text-xs text-white/60">Vendors evaluated</div>
-        <div className="mt-2 text-3xl font-semibold text-white">
-          <CountUp value={300} suffix="+" format="number" />
-        </div>
-        <div className="mt-2 text-sm text-white/70">
-          Shortlist + capability matching + compliance checks
-        </div>
-      </div>
+          <div className="relative flex items-start justify-between gap-4">
+            <div>
+              <div className="text-xs font-medium text-white/55">{k.label}</div>
+              <div className="mt-2 text-3xl font-semibold tracking-tight text-white">
+                {k.value}
+              </div>
+              <div className="mt-2 text-sm leading-relaxed text-white/70">
+                {k.note}
+              </div>
+            </div>
 
-      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-        <div className="text-xs text-white/60">OTD / delivery discipline</div>
-        <div className="mt-2 text-3xl font-semibold text-white">
-          <CountUp value={92} suffix="%" format="number" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10 text-lg">
+              {k.icon}
+            </div>
+          </div>
         </div>
-        <div className="mt-2 text-sm text-white/70">
-          Order follow-ups, dispatch planning, and tracking control
-        </div>
-      </div>
+      ))}
     </div>
 
-    {/* Animated progress line */}
+    {/* Animated progress line (keep animation) */}
     <div className="mt-8 h-[2px] w-full overflow-hidden rounded-full bg-white/10">
       <div className="h-full w-1/3 animate-[slide_2.4s_ease-in-out_infinite] rounded-full bg-[rgba(var(--brand-500))]" />
     </div>
 
     {/* Expertise Cards */}
     <div className="mt-10 grid gap-6 md:grid-cols-3">
-      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-        <div className="text-sm font-semibold text-white">Electronics + AI-assisted sourcing</div>
-        <p className="mt-2 text-sm leading-relaxed text-white/70">
-          We support electronics requirements with structured RFQs, BOM clean-up, alternates mapping,
-          and AI-assisted vendor discovery, so availability improves without compromising specs.
-        </p>
-        <ul className="mt-4 space-y-2 text-sm text-white/70">
-          <li>• PCB/boards, sensors, controllers, drives, automation parts</li>
-          <li>• Alternate part identification + lead time visibility</li>
-          <li>• Vendor capability matching (quality, test, documentation)</li>
-        </ul>
+      {/* Card 1 */}
+      <div className="group rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-500/20">
+            ⚡
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-white">
+              Electronics + AI-assisted sourcing
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-white/70">
+              We support electronics requirements with structured RFQs, BOM clean-up, alternates mapping,
+              and AI-assisted vendor discovery, so availability improves without compromising specs.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 space-y-2 text-sm text-white/75">
+          {[
+            "PCB/boards, sensors, controllers, drives, automation parts",
+            "Alternate part identification + lead time visibility",
+            "Vendor capability matching (quality, test, documentation)",
+          ].map((t) => (
+            <div key={t} className="flex gap-2">
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400/80" />
+              <span>{t}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-        <div className="text-sm font-semibold text-white">Mechanical & engineered components</div>
-        <p className="mt-2 text-sm leading-relaxed text-white/70">
-          From machined items to industrial spares, we coordinate suppliers and validate the technical
-          details that decide fit, performance, and lifecycle reliability.
-        </p>
-        <ul className="mt-4 space-y-2 text-sm text-white/70">
-          <li>• Bearings, seals, gearboxes, motors, pumps, couplings</li>
-          <li>• Fabrication, machining, casting/forging coordination</li>
-          <li>• Material grade + dimensional requirement alignment</li>
-        </ul>
+      {/* Card 2 */}
+      <div className="group rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-500/20">
+            🏗️
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-white">
+              Mechanical & engineered components
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-white/70">
+              From machined items to industrial spares, we coordinate suppliers and validate the technical
+              details that decide fit, performance, and lifecycle reliability.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 space-y-2 text-sm text-white/75">
+          {[
+            "Bearings, seals, gearboxes, motors, pumps, couplings",
+            "Fabrication, machining, casting/forging coordination",
+            "Material grade + dimensional requirement alignment",
+          ].map((t) => (
+            <div key={t} className="flex gap-2">
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400/80" />
+              <span>{t}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-        <div className="text-sm font-semibold text-white">Spec verification & compliance control</div>
-        <p className="mt-2 text-sm leading-relaxed text-white/70">
-          We reduce costly errors by ensuring offered items match your exact specification before ordering.
-          Documentation and customs coordination are supported through trusted partners when applicable.
-        </p>
-        <ul className="mt-4 space-y-2 text-sm text-white/70">
-          <li>• Spec match: part numbers, drawings, revisions, approvals</li>
-          <li>• Datasheets, CoC/CoA, test reports, packaging requirements</li>
-          <li>• Import/export docs coordination via partners</li>
-        </ul>
+      {/* Card 3 */}
+      <div className="group rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-500/20">
+            ✅
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-white">
+              Spec verification & compliance control
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-white/70">
+              We reduce costly errors by ensuring offered items match your exact specification before ordering.
+              Documentation and customs coordination are supported through trusted partners when applicable.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 space-y-2 text-sm text-white/75">
+          {[
+            "Spec match: part numbers, drawings, revisions, approvals",
+            "Datasheets, CoC/CoA, test reports, packaging requirements",
+            "Import/export docs coordination via partners",
+          ].map((t) => (
+            <div key={t} className="flex gap-2">
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400/80" />
+              <span>{t}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
 
     {/* CTA card */}
     <div className="mt-12 grid gap-8 rounded-3xl bg-black/30 p-8 ring-1 ring-white/10 md:grid-cols-2 md:items-center">
       <div>
-        <div className="text-sm text-[rgba(var(--brand-500))]">For electronics & engineering procurement</div>
-        <h3 className="mt-2 text-2xl font-semibold text-white">Send your BOM - we’ll structure it and source it</h3>
+        <div className="text-sm text-[rgba(var(--brand-500))]">
+          For electronics & engineering procurement
+        </div>
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          Send your BOM — we’ll structure it and source it
+        </h3>
         <p className="mt-3 text-sm leading-relaxed text-white/70">
           Share part numbers, specs/drawings, required quantities, and target delivery dates.
           We’ll respond with a sourcing plan, vendor options, lead times, and a coordination model.
@@ -243,15 +316,30 @@ export default function Home() {
       </div>
 
       <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
-        <div className="text-sm font-semibold text-white">What you’ll get</div>
-        <ul className="mt-3 space-y-2 text-sm text-white/70">
-          <li>• Clear RFQ + quote comparison (spec / lead time / price)</li>
-          <li>• Vendor shortlist + alternates for faster availability</li>
-          <li>• Follow-ups + dispatch planning + delivery confirmation</li>
-          <li>• Structured updates: pending, ETA, risks, next actions</li>
-        </ul>
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm font-semibold text-white">What you’ll get</div>
+          <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-500/20">
+            24–48h response
+          </span>
+        </div>
 
-        <div className="mt-5">
+        <div className="mt-4 space-y-2 text-sm text-white/75">
+          {[
+            "Clear RFQ + quote comparison (spec / lead time / price)",
+            "Vendor shortlist + alternates for faster availability",
+            "Follow-ups + dispatch planning + delivery confirmation",
+            "Structured updates: pending, ETA, risks, next actions",
+          ].map((t) => (
+            <div key={t} className="flex gap-2">
+              <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-500/20">
+                ✓
+              </span>
+              <span className="leading-relaxed">{t}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6">
           <PrimaryButton to="/contact">Request sourcing support</PrimaryButton>
         </div>
       </div>
