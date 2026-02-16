@@ -4,7 +4,7 @@ export const site = {
   name: "PGI",
   tagline: "Procurement & Logistics Coordination Services",
   contact: {
-    email: "sales@pgihub.com",
+    email: "info@pgihub.com",
     phone: "+91 8921983250",
     location: "Kerala, India",
   },
