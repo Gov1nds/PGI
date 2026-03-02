@@ -17,7 +17,7 @@ export default function Home() {
         {/* Soft dark glass behind text (so image stays visible but text becomes readable) */}
         <div className="rounded-3xl bg-black/40 backdrop-blur-sm p-6 ring-1 ring-white/10 sm:p-8">
           <p className="text-sm text-white/80 hero-anim-1">
-            Procurement & Logistics Coordination Services
+            Procurement & Supply Chain Management
           </p>
 
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl hero-anim-2">
@@ -307,7 +307,7 @@ export default function Home() {
           For electronics & engineering procurement
         </div>
         <h3 className="mt-2 text-2xl font-semibold text-white">
-          Send your BOM — we’ll structure it and source it
+          Send your BOM  - we’ll structure it and source it
         </h3>
         <p className="mt-3 text-sm leading-relaxed text-white/70">
           Share part numbers, specs/drawings, required quantities, and target delivery dates.
