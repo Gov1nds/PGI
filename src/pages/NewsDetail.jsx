@@ -5,7 +5,7 @@ import { newsItems, site } from "../content/siteData.js";
 const newsBodyBySlug = {
   "procurement-logistics-expansion": {
     intro:
-      "PGI has formally launched Procurement & Logistics Coordination Services to help businesses manage BOQs, daily requirements, vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking. We operate as a service team that brings structure, speed, and visibility—without clients needing to add internal headcount.",
+      "PGI has formally launched Procurement & Logistics Coordination Services to help businesses manage BOQs, daily requirements, vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking. We operate as a service team that brings structure, speed, and visibility-without clients needing to add internal headcount.",
     highlights: [
       "BOQ intake + daily requirement structuring (turn unorganized requests into an actionable tracker)",
       "Quotation coordination and comparison (rates, lead times, availability, delivery scope)",
@@ -15,7 +15,7 @@ const newsBodyBySlug = {
       "Documentation coordination support (invoice/dispatch docs + compliance guidance; customs support via partners where needed)"
     ],
     whyItMatters: [
-      "Most delays are not caused by suppliers alone—delays happen due to missed follow-ups, unclear approvals, and transport misalignment.",
+      "Most delays are not caused by suppliers alone-delays happen due to missed follow-ups, unclear approvals, and transport misalignment.",
       "Businesses lose money when urgent requirements are handled on calls/WhatsApp without a single tracker and escalation system.",
       "A structured coordination layer improves delivery predictability, reduces last-minute firefighting, and helps prevent cost overruns from delays and rework."
     ],
@@ -25,7 +25,7 @@ const newsBodyBySlug = {
       "We’ll propose a coordination workflow + reporting format (daily/weekly) and start with a pilot scope"
     ],
     extras: [
-      "We do not replace your existing vendors—we coordinate them and maintain backup options to reduce risk.",
+      "We do not replace your existing vendors-we coordinate them and maintain backup options to reduce risk.",
       "Client payments can remain direct to vendors; our role is coordination, tracking, and delivery control.",
       "For imports/port-side movements, we can coordinate with your CHA/freight partners or connect you to verified partners for documentation and customs processes."
     ]
@@ -33,7 +33,7 @@ const newsBodyBySlug = {
 
   "live-delivery-tracking": {
     intro:
-      "We introduced a clearer delivery tracking and reporting system to reduce confusion across vendors, transporters, and receiving teams. Clients now get a single source of truth showing what’s quoted, approved, ordered, ready, dispatched, and delivered—with ETAs and pending actions.",
+      "We introduced a clearer delivery tracking and reporting system to reduce confusion across vendors, transporters, and receiving teams. Clients now get a single source of truth showing what’s quoted, approved, ordered, ready, dispatched, and delivered-with ETAs and pending actions.",
     highlights: [
       "Single tracker view: Quoted → Approved → Ordered → Ready → Dispatched → Delivered",
       "Dispatch details captured: vehicle number, driver contact, pickup time slot, ETA",

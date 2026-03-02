@@ -17,7 +17,7 @@ export default function Home() {
         {/* Soft dark glass behind text (so image stays visible but text becomes readable) */}
         <div className="rounded-3xl bg-black/40 backdrop-blur-sm p-6 ring-1 ring-white/10 sm:p-8">
           <p className="text-sm text-white/80 hero-anim-1">
-            Procurement & Supply Chain Management
+            Strategic Procurement & Supply Chain Management
           </p>
 
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl hero-anim-2">

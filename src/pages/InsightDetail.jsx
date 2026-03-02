@@ -12,7 +12,7 @@ import { insights } from "../content/siteData.js";
 const insightBodyBySlug = {
   "boq-to-delivery": {
     intro:
-      "Most procurement delays happen because BOQ items are not converted into an actionable control system. People quote late, approvals are unclear, orders are not tracked, and dispatch updates are scattered across calls and WhatsApp. This guide shows a simple, practical BOQ-to-Delivery system you can run daily—without expensive software.",
+      "Most procurement delays happen because BOQ items are not converted into an actionable control system. People quote late, approvals are unclear, orders are not tracked, and dispatch updates are scattered across calls and WhatsApp. This guide shows a simple, practical BOQ-to-Delivery system you can run daily-without expensive software.",
     sections: [
       {
         title: "Key takeaways",
@@ -300,7 +300,7 @@ export default function InsightDetail() {
               </div>
               <p className="mt-2 text-sm text-white/70">
                 Share your BOQ or daily requirements, delivery location, and timeline. We’ll coordinate quotations,
-                vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking—so materials arrive
+                vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking-so materials arrive
                 on time without daily chaos.
               </p>
               <Link

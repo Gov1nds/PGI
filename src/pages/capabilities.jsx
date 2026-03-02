@@ -10,7 +10,7 @@ export default function Capabilities() {
     <Container className="py-14">
       <SectionHeading
         eyebrow="Capabilities"
-        title="Procurement & logistics coordination — local and international"
+        title="Procurement & logistics coordination - local and international"
         desc="We coordinate sourcing, vendor follow-ups, dispatch planning, transport, and delivery tracking. For cross-border shipments, we support documentation and customs clearance coordination through trusted partners."
       />
 

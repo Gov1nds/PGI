@@ -9,7 +9,7 @@ export default function Insights() {
       <SectionHeading
         eyebrow="Insights"
         title="Procurement & Logistics Intelligence"
-        desc="Structured thinking and field-proven systems for BOQ management, vendor coordination, dispatch planning, shipment tracking, and documentation support — including customs coordination through trusted partners."
+        desc="Structured thinking and field-proven systems for BOQ management, vendor coordination, dispatch planning, shipment tracking, and documentation support - including customs coordination through trusted partners."
       />
 
       <div className="mt-14 grid gap-7 md:grid-cols-3">

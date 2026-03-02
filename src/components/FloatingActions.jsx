@@ -131,7 +131,7 @@ export default function FloatingActions() {
               boxShadow: "0 10px 30px rgba(6,95,70,0.18)",
             }}
           >
-            {/* refined WhatsApp glyph — filled phone-speech bubble */}
+            {/* refined WhatsApp glyph - filled phone-speech bubble */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

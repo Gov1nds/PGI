@@ -13,7 +13,7 @@ export default function About() {
               <SectionHeading
                 eyebrow="About PGI"
                 title="Built for procurement and delivery execution"
-                desc="PGI (Padanilath Global Integrated) supports businesses with structured procurement coordination, vendor management, dispatch planning, shipment tracking, and documentation support—so materials arrive on time, specs match, and operations stay under control."
+                desc="PGI (Padanilath Global Integrated) supports businesses with structured procurement coordination, vendor management, dispatch planning, shipment tracking, and documentation support - so materials arrive on time, specs match, and operations stay under control."
               />
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -55,7 +55,7 @@ export default function About() {
             {[
               {
                 t: "Mission",
-                d: "Reduce delivery delays and procurement confusion by running a disciplined coordination system—clear requirements, controlled follow-ups, and reliable dispatch-to-delivery tracking.",
+                d: "Reduce delivery delays and procurement confusion by running a disciplined coordination system-clear requirements, controlled follow-ups, and reliable dispatch-to-delivery tracking.",
               },
               {
                 t: "Vision",
@@ -63,7 +63,7 @@ export default function About() {
               },
               {
                 t: "Values",
-                d: "Clarity, integrity, accountability, and speed. We document decisions, keep stakeholders aligned, and escalate risks early—before they become expensive.",
+                d: "Clarity, integrity, accountability, and speed. We document decisions, keep stakeholders aligned, and escalate risks early-before they become expensive.",
               },
             ].map((b) => (
               <div key={b.t} className="rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
@@ -96,7 +96,7 @@ export default function About() {
             <div className="rounded-3xl bg-white/5 p-8 ring-1 ring-white/10">
               <div className="text-sm font-semibold">Technical sourcing support</div>
               <p className="mt-3 text-sm leading-relaxed text-white/70">
-                For technical items—electronics, mechanical parts, engineering components we support spec matching and vendor
+                For technical items-electronics, mechanical parts, engineering components we support spec matching and vendor
                 shortlisting. Our goal is simple: reduce wrong material purchases and prevent failures during installation.
               </p>
 

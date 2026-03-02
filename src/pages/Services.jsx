@@ -26,7 +26,7 @@ export default function Services() {
             <div className="text-sm font-semibold text-[rgba(var(--brand-500))]">Scope coverage</div>
             <div className="mt-2 text-xl font-semibold">What we can take ownership of</div>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
-              We operate as your extended coordination team—reducing delays, improving visibility, and creating control
+              We operate as your extended coordination team-reducing delays, improving visibility, and creating control
               across suppliers, transporters, and receiving teams.
             </p>
           </div>
