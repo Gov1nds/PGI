@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { newsItems, site } from "../content/siteData.js";
 
+/* News article bodies */
 const newsBodyBySlug = {
   "cnc-network-expansion": {
     intro:
@@ -16,58 +17,123 @@ const newsBodyBySlug = {
     ],
 
     whyItMatters: [
-      "Manufacturing through a distributed, managed network reduces dependency on a single facility and improves production resilience.",
-      "Engineering oversight ensures consistent tolerances and manufacturing standards across all partner facilities.",
-      "Clients gain the scale advantages of a large production ecosystem without managing multiple suppliers.",
-      "Faster lead times and scalable production capacity enable companies to transition smoothly from prototype to full-scale manufacturing."
+      "Manufacturing through a distributed network improves production resilience.",
+      "Engineering oversight ensures consistent tolerances across facilities.",
+      "Clients gain scale advantages without managing multiple suppliers.",
+      "Faster lead times enable smoother prototype-to-production transitions."
     ],
 
     nextSteps: [
       "Share your 3D CAD models (STEP or IGES) along with technical drawings.",
-      "PGI engineers perform a detailed Design for Manufacturability (DFM) review.",
-      "Receive a structured quotation including production timelines and quality verification plans.",
+      "PGI engineers perform a Design for Manufacturability (DFM) review.",
+      "Receive a structured quotation including production timelines.",
       "Approve the First Article Inspection (FAI) before scaling production."
     ],
 
     extras: [
-      "Material mill certificates and inspection reports accompany every production batch.",
-      "Surface finishing options include anodizing, powder coating, electroless nickel plating, and passivation.",
-      "Dimensional inspection reports are generated through CMM measurement systems.",
-      "Export documentation and freight coordination are managed directly through PGI’s logistics partners."
+      "Material mill certificates and inspection reports accompany every batch.",
+      "Surface finishing options include anodizing, powder coating, and passivation.",
+      "Dimensional inspection reports are generated using CMM systems.",
+      "Export documentation and freight coordination are managed by PGI."
     ]
   },
 
   "turnkey-pcba-launch": {
     intro:
-      "PGI has introduced turnkey PCB assembly (PCBA) services to support clients developing advanced electromechanical products. By integrating electronic manufacturing with mechanical enclosure production, PGI now enables customers to source complete hardware assemblies through a single coordinated manufacturing partner.",
+      "PGI has introduced turnkey PCB assembly (PCBA) services to support clients developing advanced electromechanical products.",
 
     highlights: [
-      "Component sourcing through authorized global distributors to eliminate counterfeit risks.",
-      "High-precision SMT assembly lines capable of placing fine-pitch components down to 0201 packages.",
-      "Automated Optical Inspection (AOI) and X-ray inspection for advanced component packages including BGA.",
-      "Functional board-level testing and firmware programming services.",
-      "Integration of electronics with mechanical enclosures for complete electromechanical box-build assemblies."
+      "Component sourcing through authorized global distributors.",
+      "High-precision SMT assembly supporting 0201 components.",
+      "Automated Optical Inspection (AOI) and X-ray inspection.",
+      "Functional testing and firmware programming.",
+      "Integration with mechanical enclosures for full box-build assemblies."
     ],
 
     whyItMatters: [
-      "Managing multiple suppliers for PCB fabrication, components, and assembly often introduces coordination delays.",
-      "Turnkey manufacturing ensures consistent BOM control and supply chain visibility.",
-      "Integrated mechanical and electronic production improves product reliability and reduces assembly errors.",
-      "Clients receive fully tested assemblies rather than separate components that require local integration."
+      "Managing multiple suppliers introduces delays.",
+      "Turnkey manufacturing ensures BOM control.",
+      "Integrated mechanical + electronics improves reliability.",
+      "Clients receive fully tested assemblies."
     ],
 
     nextSteps: [
-      "Provide Gerber files, Bill of Materials (BOM), and pick-and-place data.",
-      "PGI engineering reviews the BOM for obsolete components and long lead-time risks.",
-      "Prototype boards are assembled and tested for functional validation.",
-      "Once approved, production scales through PGI’s electronics manufacturing network."
+      "Provide Gerber files and BOM.",
+      "PGI reviews components and supply risks.",
+      "Prototype boards assembled and tested.",
+      "Production scaling through PGI electronics partners."
     ],
 
     extras: [
-      "Assembly processes follow IPC-A-610 quality standards based on product requirements.",
-      "Moisture-sensitive components are handled with strict MSL control procedures.",
-      "Conformal coating and environmental protection options are available for harsh industrial environments.",
-      "Full traceability is maintained for components and production batches."
+      "IPC-A-610 assembly quality standards.",
+      "Moisture-sensitive component control.",
+      "Conformal coating options.",
+      "Full component traceability."
     ]
   }
 };
+
+export default function NewsDetail() {
+  const { slug } = useParams();
+
+  const article = newsBodyBySlug[slug];
+  const meta = newsItems.find((n) => n.slug === slug);
+
+  if (!article) {
+    return (
+      <Container className="py-20">
+        <h1 className="text-2xl font-semibold">News article not found</h1>
+      </Container>
+    );
+  }
+
+  return (
+    <Container className="py-16 max-w-4xl">
+
+      {/* Title */}
+      <h1 className="text-3xl font-semibold mb-4">
+        {meta?.title}
+      </h1>
+
+      {/* Intro */}
+      <p className="text-gray-600 mb-10 leading-relaxed">
+        {article.intro}
+      </p>
+
+      {/* Highlights */}
+      <Section title="Highlights" items={article.highlights} />
+
+      {/* Why it matters */}
+      <Section title="Why This Matters" items={article.whyItMatters} />
+
+      {/* Next Steps */}
+      <Section title="Next Steps" items={article.nextSteps} />
+
+      {/* Additional details */}
+      <Section title="Additional Details" items={article.extras} />
+
+      {/* Back link */}
+      <div className="mt-12">
+        <Link to="/news" className="text-blue-500">
+          ← Back to News
+        </Link>
+      </div>
+
+    </Container>
+  );
+}
+
+/* reusable section */
+function Section({ title, items }) {
+  return (
+    <div className="mb-10">
+      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+
+      <ul className="list-disc list-inside space-y-2 text-gray-600">
+        {items.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
