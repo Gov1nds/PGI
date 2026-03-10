@@ -162,3 +162,24 @@ export const pricingFeatures = [
   "Quality inspection",
   "Production management"
 ];
+/* ======================================================
+NEWS / ARTICLES
+====================================================== */
+
+export const newsItems = [
+  {
+    title: "Scaling Hardware Manufacturing Through Distributed Networks",
+    desc: "How companies scale production using coordinated supplier ecosystems instead of owning factories.",
+    image: "/images/news1.jpg"
+  },
+  {
+    title: "Electronics Supply Chains for Robotics & EV Startups",
+    desc: "Managing semiconductor sourcing, PCB fabrication, and electronics assembly.",
+    image: "/images/news2.jpg"
+  },
+  {
+    title: "Manufacturing Coordination for Industrial Products",
+    desc: "Engineering review, machining vendors, and production verification processes.",
+    image: "/images/news3.jpg"
+  }
+];
