@@ -1,32 +1,35 @@
 /* ======================================================
-   SITE INFORMATION
+SITE INFORMATION
 ====================================================== */
 
 export const site = {
   name: "PGI",
   tagline:
     "Manufacturing Operating Partner for Hardware Startups, Robotics, EV & Industrial Products",
+  description:
+    "PGI coordinates electronics sourcing, machining, fabrication, assembly, and quality verification through a distributed manufacturing network.",
   contact: {
-    email: "info@pgi.com",
-    phone: "+91 8921983250",
+    email: "info@pgi-india.com",
+    phone: "+91 0000000000",
     location: "Kerala, India"
   }
 };
 
 /* ======================================================
-   NAVIGATION
+NAVIGATION
 ====================================================== */
 
 export const navLinks = [
   { label: "Home", to: "/" },
   { label: "Services", to: "/services" },
   { label: "Network", to: "/network" },
-  { label: "News", to: "/news" },
+  { label: "Pricing", to: "/pricing" },
+  { label: "Insights", to: "/news" },
   { label: "Contact", to: "/contact" }
 ];
 
 /* ======================================================
-   HERO METRICS
+HERO STATS
 ====================================================== */
 
 export const heroStats = [
@@ -37,44 +40,44 @@ export const heroStats = [
 ];
 
 /* ======================================================
-   SERVICES
+SERVICES
 ====================================================== */
 
 export const services = [
   {
     title: "Product Manufacturing Coordination",
     desc:
-      "Engineering-driven coordination of product manufacturing from sourcing and prototyping to scaled production."
+      "Engineering-led coordination of product manufacturing from prototype to scaled production."
   },
   {
     title: "Electronics Components & PCB Sourcing",
     desc:
-      "Global sourcing of semiconductors, passive components, connectors, and PCB fabrication through vetted suppliers."
+      "Global sourcing of semiconductors, connectors, sensors, and PCB manufacturing partners."
   },
   {
     title: "Precision Machining & Fabrication",
     desc:
-      "Coordination of CNC machining, sheet metal fabrication, and custom mechanical component manufacturing."
+      "Coordination of CNC machining, sheet metal fabrication, and custom mechanical components."
   },
   {
     title: "Assembly & Production Management",
     desc:
-      "Managing assembly workflows, scheduling, and integration across electronics and mechanical manufacturing partners."
+      "Managing production schedules, assembly lines, and manufacturing integration."
   },
   {
     title: "Quality Control & Inspection",
     desc:
-      "First Article Inspection (FAI), dimensional verification, and quality assurance before shipment."
+      "Dimensional inspection, engineering validation, and quality assurance before shipment."
   },
   {
     title: "Supply Chain & Vendor Network",
     desc:
-      "Building and managing a distributed manufacturing ecosystem to ensure reliable production capacity."
+      "Building a distributed manufacturing ecosystem to ensure reliable production capacity."
   }
 ];
 
 /* ======================================================
-   MANUFACTURING NETWORK
+MANUFACTURING NETWORK
 ====================================================== */
 
 export const outdoorWorks = [
@@ -85,7 +88,7 @@ export const outdoorWorks = [
 ];
 
 /* ======================================================
-   INSIGHTS / ARTICLES
+INSIGHTS / ARTICLES
 ====================================================== */
 
 export const insights = [
@@ -93,18 +96,69 @@ export const insights = [
     title:
       "How hardware startups scale manufacturing without owning factories",
     desc:
-      "Exploring how product companies leverage distributed manufacturing networks to scale production."
+      "Product companies increasingly use distributed manufacturing networks to scale efficiently."
   },
   {
     title:
       "Managing electronics supply chains for new product development",
     desc:
-      "Key strategies for sourcing electronic components and maintaining supply continuity."
+      "Strategies for securing semiconductors, PCBs, and electronics components."
   },
   {
     title:
       "The distributed manufacturing model for modern hardware companies",
     desc:
-      "Why manufacturing coordination and supplier ecosystems are becoming critical for product companies."
+      "Why supplier ecosystems are replacing traditional vertically integrated factories."
   }
+];
+
+/* ======================================================
+PRICING
+====================================================== */
+
+export const pricingPlans = [
+  {
+    name: "Prototype",
+    price: "Custom",
+    desc: "For early stage hardware startups building prototypes.",
+    features: [
+      "Component sourcing",
+      "Engineering review",
+      "Vendor identification",
+      "Prototype manufacturing coordination"
+    ]
+  },
+  {
+    name: "Production",
+    price: "Custom",
+    desc: "For companies moving from prototype to small batch production.",
+    features: [
+      "Electronics sourcing",
+      "PCB manufacturing",
+      "Machining partners",
+      "Assembly coordination",
+      "Quality inspection"
+    ]
+  },
+  {
+    name: "Scale",
+    price: "Custom",
+    desc: "Full manufacturing operating partner.",
+    features: [
+      "Full supply chain coordination",
+      "Production planning",
+      "Vendor network management",
+      "Quality verification",
+      "Logistics coordination"
+    ]
+  }
+];
+
+export const pricingFeatures = [
+  "Engineering review",
+  "Electronics sourcing",
+  "Mechanical manufacturing",
+  "Vendor coordination",
+  "Quality inspection",
+  "Production management"
 ];
