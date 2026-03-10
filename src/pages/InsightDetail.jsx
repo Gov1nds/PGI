@@ -1,3 +1,55 @@
+import { useParams } from "react-router-dom";
+import Container from "../components/Container.jsx";
+import { insightBodyBySlug } from "../content/insightBody.js";
+
+export default function InsightDetail() {
+  const { slug } = useParams();
+  const article = insightBodyBySlug[slug];
+
+  if (!article) {
+    return (
+      <Container>
+        <div className="py-20">
+          <h1>Article not found</h1>
+        </div>
+      </Container>
+    );
+  }
+
+  return (
+    <Container className="py-16 max-w-3xl">
+      <h1 className="text-3xl font-semibold mb-6">{slug}</h1>
+
+      <p className="text-gray-600 mb-8 leading-relaxed">
+        {article.intro}
+      </p>
+
+      {article.sections.map((section, i) => (
+        <div key={i} className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">
+            {section.title}
+          </h2>
+
+          {section.type === "ul" && (
+            <ul className="list-disc list-inside space-y-2 text-gray-600">
+              {section.items.map((item, j) => (
+                <li key={j}>{item}</li>
+              ))}
+            </ul>
+          )}
+
+          {section.type === "ol" && (
+            <ol className="list-decimal list-inside space-y-2 text-gray-600">
+              {section.items.map((item, j) => (
+                <li key={j}>{item}</li>
+              ))}
+            </ol>
+          )}
+        </div>
+      ))}
+    </Container>
+  );
+}
 const insightBodyBySlug = {
   "dfm-optimization": {
     intro:
