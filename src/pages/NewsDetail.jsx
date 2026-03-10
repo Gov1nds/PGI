@@ -3,58 +3,57 @@ import Container from "../components/Container.jsx";
 import { newsItems, site } from "../content/siteData.js";
 
 const newsBodyBySlug = {
-  "procurement-logistics-expansion": {
+  "cnc-network-expansion": {
     intro:
-      "PGI has formally launched Procurement & Logistics Coordination Services to help businesses manage BOQs, daily requirements, vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking. We operate as a service team that brings structure, speed, and visibility-without clients needing to add internal headcount.",
+      "PGI Manufacturing Network has officially expanded its precision mechanical manufacturing capacity by integrating 12 new ISO-certified CNC facilities into our Indian supply ecosystem. This expansion allows us to handle high-volume production runs of complex machined components with reduced lead times and enhanced quality control.",
     highlights: [
-      "BOQ intake + daily requirement structuring (turn unorganized requests into an actionable tracker)",
-      "Quotation coordination and comparison (rates, lead times, availability, delivery scope)",
-      "Vendor follow-ups for readiness, dispatch dates, and issue resolution",
-      "Dispatch planning + transport coordination (pickup slots, vehicle planning, delivery windows)",
-      "Shipment tracking + proof of delivery (POD) confirmation",
-      "Documentation coordination support (invoice/dispatch docs + compliance guidance; customs support via partners where needed)"
+      "Added capacity for 5-axis CNC milling and high-speed CNC turning.",
+      "Integration of automated CMM (Coordinate Measuring Machine) inspection at partner facilities.",
+      "Expanded material handling capabilities, including specialized aerospace-grade aluminum and titanium.",
+      "Centralized raw material procurement to ensure batch consistency and traceability.",
+      "Streamlined export logistics for faster global dispatch from Indian ports."
     ],
     whyItMatters: [
-      "Most delays are not caused by suppliers alone-delays happen due to missed follow-ups, unclear approvals, and transport misalignment.",
-      "Businesses lose money when urgent requirements are handled on calls/WhatsApp without a single tracker and escalation system.",
-      "A structured coordination layer improves delivery predictability, reduces last-minute firefighting, and helps prevent cost overruns from delays and rework."
+      "Relying on a single factory creates bottlenecks. A distributed, managed network guarantees that production can pivot if one facility reaches capacity.",
+      "Centralized engineering oversight ensures that DFM (Design for Manufacturing) standards and tight tolerances are strictly maintained across all partner facilities.",
+      "Clients benefit from the cost efficiencies of offshore manufacturing without sacrificing the communication and accountability of a local partner."
     ],
     nextSteps: [
-      "Share your BOQ or requirement list (qty + unit), preferred brands/specs, and required-by dates",
-      "Send pickup & delivery locations and receiving constraints (timings, unloading, site contact)",
-      "We’ll propose a coordination workflow + reporting format (daily/weekly) and start with a pilot scope"
+      "Share your 3D CAD models (STEP/IGES) and 2D PDF drawings with required tolerances.",
+      "Our engineering team will conduct a DFM review and provide a comprehensive quotation.",
+      "Approve the First Article Inspection (FAI) report before we initiate full-scale production."
     ],
     extras: [
-      "We do not replace your existing vendors-we coordinate them and maintain backup options to reduce risk.",
-      "Client payments can remain direct to vendors; our role is coordination, tracking, and delivery control.",
-      "For imports/port-side movements, we can coordinate with your CHA/freight partners or connect you to verified partners for documentation and customs processes."
+      "We provide full material certifications (Mill Certificates) and dimensional inspection reports with every batch.",
+      "Surface treatments—including hard anodizing, powder coating, and electroless nickel plating—are managed within the network.",
+      "We handle all export documentation and global freight forwarding directly to your facility."
     ]
   },
 
-  "live-delivery-tracking": {
+  "turnkey-pcba-launch": {
     intro:
-      "We introduced a clearer delivery tracking and reporting system to reduce confusion across vendors, transporters, and receiving teams. Clients now get a single source of truth showing what’s quoted, approved, ordered, ready, dispatched, and delivered-with ETAs and pending actions.",
+      "To better support our clients developing complex electromechanical products, PGI has officially launched Turnkey PCB Assembly (PCBA) services. This closes the loop between mechanical enclosures and electronic controls, allowing clients to source fully integrated, tested 'box-builds' from a single dedicated partner.",
     highlights: [
-      "Single tracker view: Quoted → Approved → Ordered → Ready → Dispatched → Delivered",
-      "Dispatch details captured: vehicle number, driver contact, pickup time slot, ETA",
-      "Pending actions list: approvals required, payment confirmation pending, vendor readiness pending",
-      "Delay flags with reason + revised dates (so teams can act early)",
-      "Proof of delivery capture (POD/photo/receipt confirmation) for closure"
+      "End-to-end component sourcing through franchised global distributors to eliminate counterfeit risks.",
+      "Automated SMT (Surface Mount Technology) lines capable of placing ultra-fine pitch components (0201 size).",
+      "Inline AOI (Automated Optical Inspection) and X-Ray inspection for BGA and leadless packages.",
+      "Functional board-level testing and IC programming capabilities.",
+      "Seamless integration: We now manufacture the mechanical enclosure, assemble the PCB, and deliver the final integrated product."
     ],
     whyItMatters: [
-      "Delivery delays usually build up quietly; a tracker catches risk early and enables escalation before deadlines are missed.",
-      "A single reporting format reduces repeated calls and prevents wrong information spreading across teams.",
-      "Documented updates reduce disputes and improve accountability between supplier, transporter, and receiving team."
+      "Managing separate suppliers for bare boards, electronic components, and SMT assembly frequently leads to BOM mismatches and 'line-down' delays.",
+      "A turnkey approach shifts the burden of inventory management and vendor coordination entirely to PGI.",
+      "Testing the PCBA immediately alongside the mechanical enclosure catches integration issues before the product ships across the globe."
     ],
     nextSteps: [
-      "Request our reporting format (daily or weekly) and we’ll set it up for your project",
-      "Start with 10–20 BOQ lines as a pilot to demonstrate control and speed",
-      "Scale to full requirements once the workflow is stable"
+      "Send us your complete Bill of Materials (BOM), Gerber files, and Pick & Place (Centroid) data.",
+      "We will scrub the BOM for obsolete or long-lead-time components and suggest available alternates.",
+      "We build and test prototype boards for your approval before scaling to volume production."
     ],
     extras: [
-      "For compliance-sensitive shipments, we include a documentation checklist (invoice/dispatch documents, transport documents, and coordination notes).",
-      "Where customs is involved, we coordinate status updates and document readiness through your CHA/freight team or verified partners.",
-      "If your receiving site has time restrictions, we plan delivery windows to avoid waiting charges and re-routing."
+      "We strictly adhere to IPC-A-610 Class 2 and Class 3 assembly standards based on client requirements.",
+      "Moisture-sensitive components are strictly managed (baking and vacuum sealing) prior to reflow.",
+      "Conformal coating and potting services are available for boards operating in harsh industrial or marine environments."
     ]
   }
 };
@@ -87,10 +86,15 @@ export default function NewsDetail() {
   if (!item) {
     return (
       <Container className="py-14">
-        <h1 className="text-2xl font-semibold">News item not found</h1>
-        <Link className="mt-6 inline-flex text-[rgba(var(--brand-500))] hover:underline" to="/news">
+        <Link className="text-sm text-white/60 hover:text-white" to="/news">
           ← Back to news
         </Link>
+        <div className="mt-6">
+          <h1 className="text-2xl font-semibold">News item not found</h1>
+          <p className="mt-3 text-sm text-white/70">
+            The link may be outdated, or the content has not been published yet.
+          </p>
+        </div>
       </Container>
     );
   }
@@ -130,28 +134,28 @@ export default function NewsDetail() {
 
         {/* Extra detail block */}
         <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">How we typically work</div>
+          <div className="text-sm font-semibold text-white">How we ensure quality</div>
           <BulletList
             items={
               body?.extras || [
-                "Share BOQ / requirements and required-by dates.",
-                "We coordinate quotations and follow-ups and propose dispatch/delivery plan.",
-                "Client pays vendors directly; we track readiness, transport, and delivery.",
-                "You receive daily/weekly reports and a single tracker view."
+                "Strict engineering oversight and DFM review.",
+                "First Article Inspection (FAI) before production scaling.",
+                "Material certifications and dimensional reports provided.",
+                "Global delivery managed directly to your facility."
               ]
             }
           />
         </div>
 
         <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">Next steps</div>
+          <div className="text-sm font-semibold text-white">Next steps for clients</div>
           <NumberList items={body?.nextSteps || ["Add next steps for interested clients."]} />
         </div>
 
         <div className="rounded-3xl bg-black/30 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">Talk to us</div>
+          <div className="text-sm font-semibold text-white">Talk to our engineering team</div>
           <p className="mt-2 text-sm text-white/70">
-            For partnerships, procurement support, transport coordination, or documentation/customs coordination enquiries:
+            For manufacturing enquiries, DFM reviews, or electromechanical assembly projects, contact us:
           </p>
           <div className="mt-4 text-sm text-white/75 space-y-1">
             <div>
@@ -172,7 +176,7 @@ export default function NewsDetail() {
           </div>
 
           <div className="mt-4 text-xs text-white/50">
-            Note: Customs and specialized compliance activities are coordinated through verified partners/agents as applicable.
+            Note: Specialized testing certifications (e.g., CE, UL) are coordinated through verified third-party labs as required.
           </div>
         </div>
       </div>

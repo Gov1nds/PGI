@@ -4,218 +4,141 @@ import { insights } from "../content/siteData.js";
 
 /**
  * Keep slugs here aligned with `insights` in siteData.js
- * Suggested slugs (from our updated content):
- * - boq-to-delivery
- * - vendor-transport-coordination
- * - delivery-delay-prevention
+ * Suggested slugs for the new manufacturing focus:
+ * - dfm-optimization
+ * - pcba-quality-control
+ * - offshore-manufacturing-supply-chain
  */
 const insightBodyBySlug = {
-  "boq-to-delivery": {
+  "dfm-optimization": {
     intro:
-      "Most procurement delays happen because BOQ items are not converted into an actionable control system. People quote late, approvals are unclear, orders are not tracked, and dispatch updates are scattered across calls and WhatsApp. This guide shows a simple, practical BOQ-to-Delivery system you can run daily-without expensive software.",
+      "Most manufacturing cost overruns and delays happen before a single machine is turned on. When CAD models are sent directly to production without a Design for Manufacturability (DFM) review, you risk high tooling costs, impossible tolerances, and high scrap rates. This guide covers practical steps to optimize your designs for precision CNC and sheet metal fabrication.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Turn every BOQ into a live tracker with one status per line item (Quoted → Approved → Ordered → Ready → Dispatched → Delivered).",
-          "Separate responsibility: client approves + pays vendors, you coordinate follow-ups + logistics to ensure delivery.",
-          "Create a single ‘truth sheet’ that everyone follows (avoid multiple versions on WhatsApp).",
-          "Track 4 critical dates per item: quote received, approval, expected dispatch, expected delivery.",
-          "Use escalation rules: if vendor misses a date, you switch to backup vendor or alternate transporter fast."
+          "Always run a DFM review to align your 3D models with the actual capabilities of the target machines (3-axis vs 5-axis CNC, laser cutting vs punching).",
+          "Avoid unnecessarily tight tolerances. Apply tight tolerances only to critical mating surfaces to drastically reduce machining time and cost.",
+          "Standardize hole sizes, threads, and bend radii to utilize standard tooling, preventing custom tool purchases.",
+          "Design for assembly: minimize part counts by combining components where possible, or use interlocking sheet metal tabs.",
+          "Consult with your manufacturing partner on material selection—sometimes a slightly more expensive raw material machines so much faster that the final part cost drops."
         ]
       },
       {
-        title: "The BOQ to Delivery control workflow",
+        title: "DFM Checklist: CNC Machining",
         type: "ol",
         items: [
-          "BOQ intake: capture item name, spec/brand, unit, qty, required-by date, delivery location.",
-          "Quote collection: get at least 2–3 quotes for key items (price + lead time + dispatch terms).",
-          "Comparison sheet: compare price, availability, lead time, payment terms, warranty, delivery scope.",
-          "Approval checkpoint: client selects option + approves (record approval date and final spec).",
-          "Order release: vendor receives confirmed order details + expected dispatch date.",
-          "Dispatch readiness: confirm packing, loading plan, invoice/ewaybill readiness (if applicable), and pickup timing.",
-          "Transport arrangement: allocate vehicle, share pickup contact, share delivery contact, fix delivery window.",
-          "Shipment tracking: check-in at critical milestones (pickup → transit midpoint → delivery gate).",
-          "Delivery confirmation: POD/photo/receipt confirmation + close item status in tracker."
+          "Internal Corners: Add radii to all internal vertical corners. Sharp internal corners require slow, expensive EDM processes.",
+          "Wall Thickness: Maintain a minimum wall thickness of 0.8mm for metals and 1.5mm for plastics to prevent warping and vibration during milling.",
+          "Hole Depth: Keep hole depths under 4x the diameter. Deeper holes require specialized deep-hole drilling tools and slow feed rates.",
+          "Tolerances: Default to standard tolerances (e.g., ISO 2768-m) unless a specific fit is required. Highlight critical dimensions on your 2D PDF drawing.",
+          "Text & Lettering: Engrave text rather than embossing it. Embossing requires milling away all surrounding material, which wastes time."
         ]
       },
       {
-        title: "What your tracker must include (minimum columns)",
+        title: "DFM Checklist: Sheet Metal Fabrication",
         type: "ul",
         items: [
-          "Item code / line no.",
-          "Item description + spec/brand",
-          "Qty + unit",
-          "Vendor name + contact",
-          "Quoted rate + quote date",
-          "Approved rate + approval date",
-          "Order date",
-          "Expected dispatch date",
-          "Transporter + vehicle no.",
-          "Expected delivery date + delivery location",
-          "Status (Quoted / Approved / Ordered / Ready / Dispatched / Delivered)",
-          "Remarks (issues, changes, pending actions)"
+          "Bend Radii: Keep the bend radius consistent across the entire part to prevent multiple machine setups.",
+          "Hole Placement: Keep holes and slots at least 2x the material thickness away from any bend lines to prevent distortion.",
+          "Relief Cuts: Add bend relief cuts next to flanges to prevent material tearing during the folding process.",
+          "Hemming: Use hems to eliminate sharp edges and add stiffness without increasing material thickness."
         ]
       },
       {
-        title: "Common failure points (and how to prevent them)",
+        title: "The PGI Engineering Review Process",
         type: "ul",
         items: [
-          "BOQ lacks specs: fix by adding brand/grade/thickness/model before quotation.",
-          "Approvals happen on phone: fix by confirming approval on email/WhatsApp with final rate + delivery date.",
-          "Vendor says ‘tomorrow dispatch’ repeatedly: fix with a confirmed dispatch slot + escalation if missed.",
-          "Transport arranged late: fix by pre-booking vehicle once item is ‘Ready’ (not after invoice generation).",
-          "No delivery window coordination: fix by confirming site receiving time + unloading constraints in advance."
-        ]
-      },
-      {
-        title: "Simple reporting format (daily / weekly)",
-        type: "ul",
-        items: [
-          "Today dispatch list (items + vehicle + ETA)",
-          "Pending approvals list (items + decision required)",
-          "Vendor follow-up list (items + next action)",
-          "Delayed items list (reason + revised dispatch/delivery)",
-          "Next 7 days requirement plan (high-risk items needing early action)"
+          "Intake: Client shares CAD (STEP/IGES) and 2D PDFs with material specs.",
+          "Simulation: PGI engineers simulate the toolpaths to identify deep pockets, unreachable features, or thin walls.",
+          "Feedback loop: We provide a marked-up drawing suggesting minor geometry changes to lower costs.",
+          "Approval & Prototyping: Once DFM adjustments are approved, we run the First Article Inspection (FAI) prototype."
         ]
       }
     ]
   },
 
-  "vendor-transport-coordination": {
+  "pcba-quality-control": {
     intro:
-      "Procurement succeeds when vendors and transporters are aligned on dispatch readiness, pickup timing, documents, and delivery window. Without a system, you get last-minute calls, missed pickups, demurrage risk, and blame-shifting. This guide provides a clean coordination system you can run with WhatsApp + a tracker.",
+      "Managing electronic assembly (PCBA) by sourcing components from five different vendors and sending them to a separate assembly house is a recipe for mismatched BOMs, counterfeit parts, and delayed production. A turnkey approach—where one partner handles component sourcing, SMT assembly, and testing—creates a closed-loop system for quality control.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Vendor readiness must be confirmed before booking vehicle: packing + loading + invoice readiness.",
-          "Transport booking must include: pickup address, loading hours, material type/weight, delivery window.",
-          "Use a ‘Dispatch Confirmation Message’ template to avoid misunderstandings.",
-          "Create a single communication thread per dispatch (vendor + transporter + client/site contact).",
-          "Build backups: at least 2 alternate vendors and 2 alternate transport options for key items."
+          "Consolidate your BOM. Letting your manufacturing partner handle component procurement prevents 'line-down' situations caused by missing parts.",
+          "Allow for approved alternates. Rigid BOMs with zero acceptable alternates lead to massive delays during global chip shortages.",
+          "Bake testing into the assembly line. Catching a short circuit during ICT (In-Circuit Testing) costs pennies; catching it after the box-build costs dollars.",
+          "Specify your PCB stack-up, copper weight, and surface finish (e.g., ENIG vs HASL) clearly in your fabrication files (Gerbers)."
         ]
       },
       {
-        title: "Dispatch confirmation checklist (vendor side)",
+        title: "The Turnkey PCBA Workflow",
         type: "ol",
         items: [
-          "Material packed and ready? (yes/no, time)",
-          "Loading support available? (forklift/manual, manpower)",
-          "Invoice/dispatch note ready? (yes/no)",
-          "Any special handling required? (fragile, moisture-sensitive, stacking limits)",
-          "Pickup contact name + phone confirmed",
-          "Gate/entry rules at pickup location confirmed",
-          "Final pickup slot agreed (date + time window)"
+          "BOM & Gerber Analysis: Scrubbing the Bill of Materials for obsolete or long-lead-time components.",
+          "Component Sourcing: Procuring ICs, passives, and bare boards through authorized global distributors to prevent counterfeits.",
+          "SMT Assembly (Surface Mount): Automated solder paste application, pick-and-place, and reflow soldering for high-density boards.",
+          "THT Assembly (Through-Hole): Wave soldering or selective soldering for larger connectors and power components.",
+          "AOI & X-Ray Inspection: Automated Optical Inspection for surface defects, and X-Ray for hidden solder joints (like BGA components).",
+          "Functional Testing & Conformal Coating: Powering the board to verify firmware/function, followed by protective coating for harsh environments."
         ]
       },
       {
-        title: "Transport booking checklist (transporter side)",
-        type: "ol",
-        items: [
-          "Vehicle type (pickup/LCV/mini-truck/lorry/container) decided based on volume/weight",
-          "Pickup address + pin + landmark + loading time window shared",
-          "Delivery address + receiving time window shared",
-          "Material details shared (weight/packaging/stacking)",
-          "Rate + payment terms agreed (advance/balance, toll, unloading)",
-          "Driver name + phone + vehicle number captured",
-          "Transit ETA plan agreed (including night halt if long route)"
-        ]
-      },
-      {
-        title: "A simple 3-message system that reduces chaos",
+        title: "Common PCBA Failures (and how to prevent them)",
         type: "ul",
         items: [
-          "Message 1 (Vendor): 'Confirm material readiness + exact pickup slot + loading support.'",
-          "Message 2 (Transporter): 'Vehicle details + driver + pickup time + delivery ETA.'",
-          "Message 3 (Client/Site): 'Dispatch details + vehicle + ETA + receiving coordination.'"
-        ]
-      },
-      {
-        title: "Common coordination issues (and fixes)",
-        type: "ul",
-        items: [
-          "Vehicle reaches before material is ready → confirm ‘Ready’ status before booking vehicle.",
-          "Vendor changes pickup timing last minute → set a firm slot + escalation after 1 reschedule.",
-          "Wrong vehicle size booked → maintain a quick reference table for item categories and vehicle types.",
-          "No unloading manpower at site → confirm unloading responsibility before dispatch.",
-          "Driver unreachable mid-transit → share alternate driver number + transporter office number."
-        ]
-      },
-      {
-        title: "Quality control during dispatch (practical)",
-        type: "ul",
-        items: [
-          "Verify quantity by count/weight before loading where possible.",
-          "Take photos of packing + loaded vehicle (proof for disputes).",
-          "Ensure labeling for multi-item loads (avoid missing items on delivery).",
-          "Confirm fragile items are protected (corner guards, wrap, pallets if needed)."
+          "Tombstoning (components standing on end): Fixed by balancing the thermal mass of the copper pads and tweaking the reflow oven profile.",
+          "Solder Bridging (shorts): Prevented by ensuring proper solder mask expansion and using high-quality solder paste stencils.",
+          "Counterfeit ICs: Eliminated by strictly sourcing through franchised distributors or requiring full traceability/CoC (Certificate of Conformity).",
+          "Moisture Damage: Prevented by baking moisture-sensitive components (MSL tracking) before reflow soldering."
         ]
       }
     ]
   },
 
-  "delivery-delay-prevention": {
+  "offshore-manufacturing-supply-chain": {
     intro:
-      "Delivery delays rarely happen ‘suddenly’. They build up from small misses: late approvals, vendor dispatch uncertainty, transport availability, traffic windows, and receiving constraints. This guide gives a practical delay-prevention playbook you can use for daily procurement and logistics coordination.",
+      "Transitioning from local prototyping to offshore production scaling is challenging. Quality fade, communication barriers, and logistical black holes can erase any cost savings. A managed manufacturing network in India provides the scalable capacity of offshore production, but with centralized engineering oversight, strict IP protection, and reliable delivery schedules.",
     sections: [
       {
         title: "Key takeaways",
         type: "ul",
         items: [
-          "Treat lead time as a risk: confirm realistic dispatch dates, not optimistic promises.",
-          "Maintain a 7-day lookahead plan for high-risk items (long lead, imported, custom, limited stock).",
-          "Use buffers: dispatch buffer + delivery buffer + receiving buffer.",
-          "Always confirm receiving constraints: unloading time, gate entry, permits, holiday blocks, labor availability.",
-          "Create a delay escalation ladder (vendor → vendor owner → alternate vendor → client decision)."
+          "Don't manage individual factories offshore; partner with a network manager who takes accountability for the final delivered product.",
+          "Enforce First Article Inspection (FAI) on every new batch or tooling change before full production scales.",
+          "Require material certifications (CoC) and dimensional inspection reports before the shipment ever leaves the port.",
+          "Integrate electromechanical builds (box-builds) at the source. Shipping bare PCBs and metal enclosures separately to assemble them locally wastes time and money."
         ]
       },
       {
-        title: "The 7-day lookahead system (simple and powerful)",
+        title: "Building a Resilient Production Ecosystem",
         type: "ol",
         items: [
-          "List items needed in the next 7 days (required-by date).",
-          "Mark risk level: High (lead time > 3 days or limited stock), Medium, Low.",
-          "For High-risk items: confirm vendor readiness date + backup vendor option.",
-          "Pre-book transport when item is within 48 hours of readiness.",
-          "Send daily status to client: what is safe, what is at risk, what needs decision today."
+          "Facility Matching: Not every CNC shop is right for every part. Match high-mix/low-volume jobs to agile shops, and high-volume jobs to automated lines.",
+          "Centralized Procurement: Bulk order raw materials (aluminum billets, steel sheets) centrally to maintain material consistency across multiple machining partners.",
+          "Standardized Quality Gates: Implement identical inspection standards (CMM checks, go/no-go gauges) across all facilities.",
+          "Consolidated Shipping: Pack mechanical components, wiring harnesses, and PCB assemblies into single, optimized sea or air freight shipments."
         ]
       },
       {
-        title: "Top reasons deliveries get delayed",
+        title: "Quality Control Documentation to Demand",
         type: "ul",
         items: [
-          "Late approvals on quotations",
-          "Vendor stock mismatch (they quote without confirming stock)",
-          "Packing/loading not ready on pickup day",
-          "Transport shortage / wrong vehicle choice",
-          "Receiving team not ready (no unloading / gate delays / wrong delivery window)",
-          "Documentation delays (invoice, e-waybill, dispatch note where applicable)"
+          "Material Mill Certificates (ensuring you got 6061-T6 Aluminum, not a cheap substitute).",
+          "First Article Inspection (FAI) Report (verifying all dimensions against the 2D drawing).",
+          "Surface Treatment Reports (e.g., anodizing thickness, salt spray testing for corrosion resistance).",
+          "RoHS / REACH compliance declarations for electronic components."
         ]
       },
       {
-        title: "Delay prevention checklist (run this before dispatch)",
-        type: "ol",
-        items: [
-          "Approval confirmed? (yes/no) + final spec locked",
-          "Payment status clear? (client/vendor confirmation if required)",
-          "Material ready time confirmed? (not just 'tomorrow')",
-          "Transport booked with correct vehicle? (yes/no)",
-          "Pickup + delivery windows confirmed? (yes/no)",
-          "Unloading responsibility confirmed? (yes/no)",
-          "Driver contact + live location sharing setup? (optional but useful)"
-        ]
-      },
-      {
-        title: "Escalation rules (make it professional)",
+        title: "How PGI Manages the Risk",
         type: "ul",
         items: [
-          "If vendor misses dispatch once → ask for revised dispatch date + reason + confirmation.",
-          "If vendor misses twice → activate backup vendor quote + inform client of impact.",
-          "If transporter fails pickup slot → switch transporter from backup list immediately.",
-          "If receiving issue causes delay → confirm revised delivery window + share with driver to prevent waiting charges."
+          "We act as your single point of contact. You speak to our engineering team; we handle the factory floor.",
+          "We physically inspect products in our Indian network before authorizing export.",
+          "We handle the complexities of export documentation, customs clearance coordination, and freight forwarding to your door."
         ]
       }
     ]
@@ -251,16 +174,21 @@ export default function InsightDetail() {
   if (!item) {
     return (
       <Container className="py-14">
-        <h1 className="text-2xl font-semibold">Insight not found</h1>
-        <p className="mt-3 text-sm text-white/70">
-          The link may be outdated. Please browse all insights.
-        </p>
-        <Link
-          to="/insights"
-          className="mt-6 inline-flex text-sm font-semibold text-[rgba(var(--brand-500))]"
-        >
+        <Link to="/insights" className="text-sm text-white/60 hover:text-white">
           ← Back to insights
         </Link>
+        <div className="mt-6">
+          <h1 className="text-2xl font-semibold">Insight not found</h1>
+          <p className="mt-3 text-sm text-white/70">
+            The link may be outdated, or the content has not been published yet.
+          </p>
+          <Link
+            to="/insights"
+            className="mt-6 inline-flex text-sm font-semibold text-[rgba(var(--brand-500))]"
+          >
+            Browse all insights
+          </Link>
+        </div>
       </Container>
     );
   }
@@ -296,44 +224,41 @@ export default function InsightDetail() {
 
             <div className="mt-10 rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
               <div className="text-sm font-semibold text-white">
-                Need help with procurement and logistics coordination?
+                Ready to optimize your manufacturing workflow?
               </div>
               <p className="mt-2 text-sm text-white/70">
-                Share your BOQ or daily requirements, delivery location, and timeline. We’ll coordinate quotations,
-                vendor follow-ups, dispatch planning, transport arrangement, and delivery tracking-so materials arrive
-                on time without daily chaos.
+                Share your CAD files, BOMs, and technical requirements. Our engineering team will review your designs for manufacturability, provide a transparent quotation, and manage the entire production lifecycle through our vetted Indian network.
               </p>
               <Link
                 to="/contact"
                 className="mt-4 inline-flex text-sm font-semibold text-[rgba(var(--brand-500))] hover:underline"
               >
-                Contact us →
+                Request an engineering review →
               </Link>
             </div>
           </div>
         </article>
 
-        <aside className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold">Work with us</div>
+        <aside className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 h-fit sticky top-24">
+          <div className="text-sm font-semibold">Work with PGI Engineering</div>
           <p className="mt-2 text-sm text-white/70">
-            Send your BOQ (or item list), preferred brands/specs, delivery location, and required dates.
-            We’ll share a clear coordination plan and reporting format.
+            Send your 3D models (STEP/IGES), 2D drawings, or Bill of Materials. We’ll respond with DFM feedback and a structured production plan.
           </p>
           <Link
             to="/contact"
             className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-[rgba(var(--brand-600)/0.25)] px-4 py-2 text-sm font-semibold ring-1 ring-[rgba(var(--brand-500)/0.35)] transition hover:bg-[rgba(var(--brand-600)/0.35)]"
           >
-            Contact sales
+            Contact engineering
           </Link>
 
           <div className="mt-8 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-            <div className="text-xs font-semibold text-white/80">What to send</div>
+            <div className="text-xs font-semibold text-white/80">What to include</div>
             <ul className="mt-2 list-disc pl-5 text-xs text-white/60 space-y-1">
-              <li>BOQ / item list (qty + unit)</li>
-              <li>Specs / brands (if any)</li>
-              <li>Required-by dates</li>
-              <li>Pickup & delivery locations</li>
-              <li>Any constraints (receiving time, unloading)</li>
+              <li>CAD Models (STEP / IGES)</li>
+              <li>2D Drawings (PDF) with tolerances</li>
+              <li>Bill of Materials (BOM)</li>
+              <li>Material & finishing specs</li>
+              <li>Expected production quantities</li>
             </ul>
           </div>
         </aside>

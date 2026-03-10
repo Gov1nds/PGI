@@ -7,9 +7,9 @@ export default function News() {
   return (
     <Container className="py-14">
       <SectionHeading
-        eyebrow="Updates"
-        title="News & operations updates"
-        desc="Announcements on procurement coordination, logistics tracking improvements, and documentation/customs coordination support (via partners) for smoother deliveries."
+        eyebrow="Network Updates"
+        title="Manufacturing & operations news"
+        desc="Announcements regarding expanded production capacity, new CNC and PCBA facility partnerships, and advancements in our engineering-driven supply chain."
       />
 
       <div className="mt-10 grid gap-6 md:grid-cols-3">

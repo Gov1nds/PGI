@@ -12,23 +12,23 @@ export default function About() {
             <div>
               <SectionHeading
                 eyebrow="About PGI"
-                title="Built for procurement and delivery execution"
-                desc="PGI (Padanilath Global Integrated) supports businesses with structured procurement coordination, vendor management, dispatch planning, shipment tracking, and documentation support - so materials arrive on time, specs match, and operations stay under control."
+                title="Simplifying complex manufacturing for global clients"
+                desc="PGI Manufacturing Network provides engineering-led manufacturing solutions. We integrate engineering review, supplier network management, and logistics within a single operational framework, allowing clients to access reliable production without the burden of managing multiple vendors."
               />
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <PrimaryButton to="/contact">Contact sales</PrimaryButton>
+                <PrimaryButton to="/contact">Contact engineering</PrimaryButton>
               </div>
 
               {/* Quick credibility chips */}
               <div className="mt-6 flex flex-wrap gap-2">
                 {[
-                  "BOQ → RFQ → PO support",
-                  "Vendor follow-ups",
-                  "Pickup & dispatch planning",
-                  "Shipment tracking",
-                  "Documentation & compliance",
-                  "Customs support via partners",
+                  "Engineering-Driven Decisions",
+                  "Ownership of Supply Chain",
+                  "Consistent Quality Verification",
+                  "Mechanical & Machined Items",
+                  "Electronic Assemblies (PCBA)",
+                  "Global Delivery Coordination",
                 ].map((t) => (
                   <span
                     key={t}
@@ -41,7 +41,6 @@ export default function About() {
             </div>
 
             <div className="relative aspect-[16/10] overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-              {/* Update image later if needed */}
               <img src="/images/about-hero.jpg" alt="About PGI" className="h-full w-full object-cover" />
             </div>
           </div>
@@ -54,16 +53,16 @@ export default function About() {
           <div className="grid gap-8 md:grid-cols-3">
             {[
               {
+                t: "Philosophy",
+                d: "Modern manufacturing demands engineering expertise, disciplined supply chain coordination, and consistent quality assurance. We prioritize operational excellence to provide enduring manufacturing partnerships[cite: 10, 13].",
+              },
+              {
                 t: "Mission",
-                d: "Reduce delivery delays and procurement confusion by running a disciplined coordination system-clear requirements, controlled follow-ups, and reliable dispatch-to-delivery tracking.",
+                d: "To simplify global manufacturing by building a coordinated network of trusted suppliers, providing engineering-driven sourcing, production oversight, quality assurance, and reliable delivery for precision industrial components[cite: 29].",
               },
               {
                 t: "Vision",
-                d: "To become a trusted execution partner for supply-chain coordination in construction, MEP, industrial buying, and project procurement especially when timelines and technical specs matter.",
-              },
-              {
-                t: "Values",
-                d: "Clarity, integrity, accountability, and speed. We document decisions, keep stakeholders aligned, and escalate risks early-before they become expensive.",
+                d: "To build a globally trusted manufacturing network that connects engineering innovation with reliable production, enabling companies worldwide to access high-quality industrial manufacturing through a seamless and coordinated supply ecosystem[cite: 31].",
               },
             ].map((b) => (
               <div key={b.t} className="rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
@@ -76,38 +75,43 @@ export default function About() {
           {/* How we operate */}
           <div className="mt-14 grid gap-10 md:grid-cols-2">
             <div className="rounded-3xl bg-white/5 p-8 ring-1 ring-white/10">
-              <div className="text-sm font-semibold">What we actually do</div>
+              <div className="text-sm font-semibold text-[rgba(var(--brand-500))]">Operational Process</div>
+              <div className="mt-2 text-xl font-semibold">How we execute projects</div>
               <p className="mt-3 text-sm leading-relaxed text-white/70">
-                PGI operates as an external coordination layer between your site team, purchase team, vendors, transporters,
-                and (when applicable) customs/documentation partners. We don’t replace ERP, we keep execution moving with
-                trackers, follow-ups, and structured reporting.
+                PGI follows a highly structured, disciplined workflow for managing manufacturing projects from inception to global delivery[cite: 128].
               </p>
 
-              <ul className="mt-6 space-y-3 text-sm text-white/70">
-                <li>• BOQ structuring and requirement control (versions, quantities, priorities)</li>
-                <li>• RFQ coordination and quote comparison (brands, specs, lead time, terms)</li>
-                <li>• Vendor management (confirmations, readiness, delays, alternatives)</li>
-                <li>• Dispatch planning and transporter coordination (pickup slots, loading, POD)</li>
-                <li>• Shipment tracking and delivery confirmation (ETAs, exceptions, resolution)</li>
-                <li>• Documentation support (invoice packs, e-waybill, basic compliance)</li>
+              <ul className="mt-6 space-y-4 text-sm text-white/70">
+                <li>
+                  <strong className="text-white">1. Review & Evaluate:</strong> Comprehensive review of CAD files and specs to evaluate manufacturability and identify cost optimizations[cite: 134, 135].
+                </li>
+                <li>
+                  <strong className="text-white">2. Procure & Schedule:</strong> Procurement of all raw materials and electronic components, followed by meticulous scheduling across our most qualified partner facilities[cite: 137, 138].
+                </li>
+                <li>
+                  <strong className="text-white">3. Coordinate & Monitor:</strong> PGI engineers coordinate activities on the factory floor and actively monitor progress to ensure strict adherence to technical requirements[cite: 140].
+                </li>
+                <li>
+                  <strong className="text-white">4. Verify & Deliver:</strong> Rigorous final inspection and quality verification before components are securely packaged and delivered directly to client facilities worldwide[cite: 142].
+                </li>
               </ul>
             </div>
 
             <div className="rounded-3xl bg-white/5 p-8 ring-1 ring-white/10">
-              <div className="text-sm font-semibold">Technical sourcing support</div>
+              <div className="text-sm font-semibold text-[rgba(var(--brand-500))]">Supply Chain Ecosystem</div>
+              <div className="mt-2 text-xl font-semibold">The PGI Network Model</div>
               <p className="mt-3 text-sm leading-relaxed text-white/70">
-                For technical items-electronics, mechanical parts, engineering components we support spec matching and vendor
-                shortlisting. Our goal is simple: reduce wrong material purchases and prevent failures during installation.
+                We operate through a structured network of vetted manufacturing facilities across India. This distributed model allows PGI to provide scalable capacity while maintaining centralized engineering and quality control[cite: 81, 86].
               </p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {[
-                  "Electronics & control items",
-                  "Mechanical & MRO supplies",
-                  "Engineering/industrial components",
-                  "Spec validation & substitutions",
-                  "Vendor discovery & RFQ packs",
-                  "Alternative vendors for urgency",
+                  "Raw Material Sourcing [cite: 111]",
+                  "Electronic Component Procurement [cite: 96]",
+                  "Partner Facility Allocation [cite: 114]",
+                  "Central Engineering Oversight [cite: 115]",
+                  "Quality Verification Labs [cite: 101]",
+                  "Export & Logistics Coordination [cite: 104]",
                 ].map((x) => (
                   <div key={x} className="rounded-2xl bg-black/30 p-4 text-sm text-white/70 ring-1 ring-white/10">
                     {x}
@@ -116,10 +120,9 @@ export default function About() {
               </div>
 
               <div className="mt-6 rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
-                <div className="text-sm font-semibold text-white">Reporting you’ll receive</div>
+                <div className="text-sm font-semibold text-white">Innovation & R&D</div>
                 <p className="mt-2 text-sm text-white/70">
-                  A clean weekly view: order status, pending actions, expected dispatches, delivery confirmations, and a risk
-                  log with mitigation steps.
+                  We intensively study advanced manufacturing techniques and emerging technologies in electronics assembly and precision machining to continually improve production capabilities[cite: 122, 123].
                 </p>
               </div>
             </div>
@@ -129,22 +132,22 @@ export default function About() {
           <div className="mt-14 rounded-3xl bg-white/5 p-8 ring-1 ring-white/10">
             <div className="grid gap-8 md:grid-cols-3 md:items-start">
               <div>
-                <div className="text-sm font-semibold">Who we serve</div>
+                <div className="text-sm font-semibold text-[rgba(var(--brand-500))]">Industries Served</div>
+                <div className="mt-2 text-xl font-semibold">Built for complex hardware</div>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">
-                  Teams that need reliable buying + delivery execution without building a large procurement/logistics
-                  department.
+                  By supporting both mechanical and electronic manufacturing, PGI is perfectly positioned to assist companies developing complex electromechanical products[cite: 150].
                 </p>
               </div>
 
               <div className="md:col-span-2">
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {[
-                    "Construction & project sites",
-                    "MEP contractors",
-                    "SME manufacturers",
-                    "Facility maintenance teams",
-                    "Retail / distribution",
-                    "Import-driven procurement",
+                    "Industrial Machinery [cite: 151]",
+                    "Robotics & Automation [cite: 153]",
+                    "Energy & Infrastructure [cite: 155]",
+                    "Electronics & Equipment [cite: 152]",
+                    "Automotive Components [cite: 154]",
+                    "Technology Hardware [cite: 156]",
                   ].map((x) => (
                     <div key={x} className="rounded-2xl bg-black/30 p-4 text-sm text-white/70 ring-1 ring-white/10">
                       {x}
@@ -154,22 +157,22 @@ export default function About() {
 
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
-                    <div className="text-sm font-semibold text-white">When clients use PGI</div>
+                    <div className="text-sm font-semibold text-white">Why Choose PGI?</div>
                     <ul className="mt-3 space-y-2 text-sm text-white/70">
-                      <li>• Multiple vendors, tight timelines, frequent follow-ups</li>
-                      <li>• Technical items where spec mismatch is costly</li>
-                      <li>• Dispatch planning across routes and transporters</li>
-                      <li>• Visibility needed for owners/management</li>
+                      <li>• Single point of coordination for mechanical and electronic needs [cite: 146]</li>
+                      <li>• Allows clients to focus purely on product development and growth [cite: 146]</li>
+                      <li>• Predictable delivery timelines and efficient production scaling [cite: 147]</li>
+                      <li>• Unwavering commitment to quality and integrity [cite: 20, 33]</li>
                     </ul>
                   </div>
 
                   <div className="rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
-                    <div className="text-sm font-semibold text-white">What success looks like</div>
+                    <div className="text-sm font-semibold text-white">Our Product Portfolio</div>
                     <ul className="mt-3 space-y-2 text-sm text-white/70">
-                      <li>• Fewer delays due to missing materials</li>
-                      <li>• Better cost control via quote clarity</li>
-                      <li>• Faster resolution when a vendor fails</li>
-                      <li>• Clear accountability and documentation</li>
+                      <li>• Precision CNC & Sheet Metal Enclosures [cite: 60, 62]</li>
+                      <li>• Cast, Forged & Custom Fasteners [cite: 64, 66]</li>
+                      <li>• PCB Assemblies & Wire Harnesses [cite: 69, 70]</li>
+                      <li>• Full "Box-Build" Electromechanical Assemblies [cite: 75, 77]</li>
                     </ul>
                   </div>
                 </div>
@@ -178,9 +181,9 @@ export default function About() {
 
             <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
               <div className="text-sm text-white/70">
-                Want to see how our BOQ tracker + weekly reporting looks?
+                Ready to optimize your manufacturing supply chain?
               </div>
-              <PrimaryButton to="/contact">Request a sample</PrimaryButton>
+              <PrimaryButton to="/contact">Request an engineering review</PrimaryButton>
             </div>
           </div>
         </Container>

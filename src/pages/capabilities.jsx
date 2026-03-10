@@ -5,13 +5,12 @@ import { PrimaryButton } from "../components/Buttons.jsx";
 import { outdoorWorks } from "../content/siteData.js";
 
 export default function Capabilities() {
-
   return (
     <Container className="py-14">
       <SectionHeading
         eyebrow="Capabilities"
-        title="Procurement & logistics coordination - local and international"
-        desc="We coordinate sourcing, vendor follow-ups, dispatch planning, transport, and delivery tracking. For cross-border shipments, we support documentation and customs clearance coordination through trusted partners."
+        title="Precision manufacturing and electromechanical integration"
+        desc="From raw material sourcing and CNC machining to full PCBA and box-build assembly, we manage the entire production lifecycle through our vetted Indian manufacturing network."
       />
 
       <div className="mt-10 grid gap-6 md:grid-cols-4">
@@ -24,45 +23,45 @@ export default function Capabilities() {
       <div className="mt-14 rounded-3xl bg-white/5 p-8 ring-1 ring-white/10">
         <div className="grid gap-8 md:grid-cols-2 md:items-center">
           <div>
-            <div className="text-sm text-[rgba(var(--brand-500))]">Coordination framework</div>
+            <div className="text-sm text-[rgba(var(--brand-500))]">Manufacturing framework</div>
             <h3 className="mt-2 text-2xl font-semibold">What we manage end-to-end</h3>
 
             <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-white/70">
               <li>
-                <span className="font-semibold text-white/80">BOQ & daily requirement control:</span>{" "}
-                Convert unorganized needs into a live tracker (Quoted → Approved → Ordered → Ready → Dispatched → Delivered).
+                <span className="font-semibold text-white/80">Engineering & DFM:</span>{" "}
+                Comprehensive review of CAD models and drawings to evaluate manufacturability and optimize production costs.
               </li>
               <li>
-                <span className="font-semibold text-white/80">Vendor management:</span>{" "}
-                RFQ coordination, quote comparison, lead-time validation, follow-ups, escalation, and backup vendor options.
+                <span className="font-semibold text-white/80">Mechanical Manufacturing:</span>{" "}
+                Precision 3-axis to 5-axis CNC machining, CNC turning, sheet metal fabrication, and custom surface finishing.
               </li>
               <li>
-                <span className="font-semibold text-white/80">Dispatch & transport coordination:</span>{" "}
-                Pickup scheduling, vehicle planning, loading readiness checks, delivery window alignment, and POD closure.
+                <span className="font-semibold text-white/80">Electronic Assembly (PCBA):</span>{" "}
+                Turnkey component sourcing, SMT & DIP assembly, Automated Optical Inspection (AOI), and functional board-level testing.
               </li>
               <li>
-                <span className="font-semibold text-white/80">International logistics coordination:</span>{" "}
-                Support for freight coordination (air/sea), shipment milestones, ETAs, and alignment with forwarders/agents.
+                <span className="font-semibold text-white/80">Electromechanical Box Builds:</span>{" "}
+                Full integration of mechanical enclosures, wire harnesses, sensors, and PCBs into ready-to-ship products.
               </li>
               <li>
-                <span className="font-semibold text-white/80">Customs & compliance support (via partners):</span>{" "}
-                Documentation checklist, readiness follow-ups, and coordination with CHA/freight partners for clearance status.
+                <span className="font-semibold text-white/80">Quality Verification:</span>{" "}
+                Strict adherence to tolerances, First Article Inspection (FAI), material certifications (CoC), and dimensional reporting.
               </li>
               <li>
-                <span className="font-semibold text-white/80">Digital tracking & data insight:</span>{" "}
-                Simple dashboards for pending approvals, delays, vendor performance, cost trends, and weekly status reports.
+                <span className="font-semibold text-white/80">Global Logistics & Export:</span>{" "}
+                Custom packaging, freight forwarder coordination, export documentation, and global delivery tracking directly to your facility.
               </li>
             </ul>
 
             {/* Mini “how we work” chips */}
             <div className="mt-6 flex flex-wrap gap-2">
               {[
-                "Single tracker system",
-                "Daily follow-ups",
-                "Clear escalation rules",
-                "Delivery confirmation (POD)",
-                "Compliance checklist",
-                "Weekly dashboards"
+                "DFM Optimization",
+                "ISO Compliant Network",
+                "First Article Inspection",
+                "Turnkey PCBA",
+                "Electromechanical Integration",
+                "Global Export Support"
               ].map((t) => (
                 <span
                   key={t}
@@ -75,31 +74,29 @@ export default function Capabilities() {
           </div>
 
           <div className="rounded-2xl bg-black/30 p-6 ring-1 ring-white/10">
-            <div className="text-lg font-semibold">Need control over procurement and deliveries?</div>
+            <div className="text-lg font-semibold">Ready to scale your production?</div>
             <p className="mt-2 text-sm text-white/70">
-              Share your BOQ or item list, preferred specs/brands, required-by dates, and pickup & delivery locations.
-              We’ll respond with a coordination plan and reporting format. For international shipments, we’ll also guide
-              documentation and customs coordination through trusted partners.
+              Share your engineering drawings, 3D models, or Bill of Materials. We will review your requirements for manufacturability and provide a comprehensive quotation including lead times and optimal production routes.
             </p>
 
             {/* What to send */}
             <div className="mt-5 rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
-              <div className="text-xs font-semibold text-white/80">What to send</div>
+              <div className="text-xs font-semibold text-white/80">What to send for an accurate quote</div>
               <ul className="mt-2 list-disc pl-5 text-xs text-white/60 space-y-1">
-                <li>BOQ / item list (qty + unit)</li>
-                <li>Specs / brands (if any)</li>
-                <li>Required-by dates</li>
-                <li>Pickup & delivery locations</li>
-                <li>Any constraints (receiving time, unloading, documentation)</li>
+                <li>3D CAD models (STEP / IGES)</li>
+                <li>2D Drawings (PDF) with tolerances & material specs</li>
+                <li>Bill of Materials (BOM) for assemblies/PCBA</li>
+                <li>Target production quantities & expected timeline</li>
+                <li>Specific quality, testing, or certification requirements</li>
               </ul>
             </div>
 
             <div className="mt-5">
-              <PrimaryButton to="/contact">Contact sales</PrimaryButton>
+              <PrimaryButton to="/contact">Request an engineering review</PrimaryButton>
             </div>
 
             <div className="mt-4 text-xs text-white/45">
-              Note: Customs clearance and regulated compliance activities are coordinated through verified partners/agents as applicable.
+              Note: Specialized testing and certification validations (e.g., UL, CE, RoHS) are coordinated through verified partner labs when applicable.
             </div>
           </div>
         </div>

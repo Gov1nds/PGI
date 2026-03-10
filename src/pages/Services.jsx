@@ -8,8 +8,8 @@ export default function Services() {
     <Container className="py-16">
       <SectionHeading
         eyebrow="What we do"
-        title="Procurement & Logistics Coordination Services"
-        desc="End-to-end coordination across BOQ intake, RFQs, vendor follow-ups, dispatch planning, transport arrangement, delivery tracking, and structured reporting. Documentation and customs clearance are coordinated through trusted partners when applicable."
+        title="Engineering-Led Manufacturing & Global Supply"
+        desc="End-to-end manufacturing solutions across precision mechanical components, sheet metal fabrication, and PCB assembly. We handle everything from DFM reviews and prototyping to scaled production, final assembly, and global dispatch."
       />
 
       {/* Service cards */}
@@ -24,10 +24,9 @@ export default function Services() {
         <div className="grid gap-8 md:grid-cols-3 md:items-start">
           <div>
             <div className="text-sm font-semibold text-[rgba(var(--brand-500))]">Scope coverage</div>
-            <div className="mt-2 text-xl font-semibold">What we can take ownership of</div>
+            <div className="mt-2 text-xl font-semibold">What we take ownership of</div>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
-              We operate as your extended coordination team-reducing delays, improving visibility, and creating control
-              across suppliers, transporters, and receiving teams.
+              We operate as your dedicated manufacturing partner—reducing overhead, ensuring strict quality control, and delivering finished assemblies directly to your doorstep.
             </p>
           </div>
 
@@ -35,28 +34,28 @@ export default function Services() {
             <div className="grid gap-4 sm:grid-cols-2">
               {[
                 {
-                  t: "Procurement control",
-                  d: "BOQ structuring, RFQ coordination, quote comparison, lead-time validation, approval tracking, and escalation management."
+                  t: "Precision CNC Machining",
+                  d: "3-axis, 4-axis, and 5-axis milling and turning. We achieve tight tolerances for complex geometries across aluminum, steel, brass, and engineered plastics."
                 },
                 {
-                  t: "Vendor management",
-                  d: "Supplier onboarding support, follow-ups for readiness/dispatch, issue resolution, and backup vendor options for critical items."
+                  t: "Sheet Metal Fabrication",
+                  d: "Laser cutting, precision bending, welding, and surface treatments (anodizing, powder coating, plating) for custom enclosures and brackets."
                 },
                 {
-                  t: "Logistics coordination",
-                  d: "Pickup scheduling, vehicle planning, transporter coordination, transit updates, delivery window alignment, and POD closure."
+                  t: "Electronic Assembly (PCBA)",
+                  d: "Turnkey PCB assembly including SMT, DIP, component sourcing, AOI (Automated Optical Inspection), and functional board-level testing."
                 },
                 {
-                  t: "Documentation & compliance",
-                  d: "Dispatch documents checklist (invoice, packing list/dispatch note) + coordination guidance; customs clearance coordination via partners/CHA as needed."
+                  t: "Electromechanical Box Builds",
+                  d: "Complete product integration. We assemble your mechanical enclosures, route wire harnesses, install PCBs, and perform system-level testing."
                 },
                 {
-                  t: "International logistics support",
-                  d: "Coordination with freight forwarders/agents for shipment milestones, ETAs, documentation readiness, and clearance status updates (via partners)."
+                  t: "Quality Assurance (QA)",
+                  d: "Strict quality control protocols including First Article Inspection (FAI), material certifications (CoC), and dimensional reports prior to shipping."
                 },
                 {
-                  t: "Reporting & data visibility",
-                  d: "Daily/weekly dashboards: pending approvals, delayed items, dispatch plan, delivery confirmations, and vendor performance signals."
+                  t: "Global Logistics & Export",
+                  d: "Custom, secure packaging for sensitive components, freight forwarder coordination, and export documentation to ensure smooth global delivery."
                 }
               ].map((x) => (
                 <div key={x.t} className="rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
@@ -67,7 +66,7 @@ export default function Services() {
             </div>
 
             <div className="mt-5 text-xs text-white/50">
-              Note: Customs clearance, regulated compliance, and specialized legal activities are coordinated through verified partners/agents as applicable.
+              Note: Specialized testing certifications (e.g., UL, CE, RoHS compliance validation) and customs clearance are coordinated through verified third-party labs and agents as applicable.
             </div>
           </div>
         </div>
@@ -77,10 +76,9 @@ export default function Services() {
       <div className="mt-12 grid gap-8 rounded-3xl bg-white/5 p-8 ring-1 ring-white/10 md:grid-cols-3">
         <div>
           <div className="text-sm font-semibold text-[rgba(var(--brand-500))]">How we work</div>
-          <div className="mt-2 text-xl font-semibold">A simple coordination system</div>
+          <div className="mt-2 text-xl font-semibold">A streamlined production system</div>
           <p className="mt-3 text-sm leading-relaxed text-white/70">
-            We run a clean workflow that converts BOQs and daily requirements into controlled execution with clear status,
-            ownership, and reporting.
+            We run a rigorous engineering workflow that converts your CAD files and BOMs into manufactured, tested, and delivered hardware.
           </p>
         </div>
 
@@ -88,28 +86,28 @@ export default function Services() {
           <ol className="grid gap-4 sm:grid-cols-2">
             {[
               {
-                t: "Intake & structure",
-                d: "Collect BOQ/requirements, confirm specs/brands, quantities, delivery location, and required-by dates."
+                t: "1. Engineering Intake & DFM",
+                d: "Collect CAD files (STEP/IGES), 2D drawings, and BOMs. Our engineers review for manufacturability (DFM) to optimize costs and tolerances."
               },
               {
-                t: "RFQ & comparison",
-                d: "Coordinate quotations, compare price/lead time/availability, and share options for client approval."
+                t: "2. Quotation & Planning",
+                d: "Provide transparent pricing, tooling costs (if any), material selection confirmation, and a structured production timeline."
               },
               {
-                t: "Order follow-up",
-                d: "Vendor follow-ups for confirmations, readiness, dispatch schedule, and issue escalation."
+                t: "3. Prototyping & FAI",
+                d: "Manufacture initial prototypes. We conduct First Article Inspection (FAI) and share samples or detailed reports for your final approval."
               },
               {
-                t: "Dispatch & transport",
-                d: "Plan pickup slots, arrange transporter, confirm loading readiness, and align delivery windows."
+                t: "4. Scaled Production",
+                d: "Allocate production across our vetted network of specialized facilities, managing material procurement and daily manufacturing schedules."
               },
               {
-                t: "Shipment tracking",
-                d: "Track transit, share ETAs, coordinate receiving, and close with delivery confirmation (POD)."
+                t: "5. Assembly & Quality Control",
+                d: "Integrate mechanical and electronic components. Perform visual, dimensional, and functional testing to ensure 100% spec compliance."
               },
               {
-                t: "Reporting & improvement",
-                d: "Daily/weekly dashboards: pending actions, delays, risks, and performance signals for better decisions."
+                t: "6. Dispatch & Tracking",
+                d: "Pack components securely, arrange optimal freight options, handle export documentation, and track shipments until final delivery."
               }
             ].map((x) => (
               <li key={x.t} className="rounded-2xl bg-black/30 p-5 ring-1 ring-white/10">
