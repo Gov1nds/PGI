@@ -25,7 +25,6 @@ export default function Insights() {
         ))}
       </div>
 
-      {/* Credibility note */}
       <div className="mt-16 max-w-3xl text-xs leading-relaxed text-white/50">
         These insights are based on real manufacturing coordination across CNC machining facilities,
         electronics assembly partners, fabrication workshops, and global logistics providers.
