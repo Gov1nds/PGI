@@ -135,3 +135,26 @@ export const pricingFeatures = [
   "Quality inspection management",
   "Production monitoring",
 ];
+export const newsItems = [
+  {
+    title: "PGI Expands Manufacturing Network",
+    date: "2026-02-20",
+    excerpt:
+      "PGI continues to expand its distributed manufacturing network supporting electronics, machining, and product assembly.",
+    image: "/images/news-1.jpg",
+  },
+  {
+    title: "Supporting Hardware Startups",
+    date: "2026-02-01",
+    excerpt:
+      "PGI works with hardware startups to coordinate sourcing, manufacturing, and production scaling.",
+    image: "/images/news-2.jpg",
+  },
+  {
+    title: "Electronics Supply Chain Development",
+    date: "2026-01-15",
+    excerpt:
+      "PGI strengthens partnerships with electronics suppliers and manufacturing partners.",
+    image: "/images/news-3.jpg",
+  }
+];
