@@ -9,7 +9,7 @@ export default function Services() {
       <SectionHeading
         eyebrow="Services"
         title="Engineering-led manufacturing solutions"
-        desc="PGI coordinates the complete manufacturing lifecycle — from engineering review and prototyping to production scaling, assembly, quality verification, and global delivery."
+        desc="PGI coordinates the complete manufacturing lifecycle-from engineering review and prototyping to production scaling, assembly, quality verification, and global delivery."
       />
 
       {/* Service cards */}

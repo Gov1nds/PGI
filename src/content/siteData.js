@@ -9,8 +9,8 @@ export const site = {
   description:
     "PGI coordinates electronics sourcing, machining, fabrication, assembly, and quality verification through a distributed manufacturing network.",
   contact: {
-    email: "info@pgi-india.com",
-    phone: "+91 0000000000",
+    email: "info@pgihub.com",
+    phone: "+91 8921983250 ",
     location: "Kerala, India"
   }
 };

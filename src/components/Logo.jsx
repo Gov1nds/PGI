@@ -10,7 +10,7 @@ export default function Logo() {
       />
       <div className="leading-tight">
         <div className="text-sm font-semibold text-white">PGI</div>
-        <div className="text-xs text-white/60">Integrated Supply Chain & Strategic Sourcing</div>
+        <div className="text-xs text-white/60">Manufacturing Network</div>
       </div>
     </Link>
   );

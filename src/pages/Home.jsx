@@ -56,7 +56,7 @@ const Home = () => {
 
                   <div className="rounded-2xl p-4 bg-black/55 backdrop-blur-md ring-1 ring-white/15">
                     <div className="text-lg font-semibold text-white">
-                      <CountUp value={1200} suffix="+" />
+                      <CountUp value={12200} suffix="+" />
                     </div>
                     <div className="text-xs text-white/80">
                       Components manufactured
@@ -83,7 +83,7 @@ const Home = () => {
 
                   <div className="rounded-2xl p-4 bg-black/55 backdrop-blur-md ring-1 ring-white/15">
                     <div className="text-lg font-semibold text-white">
-                      <CountUp value={15} suffix="+" />
+                      <CountUp value={25} suffix="+" />
                     </div>
                     <div className="text-xs text-white/80">
                       Industries supported
@@ -126,7 +126,7 @@ const Home = () => {
                       Engineering reviews
                     </div>
                     <div className="text-xl font-semibold text-white">
-                      <CountUp value={850} suffix="+" />
+                      <CountUp value={1550} suffix="+" />
                     </div>
                   </div>
 
@@ -135,7 +135,7 @@ const Home = () => {
                       Projects coordinated
                     </div>
                     <div className="text-xl font-semibold text-white">
-                      <CountUp value={420} suffix="+" />
+                      <CountUp value={1420} suffix="+" />
                     </div>
                   </div>
 
@@ -144,7 +144,7 @@ const Home = () => {
                       Cost optimization
                     </div>
                     <div className="text-xl font-semibold text-white">
-                      <CountUp value={18} suffix="%" />
+                      <CountUp value={25} suffix="%" />
                     </div>
                   </div>
 
@@ -154,7 +154,7 @@ const Home = () => {
                 <div className="mt-6 flex flex-wrap gap-2">
                   {[
                     "Engineering review & DFM",
-                    "Material procurement control",
+                    "Electronics Components",
                     "CNC machining network",
                     "PCBA manufacturing",
                     "Electromechanical assembly",

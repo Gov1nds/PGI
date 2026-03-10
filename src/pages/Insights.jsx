@@ -9,7 +9,7 @@ export default function Insights() {
       <SectionHeading
         eyebrow="Insights"
         title="Engineering & Manufacturing Intelligence"
-        desc="Practical insights on scaling hardware production — from engineering optimization and supplier coordination to precision manufacturing, quality control, and global delivery."
+        desc="Practical insights on scaling hardware production from engineering optimization and supplier coordination to precision manufacturing, quality control, and global delivery."
       />
 
       <div className="mt-14 grid gap-7 md:grid-cols-3">
