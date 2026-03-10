@@ -28,3 +28,10 @@ const siteData = {
 };
 
 export default siteData;
+export const navLinks = [
+  { label: "Home", to: "/" },
+  { label: "Services", to: "/services" },
+  { label: "Network", to: "/network" },
+  { label: "News", to: "/news" },
+  { label: "Contact", to: "/contact" }
+];
