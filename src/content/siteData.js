@@ -106,4 +106,32 @@ export const insights = [
     excerpt: "How product companies use external manufacturing networks to scale production faster.",
     image: "/images/insight-3.jpg",
   },
+];export const pricingPlans = [
+  {
+    name: "Manufacturing Coordination",
+    price: "Project Based",
+    description:
+      "PGI coordinates manufacturing activities across sourcing, vendor management, and production.",
+  },
+  {
+    name: "Supply Chain Operations",
+    price: "Custom Engagement",
+    description:
+      "End-to-end supply chain coordination including sourcing, manufacturing partners, and delivery management.",
+  },
+  {
+    name: "Production Scale Support",
+    price: "Enterprise",
+    description:
+      "Long-term manufacturing operating partnership for hardware startups and product companies.",
+  },
+];
+
+export const pricingFeatures = [
+  "Supplier identification & onboarding",
+  "Electronics component sourcing",
+  "Precision machining coordination",
+  "Assembly partner coordination",
+  "Quality inspection management",
+  "Production monitoring",
 ];
