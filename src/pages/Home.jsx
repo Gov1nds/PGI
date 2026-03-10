@@ -1,6 +1,4 @@
 import React from "react";
-import "./Home.css";
-
 import Container from "../components/Container.jsx";
 import SectionHeading from "../components/SectionHeading.jsx";
 import ImageCard from "../components/ImageCard.jsx";
