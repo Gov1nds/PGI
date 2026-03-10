@@ -5,181 +5,69 @@ import { newsItems, site } from "../content/siteData.js";
 const newsBodyBySlug = {
   "cnc-network-expansion": {
     intro:
-      "PGI Manufacturing Network has officially expanded its precision mechanical manufacturing capacity by integrating 12 new ISO-certified CNC facilities into our Indian supply ecosystem. This expansion allows us to handle high-volume production runs of complex machined components with reduced lead times and enhanced quality control.",
+      "PGI has expanded its precision mechanical manufacturing network by onboarding multiple new ISO-compliant CNC facilities across India. This expansion strengthens our ability to support complex mechanical components, larger production volumes, and tighter delivery schedules while maintaining strict engineering oversight and quality verification.",
+
     highlights: [
-      "Added capacity for 5-axis CNC milling and high-speed CNC turning.",
-      "Integration of automated CMM (Coordinate Measuring Machine) inspection at partner facilities.",
-      "Expanded material handling capabilities, including specialized aerospace-grade aluminum and titanium.",
-      "Centralized raw material procurement to ensure batch consistency and traceability.",
-      "Streamlined export logistics for faster global dispatch from Indian ports."
+      "Expanded access to advanced 5-axis CNC milling and high-precision CNC turning centers.",
+      "Integration of automated CMM inspection systems across partner facilities for dimensional verification.",
+      "Support for specialized engineering materials including aerospace-grade aluminum, stainless steel alloys, and titanium.",
+      "Centralized raw material procurement to maintain batch consistency and traceability.",
+      "Improved export logistics coordination for faster global deliveries."
     ],
+
     whyItMatters: [
-      "Relying on a single factory creates bottlenecks. A distributed, managed network guarantees that production can pivot if one facility reaches capacity.",
-      "Centralized engineering oversight ensures that DFM (Design for Manufacturing) standards and tight tolerances are strictly maintained across all partner facilities.",
-      "Clients benefit from the cost efficiencies of offshore manufacturing without sacrificing the communication and accountability of a local partner."
+      "Manufacturing through a distributed, managed network reduces dependency on a single facility and improves production resilience.",
+      "Engineering oversight ensures consistent tolerances and manufacturing standards across all partner facilities.",
+      "Clients gain the scale advantages of a large production ecosystem without managing multiple suppliers.",
+      "Faster lead times and scalable production capacity enable companies to transition smoothly from prototype to full-scale manufacturing."
     ],
+
     nextSteps: [
-      "Share your 3D CAD models (STEP/IGES) and 2D PDF drawings with required tolerances.",
-      "Our engineering team will conduct a DFM review and provide a comprehensive quotation.",
-      "Approve the First Article Inspection (FAI) report before we initiate full-scale production."
+      "Share your 3D CAD models (STEP or IGES) along with technical drawings.",
+      "PGI engineers perform a detailed Design for Manufacturability (DFM) review.",
+      "Receive a structured quotation including production timelines and quality verification plans.",
+      "Approve the First Article Inspection (FAI) before scaling production."
     ],
+
     extras: [
-      "We provide full material certifications (Mill Certificates) and dimensional inspection reports with every batch.",
-      "Surface treatments—including hard anodizing, powder coating, and electroless nickel plating—are managed within the network.",
-      "We handle all export documentation and global freight forwarding directly to your facility."
+      "Material mill certificates and inspection reports accompany every production batch.",
+      "Surface finishing options include anodizing, powder coating, electroless nickel plating, and passivation.",
+      "Dimensional inspection reports are generated through CMM measurement systems.",
+      "Export documentation and freight coordination are managed directly through PGI’s logistics partners."
     ]
   },
 
   "turnkey-pcba-launch": {
     intro:
-      "To better support our clients developing complex electromechanical products, PGI has officially launched Turnkey PCB Assembly (PCBA) services. This closes the loop between mechanical enclosures and electronic controls, allowing clients to source fully integrated, tested 'box-builds' from a single dedicated partner.",
+      "PGI has introduced turnkey PCB assembly (PCBA) services to support clients developing advanced electromechanical products. By integrating electronic manufacturing with mechanical enclosure production, PGI now enables customers to source complete hardware assemblies through a single coordinated manufacturing partner.",
+
     highlights: [
-      "End-to-end component sourcing through franchised global distributors to eliminate counterfeit risks.",
-      "Automated SMT (Surface Mount Technology) lines capable of placing ultra-fine pitch components (0201 size).",
-      "Inline AOI (Automated Optical Inspection) and X-Ray inspection for BGA and leadless packages.",
-      "Functional board-level testing and IC programming capabilities.",
-      "Seamless integration: We now manufacture the mechanical enclosure, assemble the PCB, and deliver the final integrated product."
+      "Component sourcing through authorized global distributors to eliminate counterfeit risks.",
+      "High-precision SMT assembly lines capable of placing fine-pitch components down to 0201 packages.",
+      "Automated Optical Inspection (AOI) and X-ray inspection for advanced component packages including BGA.",
+      "Functional board-level testing and firmware programming services.",
+      "Integration of electronics with mechanical enclosures for complete electromechanical box-build assemblies."
     ],
+
     whyItMatters: [
-      "Managing separate suppliers for bare boards, electronic components, and SMT assembly frequently leads to BOM mismatches and 'line-down' delays.",
-      "A turnkey approach shifts the burden of inventory management and vendor coordination entirely to PGI.",
-      "Testing the PCBA immediately alongside the mechanical enclosure catches integration issues before the product ships across the globe."
+      "Managing multiple suppliers for PCB fabrication, components, and assembly often introduces coordination delays.",
+      "Turnkey manufacturing ensures consistent BOM control and supply chain visibility.",
+      "Integrated mechanical and electronic production improves product reliability and reduces assembly errors.",
+      "Clients receive fully tested assemblies rather than separate components that require local integration."
     ],
+
     nextSteps: [
-      "Send us your complete Bill of Materials (BOM), Gerber files, and Pick & Place (Centroid) data.",
-      "We will scrub the BOM for obsolete or long-lead-time components and suggest available alternates.",
-      "We build and test prototype boards for your approval before scaling to volume production."
+      "Provide Gerber files, Bill of Materials (BOM), and pick-and-place data.",
+      "PGI engineering reviews the BOM for obsolete components and long lead-time risks.",
+      "Prototype boards are assembled and tested for functional validation.",
+      "Once approved, production scales through PGI’s electronics manufacturing network."
     ],
+
     extras: [
-      "We strictly adhere to IPC-A-610 Class 2 and Class 3 assembly standards based on client requirements.",
-      "Moisture-sensitive components are strictly managed (baking and vacuum sealing) prior to reflow.",
-      "Conformal coating and potting services are available for boards operating in harsh industrial or marine environments."
+      "Assembly processes follow IPC-A-610 quality standards based on product requirements.",
+      "Moisture-sensitive components are handled with strict MSL control procedures.",
+      "Conformal coating and environmental protection options are available for harsh industrial environments.",
+      "Full traceability is maintained for components and production batches."
     ]
   }
 };
-
-function BulletList({ items }) {
-  return (
-    <ul className="mt-3 list-disc pl-5 space-y-2 text-sm text-white/75">
-      {items.map((x) => (
-        <li key={x}>{x}</li>
-      ))}
-    </ul>
-  );
-}
-
-function NumberList({ items }) {
-  return (
-    <ol className="mt-3 list-decimal pl-5 space-y-2 text-sm text-white/75">
-      {items.map((x) => (
-        <li key={x}>{x}</li>
-      ))}
-    </ol>
-  );
-}
-
-export default function NewsDetail() {
-  const { slug } = useParams();
-  const item = newsItems.find((n) => n.slug === slug);
-  const body = newsBodyBySlug[slug];
-
-  if (!item) {
-    return (
-      <Container className="py-14">
-        <Link className="text-sm text-white/60 hover:text-white" to="/news">
-          ← Back to news
-        </Link>
-        <div className="mt-6">
-          <h1 className="text-2xl font-semibold">News item not found</h1>
-          <p className="mt-3 text-sm text-white/70">
-            The link may be outdated, or the content has not been published yet.
-          </p>
-        </div>
-      </Container>
-    );
-  }
-
-  return (
-    <Container className="py-14">
-      <Link className="text-sm text-white/60 hover:text-white" to="/news">
-        ← Back to news
-      </Link>
-
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{item.title}</h1>
-      <p className="mt-2 text-sm text-white/70">{item.date}</p>
-
-      <div className="relative mt-6 aspect-[16/9] overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-        <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-      </div>
-
-      <div className="mt-8 max-w-3xl space-y-6 text-sm leading-relaxed text-white/75">
-        <p className="text-white/80">{item.excerpt}</p>
-
-        <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">Update overview</div>
-          <p className="mt-3 text-sm text-white/75">
-            {body?.intro || "This update is published, but detailed content is not added yet. Add content for this slug in newsBodyBySlug."}
-          </p>
-        </div>
-
-        <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">Highlights</div>
-          <BulletList items={body?.highlights || ["Add highlights for this update."]} />
-        </div>
-
-        <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">Why this matters</div>
-          <BulletList items={body?.whyItMatters || ["Explain why this update matters to clients."]} />
-        </div>
-
-        {/* Extra detail block */}
-        <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">How we ensure quality</div>
-          <BulletList
-            items={
-              body?.extras || [
-                "Strict engineering oversight and DFM review.",
-                "First Article Inspection (FAI) before production scaling.",
-                "Material certifications and dimensional reports provided.",
-                "Global delivery managed directly to your facility."
-              ]
-            }
-          />
-        </div>
-
-        <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">Next steps for clients</div>
-          <NumberList items={body?.nextSteps || ["Add next steps for interested clients."]} />
-        </div>
-
-        <div className="rounded-3xl bg-black/30 p-6 ring-1 ring-white/10">
-          <div className="text-sm font-semibold text-white">Talk to our engineering team</div>
-          <p className="mt-2 text-sm text-white/70">
-            For manufacturing enquiries, DFM reviews, or electromechanical assembly projects, contact us:
-          </p>
-          <div className="mt-4 text-sm text-white/75 space-y-1">
-            <div>
-              Email:{" "}
-              <a className="text-[rgba(var(--brand-500))] hover:underline" href={`mailto:${site.contact.email}`}>
-                {site.contact.email}
-              </a>
-            </div>
-            <div>
-              Phone:{" "}
-              <a
-                className="text-[rgba(var(--brand-500))] hover:underline"
-                href={`tel:${site.contact.phone.replace(/\s+/g, "")}`}
-              >
-                {site.contact.phone}
-              </a>
-            </div>
-          </div>
-
-          <div className="mt-4 text-xs text-white/50">
-            Note: Specialized testing certifications (e.g., CE, UL) are coordinated through verified third-party labs as required.
-          </div>
-        </div>
-      </div>
-    </Container>
-  );
-}

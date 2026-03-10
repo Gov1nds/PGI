@@ -8,8 +8,8 @@ export default function Insights() {
     <Container className="py-20">
       <SectionHeading
         eyebrow="Insights"
-        title="Procurement & Logistics Intelligence"
-        desc="Structured thinking and field-proven systems for BOQ management, vendor coordination, dispatch planning, shipment tracking, and documentation support - including customs coordination through trusted partners."
+        title="Engineering & Manufacturing Intelligence"
+        desc="Practical insights on scaling hardware production — from engineering optimization and supplier coordination to precision manufacturing, quality control, and global delivery."
       />
 
       <div className="mt-14 grid gap-7 md:grid-cols-3">
@@ -25,10 +25,13 @@ export default function Insights() {
         ))}
       </div>
 
-      {/* Professional credibility footer note */}
+      {/* Credibility note */}
       <div className="mt-16 max-w-3xl text-xs leading-relaxed text-white/50">
-        Our insights are drawn from hands-on coordination across suppliers, transporters, project teams, and delivery locations. 
-        The focus is always on improving visibility, preventing delays, strengthening compliance, and building dependable procurement and logistics workflows for growing businesses.
+        These insights are based on real manufacturing coordination across CNC machining facilities,
+        electronics assembly partners, fabrication workshops, and global logistics providers.
+        Our focus is on improving manufacturability, ensuring production reliability,
+        and helping companies scale hardware manufacturing through structured engineering
+        and supplier network management.
       </div>
     </Container>
   );

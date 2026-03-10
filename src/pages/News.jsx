@@ -8,8 +8,8 @@ export default function News() {
     <Container className="py-14">
       <SectionHeading
         eyebrow="Network Updates"
-        title="Manufacturing & operations news"
-        desc="Announcements regarding expanded production capacity, new CNC and PCBA facility partnerships, and advancements in our engineering-driven supply chain."
+        title="Manufacturing network & operations updates"
+        desc="Updates on new manufacturing partnerships, expanded CNC and electronics production capacity, engineering initiatives, and operational milestones across the PGI manufacturing network."
       />
 
       <div className="mt-10 grid gap-6 md:grid-cols-3">
@@ -23,6 +23,13 @@ export default function News() {
             tag={n.date}
           />
         ))}
+      </div>
+
+      {/* credibility note */}
+      <div className="mt-14 max-w-3xl text-xs leading-relaxed text-white/50">
+        Our network updates highlight developments across PGI’s manufacturing ecosystem,
+        including new supplier partnerships, production capability expansions,
+        quality initiatives, and improvements in engineering-driven manufacturing coordination.
       </div>
     </Container>
   );
