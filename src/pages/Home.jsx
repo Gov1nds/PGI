@@ -89,13 +89,9 @@ const Home = () => {
               </div>
             </div>
 
-            {/* RIGHT - HERO IMAGE */}
-            <div className="hidden md:block">
-              <img 
-                src="/images/hero.jpg" 
-                alt="Manufacturing facility" 
-                className="rounded-3xl w-full object-cover h-96 ring-1 ring-white/10"
-              />
+             {/* RIGHT - ANIMATED MILESTONES SECTION */}
+            <div className="relative h-96 md:h-full min-h-96 flex items-center justify-center hero-anim-5">
+              <AnimatedMilestones />
             </div>
           </div>
         </Container>

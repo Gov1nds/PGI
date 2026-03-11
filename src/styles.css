@@ -277,3 +277,78 @@
 html{
   scroll-behavior:smooth;
 }
+/* =========================================================
+   HERO ANIMATIONS
+   ========================================================= */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes floatAnimation {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(34, 197, 94, 0.6);
+  }
+}
+
+.hero-anim-1 {
+  animation: slideInUp 0.8s ease-out 0.2s both;
+}
+
+.hero-anim-2 {
+  animation: slideInUp 0.8s ease-out 0.4s both;
+}
+
+.hero-anim-3 {
+  animation: slideInUp 0.8s ease-out 0.6s both;
+}
+
+.hero-anim-4 {
+  animation: slideInUp 0.8s ease-out 0.8s both;
+}
+
+.hero-anim-5 {
+  animation: slideInRight 0.8s ease-out 0.4s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-anim-1,
+  .hero-anim-2,
+  .hero-anim-3,
+  .hero-anim-4,
+  .hero-anim-5 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
