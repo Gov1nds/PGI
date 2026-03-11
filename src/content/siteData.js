@@ -42,81 +42,81 @@ export const heroStats = [
 ];
 
 /* ======================================================
-SERVICES
+SERVICES (6 UNIQUE SERVICES WITH 6 UNIQUE IMAGES)
 ====================================================== */
 
 export const services = [
   {
     title: "Product Manufacturing Coordination",
     desc: "Engineering-led coordination of product manufacturing from prototype to scaled production.",
-    image: "/images/service-1.jpg",
+    image: "/images/service-product-coordination.jpg",
     fullDesc: "We coordinate every aspect of manufacturing—from initial design review through prototype validation, material sourcing, production scheduling, and final delivery.",
     benefits: ["Prototype to production transitions", "Cost optimization through DFM", "Consistent quality across batches"]
   },
   {
     title: "Electronics Components & PCB Sourcing",
     desc: "Global sourcing of semiconductors, connectors, sensors, and PCB manufacturing partners.",
-    image: "/images/service-2.jpg",
+    image: "/images/service-electronics-sourcing.jpg",
     fullDesc: "Access to global electronics suppliers with quality validation, counterfeit prevention, and supply chain resilience strategies.",
     benefits: ["Authorized component sourcing", "Supply chain resilience", "Component traceability"]
   },
   {
     title: "Precision Machining & Fabrication",
     desc: "Coordination of CNC machining, sheet metal fabrication, and custom mechanical components.",
-    image: "/images/service-3.jpg",
+    image: "/images/service-machining-fabrication.jpg",
     fullDesc: "Network of CNC facilities supporting complex geometries, tight tolerances, and specialized materials including aerospace-grade alloys.",
     benefits: ["Multi-axis CNC capabilities", "Tight tolerance control", "Custom surface finishing"]
   },
   {
     title: "Assembly & Production Management",
     desc: "Managing production schedules, assembly lines, and manufacturing integration.",
-    image: "/images/service-1.jpg",
+    image: "/images/service-assembly-production.jpg",
     fullDesc: "End-to-end production management including scheduling, line coordination, and just-in-time delivery logistics.",
     benefits: ["Production planning & scheduling", "Just-in-time delivery", "Inventory optimization"]
   },
   {
     title: "Quality Control & Inspection",
     desc: "Dimensional inspection, engineering validation, and quality assurance before shipment.",
-    image: "/images/service-2.jpg",
+    image: "/images/service-quality-inspection.jpg",
     fullDesc: "Comprehensive quality verification including First Article Inspection, CMM reports, material certificates, and functional testing.",
     benefits: ["First Article Inspection (FAI)", "CMM dimensional reports", "Functional testing"]
   },
   {
     title: "Supply Chain & Vendor Network",
     desc: "Building a distributed manufacturing ecosystem to ensure reliable production capacity.",
-    image: "/images/service-3.jpg",
+    image: "/images/service-supply-chain.jpg",
     fullDesc: "Strategic vendor relationships and supply chain integration to reduce single-source dependencies and improve resilience.",
     benefits: ["Vendor diversification", "Supply chain resilience", "Cost optimization"]
   }
 ];
 
 /* ======================================================
-CAPABILITIES / MANUFACTURING NETWORK
+CAPABILITIES / MANUFACTURING NETWORK (4 UNIQUE IMAGES)
 ====================================================== */
 
 export const outdoorWorks = [
   {
     title: "Distributed Manufacturing Network",
     desc: "Coordinated ecosystem of CNC facilities, fabrication shops, and electronics assembly partners to scale production efficiently.",
-    image: "/images/capability-1.jpg",
+    image: "/images/capability-distributed-network.jpg",
     details: "Our network spans precision machining centers, sheet metal fabrication shops, and electronics assembly facilities across multiple locations."
   },
   {
     title: "Electronics Manufacturing Ecosystem",
     desc: "Global sourcing, PCB assembly, component testing, and electronics integration through trusted manufacturing partners.",
-    image: "/images/capability-2.jpg",
+    image: "/images/capability-electronics-ecosystem.jpg",
     details: "Turnkey PCBA services with component sourcing, SMT assembly, automated inspection, and functional testing capabilities."
   },
   {
     title: "Mechanical & Precision Manufacturing",
     desc: "Advanced CNC machining, sheet metal fabrication, custom casting, and precision fabrication capabilities.",
-    image: "/images/capability-3.jpg",
+    image: "/images/capability-mechanical-precision.jpg",
     details: "Multi-axis CNC, precision turning, laser cutting, metal bending, welding, and custom surface finishing options."
   },
   {
     title: "Engineering Review & Production Optimization",
     desc: "Design for manufacturability (DFM) analysis, cost optimization, and production readiness assessment.",
-    image: "/images/capability-4.jpg",
+    image: "/images/capability-engineering-review.jpg",
     details: "Technical review services including DFM analysis, tolerance optimization, material selection, and manufacturing method selection."
   }
 ];
