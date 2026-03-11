@@ -70,7 +70,7 @@ export default function Insights() {
                 Our insights and articles are based on real-world manufacturing coordination across CNC machining facilities, electronics assembly partners, fabrication workshops, and global logistics providers.
               </p>
               <p className="text-white/70 mb-6 leading-relaxed">
-                Our focus is on practical knowledge sharing—improving manufacturability, ensuring production reliability, and helping companies scale hardware manufacturing through structured engineering and supplier network management.
+                Our focus is on practical knowledge sharing-improving manufacturability, ensuring production reliability, and helping companies scale hardware manufacturing through structured engineering and supplier network management.
               </p>
               <div className="space-y-3">
                 {[

@@ -15,7 +15,7 @@ export default function Services() {
               Engineering-led manufacturing solutions
             </h1>
             <p className="mt-4 text-white/75 leading-relaxed">
-              PGI coordinates the complete manufacturing lifecycle—from engineering review and prototyping to production scaling, assembly, quality verification, and global delivery.
+              PGI coordinates the complete manufacturing lifecycle-from engineering review and prototyping to production scaling, assembly, quality verification, and global delivery.
             </p>
           </div>
         </Container>

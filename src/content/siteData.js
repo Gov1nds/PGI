@@ -50,7 +50,7 @@ export const services = [
     title: "Product Manufacturing Coordination",
     desc: "Engineering-led coordination of product manufacturing from prototype to scaled production.",
     image: "/images/service-product-coordination.jpg",
-    fullDesc: "We coordinate every aspect of manufacturing—from initial design review through prototype validation, material sourcing, production scheduling, and final delivery.",
+    fullDesc: "We coordinate every aspect of manufacturing-from initial design review through prototype validation, material sourcing, production scheduling, and final delivery.",
     benefits: ["Prototype to production transitions", "Cost optimization through DFM", "Consistent quality across batches"]
   },
   {
