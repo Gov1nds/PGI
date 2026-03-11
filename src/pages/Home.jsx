@@ -5,6 +5,7 @@ import ImageCard from "../components/ImageCard.jsx";
 import { PrimaryButton, SecondaryButton } from "../components/Buttons.jsx";
 import { services, outdoorWorks, insights, newsItems, differentiators, processSteps } from "../content/siteData.js";
 import CountUp from "../components/CountUp.jsx";
+import AnimatedMilestones from "../components/AnimatedMilestones.jsx";
 
 const Home = () => {
   return (
@@ -89,8 +90,17 @@ const Home = () => {
               </div>
             </div>
 
-             {/* RIGHT - ANIMATED MILESTONES SECTION */}
-            <div className="relative h-96 md:h-full min-h-96 flex items-center justify-center hero-anim-5">
+              {/* RIGHT - ANIMATED MILESTONES */}
+            <div 
+              style={{
+                position: "relative",
+                height: "400px",
+                minHeight: "400px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <AnimatedMilestones />
             </div>
           </div>
