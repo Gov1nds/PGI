@@ -4,8 +4,7 @@ import SectionHeading from "../components/SectionHeading.jsx";
 import ImageCard from "../components/ImageCard.jsx";
 import { PrimaryButton, SecondaryButton } from "../components/Buttons.jsx";
 import { services, outdoorWorks, insights, newsItems, differentiators, processSteps } from "../content/siteData.js";
-import CountUp from "../components/CountUp.jsx";
-import AnimatedMilestones from "../components/AnimatedMilestones.jsx";
+import CountUp from "../components/CountUp.jsx";import PremiumMetricsSection from "../components/PremiumMetricsSection.jsx";
 
 const Home = () => {
   return (
@@ -89,19 +88,9 @@ const Home = () => {
                 </div>
               </div>
             </div>
-
-              {/* RIGHT - ANIMATED MILESTONES */}
-            <div 
-              style={{
-                position: "relative",
-                height: "400px",
-                minHeight: "400px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <AnimatedMilestones />
+      {/* RIGHT - PREMIUM METRICS SECTION */}
+            <div className="relative hero-anim-5">
+              <PremiumMetricsSection />
             </div>
           </div>
         </Container>
