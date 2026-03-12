@@ -37,7 +37,7 @@ export default function PremiumMetricsSection() {
     },
     {
       id: 4,
-      value: 17,
+      value: 9,
       suffix: "+",
       label: "Years Industry Leadership",
       icon: "⭐",
