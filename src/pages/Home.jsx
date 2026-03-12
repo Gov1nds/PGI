@@ -79,7 +79,7 @@ const Home = () => {
 
                   <div className="rounded-2xl p-4 bg-black/55 backdrop-blur-md ring-1 ring-white/15">
                     <div className="text-lg font-semibold text-white">
-                      <CountUp value={17} suffix="+ yrs" />
+                      <CountUp value={9} suffix="+ yrs" />
                     </div>
                     <div className="text-xs text-white/80">
                       Engineering experience
