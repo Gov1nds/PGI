@@ -38,7 +38,7 @@ export const heroStats = [
   { kpi: "12,200+", label: "Components manufactured" },
   { kpi: "300+", label: "Manufacturing partners" },
   { kpi: "92%", label: "Production reliability" },
-  { kpi: "17+ years", label: "Engineering experience" }
+  { kpi: "9+ years", label: "Engineering experience" }
 ];
 
 /* ======================================================
