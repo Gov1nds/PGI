@@ -13,7 +13,6 @@ export default function NewsDetail() {
     return <Navigate to="/news" replace />;
   }
 
-  // Generate full content based on slug
   const getFullContent = () => {
     const contentMap = {
       "cnc-network-expansion": {
@@ -45,71 +44,71 @@ export default function NewsDetail() {
           }
         ]
       },
-      "supply-chain-resilience": {
+      "turnkey-pcba-launch": {
         sections: [
           {
-            title: "Building Resilient Supply Chains",
+            title: "Comprehensive Electronics Manufacturing Services",
             content:
-              "Following recent global supply chain disruptions, PGI has implemented comprehensive supply chain resilience strategies to ensure uninterrupted manufacturing operations for all clients."
+              "PGI launches turnkey PCBA services, bringing complete end-to-end electronics manufacturing capabilities to our manufacturing ecosystem. This addition enables companies to handle complex electromechanical products with a single coordinated partner."
           },
           {
-            title: "Multi-Source Strategy",
+            title: "What is Turnkey PCBA?",
             content:
-              "Critical components are now sourced from multiple qualified suppliers in different geographic regions. This eliminates single points of failure and ensures continuous supply even during regional disruptions."
+              "Turnkey PCBA means we handle everything: component sourcing, PCB manufacturing, assembly, inspection, and testing. Companies provide us with design files and we deliver finished, tested boards ready for integration into their products."
           },
           {
-            title: "Strategic Inventory Planning",
+            title: "Component Sourcing Excellence",
             content:
-              "Long-lead components are identified early in projects, and strategic inventory is maintained for components with volatile availability. This protects project timelines from supply shocks."
+              "Our established relationships with authorized distributors and component suppliers ensure access to quality semiconductors, connectors, and passive components. We maintain supply chain resilience through multi-source strategies and advance procurement."
           },
           {
-            title: "Supplier Relationship Management",
+            title: "Advanced Assembly Capabilities",
             content:
-              "Strengthened relationships with primary suppliers include early notification of capacity constraints and priority access during tight supply periods. Backup suppliers ensure alternative sources when needed."
+              "State-of-the-art SMT assembly equipment, through-hole soldering, and automated optical inspection ensure consistent quality. We handle everything from simple 2-layer boards to complex multi-layer designs."
           },
           {
-            title: "Real-Time Supply Visibility",
+            title: "Quality and Testing Standards",
             content:
-              "Clients now have visibility into component sourcing status and supply chain risks through regular status updates. Proactive notifications alert clients to potential delays before they impact production."
+              "Every PCBA undergoes functional testing, and we provide detailed test reports and documentation. For high-reliability applications, we offer conformal coating and enhanced testing protocols."
           },
           {
-            title: "Commitment to Reliability",
+            title: "Seamless Integration",
             content:
-              "Supply chain resilience is now a core competitive advantage. PGI's commitment to reliability gives hardware companies confidence to scale production without supply chain anxiety."
+              "PCBA services integrate seamlessly with our mechanical manufacturing and assembly services, enabling companies to manufacture complete products through a single coordinated partner."
           }
         ]
       },
       "manufacturing-coordination": {
         sections: [
           {
-            title: "Advanced Coordination Capabilities",
+            title: "Scaling EV Component Production",
             content:
-              "PGI launches enhanced manufacturing coordination tools and processes to improve visibility and control across distributed production networks."
+              "This case study demonstrates how PGI's manufacturing coordination capabilities enabled successful scaling of specialized mechanical components for electric vehicle manufacturing from prototype to high-volume production."
           },
           {
-            title: "Real-Time Production Tracking",
+            title: "The Challenge",
             content:
-              "Clients can now track their production in real-time across all manufacturing facilities. Status updates, quality reports, and milestone achievements are visible through a unified dashboard."
+              "The client needed to scale production of precision-engineered EV components from 100 units to 5,000 units within 6 months. Components required tight tolerances, multiple manufacturing processes (machining, surface treatment, assembly), and quality verification at scale."
           },
           {
-            title: "Improved Communication Workflows",
+            title: "Engineering Review and Optimization",
             content:
-              "Streamlined communication between engineering, procurement, manufacturing, and quality teams reduces bottlenecks and accelerates decision-making. Issues are identified and resolved faster."
+              "Our engineering team conducted comprehensive DFM analysis, identifying cost reduction opportunities and optimizing the design for high-volume manufacturing. We recommended manufacturing method changes that reduced per-unit costs by 18% while improving quality."
           },
           {
-            title: "Predictive Scheduling",
+            title: "Vendor Network Coordination",
             content:
-              "Advanced scheduling algorithms optimize facility utilization and production sequences. This reduces lead times while maintaining quality and cost efficiency."
+              "We leveraged our network of CNC facilities, surface treatment partners, and assembly operations to create a coordinated production flow. Each facility handled their specialty process, enabling parallel processing and faster turnaround times."
           },
           {
-            title: "Quality Documentation Integration",
+            title: "Quality Verification at Scale",
             content:
-              "Quality reports, material certificates, inspection data, and compliance documentation are automatically consolidated and delivered to clients, simplifying compliance and audit processes."
+              "We implemented comprehensive quality protocols including first-article inspection, statistical process control at each facility, and final product verification. Zero quality issues were recorded across all 5,000 units."
           },
           {
-            title: "Partnership Benefits",
+            title: "Results and Lessons",
             content:
-              "These enhancements reflect our commitment to transparency and partnership with clients. As PGI's capabilities evolve, client benefits improve directly."
+              "The project achieved 18% cost reduction, 20% faster production cycles, and zero quality failures. This case demonstrates the power of coordinated manufacturing networks in scaling production efficiently while maintaining quality and controlling costs."
           }
         ]
       }
@@ -121,7 +120,6 @@ export default function NewsDetail() {
 
   return (
     <div>
-      {/* HERO SECTION */}
       <section className="border-b border-white/10 py-12 md:py-16">
         <Container>
           <div className="max-w-3xl">
@@ -145,7 +143,6 @@ export default function NewsDetail() {
         </Container>
       </section>
 
-      {/* FEATURED IMAGE */}
       <section className="border-b border-white/10">
         <Container className="py-8">
           <div className="rounded-2xl overflow-hidden aspect-video bg-black/40">
@@ -158,7 +155,6 @@ export default function NewsDetail() {
         </Container>
       </section>
 
-      {/* ARTICLE CONTENT */}
       <section className="py-16 md:py-20">
         <Container>
           <div className="max-w-3xl mx-auto">
@@ -176,7 +172,6 @@ export default function NewsDetail() {
         </Container>
       </section>
 
-      {/* CTA SECTION */}
       <section className="border-t border-white/10 py-16 md:py-20 bg-gradient-to-b from-transparent to-blue-500/5">
         <Container>
           <div className="rounded-3xl bg-gradient-to-r from-blue-500/15 to-blue-500/5 p-8 md:p-12 ring-1 ring-blue-500/20 text-center">
@@ -191,7 +186,6 @@ export default function NewsDetail() {
         </Container>
       </section>
 
-      {/* RELATED NEWS */}
       <section className="border-t border-white/10 py-16 md:py-20">
         <Container>
           <div className="text-center mb-12">

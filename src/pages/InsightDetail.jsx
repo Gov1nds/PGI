@@ -13,7 +13,6 @@ export default function InsightDetail() {
     return <Navigate to="/insights" replace />;
   }
 
-  // Generate full content based on slug
   const getFullContent = () => {
     const contentMap = {
       "scale-manufacturing-without-factories": {
@@ -126,7 +125,6 @@ export default function InsightDetail() {
 
   return (
     <div>
-      {/* HERO SECTION */}
       <section className="border-b border-white/10 py-12 md:py-16">
         <Container>
           <div className="max-w-3xl">
@@ -150,7 +148,6 @@ export default function InsightDetail() {
         </Container>
       </section>
 
-      {/* FEATURED IMAGE */}
       <section className="border-b border-white/10">
         <Container className="py-8">
           <div className="rounded-2xl overflow-hidden aspect-video bg-black/40">
@@ -163,10 +160,9 @@ export default function InsightDetail() {
         </Container>
       </section>
 
-      {/* ARTICLE CONTENT */}
       <section className="py-16 md:py-20">
         <Container>
-          <div className="max-w-3xl mx-auto prose prose-invert">
+          <div className="max-w-3xl mx-auto">
             {content.sections.map((section, idx) => (
               <div key={idx} className="mb-10">
                 <h2 className="text-2xl font-semibold text-white mb-4">
@@ -181,7 +177,6 @@ export default function InsightDetail() {
         </Container>
       </section>
 
-      {/* CTA SECTION */}
       <section className="border-t border-white/10 py-16 md:py-20 bg-gradient-to-b from-transparent to-emerald-500/5">
         <Container>
           <div className="rounded-3xl bg-gradient-to-r from-emerald-500/15 to-emerald-500/5 p-8 md:p-12 ring-1 ring-emerald-500/20 text-center">
@@ -196,7 +191,6 @@ export default function InsightDetail() {
         </Container>
       </section>
 
-      {/* RELATED INSIGHTS */}
       <section className="border-t border-white/10 py-16 md:py-20">
         <Container>
           <div className="text-center mb-12">
