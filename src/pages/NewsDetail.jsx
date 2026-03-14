@@ -1,139 +1,235 @@
-import { useParams, Link } from "react-router-dom";
+import React from "react";
+import { useParams, Navigate } from "react-router-dom";
 import Container from "../components/Container.jsx";
-import { newsItems, site } from "../content/siteData.js";
-
-/* News article bodies */
-const newsBodyBySlug = {
-  "cnc-network-expansion": {
-    intro:
-      "PGI has expanded its precision mechanical manufacturing network by onboarding multiple new ISO-compliant CNC facilities across India. This expansion strengthens our ability to support complex mechanical components, larger production volumes, and tighter delivery schedules while maintaining strict engineering oversight and quality verification.",
-
-    highlights: [
-      "Expanded access to advanced 5-axis CNC milling and high-precision CNC turning centers.",
-      "Integration of automated CMM inspection systems across partner facilities for dimensional verification.",
-      "Support for specialized engineering materials including aerospace-grade aluminum, stainless steel alloys, and titanium.",
-      "Centralized raw material procurement to maintain batch consistency and traceability.",
-      "Improved export logistics coordination for faster global deliveries."
-    ],
-
-    whyItMatters: [
-      "Manufacturing through a distributed network improves production resilience.",
-      "Engineering oversight ensures consistent tolerances across facilities.",
-      "Clients gain scale advantages without managing multiple suppliers.",
-      "Faster lead times enable smoother prototype-to-production transitions."
-    ],
-
-    nextSteps: [
-      "Share your 3D CAD models (STEP or IGES) along with technical drawings.",
-      "PGI engineers perform a Design for Manufacturability (DFM) review.",
-      "Receive a structured quotation including production timelines.",
-      "Approve the First Article Inspection (FAI) before scaling production."
-    ],
-
-    extras: [
-      "Material mill certificates and inspection reports accompany every batch.",
-      "Surface finishing options include anodizing, powder coating, and passivation.",
-      "Dimensional inspection reports are generated using CMM systems.",
-      "Export documentation and freight coordination are managed by PGI."
-    ]
-  },
-
-  "turnkey-pcba-launch": {
-    intro:
-      "PGI has introduced turnkey PCB assembly (PCBA) services to support clients developing advanced electromechanical products.",
-
-    highlights: [
-      "Component sourcing through authorized global distributors.",
-      "High-precision SMT assembly supporting 0201 components.",
-      "Automated Optical Inspection (AOI) and X-ray inspection.",
-      "Functional testing and firmware programming.",
-      "Integration with mechanical enclosures for full box-build assemblies."
-    ],
-
-    whyItMatters: [
-      "Managing multiple suppliers introduces delays.",
-      "Turnkey manufacturing ensures BOM control.",
-      "Integrated mechanical + electronics improves reliability.",
-      "Clients receive fully tested assemblies."
-    ],
-
-    nextSteps: [
-      "Provide Gerber files and BOM.",
-      "PGI reviews components and supply risks.",
-      "Prototype boards assembled and tested.",
-      "Production scaling through PGI electronics partners."
-    ],
-
-    extras: [
-      "IPC-A-610 assembly quality standards.",
-      "Moisture-sensitive component control.",
-      "Conformal coating options.",
-      "Full component traceability."
-    ]
-  }
-};
+import { PrimaryButton } from "../components/Buttons.jsx";
+import { newsItems } from "../content/siteData.js";
+import { Link } from "react-router-dom";
 
 export default function NewsDetail() {
   const { slug } = useParams();
+  const news = newsItems.find((n) => n.slug === slug);
 
-  const article = newsBodyBySlug[slug];
-  const meta = newsItems.find((n) => n.slug === slug);
-
-  if (!article) {
-    return (
-      <Container className="py-20">
-        <h1 className="text-2xl font-semibold">News article not found</h1>
-      </Container>
-    );
+  if (!news) {
+    return <Navigate to="/news" replace />;
   }
 
+  // Generate full content based on slug
+  const getFullContent = () => {
+    const contentMap = {
+      "cnc-network-expansion": {
+        sections: [
+          {
+            title: "Strategic Growth in Precision Manufacturing",
+            content:
+              "PGI announces major expansion of its CNC manufacturing network with three new partner facilities across key geographic regions. This expansion strengthens our ability to handle complex precision machining projects with reduced lead times and increased capacity."
+          },
+          {
+            title: "New Facilities and Capabilities",
+            content:
+              "The newly integrated facilities bring advanced multi-axis CNC capabilities, custom surface finishing, and specialized processes including aerospace-grade material handling. Combined, they add 40% additional production capacity for precision components."
+          },
+          {
+            title: "Geographic Diversification",
+            content:
+              "The new locations reduce manufacturing dependency on any single region and provide better logistics efficiency for our clients across different markets. This diversification also improves supply chain resilience."
+          },
+          {
+            title: "Quality Standards Maintained",
+            content:
+              "All new partner facilities meet PGI's stringent quality standards, ISO certifications, and material traceability requirements. Existing clients will see no change in quality assurance processes."
+          },
+          {
+            title: "Impact on Client Projects",
+            content:
+              "Existing and new clients benefit immediately through faster turnaround times, increased production capacity, and more flexible manufacturing options. Complex projects can now be executed more efficiently."
+          }
+        ]
+      },
+      "supply-chain-resilience": {
+        sections: [
+          {
+            title: "Building Resilient Supply Chains",
+            content:
+              "Following recent global supply chain disruptions, PGI has implemented comprehensive supply chain resilience strategies to ensure uninterrupted manufacturing operations for all clients."
+          },
+          {
+            title: "Multi-Source Strategy",
+            content:
+              "Critical components are now sourced from multiple qualified suppliers in different geographic regions. This eliminates single points of failure and ensures continuous supply even during regional disruptions."
+          },
+          {
+            title: "Strategic Inventory Planning",
+            content:
+              "Long-lead components are identified early in projects, and strategic inventory is maintained for components with volatile availability. This protects project timelines from supply shocks."
+          },
+          {
+            title: "Supplier Relationship Management",
+            content:
+              "Strengthened relationships with primary suppliers include early notification of capacity constraints and priority access during tight supply periods. Backup suppliers ensure alternative sources when needed."
+          },
+          {
+            title: "Real-Time Supply Visibility",
+            content:
+              "Clients now have visibility into component sourcing status and supply chain risks through regular status updates. Proactive notifications alert clients to potential delays before they impact production."
+          },
+          {
+            title: "Commitment to Reliability",
+            content:
+              "Supply chain resilience is now a core competitive advantage. PGI's commitment to reliability gives hardware companies confidence to scale production without supply chain anxiety."
+          }
+        ]
+      },
+      "manufacturing-coordination": {
+        sections: [
+          {
+            title: "Advanced Coordination Capabilities",
+            content:
+              "PGI launches enhanced manufacturing coordination tools and processes to improve visibility and control across distributed production networks."
+          },
+          {
+            title: "Real-Time Production Tracking",
+            content:
+              "Clients can now track their production in real-time across all manufacturing facilities. Status updates, quality reports, and milestone achievements are visible through a unified dashboard."
+          },
+          {
+            title: "Improved Communication Workflows",
+            content:
+              "Streamlined communication between engineering, procurement, manufacturing, and quality teams reduces bottlenecks and accelerates decision-making. Issues are identified and resolved faster."
+          },
+          {
+            title: "Predictive Scheduling",
+            content:
+              "Advanced scheduling algorithms optimize facility utilization and production sequences. This reduces lead times while maintaining quality and cost efficiency."
+          },
+          {
+            title: "Quality Documentation Integration",
+            content:
+              "Quality reports, material certificates, inspection data, and compliance documentation are automatically consolidated and delivered to clients, simplifying compliance and audit processes."
+          },
+          {
+            title: "Partnership Benefits",
+            content:
+              "These enhancements reflect our commitment to transparency and partnership with clients. As PGI's capabilities evolve, client benefits improve directly."
+          }
+        ]
+      }
+    };
+    return contentMap[slug] || { sections: [] };
+  };
+
+  const content = getFullContent();
+
   return (
-    <Container className="py-16 max-w-4xl">
+    <div>
+      {/* HERO SECTION */}
+      <section className="border-b border-white/10 py-12 md:py-16">
+        <Container>
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30">
+                {news.category}
+              </span>
+              <span className="text-xs text-white/50">{news.date}</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-semibold text-white leading-tight">
+              {news.title}
+            </h1>
+            <p className="mt-6 text-lg text-white/75">{news.excerpt}</p>
+            <div className="mt-6 flex items-center gap-4">
+              <div>
+                <p className="text-sm font-semibold text-white">PGI Network</p>
+                <p className="text-xs text-white/50">Manufacturing Updates</p>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
 
-      {/* Title */}
-      <h1 className="text-3xl font-semibold mb-4">
-        {meta?.title}
-      </h1>
+      {/* FEATURED IMAGE */}
+      <section className="border-b border-white/10">
+        <Container className="py-8">
+          <div className="rounded-2xl overflow-hidden aspect-video bg-black/40">
+            <img
+              src={news.image}
+              alt={news.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </Container>
+      </section>
 
-      {/* Intro */}
-      <p className="text-gray-600 mb-10 leading-relaxed">
-        {article.intro}
-      </p>
+      {/* ARTICLE CONTENT */}
+      <section className="py-16 md:py-20">
+        <Container>
+          <div className="max-w-3xl mx-auto">
+            {content.sections.map((section, idx) => (
+              <div key={idx} className="mb-10">
+                <h2 className="text-2xl font-semibold text-white mb-4">
+                  {section.title}
+                </h2>
+                <p className="text-white/75 leading-relaxed text-base">
+                  {section.content}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
 
-      {/* Highlights */}
-      <Section title="Highlights" items={article.highlights} />
+      {/* CTA SECTION */}
+      <section className="border-t border-white/10 py-16 md:py-20 bg-gradient-to-b from-transparent to-blue-500/5">
+        <Container>
+          <div className="rounded-3xl bg-gradient-to-r from-blue-500/15 to-blue-500/5 p-8 md:p-12 ring-1 ring-blue-500/20 text-center">
+            <h2 className="text-3xl font-semibold text-white mb-3">
+              Ready to partner with PGI?
+            </h2>
+            <p className="text-white/75 max-w-xl mx-auto mb-8">
+              Discover how our manufacturing network can scale your production efficiently.
+            </p>
+            <PrimaryButton to="/contact">Get in Touch</PrimaryButton>
+          </div>
+        </Container>
+      </section>
 
-      {/* Why it matters */}
-      <Section title="Why This Matters" items={article.whyItMatters} />
+      {/* RELATED NEWS */}
+      <section className="border-t border-white/10 py-16 md:py-20">
+        <Container>
+          <div className="text-center mb-12">
+            <p className="text-sm text-blue-400 font-semibold">More Updates</p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">Related News</h2>
+          </div>
 
-      {/* Next Steps */}
-      <Section title="Next Steps" items={article.nextSteps} />
-
-      {/* Additional details */}
-      <Section title="Additional Details" items={article.extras} />
-
-      {/* Back link */}
-      <div className="mt-12">
-        <Link to="/news" className="text-blue-500">
-          ← Back to News
-        </Link>
-      </div>
-
-    </Container>
-  );
-}
-
-/* reusable section */
-function Section({ title, items }) {
-  return (
-    <div className="mb-10">
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
-
-      <ul className="list-disc list-inside space-y-2 text-gray-600">
-        {items.map((item, i) => (
-          <li key={i}>{item}</li>
-        ))}
-      </ul>
+          <div className="grid gap-7 md:grid-cols-3">
+            {newsItems
+              .filter((n) => n.slug !== slug)
+              .slice(0, 3)
+              .map((n, idx) => (
+                <Link
+                  key={idx}
+                  to={`/news/${n.slug}`}
+                  className="group rounded-2xl bg-white/5 hover:bg-white/8 ring-1 ring-white/10 hover:ring-blue-500/30 overflow-hidden transition-all duration-300 flex flex-col hover:shadow-lg hover:shadow-blue-500/10"
+                >
+                  <div className="relative overflow-hidden aspect-video bg-black/40">
+                    <img
+                      src={n.image}
+                      alt={n.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <h3 className="text-base font-semibold text-white group-hover:text-blue-300 transition">
+                      {n.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-white/70 flex-1">{n.excerpt}</p>
+                    <div className="mt-4 text-blue-400 text-sm group-hover:text-blue-300 transition">
+                      Read update →
+                    </div>
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </Container>
+      </section>
     </div>
   );
 }
