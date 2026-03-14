@@ -21,6 +21,7 @@ NAVIGATION
 
 export const navLinks = [
   { label: "Home", to: "/" },
+  { label: "BOM Analyzer", to: "/bom-analyzer" },
   { label: "Services", to: "/services" },
   { label: "Capabilities", to: "/capabilities" },
   { label: "Insights", to: "/insights" },
