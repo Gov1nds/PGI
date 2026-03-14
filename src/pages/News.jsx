@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import SectionHeading from "../components/SectionHeading.jsx";
 import { newsItems } from "../content/siteData.js";
@@ -25,9 +26,9 @@ export default function News() {
         {/* ========== NEWS GRID ========== */}
         <div className="grid gap-8 md:grid-cols-3">
           {newsItems.map((n, idx) => (
-            <a 
+            <Link 
               key={idx}
-              href={`/news/${n.slug}`}
+              to={`/news/${n.slug}`}
               className="group rounded-2xl bg-white/5 hover:bg-white/8 ring-1 ring-white/10 hover:ring-blue-500/30 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 flex flex-col h-full"
             >
               <div className="relative overflow-hidden aspect-video bg-black/40">
@@ -61,7 +62,7 @@ export default function News() {
                   <span className="text-sm text-blue-400 group-hover:text-blue-300 transition font-semibold">Read update →</span>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
 

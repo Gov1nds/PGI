@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import SectionHeading from "../components/SectionHeading.jsx";
 import { insights } from "../content/siteData.js";
@@ -25,9 +26,9 @@ export default function Insights() {
         {/* ========== INSIGHTS GRID ========== */}
         <div className="grid gap-8 md:grid-cols-3">
           {insights.map((i, idx) => (
-            <a 
+            <Link 
               key={idx}
-              href={`/insights/${i.slug}`}
+              to={`/insights/${i.slug}`}
               className="group rounded-2xl bg-white/5 hover:bg-white/8 ring-1 ring-white/10 hover:ring-emerald-500/30 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/10 flex flex-col h-full"
             >
               <div className="relative overflow-hidden aspect-video bg-black/40">
@@ -57,7 +58,7 @@ export default function Insights() {
                   <span className="text-sm text-emerald-400 group-hover:text-emerald-300 transition font-semibold">Read →</span>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
 
