@@ -4,13 +4,11 @@ import Footer from "./components/Footer.jsx";
 import FloatingActions from "./components/FloatingActions.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Pricing from "./pages/Pricing.jsx";
-import BOMAnalyzer from "./pages/BOMAnalyzer.jsx";
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
-
-// ✅ Change this import (use the correct filename + component name)
 import Capabilities from "./pages/capabilities.jsx";
+import BOMAnalyzer from "./pages/BOMAnalyzer.jsx";  // ✅ ADD THIS LINE
 
 import Insights from "./pages/Insights.jsx";
 import InsightDetail from "./pages/InsightDetail.jsx";
@@ -24,7 +22,6 @@ import ConsultPopup from "./components/ConsultPopup.jsx";
 export default function App() {
   return (
     <>
-      {/* Accessibility skip link */}
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-black/80 focus:px-4 focus:py-2 focus:text-sm"
@@ -34,22 +31,16 @@ export default function App() {
 
       <Navbar />
       <ConsultPopup delayMs={10000} />
-<ScrollToTop />
-<ConsultPopup delayMs={10000} />
+      <ScrollToTop />
+
       <main id="content" className="min-h-[70vh]">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
-
-          {/* ✅ Route renamed */}
           <Route path="/capabilities" element={<Capabilities />} />
-
-          {/* (Optional) keep old route redirect for old links, see below */}
-          {/* <Route path="/outdoor-works" element={<Navigate to="/capabilities" replace />} /> */}
-<Route path="/pricing" element={<Pricing />} />
-
+          <Route path="/bom-analyzer" element={<BOMAnalyzer />} />  {/* ✅ ADD THIS LINE */}
+          <Route path="/pricing" element={<Pricing />} />
           <Route path="/insights" element={<Insights />} />
-          <Route path="/bom-analyzer" element={<BOMAnalyzer />} />
           <Route path="/insights/:slug" element={<InsightDetail />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
@@ -60,8 +51,6 @@ export default function App() {
       </main>
 
       <Footer />
-
-      {/* Floating Call + WhatsApp Buttons */}
       <FloatingActions />
     </>
   );
