@@ -88,13 +88,62 @@ const Home = () => {
                 </div>
               </div>
             </div>
-      {/* RIGHT - PREMIUM METRICS SECTION */}
-            <div className="relative hero-anim-5">
-              <PremiumMetricsSection />
-            </div>
+       {/* RIGHT - BOM ANALYZER CARD */}
+            <Link 
+              to="/bom-analyzer"
+              className="relative group cursor-pointer hero-anim-5"
+            >
+              <div className="rounded-3xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 p-8 ring-1 ring-emerald-500/30 hover:ring-emerald-400/50 transition-all duration-300 hover:from-emerald-500/20 hover:to-emerald-500/10 hover:shadow-lg hover:shadow-emerald-500/20 h-full flex flex-col">
+                
+                <div className="mb-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-500/20 ring-1 ring-emerald-500/40 group-hover:bg-emerald-500/30 transition">
+                    <svg className="w-6 h-6 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <h3 className="text-2xl font-semibold text-white mb-3 group-hover:text-emerald-300 transition">
+                  BOM Analyzer
+                </h3>
+
+                <p className="text-sm text-white/75 leading-relaxed mb-6 flex-grow">
+                  Upload your Bill of Materials and get instant manufacturing strategy, cost estimation, and supplier recommendations.
+                </p>
+
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400 mt-1">✓</span>
+                    <span className="text-sm text-white/70">Part classification & material analysis</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400 mt-1">✓</span>
+                    <span className="text-sm text-white/70">Cost estimation by region</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400 mt-1">✓</span>
+                    <span className="text-sm text-white/70">Global sourcing strategy</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400 mt-1">✓</span>
+                    <span className="text-sm text-white/70">Lead time & logistics estimate</span>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-emerald-500/20">
+                  <span className="inline-flex items-center text-emerald-300 font-semibold group-hover:gap-2 transition-all">
+                    Analyze your BOM
+                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
           </div>
         </Container>
       </section>
+
 
       {/* ========== SERVICES SECTION ========== */}
       <section className="border-b border-white/10 py-20 bg-gradient-to-b from-transparent to-emerald-500/5">

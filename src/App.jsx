@@ -4,6 +4,7 @@ import Footer from "./components/Footer.jsx";
 import FloatingActions from "./components/FloatingActions.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Pricing from "./pages/Pricing.jsx";
+import BOMAnalyzer from "./pages/BOMAnalyzer.jsx";
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
@@ -48,6 +49,7 @@ export default function App() {
 <Route path="/pricing" element={<Pricing />} />
 
           <Route path="/insights" element={<Insights />} />
+          <Route path="/bom-analyzer" element={<BOMAnalyzer />} />
           <Route path="/insights/:slug" element={<InsightDetail />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
