@@ -9,7 +9,7 @@ export default function BOMAnalyzer() {
   const [step, setStep] = useState(1);
   const [file, setFile] = useState(null);
   const [bomData, setBomData] = useState([]);
-  const [analysisResults, setAnalysisResults] = useState([]);
+  const [analysis, setAnalysis] = useState([]);
 
   const [country, setCountry] = useState("");
   const [stateRegion, setStateRegion] = useState("");
@@ -18,40 +18,41 @@ export default function BOMAnalyzer() {
   const [email, setEmail] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  /* -----------------------------
-     STEP 1 — READ BOM FILE
-  ----------------------------- */
+  /* ------------------------------
+     FILE UPLOAD + BOM PARSING
+  --------------------------------*/
 
   const handleFileUpload = (e) => {
 
-    const uploadedFile = e.target.files[0];
-    setFile(uploadedFile);
+    const file = e.target.files[0];
+    setFile(file);
 
     const reader = new FileReader();
 
     reader.onload = (evt) => {
 
       const data = new Uint8Array(evt.target.result);
+
       const workbook = XLSX.read(data, { type: "array" });
 
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
       const json = XLSX.utils.sheet_to_json(sheet);
 
       setBomData(json);
 
-      console.log("Parsed BOM:", json);
     };
 
-    reader.readAsArrayBuffer(uploadedFile);
+    reader.readAsArrayBuffer(file);
   };
 
-  /* -----------------------------
-     STEP 2 — PART CLASSIFICATION
-  ----------------------------- */
+  /* ------------------------------
+     PART CLASSIFICATION
+  --------------------------------*/
 
   function classifyPart(partName) {
 
-    const name = partName?.toLowerCase() || "";
+    const name = partName.toLowerCase();
 
     if (name.includes("bolt") || name.includes("nut") || name.includes("washer"))
       return "Standard Mechanical";
@@ -65,25 +66,25 @@ export default function BOMAnalyzer() {
     return "Unknown";
   }
 
-  /* -----------------------------
-     STEP 3 — PROCESS DETECTION
-  ----------------------------- */
+  /* ------------------------------
+     PROCESS DETECTION
+  --------------------------------*/
 
   function detectProcess(part) {
 
-    const name = part?.toLowerCase() || "";
+    const name = part.toLowerCase();
 
     if (name.includes("shaft")) return "Turning";
     if (name.includes("plate")) return "Laser Cutting";
     if (name.includes("housing")) return "CNC Machining";
     if (name.includes("bracket")) return "Sheet Metal";
 
-    return "General Manufacturing";
+    return "Standard Purchase";
   }
 
-  /* -----------------------------
-     STEP 4 — SUPPLIER DECISION
-  ----------------------------- */
+  /* ------------------------------
+     SUPPLIER SELECTION
+  --------------------------------*/
 
   function chooseSupplier(qty) {
 
@@ -94,9 +95,9 @@ export default function BOMAnalyzer() {
     return "Global Supplier";
   }
 
-  /* -----------------------------
-     STEP 5 — COST ESTIMATION
-  ----------------------------- */
+  /* ------------------------------
+     COST ESTIMATION
+  --------------------------------*/
 
   function estimateCost(process, qty) {
 
@@ -106,20 +107,20 @@ export default function BOMAnalyzer() {
     if (process === "Sheet Metal")
       return qty * 20;
 
-    if (process === "Laser Cutting")
-      return qty * 18;
-
     if (process === "Turning")
       return qty * 35;
+
+    if (process === "Laser Cutting")
+      return qty * 25;
 
     return qty * 10;
   }
 
-  /* -----------------------------
-     ANALYZE BOM
-  ----------------------------- */
+  /* ------------------------------
+     RUN ANALYSIS
+  --------------------------------*/
 
-  const analyzeBOM = () => {
+  const runAnalysis = () => {
 
     const results = bomData.map((item) => {
 
@@ -127,8 +128,11 @@ export default function BOMAnalyzer() {
       const qty = item.Qty || item.qty || Object.values(item)[1] || 1;
 
       const category = classifyPart(part);
+
       const process = detectProcess(part);
+
       const supplier = chooseSupplier(qty);
+
       const cost = estimateCost(process, qty);
 
       return {
@@ -139,18 +143,15 @@ export default function BOMAnalyzer() {
         supplier,
         cost
       };
+
     });
 
-    setAnalysisResults(results);
+    setAnalysis(results);
   };
 
-  /* -----------------------------
-     FLOW CONTROL
-  ----------------------------- */
-
-  const proceedToLocation = () => {
-    if (file) setStep(2);
-  };
+  /* ------------------------------
+     PROCESSING SIMULATION
+  --------------------------------*/
 
   const startProcessing = () => {
 
@@ -161,21 +162,21 @@ export default function BOMAnalyzer() {
 
       setTimeout(() => {
 
-        analyzeBOM();
+        runAnalysis();
 
         setIsProcessing(false);
+
         setStep(4);
 
-      }, 3000);
+      }, 4000);
     }
   };
 
-  const handleEmailSubmit = () => {
+  /* ------------------------------
+     COST TOTAL
+  --------------------------------*/
 
-    if (email) {
-      setStep(5);
-    }
-  };
+  const totalCost = analysis.reduce((sum, p) => sum + p.cost, 0);
 
   return (
     <div>
@@ -188,13 +189,17 @@ export default function BOMAnalyzer() {
 
           <div className="text-center max-w-3xl mx-auto">
 
+            <p className="text-sm text-emerald-400 font-semibold">
+              Engineering Tool
+            </p>
+
             <h1 className="mt-3 text-4xl md:text-5xl font-semibold text-white">
               BOM Analyzer
             </h1>
 
             <p className="mt-4 text-white/75">
-              Upload your Bill of Materials and receive manufacturing
-              strategy, sourcing recommendations and cost estimation.
+              Upload your Bill of Materials and get instant manufacturing
+              strategy, cost estimation, and global sourcing recommendations.
             </p>
 
           </div>
@@ -211,7 +216,7 @@ export default function BOMAnalyzer() {
 
           <div className="max-w-2xl mx-auto">
 
-            <div className="p-8 bg-white/5 rounded-3xl">
+            <div className="rounded-3xl bg-gradient-to-br from-white/8 to-white/3 p-10 ring-1 ring-white/10">
 
               <h2 className="text-2xl text-white mb-6">
                 Upload BOM
@@ -225,7 +230,7 @@ export default function BOMAnalyzer() {
               />
 
               <PrimaryButton
-                onClick={proceedToLocation}
+                onClick={() => setStep(2)}
                 disabled={!file}
                 className="w-full"
               >
@@ -243,38 +248,42 @@ export default function BOMAnalyzer() {
 
           <div className="max-w-2xl mx-auto">
 
-            <div className="p-8 bg-white/5 rounded-3xl">
+            <div className="rounded-3xl bg-gradient-to-br from-white/8 to-white/3 p-10 ring-1 ring-white/10">
 
               <h2 className="text-2xl text-white mb-6">
-                Delivery Location
+                Where should we deliver?
               </h2>
 
-              <input
-                placeholder="Country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                className="w-full mb-4 p-3 rounded-xl"
-              />
+              <div className="space-y-4 mb-6">
 
-              <input
-                placeholder="State"
-                value={stateRegion}
-                onChange={(e) => setStateRegion(e.target.value)}
-                className="w-full mb-4 p-3 rounded-xl"
-              />
+                <input
+                  placeholder="Country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full rounded-xl bg-white/10 px-4 py-3 text-white"
+                />
 
-              <input
-                placeholder="City"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="w-full mb-6 p-3 rounded-xl"
-              />
+                <input
+                  placeholder="State"
+                  value={stateRegion}
+                  onChange={(e) => setStateRegion(e.target.value)}
+                  className="w-full rounded-xl bg-white/10 px-4 py-3 text-white"
+                />
+
+                <input
+                  placeholder="City"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full rounded-xl bg-white/10 px-4 py-3 text-white"
+                />
+
+              </div>
 
               <PrimaryButton
                 onClick={startProcessing}
                 className="w-full"
               >
-                Start Analysis
+                Start BOM Analysis
               </PrimaryButton>
 
             </div>
@@ -286,27 +295,18 @@ export default function BOMAnalyzer() {
 
         {step === 3 && (
 
-          <div className="text-center text-white">
+          <div className="text-center text-white space-y-4">
 
-            <h2 className="text-2xl mb-6">
-              Analyzing BOM
-            </h2>
+            <h2 className="text-2xl">Analyzing BOM</h2>
 
-            {isProcessing && (
-
-              <div className="space-y-3">
-
-                <p>Parsing BOM</p>
-                <p>Classifying Parts</p>
-                <p>Detecting Manufacturing Process</p>
-                <p>Finding Suppliers</p>
-                <p>Optimizing Logistics</p>
-
-              </div>
-
-            )}
+            <p>Parsing BOM</p>
+            <p>Classifying Parts</p>
+            <p>Finding Suppliers</p>
+            <p>Optimizing Logistics</p>
+            <p>Generating Report</p>
 
           </div>
+
         )}
 
         {/* STEP 4 EMAIL */}
@@ -315,39 +315,32 @@ export default function BOMAnalyzer() {
 
           <div className="max-w-xl mx-auto">
 
-            <div className="p-8 bg-white/5 rounded-3xl">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl bg-white/10 px-4 py-3 text-white mb-4"
+            />
 
-              <h2 className="text-2xl text-white mb-6">
-                Report Ready
-              </h2>
-
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mb-6 p-3 rounded-xl"
-              />
-
-              <PrimaryButton
-                onClick={handleEmailSubmit}
-                className="w-full"
-              >
-                View Report
-              </PrimaryButton>
-
-            </div>
+            <PrimaryButton
+              onClick={() => setStep(5)}
+              className="w-full"
+            >
+              View Report
+            </PrimaryButton>
 
           </div>
+
         )}
 
         {/* STEP 5 REPORT */}
 
         {step === 5 && (
 
-          <div className="space-y-10">
+          <div className="space-y-8">
 
-            <h2 className="text-3xl text-white">
+            <h2 className="text-3xl text-white font-semibold">
               BOM Analysis Report
             </h2>
 
@@ -357,14 +350,14 @@ export default function BOMAnalyzer() {
 
                 <thead>
 
-                  <tr className="border-b border-white/20">
+                  <tr className="text-left border-b border-white/20">
 
-                    <th className="p-3 text-left">Part</th>
-                    <th className="p-3">Qty</th>
-                    <th className="p-3">Category</th>
-                    <th className="p-3">Process</th>
-                    <th className="p-3">Supplier</th>
-                    <th className="p-3">Cost</th>
+                    <th className="py-3">Part</th>
+                    <th>Qty</th>
+                    <th>Category</th>
+                    <th>Process</th>
+                    <th>Supplier</th>
+                    <th>Cost</th>
 
                   </tr>
 
@@ -372,16 +365,16 @@ export default function BOMAnalyzer() {
 
                 <tbody>
 
-                  {analysisResults.map((row, i) => (
+                  {analysis.map((p, i) => (
 
                     <tr key={i} className="border-b border-white/10">
 
-                      <td className="p-3">{row.part}</td>
-                      <td className="p-3 text-center">{row.qty}</td>
-                      <td className="p-3 text-center">{row.category}</td>
-                      <td className="p-3 text-center">{row.process}</td>
-                      <td className="p-3 text-center">{row.supplier}</td>
-                      <td className="p-3 text-center">${row.cost}</td>
+                      <td className="py-3">{p.part}</td>
+                      <td>{p.qty}</td>
+                      <td>{p.category}</td>
+                      <td>{p.process}</td>
+                      <td>{p.supplier}</td>
+                      <td>${p.cost}</td>
 
                     </tr>
 
@@ -393,27 +386,36 @@ export default function BOMAnalyzer() {
 
             </div>
 
-            <div className="bg-emerald-500/10 p-8 rounded-3xl">
+            <div className="text-white text-xl">
 
-              <h3 className="text-xl text-white mb-4">
+              Estimated Total Cost:  
+              <span className="text-emerald-400 ml-2 font-bold">
+                ${totalCost}
+              </span>
+
+            </div>
+
+            <div className="rounded-3xl bg-emerald-500/10 p-8">
+
+              <h3 className="text-white text-xl mb-4">
                 Ready to Manufacture?
               </h3>
 
               <p className="text-white/70 mb-6">
-                PGI can manage sourcing, manufacturing and delivery.
+                PGI can handle supplier sourcing, production,
+                quality control and delivery.
               </p>
 
               <Link to="/contact">
-
                 <PrimaryButton className="w-full">
                   Request Manufacturing Quote
                 </PrimaryButton>
-
               </Link>
 
             </div>
 
           </div>
+
         )}
 
       </Container>
