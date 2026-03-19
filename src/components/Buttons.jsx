@@ -1,16 +1,40 @@
 import { Link } from "react-router-dom";
 
-export function PrimaryButton({ to, children }) {
+export function PrimaryButton({
+  to,
+  onClick,
+  children,
+  className = "",
+  disabled = false,
+  type = "button"
+}) {
+  const baseStyle = `
+    inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold
+    text-white bg-[rgba(var(--brand-700))]
+    shadow-[0_12px_30px_rgba(22,163,74,0.25)]
+    hover:bg-[rgba(var(--brand-600))] transition
+    ${className}
+  `;
+
+  // 👉 If navigation link
+  if (to) {
+    return (
+      <Link to={to} className={baseStyle}>
+        {children}
+      </Link>
+    );
+  }
+
+  // 👉 If button (CLICK ACTION)
   return (
-    <Link
-      to={to}
-      className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold
-                 text-white bg-[rgba(var(--brand-700))]
-                 shadow-[0_12px_30px_rgba(22,163,74,0.25)]
-                 hover:bg-[rgba(var(--brand-600))] transition"
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={baseStyle}
     >
       {children}
-    </Link>
+    </button>
   );
 }
 
