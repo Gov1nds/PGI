@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 
-const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api";
+// ✅ FIX: Change /api to /api1
+const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
+
 // Location data
 const LOCATION_DATA = {
   India: {
@@ -145,9 +147,9 @@ export default function BOMAnalyzer() {
   };
 
   const startProcessing = async () => {
-    console.log("=" .repeat(60));
+    console.log("=".repeat(60));
     console.log("🚀 STARTING ANALYSIS");
-    console.log("=" .repeat(60));
+    console.log("=".repeat(60));
     
     // PRE-FLIGHT CHECKS
     console.log("📋 Pre-flight checks:");
@@ -305,7 +307,7 @@ export default function BOMAnalyzer() {
       }
 
       console.log("✅ ANALYSIS COMPLETE");
-      console.log("=" .repeat(60));
+      console.log("=".repeat(60));
 
       setAnalysisResult(result);
       setIsProcessing(false);
@@ -313,11 +315,11 @@ export default function BOMAnalyzer() {
 
     } catch (err) {
       console.error("\n❌ ERROR OCCURRED");
-      console.error("=" .repeat(60));
+      console.error("=".repeat(60));
       console.error("Error:", err);
       console.error("Error message:", err.message);
       console.error("Error stack:", err.stack);
-      console.error("=" .repeat(60));
+      console.error("=".repeat(60));
       
       setError(err.message || "An error occurred during processing");
       setIsProcessing(false);
@@ -423,24 +425,7 @@ export default function BOMAnalyzer() {
           </div>
         </div>
 
-        {/* Debug Info (only in development) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="max-w-2xl mx-auto mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg text-xs">
-            <p className="text-blue-400 font-mono">
-              Step: {step} | File: {file ? `✓ ${file.name}` : '✗ None'} | 
-              Location: {country || '?'} / {stateRegion || '?'} / {city || '?'}
-            </p>
-          </div>
-        )}
-
-        {/* REST OF THE COMPONENT (Steps 1-5) - KEEP AS IS FROM PREVIOUS VERSION */}
-        
-        {/* I'll continue with the rest... */}
-
-      </Container>
-    </div>
- );
-  {/* STEP 1: File Upload */}
+        {/* STEP 1: File Upload */}
         {step === 1 && (
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="rounded-3xl bg-white/5 border border-white/10 p-8">
@@ -744,4 +729,8 @@ export default function BOMAnalyzer() {
 
           </div>
         )}
+
+      </Container>
+    </div>
+  );
 }
