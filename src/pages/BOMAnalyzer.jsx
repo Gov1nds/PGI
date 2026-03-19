@@ -3,8 +3,80 @@ import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { Link } from "react-router-dom";
 
-// ✅ CORRECT API BASE (with /api1 prefix from docs)
 const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
+
+// Location data - India focused with other major countries
+const LOCATION_DATA = {
+  India: {
+    Kerala: ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam", "Palakkad", "Kottayam", "Kannur"],
+    Karnataka: ["Bangalore", "Mysore", "Mangalore", "Hubli", "Belgaum", "Davangere"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli"],
+    Maharashtra: ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Solapur"],
+    Gujarat: ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar", "Bhavnagar"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Noida", "Ghaziabad", "Agra", "Varanasi"],
+    "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri"],
+    Rajasthan: ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer", "Bikaner"],
+    Haryana: ["Gurgaon", "Faridabad", "Panipat", "Ambala", "Karnal"],
+    Punjab: ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda"],
+    "Delhi NCR": ["New Delhi", "Noida", "Gurgaon", "Faridabad", "Ghaziabad"]
+  },
+  USA: {
+    California: ["Los Angeles", "San Francisco", "San Diego", "San Jose", "Sacramento"],
+    Texas: ["Houston", "Dallas", "Austin", "San Antonio", "Fort Worth"],
+    "New York": ["New York City", "Buffalo", "Rochester", "Albany", "Syracuse"],
+    Florida: ["Miami", "Orlando", "Tampa", "Jacksonville", "Fort Lauderdale"],
+    Illinois: ["Chicago", "Aurora", "Naperville", "Rockford", "Joliet"],
+    Pennsylvania: ["Philadelphia", "Pittsburgh", "Allentown", "Erie", "Reading"],
+    Ohio: ["Columbus", "Cleveland", "Cincinnati", "Toledo", "Akron"],
+    Georgia: ["Atlanta", "Augusta", "Columbus", "Savannah", "Athens"],
+    "North Carolina": ["Charlotte", "Raleigh", "Greensboro", "Durham", "Winston-Salem"],
+    Michigan: ["Detroit", "Grand Rapids", "Warren", "Sterling Heights", "Ann Arbor"]
+  },
+  China: {
+    Guangdong: ["Shenzhen", "Guangzhou", "Dongguan", "Foshan", "Zhongshan"],
+    Shanghai: ["Shanghai"],
+    Beijing: ["Beijing"],
+    Jiangsu: ["Suzhou", "Nanjing", "Wuxi", "Changzhou", "Nantong"],
+    Zhejiang: ["Hangzhou", "Ningbo", "Wenzhou", "Jiaxing", "Shaoxing"],
+    Shandong: ["Qingdao", "Jinan", "Yantai", "Weifang", "Zibo"],
+    Sichuan: ["Chengdu", "Mianyang", "Deyang", "Nanchong"],
+    Liaoning: ["Shenyang", "Dalian", "Anshan", "Fushun"]
+  },
+  Germany: {
+    Bavaria: ["Munich", "Nuremberg", "Augsburg", "Regensburg", "Ingolstadt"],
+    "North Rhine-Westphalia": ["Cologne", "Dusseldorf", "Dortmund", "Essen", "Duisburg"],
+    "Baden-Wurttemberg": ["Stuttgart", "Mannheim", "Karlsruhe", "Freiburg", "Heidelberg"],
+    "Lower Saxony": ["Hanover", "Brunswick", "Osnabruck", "Oldenburg"],
+    Hesse: ["Frankfurt", "Wiesbaden", "Kassel", "Darmstadt"],
+    Berlin: ["Berlin"],
+    Hamburg: ["Hamburg"]
+  },
+  Mexico: {
+    "Nuevo Leon": ["Monterrey", "Guadalupe", "San Nicolas de los Garza", "Apodaca"],
+    Jalisco: ["Guadalajara", "Zapopan", "Tlaquepaque", "Tonala"],
+    "Mexico City": ["Mexico City"],
+    Guanajuato: ["Leon", "Irapuato", "Celaya", "Salamanca"],
+    Chihuahua: ["Chihuahua", "Juarez"],
+    Baja_California: ["Tijuana", "Mexicali", "Ensenada"],
+    Queretaro: ["Santiago de Queretaro", "San Juan del Rio"]
+  },
+  Vietnam: {
+    "Ho Chi Minh": ["Ho Chi Minh City"],
+    Hanoi: ["Hanoi"],
+    "Da Nang": ["Da Nang"],
+    "Binh Duong": ["Thu Dau Mot", "Di An", "Thuan An"],
+    "Dong Nai": ["Bien Hoa", "Long Khanh"],
+    "Bac Ninh": ["Bac Ninh"],
+    "Hai Phong": ["Hai Phong"]
+  },
+  Canada: {
+    Ontario: ["Toronto", "Ottawa", "Mississauga", "Brampton", "Hamilton"],
+    Quebec: ["Montreal", "Quebec City", "Laval", "Gatineau"],
+    "British Columbia": ["Vancouver", "Surrey", "Burnaby", "Richmond", "Victoria"],
+    Alberta: ["Calgary", "Edmonton", "Red Deer", "Lethbridge"],
+    Manitoba: ["Winnipeg", "Brandon", "Steinbach"]
+  }
+};
 
 export default function BOMAnalyzer() {
   const [step, setStep] = useState(1);
@@ -17,9 +89,28 @@ export default function BOMAnalyzer() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
 
+  // Get available states based on selected country
+  const availableStates = country ? Object.keys(LOCATION_DATA[country] || {}) : [];
+  
+  // Get available cities based on selected state
+  const availableCities = (country && stateRegion) 
+    ? (LOCATION_DATA[country]?.[stateRegion] || []) 
+    : [];
+
   const handleFileUpload = (e) => {
     setFile(e.target.files[0]);
     setError(null);
+  };
+
+  const handleCountryChange = (e) => {
+    setCountry(e.target.value);
+    setStateRegion(""); // Reset state when country changes
+    setCity(""); // Reset city when country changes
+  };
+
+  const handleStateChange = (e) => {
+    setStateRegion(e.target.value);
+    setCity(""); // Reset city when state changes
   };
 
   const proceedToLocation = () => {
@@ -46,23 +137,16 @@ export default function BOMAnalyzer() {
       formData.append("file", file);
 
       console.log("Uploading to:", `${API_BASE}/upload-bom`);
-      console.log("File details:", {
-        name: file.name,
-        type: file.type,
-        size: file.size
-      });
 
       const uploadRes = await fetch(`${API_BASE}/upload-bom`, {
         method: "POST",
         body: formData
-        // DO NOT set Content-Type header - browser sets it automatically with boundary
       });
 
       console.log("Upload response status:", uploadRes.status);
 
-      // Get response text first to see what we're dealing with
       const uploadText = await uploadRes.text();
-      console.log("Upload response text:", uploadText);
+      console.log("Upload response:", uploadText);
 
       if (!uploadRes.ok) {
         let errorMsg = `Upload failed: ${uploadRes.status}`;
@@ -75,7 +159,6 @@ export default function BOMAnalyzer() {
         throw new Error(errorMsg);
       }
 
-      // Parse response
       let uploadData;
       try {
         uploadData = JSON.parse(uploadText);
@@ -83,14 +166,12 @@ export default function BOMAnalyzer() {
         throw new Error("Invalid response from server");
       }
 
-      console.log("Upload data:", uploadData);
-
       if (!uploadData.success || !uploadData.components || uploadData.components.length === 0) {
         throw new Error(uploadData.error || "No valid components found in BOM file");
       }
 
       // Step 2: Analyze BOM
-      console.log("Analyzing BOM with components:", uploadData.components);
+      console.log("Analyzing BOM...");
 
       const analyzeRes = await fetch(`${API_BASE}/analyze-bom`, {
         method: "POST",
@@ -107,10 +188,8 @@ export default function BOMAnalyzer() {
         })
       });
 
-      console.log("Analyze response status:", analyzeRes.status);
-
       const analyzeText = await analyzeRes.text();
-      console.log("Analyze response text:", analyzeText);
+      console.log("Analyze response:", analyzeText);
 
       if (!analyzeRes.ok) {
         let errorMsg = `Analysis failed: ${analyzeRes.status}`;
@@ -127,10 +206,8 @@ export default function BOMAnalyzer() {
       try {
         result = JSON.parse(analyzeText);
       } catch (e) {
-        throw new Error("Invalid analysis response from server");
+        throw new Error("Invalid analysis response");
       }
-
-      console.log("Analysis result:", result);
 
       if (!result.success) {
         throw new Error(result.error || "Analysis failed");
@@ -141,8 +218,8 @@ export default function BOMAnalyzer() {
       setStep(4);
 
     } catch (err) {
-      console.error("Error details:", err);
-      setError(err.message || "An error occurred during processing");
+      console.error("Error:", err);
+      setError(err.message || "An error occurred");
       setIsProcessing(false);
       setStep(2);
     }
@@ -210,44 +287,100 @@ export default function BOMAnalyzer() {
           </div>
         )}
 
-        {/* STEP 2: Location Input */}
+        {/* STEP 2: Location Selection with Dropdowns */}
         {step === 2 && (
           <div className="max-w-2xl mx-auto space-y-6">
-            <div className="rounded-3xl bg-white/5 border border-white/10 p-8 space-y-4">
+            <div className="rounded-3xl bg-white/5 border border-white/10 p-8 space-y-6">
               <h2 className="text-2xl text-white mb-4 font-semibold">Delivery Location</h2>
               
+              {/* Country Dropdown */}
               <div>
-                <label className="block text-white/60 text-sm mb-2">Country *</label>
-                <input 
-                  placeholder="e.g., India, USA, Germany"
+                <label className="block text-white/60 text-sm mb-2 font-medium">
+                  Country <span className="text-red-400">*</span>
+                </label>
+                <select
                   value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-emerald-500"
-                />
+                  onChange={handleCountryChange}
+                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white 
+                    focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer
+                    bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3e%3cpolyline points=%226 9 12 15 18 9%22%3e%3c/polyline%3e%3c/svg%3e')] 
+                    bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat pr-10"
+                >
+                  <option value="" className="bg-gray-800">Select a country</option>
+                  {Object.keys(LOCATION_DATA).map(countryName => (
+                    <option key={countryName} value={countryName} className="bg-gray-800">
+                      {countryName}
+                    </option>
+                  ))}
+                </select>
               </div>
-              
+
+              {/* State Dropdown */}
               <div>
-                <label className="block text-white/60 text-sm mb-2">State/Region *</label>
-                <input 
-                  placeholder="e.g., Kerala, California"
+                <label className="block text-white/60 text-sm mb-2 font-medium">
+                  State/Region <span className="text-red-400">*</span>
+                </label>
+                <select
                   value={stateRegion}
-                  onChange={(e) => setStateRegion(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-emerald-500"
-                />
+                  onChange={handleStateChange}
+                  disabled={!country}
+                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white 
+                    focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                    bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3e%3cpolyline points=%226 9 12 15 18 9%22%3e%3c/polyline%3e%3c/svg%3e')] 
+                    bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat pr-10"
+                >
+                  <option value="" className="bg-gray-800">
+                    {country ? "Select a state/region" : "First select a country"}
+                  </option>
+                  {availableStates.map(state => (
+                    <option key={state} value={state} className="bg-gray-800">
+                      {state}
+                    </option>
+                  ))}
+                </select>
               </div>
-              
+
+              {/* City Dropdown */}
               <div>
-                <label className="block text-white/60 text-sm mb-2">City *</label>
-                <input 
-                  placeholder="e.g., Thamarakulam, San Francisco"
+                <label className="block text-white/60 text-sm mb-2 font-medium">
+                  City <span className="text-red-400">*</span>
+                </label>
+                <select
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-emerald-500"
-                />
+                  disabled={!stateRegion}
+                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white 
+                    focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                    bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3e%3cpolyline points=%226 9 12 15 18 9%22%3e%3c/polyline%3e%3c/svg%3e')] 
+                    bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat pr-10"
+                >
+                  <option value="" className="bg-gray-800">
+                    {stateRegion ? "Select a city" : "First select a state/region"}
+                  </option>
+                  {availableCities.map(cityName => (
+                    <option key={cityName} value={cityName} className="bg-gray-800">
+                      {cityName}
+                    </option>
+                  ))}
+                </select>
               </div>
+
+              {/* Selected Location Summary */}
+              {country && stateRegion && city && (
+                <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                  <p className="text-emerald-400 text-sm font-medium">
+                    ✓ Delivery Location: {city}, {stateRegion}, {country}
+                  </p>
+                </div>
+              )}
             </div>
             
-            <PrimaryButton onClick={startProcessing}>
+            <PrimaryButton 
+              onClick={startProcessing}
+              disabled={!country || !stateRegion || !city}
+            >
               Start Analysis
             </PrimaryButton>
           </div>
@@ -291,7 +424,7 @@ export default function BOMAnalyzer() {
           </div>
         )}
 
-        {/* STEP 5: Results */}
+        {/* STEP 5: Results Display */}
         {step === 5 && analysisResult && (
           <div className="space-y-8">
             
