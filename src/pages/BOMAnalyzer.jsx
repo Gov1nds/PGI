@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 
-// ✅ FIX: Change /api to /api1
-const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api";
+// ✅ FIX #1: Correct API endpoint path
+const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
+
 // Location data
 const LOCATION_DATA = {
   India: {
@@ -52,6 +53,33 @@ const LOCATION_DATA = {
     "British Columbia": ["Vancouver", "Surrey", "Burnaby"]
   }
 };
+
+// ✅ FIX #2: Helper function to safely convert errors to strings
+function getErrorMessage(error) {
+  if (typeof error === 'string') {
+    return error;
+  }
+  
+  if (error instanceof Error) {
+    return error.message;
+  }
+  
+  if (error && typeof error === 'object') {
+    // Try to extract meaningful error info
+    if (error.detail) return error.detail;
+    if (error.message) return error.message;
+    if (error.error) return error.error;
+    
+    // Last resort: stringify the object
+    try {
+      return JSON.stringify(error);
+    } catch (e) {
+      return 'An unknown error occurred';
+    }
+  }
+  
+  return 'An error occurred during processing';
+}
 
 export default function BOMAnalyzer() {
   const [step, setStep] = useState(1);
@@ -316,15 +344,18 @@ export default function BOMAnalyzer() {
       console.error("\n❌ ERROR OCCURRED");
       console.error("=".repeat(60));
       console.error("Error:", err);
+      console.error("Error type:", typeof err);
       console.error("Error message:", err.message);
       console.error("Error stack:", err.stack);
       console.error("=".repeat(60));
       
-      setError(err.message || "An error occurred during processing");
+      // ✅ FIX #3: Use helper function to safely extract error message
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
       setIsProcessing(false);
       
       // Go back to appropriate step
-      if (err.message.includes("Upload") || err.message.includes("file")) {
+      if (errorMessage.includes("Upload") || errorMessage.includes("file")) {
         console.log("↩️ Returning to step 1 (file upload)");
         setStep(1);
       } else {
