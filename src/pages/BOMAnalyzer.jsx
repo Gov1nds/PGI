@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 
-const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
-
+const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api";
 // Location data
 const LOCATION_DATA = {
   India: {
@@ -440,8 +439,7 @@ export default function BOMAnalyzer() {
 
       </Container>
     </div>
-  );
-}
+ );
   {/* STEP 1: File Upload */}
         {step === 1 && (
           <div className="max-w-2xl mx-auto space-y-6">
@@ -746,5 +744,4 @@ export default function BOMAnalyzer() {
 
           </div>
         )}
-
- 
+}
