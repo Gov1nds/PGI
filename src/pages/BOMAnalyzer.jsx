@@ -3,7 +3,8 @@ import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { Link } from "react-router-dom";
 
-const API_BASE = "https://bom-analyzer-api-production.up.railway.app";
+const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
+
 
 export default function BOMAnalyzer() {
   const [step, setStep] = useState(1);
