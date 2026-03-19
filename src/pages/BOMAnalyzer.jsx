@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 
-// ✅ FIX #1: Correct API endpoint path
+// ✅ USE WORKING API (deployed endpoints are at /api, not /api1)
 const API_BASE = "https://bom-analyzer-api-production.up.railway.app";
 
 // Location data
@@ -54,30 +54,19 @@ const LOCATION_DATA = {
   }
 };
 
-// ✅ FIX #2: Helper function to safely convert errors to strings
 function getErrorMessage(error) {
-  if (typeof error === 'string') {
-    return error;
-  }
-  
-  if (error instanceof Error) {
-    return error.message;
-  }
-  
+  if (typeof error === 'string') return error;
+  if (error instanceof Error) return error.message;
   if (error && typeof error === 'object') {
-    // Try to extract meaningful error info
     if (error.detail) return error.detail;
     if (error.message) return error.message;
     if (error.error) return error.error;
-    
-    // Last resort: stringify the object
     try {
       return JSON.stringify(error);
     } catch (e) {
       return 'An unknown error occurred';
     }
   }
-  
   return 'An error occurred during processing';
 }
 
@@ -92,7 +81,6 @@ export default function BOMAnalyzer() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
 
-  // Debug: Log file state changes
   useEffect(() => {
     console.log("📁 File state changed:", file ? {
       name: file.name,
@@ -101,7 +89,6 @@ export default function BOMAnalyzer() {
     } : "No file");
   }, [file]);
 
-  // Debug: Log step changes
   useEffect(() => {
     console.log("📍 Step changed to:", step);
   }, [step]);
@@ -126,7 +113,6 @@ export default function BOMAnalyzer() {
       type: selectedFile.type
     });
 
-    // Validate file type
     const validExtensions = ['.csv', '.xlsx', '.xls'];
     const fileName = selectedFile.name.toLowerCase();
     const isValid = validExtensions.some(ext => fileName.endsWith(ext));
@@ -138,7 +124,6 @@ export default function BOMAnalyzer() {
       return;
     }
 
-    // Validate file size (max 10MB)
     if (selectedFile.size > 10 * 1024 * 1024) {
       console.error("❌ File too large:", selectedFile.size);
       setError("File too large. Maximum size is 10MB");
@@ -178,14 +163,12 @@ export default function BOMAnalyzer() {
     console.log("🚀 STARTING ANALYSIS");
     console.log("=".repeat(60));
     
-    // PRE-FLIGHT CHECKS
     console.log("📋 Pre-flight checks:");
     console.log("  File:", file ? `${file.name} (${file.size} bytes)` : "❌ NO FILE");
     console.log("  Country:", country || "❌ NOT SET");
     console.log("  State:", stateRegion || "❌ NOT SET");
     console.log("  City:", city || "❌ NOT SET");
 
-    // Validation
     if (!file) {
       console.error("❌ FATAL: No file uploaded");
       setError("No file uploaded. Please go back and select a file.");
@@ -206,43 +189,36 @@ export default function BOMAnalyzer() {
     setError(null);
 
     try {
-      // ========== STEP 1: UPLOAD BOM ==========
-      console.log("\n📤 STEP 1: UPLOADING FILE");
+      // ✅ USE DEPLOYED API - FormData with delivery_location
+      console.log("\n📤 UPLOADING FILE");
       console.log("-".repeat(60));
       
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("delivery_location", `${city}, ${stateRegion}, ${country}`);
 
-      console.log("📦 FormData created");
-      console.log("  File object:", file);
-      console.log("  File in FormData:", formData.get("file"));
-      
-      const uploadUrl = `${API_BASE}/upload-bom`;
+      const uploadUrl = `${API_BASE}/api/upload-bom`;
       console.log("🌐 Upload URL:", uploadUrl);
 
       const uploadRes = await fetch(uploadUrl, {
         method: "POST",
         body: formData
+        // Let browser set Content-Type with boundary
       });
 
       console.log("📥 Upload response received");
       console.log("  Status:", uploadRes.status);
-      console.log("  Status text:", uploadRes.statusText);
-      console.log("  Headers:", Object.fromEntries(uploadRes.headers.entries()));
 
       const uploadText = await uploadRes.text();
-      console.log("📄 Upload response body (first 500 chars):");
-      console.log(uploadText.substring(0, 500));
+      console.log("📄 Response:", uploadText.substring(0, 500));
 
       if (!uploadRes.ok) {
-        console.error("❌ Upload failed with status:", uploadRes.status);
+        console.error("❌ Upload failed:", uploadRes.status);
         let errorMsg = `Upload failed (${uploadRes.status})`;
         try {
           const errorData = JSON.parse(uploadText);
-          console.error("📋 Error details:", errorData);
-          errorMsg = errorData.detail || errorData.message || errorMsg;
+          errorMsg = errorData.detail || errorData.error || errorMsg;
         } catch (e) {
-          console.error("📋 Could not parse error response");
           errorMsg = uploadText.substring(0, 100) || errorMsg;
         }
         throw new Error(errorMsg);
@@ -251,92 +227,51 @@ export default function BOMAnalyzer() {
       let uploadData;
       try {
         uploadData = JSON.parse(uploadText);
-        console.log("✅ Upload response parsed successfully");
-        console.log("📊 Upload data:", uploadData);
+        console.log("✅ Parse successful:", uploadData);
       } catch (e) {
-        console.error("❌ Failed to parse upload response:", e);
+        console.error("❌ Parse failed:", e);
         throw new Error("Server returned invalid response");
       }
 
       if (!uploadData.success) {
-        console.error("❌ Upload marked as failed:", uploadData);
         throw new Error(uploadData.error || "Upload failed");
       }
 
-      if (!uploadData.components || uploadData.components.length === 0) {
-        console.error("❌ No components in upload response");
-        throw new Error("No valid components found in BOM file");
-      }
+      console.log(`✅ Upload successful: ${uploadData.total_parts} parts found`);
 
-      console.log(`✅ Upload successful: ${uploadData.components.length} components found`);
-
-      // ========== STEP 2: ANALYZE BOM ==========
-      console.log("\n🔬 STEP 2: ANALYZING BOM");
-      console.log("-".repeat(60));
-
-      const analyzePayload = {
-        components: uploadData.components,
-        user_context: {
-          country: country,
-          priority: "BALANCED",
-          delivery_location: city
-        }
+      // Convert simple API response to analysis format
+      const parts = uploadData.parts || [];
+      
+      const analysisData = {
+        success: true,
+        summary: {
+          total_components: uploadData.total_parts || 0,
+          successful_components: uploadData.total_parts || 0,
+          failed_components: 0,
+          total_cost_usd: 0, // Not available in simple API
+          critical_path_days: 0, // Not available in simple API
+          total_suppliers: 0,
+          unique_regions: Object.keys(uploadData.categories || {}).length,
+          regional_breakdown: uploadData.categories || {}
+        },
+        components: parts.map((part, idx) => ({
+          component_id: `part_${idx}`,
+          component_name: part.part_name || part.name || "Unknown",
+          quantity: part.quantity || 0,
+          selected_strategy: {
+            strategy_id: "simple_parse",
+            unit_cost_usd: 0,
+            total_cost_usd: 0,
+            lead_time_days: 0,
+            manufacturing_region: part.category || "Not classified",
+            supplier_id: "TBD",
+            confidence: "PARSED",
+            process: part.process || "Unknown"
+          }
+        }))
       };
 
-      console.log("📊 Analysis payload:", JSON.stringify(analyzePayload, null, 2));
-
-      const analyzeUrl = `${API_BASE}/analyze-bom`;
-      console.log("🌐 Analysis URL:", analyzeUrl);
-
-      const analyzeRes = await fetch(analyzeUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(analyzePayload)
-      });
-
-      console.log("📥 Analysis response received");
-      console.log("  Status:", analyzeRes.status);
-      console.log("  Status text:", analyzeRes.statusText);
-
-      const analyzeText = await analyzeRes.text();
-      console.log("📄 Analysis response body (first 500 chars):");
-      console.log(analyzeText.substring(0, 500));
-
-      if (!analyzeRes.ok) {
-        console.error("❌ Analysis failed with status:", analyzeRes.status);
-        let errorMsg = `Analysis failed (${analyzeRes.status})`;
-        try {
-          const errorData = JSON.parse(analyzeText);
-          console.error("📋 Error details:", errorData);
-          errorMsg = errorData.detail || errorData.error || errorMsg;
-        } catch (e) {
-          console.error("📋 Could not parse error response");
-          errorMsg = analyzeText.substring(0, 100) || errorMsg;
-        }
-        throw new Error(errorMsg);
-      }
-
-      let result;
-      try {
-        result = JSON.parse(analyzeText);
-        console.log("✅ Analysis response parsed successfully");
-        console.log("📊 Analysis result:", result);
-      } catch (e) {
-        console.error("❌ Failed to parse analysis response:", e);
-        throw new Error("Server returned invalid analysis response");
-      }
-
-      if (!result.success) {
-        console.error("❌ Analysis marked as failed:", result);
-        throw new Error(result.error || "Analysis failed");
-      }
-
-      console.log("✅ ANALYSIS COMPLETE");
-      console.log("=".repeat(60));
-
-      setAnalysisResult(result);
+      setAnalysisResult(analysisData);
       setIsProcessing(false);
       setStep(4);
 
@@ -344,24 +279,12 @@ export default function BOMAnalyzer() {
       console.error("\n❌ ERROR OCCURRED");
       console.error("=".repeat(60));
       console.error("Error:", err);
-      console.error("Error type:", typeof err);
-      console.error("Error message:", err.message);
-      console.error("Error stack:", err.stack);
       console.error("=".repeat(60));
       
-      // ✅ FIX #3: Use helper function to safely extract error message
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       setIsProcessing(false);
-      
-      // Go back to appropriate step
-      if (errorMessage.includes("Upload") || errorMessage.includes("file")) {
-        console.log("↩️ Returning to step 1 (file upload)");
-        setStep(1);
-      } else {
-        console.log("↩️ Returning to step 2 (location)");
-        setStep(2);
-      }
+      setStep(2);
     }
   };
 
@@ -513,7 +436,6 @@ export default function BOMAnalyzer() {
             <div className="rounded-3xl bg-white/5 border border-white/10 p-8 space-y-6">
               <h2 className="text-2xl text-white mb-4 font-semibold">Delivery Location</h2>
               
-              {/* Country Dropdown */}
               <div>
                 <label className="block text-white/60 text-sm mb-2 font-medium">
                   Country <span className="text-red-400">*</span>
@@ -535,7 +457,6 @@ export default function BOMAnalyzer() {
                 </select>
               </div>
 
-              {/* State Dropdown */}
               <div>
                 <label className="block text-white/60 text-sm mb-2 font-medium">
                   State/Region <span className="text-red-400">*</span>
@@ -561,7 +482,6 @@ export default function BOMAnalyzer() {
                 </select>
               </div>
 
-              {/* City Dropdown */}
               <div>
                 <label className="block text-white/60 text-sm mb-2 font-medium">
                   City <span className="text-red-400">*</span>
@@ -587,7 +507,6 @@ export default function BOMAnalyzer() {
                 </select>
               </div>
 
-              {/* Selected Location Summary */}
               {country && stateRegion && city && (
                 <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
                   <p className="text-emerald-400 text-sm font-medium">
@@ -659,11 +578,18 @@ export default function BOMAnalyzer() {
         {step === 5 && analysisResult && (
           <div className="space-y-8">
             
+            {/* Notice Banner */}
+            <div className="rounded-xl bg-blue-500/10 border border-blue-500/30 p-4">
+              <p className="text-blue-300 text-sm">
+                ℹ️ <strong>Note:</strong> Using basic parsing mode. Cost and lead time analysis will be available when the advanced API is deployed.
+              </p>
+            </div>
+
             {/* Summary Card */}
             <div className="rounded-3xl bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-white/10 p-8">
               <h2 className="text-3xl font-bold text-white mb-6">BOM Analysis Report</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-black/40 rounded-xl p-6 border border-white/5">
                   <p className="text-white/50 text-sm mb-1">Total Components</p>
                   <p className="text-4xl font-bold text-white">
@@ -672,20 +598,9 @@ export default function BOMAnalyzer() {
                 </div>
 
                 <div className="bg-black/40 rounded-xl p-6 border border-white/5">
-                  <p className="text-white/50 text-sm mb-1">Total Cost</p>
-                  <p className="text-4xl font-bold text-emerald-400">
-                    ${Number(analysisResult.summary?.total_cost_usd || 0).toLocaleString('en-US', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    })}
-                  </p>
-                </div>
-
-                <div className="bg-black/40 rounded-xl p-6 border border-white/5">
-                  <p className="text-white/50 text-sm mb-1">Lead Time</p>
+                  <p className="text-white/50 text-sm mb-1">Categories</p>
                   <p className="text-4xl font-bold text-white">
-                    {analysisResult.summary?.critical_path_days || 0}
-                    <span className="text-xl text-white/60 ml-1">days</span>
+                    {analysisResult.summary?.unique_regions || 0}
                   </p>
                 </div>
               </div>
@@ -713,29 +628,23 @@ export default function BOMAnalyzer() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                         <div>
-                          <p className="text-white/50 mb-1">Unit Cost</p>
-                          <p className="text-lg font-semibold text-emerald-400">
-                            ${Number(comp.selected_strategy?.unit_cost_usd || 0).toFixed(2)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-white/50 mb-1">Total Cost</p>
-                          <p className="text-lg font-semibold text-white">
-                            ${Number(comp.selected_strategy?.total_cost_usd || 0).toFixed(2)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-white/50 mb-1">Lead Time</p>
-                          <p className="text-lg font-semibold text-white">
-                            {comp.selected_strategy?.lead_time_days || 0} days
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-white/50 mb-1">Region</p>
+                          <p className="text-white/50 mb-1">Category</p>
                           <p className="text-lg font-semibold text-white">
                             {comp.selected_strategy?.manufacturing_region || "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-white/50 mb-1">Process</p>
+                          <p className="text-lg font-semibold text-white">
+                            {comp.selected_strategy?.process || "Unknown"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-white/50 mb-1">Status</p>
+                          <p className="text-lg font-semibold text-emerald-400">
+                            {comp.selected_strategy?.confidence || "Parsed"}
                           </p>
                         </div>
                       </div>
