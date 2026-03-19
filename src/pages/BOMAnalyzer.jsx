@@ -3,8 +3,7 @@ import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { Link } from "react-router-dom";
 
-const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
-
+const API_BASE = "https://bom-analyzer-api-production.up.railway.app";
 
 export default function BOMAnalyzer() {
   const [step, setStep] = useState(1);
@@ -46,7 +45,8 @@ export default function BOMAnalyzer() {
       formData.append("file", file);
 
       console.log("Uploading BOM...");
-      const uploadRes = await fetch(`${API_BASE}/upload-bom`, {
+      const uploadRes = await fetch(`${API_BASE}/api/upload-bom`
+`${API_BASE}/api/analyze-bom`, {
         method: "POST",
         body: formData
       });
