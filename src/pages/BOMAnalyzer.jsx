@@ -3,8 +3,7 @@ import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 
 // ✅ FIX: Change /api to /api1
-const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
-
+const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api";
 // Location data
 const LOCATION_DATA = {
   India: {
