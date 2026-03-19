@@ -134,27 +134,30 @@ export default function BOMAnalyzer() {
         )}
 
         {/* STEP 1: File Upload */}
-        {step === 1 && (
-          <div className="max-w-2xl mx-auto space-y-6">
-            <div className="rounded-3xl bg-white/5 p-8">
-              <h2 className="text-2xl text-white mb-4">Upload BOM File</h2>
-              <input 
-                type="file" 
-                accept=".csv"
-                onChange={handleFileUpload}
-                className="block w-full text-white/75 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-emerald-500 file:text-white hover:file:bg-emerald-600"
-              />
-              {file && (
-                <p className="mt-2 text-emerald-400 text-sm">
-                  Selected: {file.name}
-                </p>
-              )}
-            </div>
-            <PrimaryButton onClick={proceedToLocation}>
-              Analyze BOM
-            </PrimaryButton>
-          </div>
-        )}
+{step === 1 && (
+  <div className="max-w-2xl mx-auto space-y-6">
+    <div className="rounded-3xl bg-white/5 p-8">
+      <h2 className="text-2xl text-white mb-4">Upload BOM File</h2>
+      <p className="text-white/60 text-sm mb-4">
+        Accepted formats: CSV (.csv), Excel (.xlsx, .xls)
+      </p>
+      <input 
+        type="file" 
+        accept=".csv,.xlsx,.xls"
+        onChange={handleFileUpload}
+        className="block w-full text-white/75 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-emerald-500 file:text-white hover:file:bg-emerald-600 cursor-pointer"
+      />
+      {file && (
+        <p className="mt-2 text-emerald-400 text-sm">
+          ✓ Selected: {file.name}
+        </p>
+      )}
+    </div>
+    <PrimaryButton onClick={proceedToLocation}>
+      Analyze BOM
+    </PrimaryButton>
+  </div>
+)}
 
         {/* STEP 2: Location Input */}
         {step === 2 && (
