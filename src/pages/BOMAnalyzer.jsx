@@ -3,7 +3,7 @@ import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 
 // ✅ FIX #1: Correct API endpoint path
-const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api";
+const API_BASE = "https://bom-analyzer-api-production.up.railway.app/api1";
 
 // Location data
 const LOCATION_DATA = {
