@@ -25,29 +25,19 @@ const LOCATION_DATA = {
     Texas: ["Houston", "Dallas", "Austin", "San Antonio", "Fort Worth"],
     "New York": ["New York City", "Buffalo", "Rochester", "Albany", "Syracuse"],
     Florida: ["Miami", "Orlando", "Tampa", "Jacksonville", "Fort Lauderdale"],
-    Illinois: ["Chicago", "Aurora", "Naperville", "Rockford", "Joliet"],
-    Pennsylvania: ["Philadelphia", "Pittsburgh", "Allentown", "Erie", "Reading"],
-    Ohio: ["Columbus", "Cleveland", "Cincinnati", "Toledo", "Akron"],
-    Georgia: ["Atlanta", "Augusta", "Columbus", "Savannah", "Athens"],
-    "North Carolina": ["Charlotte", "Raleigh", "Greensboro", "Durham", "Winston-Salem"],
-    Michigan: ["Detroit", "Grand Rapids", "Warren", "Sterling Heights", "Ann Arbor"]
+    Illinois: ["Chicago", "Aurora", "Naperville", "Rockford", "Joliet"]
   },
   China: {
     Guangdong: ["Shenzhen", "Guangzhou", "Dongguan", "Foshan", "Zhongshan"],
     Shanghai: ["Shanghai"],
     Beijing: ["Beijing"],
     Jiangsu: ["Suzhou", "Nanjing", "Wuxi", "Changzhou", "Nantong"],
-    Zhejiang: ["Hangzhou", "Ningbo", "Wenzhou", "Jiaxing", "Shaoxing"],
-    Shandong: ["Qingdao", "Jinan", "Yantai", "Weifang", "Zibo"],
-    Sichuan: ["Chengdu", "Mianyang", "Deyang", "Nanchong"],
-    Liaoning: ["Shenyang", "Dalian", "Anshan", "Fushun"]
+    Zhejiang: ["Hangzhou", "Ningbo", "Wenzhou", "Jiaxing", "Shaoxing"]
   },
   Germany: {
     Bavaria: ["Munich", "Nuremberg", "Augsburg", "Regensburg", "Ingolstadt"],
     "North Rhine-Westphalia": ["Cologne", "Dusseldorf", "Dortmund", "Essen", "Duisburg"],
     "Baden-Wurttemberg": ["Stuttgart", "Mannheim", "Karlsruhe", "Freiburg", "Heidelberg"],
-    "Lower Saxony": ["Hanover", "Brunswick", "Osnabruck", "Oldenburg"],
-    Hesse: ["Frankfurt", "Wiesbaden", "Kassel", "Darmstadt"],
     Berlin: ["Berlin"],
     Hamburg: ["Hamburg"]
   },
@@ -55,26 +45,19 @@ const LOCATION_DATA = {
     "Nuevo Leon": ["Monterrey", "Guadalupe", "San Nicolas de los Garza", "Apodaca"],
     Jalisco: ["Guadalajara", "Zapopan", "Tlaquepaque", "Tonala"],
     "Mexico City": ["Mexico City"],
-    Guanajuato: ["Leon", "Irapuato", "Celaya", "Salamanca"],
-    Chihuahua: ["Chihuahua", "Juarez"],
-    Baja_California: ["Tijuana", "Mexicali", "Ensenada"],
-    Queretaro: ["Santiago de Queretaro", "San Juan del Rio"]
+    Guanajuato: ["Leon", "Irapuato", "Celaya", "Salamanca"]
   },
   Vietnam: {
     "Ho Chi Minh": ["Ho Chi Minh City"],
     Hanoi: ["Hanoi"],
     "Da Nang": ["Da Nang"],
-    "Binh Duong": ["Thu Dau Mot", "Di An", "Thuan An"],
-    "Dong Nai": ["Bien Hoa", "Long Khanh"],
-    "Bac Ninh": ["Bac Ninh"],
-    "Hai Phong": ["Hai Phong"]
+    "Binh Duong": ["Thu Dau Mot", "Di An", "Thuan An"]
   },
   Canada: {
     Ontario: ["Toronto", "Ottawa", "Mississauga", "Brampton", "Hamilton"],
     Quebec: ["Montreal", "Quebec City", "Laval", "Gatineau"],
     "British Columbia": ["Vancouver", "Surrey", "Burnaby", "Richmond", "Victoria"],
-    Alberta: ["Calgary", "Edmonton", "Red Deer", "Lethbridge"],
-    Manitoba: ["Winnipeg", "Brandon", "Steinbach"]
+    Alberta: ["Calgary", "Edmonton", "Red Deer", "Lethbridge"]
   }
 };
 
@@ -98,32 +81,65 @@ export default function BOMAnalyzer() {
     : [];
 
   const handleFileUpload = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    
+    if (!selectedFile) {
+      setError("No file selected");
+      return;
+    }
+
+    // Validate file type
+    const validExtensions = ['.csv', '.xlsx', '.xls'];
+    const fileName = selectedFile.name.toLowerCase();
+    const isValid = validExtensions.some(ext => fileName.endsWith(ext));
+
+    if (!isValid) {
+      setError("Invalid file type. Please upload CSV or Excel files (.csv, .xlsx, .xls)");
+      setFile(null);
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setError("File too large. Maximum size is 10MB");
+      setFile(null);
+      return;
+    }
+
+    setFile(selectedFile);
     setError(null);
   };
 
   const handleCountryChange = (e) => {
     setCountry(e.target.value);
-    setStateRegion(""); // Reset state when country changes
-    setCity(""); // Reset city when country changes
+    setStateRegion("");
+    setCity("");
   };
 
   const handleStateChange = (e) => {
     setStateRegion(e.target.value);
-    setCity(""); // Reset city when state changes
+    setCity("");
   };
 
   const proceedToLocation = () => {
-    if (file) {
-      setStep(2);
-    } else {
+    if (!file) {
       setError("Please upload a BOM file first");
+      return;
     }
+    setError(null);
+    setStep(2);
   };
 
   const startProcessing = async () => {
-    if (!country || !stateRegion || !city || !file) {
-      setError("Please fill in all location fields");
+    // Validation
+    if (!file) {
+      setError("No file uploaded");
+      setStep(1);
+      return;
+    }
+
+    if (!country || !stateRegion || !city) {
+      setError("Please select all location fields");
       return;
     }
 
@@ -136,25 +152,26 @@ export default function BOMAnalyzer() {
       const formData = new FormData();
       formData.append("file", file);
 
-      console.log("Uploading to:", `${API_BASE}/upload-bom`);
+      console.log("📤 Uploading file:", file.name);
+      console.log("📍 Location:", `${city}, ${stateRegion}, ${country}`);
 
       const uploadRes = await fetch(`${API_BASE}/upload-bom`, {
         method: "POST",
         body: formData
       });
 
-      console.log("Upload response status:", uploadRes.status);
+      console.log("📥 Upload status:", uploadRes.status);
 
       const uploadText = await uploadRes.text();
-      console.log("Upload response:", uploadText);
+      console.log("📄 Upload response:", uploadText.substring(0, 200));
 
       if (!uploadRes.ok) {
-        let errorMsg = `Upload failed: ${uploadRes.status}`;
+        let errorMsg = `Upload failed (${uploadRes.status})`;
         try {
           const errorData = JSON.parse(uploadText);
           errorMsg = errorData.detail || errorData.message || errorMsg;
         } catch (e) {
-          errorMsg = uploadText || errorMsg;
+          errorMsg = uploadText.substring(0, 100) || errorMsg;
         }
         throw new Error(errorMsg);
       }
@@ -163,41 +180,56 @@ export default function BOMAnalyzer() {
       try {
         uploadData = JSON.parse(uploadText);
       } catch (e) {
-        throw new Error("Invalid response from server");
+        console.error("❌ Failed to parse upload response:", e);
+        throw new Error("Server returned invalid response");
       }
 
-      if (!uploadData.success || !uploadData.components || uploadData.components.length === 0) {
-        throw new Error(uploadData.error || "No valid components found in BOM file");
+      console.log("✅ Upload successful:", uploadData);
+
+      if (!uploadData.success) {
+        throw new Error(uploadData.error || "Upload failed");
       }
+
+      if (!uploadData.components || uploadData.components.length === 0) {
+        throw new Error("No valid components found in BOM file. Please check the file format.");
+      }
+
+      console.log(`📦 Found ${uploadData.components.length} components`);
 
       // Step 2: Analyze BOM
-      console.log("Analyzing BOM...");
+      console.log("🔬 Starting analysis...");
+
+      const analyzePayload = {
+        components: uploadData.components,
+        user_context: {
+          country: country,
+          priority: "BALANCED",
+          delivery_location: city
+        }
+      };
+
+      console.log("📊 Analysis payload:", JSON.stringify(analyzePayload, null, 2));
 
       const analyzeRes = await fetch(`${API_BASE}/analyze-bom`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          components: uploadData.components,
-          user_context: {
-            country: country,
-            priority: "BALANCED",
-            delivery_location: city
-          }
-        })
+        body: JSON.stringify(analyzePayload)
       });
 
+      console.log("📥 Analysis status:", analyzeRes.status);
+
       const analyzeText = await analyzeRes.text();
-      console.log("Analyze response:", analyzeText);
+      console.log("📄 Analysis response:", analyzeText.substring(0, 200));
 
       if (!analyzeRes.ok) {
-        let errorMsg = `Analysis failed: ${analyzeRes.status}`;
+        let errorMsg = `Analysis failed (${analyzeRes.status})`;
         try {
           const errorData = JSON.parse(analyzeText);
           errorMsg = errorData.detail || errorData.error || errorMsg;
         } catch (e) {
-          errorMsg = analyzeText || errorMsg;
+          errorMsg = analyzeText.substring(0, 100) || errorMsg;
         }
         throw new Error(errorMsg);
       }
@@ -206,8 +238,11 @@ export default function BOMAnalyzer() {
       try {
         result = JSON.parse(analyzeText);
       } catch (e) {
-        throw new Error("Invalid analysis response");
+        console.error("❌ Failed to parse analysis response:", e);
+        throw new Error("Server returned invalid analysis response");
       }
+
+      console.log("✅ Analysis complete:", result);
 
       if (!result.success) {
         throw new Error(result.error || "Analysis failed");
@@ -218,19 +253,45 @@ export default function BOMAnalyzer() {
       setStep(4);
 
     } catch (err) {
-      console.error("Error:", err);
-      setError(err.message || "An error occurred");
+      console.error("❌ Error:", err);
+      setError(err.message || "An error occurred during processing");
       setIsProcessing(false);
-      setStep(2);
+      
+      // Go back to appropriate step based on error
+      if (err.message.includes("Upload")) {
+        setStep(1);
+      } else {
+        setStep(2);
+      }
     }
   };
 
   const handleEmailSubmit = () => {
-    if (email) {
-      setStep(5);
-    } else {
+    if (!email) {
       setError("Please enter your email address");
+      return;
     }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    setError(null);
+    setStep(5);
+  };
+
+  const resetForm = () => {
+    setStep(1);
+    setFile(null);
+    setAnalysisResult(null);
+    setError(null);
+    setCountry("");
+    setStateRegion("");
+    setCity("");
+    setEmail("");
   };
 
   return (
@@ -252,42 +313,99 @@ export default function BOMAnalyzer() {
 
         {/* Error Display */}
         {error && (
-          <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-            ⚠️ {error}
+          <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <div className="flex items-start gap-3">
+              <span className="text-red-400 text-xl">⚠️</span>
+              <div className="flex-1">
+                <p className="text-red-400 font-medium">Error</p>
+                <p className="text-red-300 text-sm mt-1">{error}</p>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* Progress Indicator */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="flex items-center justify-between">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <div key={s} className="flex items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
+                  step >= s 
+                    ? 'bg-emerald-500 text-white' 
+                    : 'bg-white/10 text-white/40'
+                }`}>
+                  {s}
+                </div>
+                {s < 5 && (
+                  <div className={`w-12 md:w-20 h-0.5 transition-all ${
+                    step > s ? 'bg-emerald-500' : 'bg-white/10'
+                  }`} />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between mt-2 text-xs text-white/50">
+            <span>Upload</span>
+            <span>Location</span>
+            <span>Process</span>
+            <span>Email</span>
+            <span>Results</span>
+          </div>
+        </div>
 
         {/* STEP 1: File Upload */}
         {step === 1 && (
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="rounded-3xl bg-white/5 border border-white/10 p-8">
               <h2 className="text-2xl text-white mb-4 font-semibold">Upload BOM File</h2>
-              <p className="text-white/60 text-sm mb-4">
-                Accepted formats: CSV (.csv), Excel (.xlsx, .xls)
+              <p className="text-white/60 text-sm mb-6">
+                Accepted formats: CSV (.csv), Excel (.xlsx, .xls) • Max size: 10MB
               </p>
-              <input 
-                type="file" 
-                accept=".csv,.xlsx,.xls"
-                onChange={handleFileUpload}
-                className="block w-full text-white/75 
-                  file:mr-4 file:py-2 file:px-4 file:rounded 
-                  file:border-0 file:bg-emerald-500 file:text-white 
-                  hover:file:bg-emerald-600 cursor-pointer
-                  file:cursor-pointer file:font-semibold"
-              />
+              
+              <div className="relative">
+                <input 
+                  type="file" 
+                  accept=".csv,.xlsx,.xls"
+                  onChange={handleFileUpload}
+                  className="block w-full text-white/75 
+                    file:mr-4 file:py-3 file:px-6 file:rounded-lg 
+                    file:border-0 file:bg-emerald-500 file:text-white file:font-semibold
+                    hover:file:bg-emerald-600 cursor-pointer
+                    file:cursor-pointer file:transition-all"
+                />
+              </div>
+
               {file && (
-                <p className="mt-3 text-emerald-400 text-sm font-medium">
-                  ✓ Selected: {file.name} ({(file.size / 1024).toFixed(2)} KB)
-                </p>
+                <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">📄</span>
+                    <div className="flex-1">
+                      <p className="text-emerald-400 font-medium">{file.name}</p>
+                      <p className="text-emerald-300/60 text-sm">
+                        {(file.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setFile(null)}
+                      className="text-white/50 hover:text-white transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
-            <PrimaryButton onClick={proceedToLocation}>
+            
+            <PrimaryButton 
+              onClick={proceedToLocation}
+              disabled={!file}
+            >
               Continue to Location
             </PrimaryButton>
           </div>
         )}
 
-        {/* STEP 2: Location Selection with Dropdowns */}
+        {/* STEP 2: Location Selection */}
         {step === 2 && (
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="rounded-3xl bg-white/5 border border-white/10 p-8 space-y-6">
@@ -377,12 +495,20 @@ export default function BOMAnalyzer() {
               )}
             </div>
             
-            <PrimaryButton 
-              onClick={startProcessing}
-              disabled={!country || !stateRegion || !city}
-            >
-              Start Analysis
-            </PrimaryButton>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setStep(1)}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-semibold transition-all"
+              >
+                ← Back
+              </button>
+              <PrimaryButton 
+                onClick={startProcessing}
+                disabled={!country || !stateRegion || !city}
+              >
+                Start Analysis
+              </PrimaryButton>
+            </div>
           </div>
         )}
 
@@ -390,8 +516,11 @@ export default function BOMAnalyzer() {
         {step === 3 && (
           <div className="text-center py-16">
             <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-emerald-500 border-t-transparent"></div>
-            <p className="mt-6 text-white/75 text-lg">Analyzing your BOM...</p>
-            <p className="mt-2 text-white/50 text-sm">This may take a few moments</p>
+            <p className="mt-6 text-white text-lg font-medium">Analyzing your BOM...</p>
+            <p className="mt-2 text-white/50 text-sm">
+              {city}, {stateRegion}, {country}
+            </p>
+            <p className="mt-1 text-white/40 text-xs">This may take a few moments</p>
           </div>
         )}
 
@@ -400,11 +529,11 @@ export default function BOMAnalyzer() {
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="rounded-3xl bg-white/5 border border-white/10 p-8">
               <div className="text-center mb-6">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/20 mb-4">
-                  <span className="text-3xl">✓</span>
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500/20 mb-4">
+                  <span className="text-4xl">✓</span>
                 </div>
-                <h2 className="text-2xl text-white font-semibold">Analysis Complete!</h2>
-                <p className="text-white/60 mt-2">
+                <h2 className="text-3xl text-white font-bold">Analysis Complete!</h2>
+                <p className="text-white/60 mt-3">
                   Enter your email to receive the detailed report
                 </p>
               </div>
@@ -419,7 +548,7 @@ export default function BOMAnalyzer() {
             </div>
             
             <PrimaryButton onClick={handleEmailSubmit}>
-              View Results
+              View Results →
             </PrimaryButton>
           </div>
         )}
@@ -519,17 +648,8 @@ export default function BOMAnalyzer() {
             {/* Actions */}
             <div className="flex gap-4 justify-center">
               <button 
-                onClick={() => {
-                  setStep(1);
-                  setFile(null);
-                  setAnalysisResult(null);
-                  setError(null);
-                  setCountry("");
-                  setStateRegion("");
-                  setCity("");
-                  setEmail("");
-                }}
-                className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-semibold transition-all"
+                onClick={resetForm}
+                className="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-white font-semibold transition-all shadow-lg shadow-emerald-500/20"
               >
                 Analyze Another BOM
               </button>
