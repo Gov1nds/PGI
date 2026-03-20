@@ -1,96 +1,260 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function FloatingActions() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleBomClick = () => {
+    navigate("/bom-analyzer");
+  };
+
+  const handleContactClick = () => {
+    if (location.pathname === "/") {
+      const el = document.getElementById("content");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      // Navigate to contact page directly for reliability
+      navigate("/contact");
+    } else {
+      navigate("/contact");
+    }
+  };
+
   return (
     <>
       <style>{`
-        @keyframes fa-float {
-          0% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-          100% { transform: translateY(0); }
-        }
-        @keyframes fa-pulse {
-          0% { transform: scale(1); opacity: 0.5; }
-          70% { transform: scale(1.8); opacity: 0; }
-          100% { transform: scale(1.8); opacity: 0; }
-        }
-        .fa-button {
-          display: inline-grid;
-          place-items: center;
-          height: 52px;
-          width: 52px;
-          border-radius: 9999px;
-          position: relative;
+        /* ========= FLOATING ACTIONS CONTAINER ========= */
+        .fab-container {
+          position: fixed;
           z-index: 50;
-          transition: transform .2s ease, box-shadow .2s ease;
-          -webkit-tap-highlight-color: transparent;
         }
-        .fa-button:hover { transform: scale(1.05); }
-        .fa-button:focus-visible { box-shadow: 0 0 0 3px rgba(14,165,233,0.2); }
+
+        /* ========= DESKTOP: vertical stack, right side ========= */
         @media (min-width: 768px) {
-          .fa-float-anim { animation: fa-float 3.5s ease-in-out infinite; }
+          .fab-container {
+            right: 20px;
+            bottom: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+          }
         }
-        @media (prefers-reduced-motion: reduce) {
-          .fa-float-anim { animation: none; }
-          .fa-pulse-ring { animation: none; }
+
+        /* ========= MOBILE: bottom bar ========= */
+        @media (max-width: 767px) {
+          .fab-container {
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: row;
+            padding: 10px 12px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            gap: 8px;
+          }
+          .fab-container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10,15,26,0.0) 0%, rgba(10,15,26,0.92) 30%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 14px 14px 0 0;
+            z-index: -1;
+            pointer-events: none;
+          }
         }
-        .fa-pulse-ring {
-          position: absolute;
-          inset: 0;
-          border-radius: 9999px;
-          background: rgba(14,165,233,0.15);
-          filter: blur(8px);
-          z-index: -1;
-          animation: fa-pulse 2.4s cubic-bezier(.4,0,.2,1) infinite;
+
+        /* ========= INDIVIDUAL FAB WRAPPER ========= */
+        .fab-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 0;
         }
-        .fa-tooltip {
-          position: absolute;
-          right: 64px;
-          top: 50%;
-          transform: translateY(-50%) translateX(4px);
-          background: rgba(10,15,26,0.9);
+
+        /* Desktop: row layout with label on left */
+        @media (min-width: 768px) {
+          .fab-wrap {
+            flex-direction: row-reverse;
+          }
+        }
+
+        /* Mobile: full width */
+        @media (max-width: 767px) {
+          .fab-wrap {
+            flex: 1;
+          }
+        }
+
+        /* ========= FAB BUTTON ========= */
+        .fab-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          cursor: pointer;
+          position: relative;
+          -webkit-tap-highlight-color: transparent;
+          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                      box-shadow 0.2s ease;
+        }
+
+        /* Desktop: circle icon */
+        @media (min-width: 768px) {
+          .fab-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            flex-shrink: 0;
+          }
+          .fab-btn:hover {
+            transform: scale(1.08);
+          }
+          .fab-btn:active {
+            transform: scale(0.97);
+          }
+        }
+
+        /* Mobile: full-width pill with label */
+        @media (max-width: 767px) {
+          .fab-btn {
+            width: 100%;
+            height: 44px;
+            border-radius: 12px;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+          }
+        }
+
+        /* ---- BOM Analyzer button ---- */
+        .fab-bom {
+          background: linear-gradient(135deg, #0284c7, #0369a1);
           color: #fff;
-          padding: 5px 10px;
-          border-radius: 6px;
-          font-size: 11px;
+          box-shadow: 0 6px 20px rgba(2,132,199,0.25),
+                      inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .fab-bom:hover {
+          box-shadow: 0 10px 28px rgba(2,132,199,0.35),
+                      inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        /* ---- Contact button ---- */
+        .fab-contact {
+          background: rgba(255,255,255,0.06);
+          color: rgba(255,255,255,0.85);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.12),
+                      inset 0 1px 0 rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+        }
+        .fab-contact:hover {
+          background: rgba(255,255,255,0.1);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.16),
+                      inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        /* ========= DESKTOP LABEL (hover tooltip) ========= */
+        .fab-label {
+          position: absolute;
+          right: calc(100% + 10px);
+          top: 50%;
+          transform: translateY(-50%) translateX(6px);
+          white-space: nowrap;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+          padding: 6px 12px;
+          border-radius: 8px;
           opacity: 0;
           pointer-events: none;
-          transition: opacity .15s ease, transform .15s ease;
-          white-space: nowrap;
-          border: 1px solid rgba(255,255,255,0.06);
+          transition: opacity 0.2s ease, transform 0.2s ease;
         }
-        .fa-wrap:hover .fa-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
+        .fab-wrap:hover .fab-label,
+        .fab-wrap:focus-within .fab-label {
+          opacity: 1;
+          transform: translateY(-50%) translateX(0);
+        }
+
+        .fab-label-bom {
+          background: rgba(2,132,199,0.15);
+          color: #38bdf8;
+          border: 1px solid rgba(56,189,248,0.15);
+          box-shadow: 0 4px 12px rgba(2,132,199,0.1);
+        }
+        .fab-label-contact {
+          background: rgba(255,255,255,0.06);
+          color: rgba(255,255,255,0.7);
+          border: 1px solid rgba(255,255,255,0.08);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Hide desktop labels on mobile */
+        @media (max-width: 767px) {
+          .fab-label {
+            display: none;
+          }
+        }
+
+        /* Hide mobile text on desktop */
+        .fab-mobile-text {
+          display: none;
+        }
+        @media (max-width: 767px) {
+          .fab-mobile-text {
+            display: inline;
+          }
+        }
+
+        /* ========= FOCUS VISIBLE ========= */
+        .fab-btn:focus-visible {
+          outline: 2px solid rgba(56,189,248,0.4);
+          outline-offset: 3px;
+        }
+
+        /* ========= REDUCED MOTION ========= */
+        @media (prefers-reduced-motion: reduce) {
+          .fab-btn { transition: none; }
+          .fab-label { transition: none; }
+        }
       `}</style>
 
-      {/* Desktop floating buttons */}
-      <div className="hidden md:flex fixed right-5 bottom-8 z-50 flex-col items-end gap-2.5">
-        <div className="fa-wrap relative group">
-          <a href="https://wa.me/918921983250" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="fa-button fa-float-anim" style={{ background: "linear-gradient(135deg,#10B981,#059669)", color: "white", boxShadow: "0 8px 24px rgba(16,185,129,0.2)" }}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M20.5 3.5A11.9 11.9 0 0012 .5 11.9 11.9 0 003.5 9.2c0 2.1.6 4.1 1.7 5.9L3 22l7-1.9c1.7 1 3.6 1.5 5.5 1.5 6.6 0 12-5.4 12-12 0-1.6-.3-3.1-.8-4.5zM12 20.3c-1.6 0-3.2-.4-4.6-1.2l-.3-.2-4.1 1.1 1.1-4.1-.2-.3A8.9 8.9 0 013.7 9.2 8.8 8.8 0 1112 20.3z" /><path d="M16.2 13.9c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.2-.5.1s-.5.6-.6.7c-.1.1-.2.1-.4 0-.4-.2-1.3-.8-2.1-1.6-.6-.6-1-1.2-1.2-1.6-.1-.3 0-.5.2-.7.2-.2.4-.4.6-.6.2-.2.3-.4.4-.6.1-.2.1-.4 0-.6-.1-.2-.3-1.2-.5-1.6-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.8.4-.3.3-1 .9-1 2.2 0 1.3.8 2.4.9 2.6.1.2 1.4 2.2 3.3 3.1.5.2.9.3 1.2.4.5.1 1 .1 1.4.1.4 0 1.1-.3 1.4-.9.3-.6.3-1.1.2-1.3-.1-.1-.1-.2-.3-.3z" /></svg>
-          </a>
-          <div className="fa-tooltip">WhatsApp</div>
+      <div className="fab-container">
+        {/* BOM Analyzer */}
+        <div className="fab-wrap">
+          <button
+            onClick={handleBomClick}
+            className="fab-btn fab-bom"
+            aria-label="Open BOM Analyzer"
+            title="BOM Analyzer"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="12" y1="18" x2="12" y2="12" />
+              <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+            <span className="fab-mobile-text">BOM Analyzer</span>
+          </button>
+          <span className="fab-label fab-label-bom">BOM Analyzer</span>
         </div>
 
-        <div className="fa-wrap relative group">
-          <div aria-hidden className="fa-pulse-ring" style={{ width: 52, height: 52 }} />
-          <a href="tel:+918921983250" className="fa-button fa-float-anim" aria-label="Call now" style={{ background: "linear-gradient(135deg,#0284c7,#0369a1)", color: "white", boxShadow: "0 12px 32px rgba(14,165,233,0.2)" }}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M3 5a2 2 0 012-2h2.2a1 1 0 01.97.76l.6 2.4a1 1 0 01-.27.98L7.9 8.1a16 16 0 006 6l.95-.6a1 1 0 01.98-.27l2.4.6a1 1 0 01.76.97V19a2 2 0 01-2 2h-1C8.8 21 3 15.2 3 8V5z" /></svg>
-          </a>
-          <div className="fa-tooltip">Call now</div>
-        </div>
-      </div>
-
-      {/* Mobile bottom bar */}
-      <div className="md:hidden fixed left-0 right-0 bottom-0 z-50 px-3 pb-safe">
-        <div className="flex gap-2.5 p-2.5 mx-auto max-w-lg rounded-t-xl bg-[rgba(10,15,26,0.9)] backdrop-blur-xl border border-white/[0.06] border-b-0">
-          <a href="tel:+918921983250" aria-label="Call now" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg flex-1 justify-center text-white text-sm font-semibold" style={{ background: "linear-gradient(135deg,#0284c7,#0369a1)" }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M3 5a2 2 0 012-2h2.2a1 1 0 01.97.76l.6 2.4a1 1 0 01-.27.98L7.9 8.1a16 16 0 006 6l.95-.6a1 1 0 01.98-.27l2.4.6a1 1 0 01.76.97V19a2 2 0 01-2 2h-1C8.8 21 3 15.2 3 8V5z" /></svg>
-            Call
-          </a>
-          <a href="https://wa.me/918921983250" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg flex-1 justify-center text-sm font-semibold bg-white/5 text-white/80 ring-1 ring-white/10">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11.9 11.9 0 0012 .5 11.9 11.9 0 003.5 9.2c0 2.1.6 4.1 1.7 5.9L3 22l7-1.9c1.7 1 3.6 1.5 5.5 1.5 6.6 0 12-5.4 12-12 0-1.6-.3-3.1-.8-4.5zM12 20.3c-1.6 0-3.2-.4-4.6-1.2l-.3-.2-4.1 1.1 1.1-4.1-.2-.3A8.9 8.9 0 013.7 9.2 8.8 8.8 0 1112 20.3z" /><path d="M16.2 13.9c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.2-.5.1s-.5.6-.6.7c-.1.1-.2.1-.4 0-.4-.2-1.3-.8-2.1-1.6-.6-.6-1-1.2-1.2-1.6-.1-.3 0-.5.2-.7.2-.2.4-.4.6-.6.2-.2.3-.4.4-.6.1-.2.1-.4 0-.6-.1-.2-.3-1.2-.5-1.6-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.8.4-.3.3-1 .9-1 2.2 0 1.3.8 2.4.9 2.6.1.2 1.4 2.2 3.3 3.1.5.2.9.3 1.2.4.5.1 1 .1 1.4.1.4 0 1.1-.3 1.4-.9.3-.6.3-1.1.2-1.3-.1-.1-.1-.2-.3-.3z" /></svg>
-            WhatsApp
-          </a>
+        {/* Contact */}
+        <div className="fab-wrap">
+          <button
+            onClick={handleContactClick}
+            className="fab-btn fab-contact"
+            aria-label="Contact us"
+            title="Contact"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+            <span className="fab-mobile-text">Contact</span>
+          </button>
+          <span className="fab-label fab-label-contact">Contact</span>
         </div>
       </div>
     </>
