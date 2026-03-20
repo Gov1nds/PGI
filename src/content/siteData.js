@@ -3,7 +3,7 @@ SITE INFORMATION
 ====================================================== */
 
 export const site = {
-  name: "PGI",
+  name: "PGI Hub",
   tagline:
     "Manufacturing Operating Partner for Hardware Startups, Robotics, EV & Industrial Products",
   description:
@@ -22,12 +22,12 @@ NAVIGATION
 export const navLinks = [
   { label: "Home", to: "/" },
   { label: "BOM Analyzer", to: "/bom-analyzer" },
-  { label: "Services", to: "/services" },
-  { label: "Capabilities", to: "/capabilities" },
+  { label: "Manufacturing Network", to: "/capabilities" },
   { label: "Insights", to: "/insights" },
   { label: "News", to: "/news" },
-  { label: "Pricing", to: "/pricing" },
   { label: "About", to: "/about" },
+  { label: "Services", to: "/services" },
+  { label: "Plans", to: "/pricing" },
   { label: "Contact", to: "/contact" }
 ];
 
@@ -339,31 +339,31 @@ export const processSteps = [
     number: "01",
     title: "Engineering Review",
     desc: "CAD analysis, DFM assessment, tolerance review, and material selection optimization.",
-    color: "emerald"
+    color: "cyan"
   },
   {
     number: "02",
     title: "Sourcing & Procurement",
     desc: "Component sourcing, vendor identification, price negotiation, and supply chain planning.",
-    color: "emerald"
+    color: "cyan"
   },
   {
     number: "03",
     title: "Manufacturing",
     desc: "Production execution across our network of qualified facilities with real-time tracking.",
-    color: "emerald"
+    color: "cyan"
   },
   {
     number: "04",
     title: "Quality Verification",
     desc: "Inspection, testing, documentation, and compliance verification before shipment.",
-    color: "emerald"
+    color: "cyan"
   },
   {
     number: "05",
     title: "Global Logistics",
     desc: "Secure packaging, export documentation, and worldwide delivery coordination.",
-    color: "emerald"
+    color: "cyan"
   }
 ];
 

@@ -3,12 +3,20 @@ import Container from "../components/Container.jsx";
 
 export default function NotFound() {
   return (
-    <Container className="py-14">
-      <h1 className="text-3xl font-semibold">Page not found</h1>
-      <p className="mt-3 text-sm text-white/70">The page you are looking for doesn’t exist.</p>
-      <Link to="/" className="mt-6 inline-flex text-sm font-semibold text-[rgba(var(--brand-500))]">
-        ← Go to home
-      </Link>
-    </Container>
+    <section className="min-h-[60vh] flex items-center justify-center">
+      <Container className="text-center py-20">
+        <div className="text-7xl font-bold text-sky-500/15 mb-4 font-mono">404</div>
+        <h1 className="text-2xl font-semibold text-white mb-3">Page not found</h1>
+        <p className="text-sm text-white/75 mb-8 max-w-md mx-auto">
+          The page you're looking for doesn't exist or has been moved.
+        </p>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 btn-primary rounded-xl px-6 py-3 text-sm font-semibold text-white"
+        >
+          ← Back to Home
+        </Link>
+      </Container>
+    </section>
   );
 }

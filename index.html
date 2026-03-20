@@ -3,45 +3,89 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G1HBVKDDNG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1HBVKDDNG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-G1HBVKDDNG');
+    </script>
 
-  gtag('config', 'G-G1HBVKDDNG');
-</script>
     <!-- Primary SEO -->
-    <title>PGI | Manufacturing Network</title>
-    <meta
-      name="description"
-      content=" PGI provides procurement and logistics coordination services including BOQ structuring, vendor follow-ups, dispatch planning, transport arrangement, shipment tracking, and documentation support with customs coordination through trusted partners."
-    />
-    <meta name="keywords" content="Procurement services, Logistics coordination, Vendor follow-ups, BOQ management, Shipment tracking, Dispatch planning, Supply chain coordination, India logistics support" />
-    <meta name="author" content="PGI" />
-
-    <!-- Favicon -->
+    <title>PGI Hub - Global Manufacturing Network</title>
+    <meta name="description" content="PGI Hub is a global manufacturing intelligence platform. Analyze your BOM instantly, access 300+ manufacturing partners, and scale hardware production with engineering-led coordination." />
+    <meta name="keywords" content="BOM analyzer, bill of materials, manufacturing network, electronics sourcing, PCB assembly, CNC machining, supply chain intelligence, hardware startup manufacturing, cost optimization, DFM review, pgihub" />
+    <meta name="author" content="PGI Hub" />
+    <link rel="canonical" href="https://pgihub.com" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Open Graph (WhatsApp, LinkedIn, Facebook) -->
-    <meta property="og:title" content="PGI | Procurement & Logistics Coordination" />
-    <meta property="og:description" content="Structured procurement and logistics coordination - from BOQ to delivery. Vendor follow-ups, dispatch planning, shipment tracking, and documentation support including customs coordination through partners." />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="PGI Hub - Global Manufacturing Network & BOM Analyzer" />
+    <meta property="og:description" content="Analyze your Bill of Materials instantly. Access 300+ manufacturing partners worldwide. Engineering-led coordination for hardware startups, robotics, EV & industrial products." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://yourdomain.com" />
-    <meta property="og:image" content="https://yourdomain.com/images/og-preview.jpg" />
+    <meta property="og:url" content="https://pgihub.com" />
+    <meta property="og:image" content="https://pgihub.com/images/og-preview.jpg" />
+    <meta property="og:site_name" content="PGI Hub" />
 
-    <!-- Twitter Preview -->
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="PGI | Procurement & Logistics Coordination" />
-    <meta name="twitter:description" content="Procurement and logistics coordination services: BOQ structuring, vendor follow-ups, dispatch planning, shipment tracking, and customs documentation support via partners." />
-    <meta name="twitter:image" content="https://yourdomain.com/images/og-preview.jpg" />
+    <meta name="twitter:title" content="PGI Hub — BOM Analyzer & Manufacturing Network" />
+    <meta name="twitter:description" content="Upload your BOM for instant cost analysis, sourcing strategy, and manufacturing intelligence." />
+    <meta name="twitter:image" content="https://pgihub.com/images/og-preview.jpg" />
 
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#0a0f1a" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "PGI Hub",
+      "url": "https://pgihub.com",
+      "description": "Global manufacturing intelligence platform with BOM analysis, electronics sourcing, and production coordination.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-8921983250",
+        "contactType": "engineering",
+        "email": "info@pgihub.com"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PGI BOM Analyzer",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "Upload your Bill of Materials for instant manufacturing cost analysis, sourcing strategy, and supplier recommendations.",
+      "url": "https://pgihub.com/bom-analyzer",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "PGI Hub",
+      "url": "https://pgihub.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://pgihub.com/insights?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   </head>
 
-  <body class="bg-[rgb(var(--bg-950))] text-[rgb(var(--text))]">
+  <body class="bg-[rgb(var(--bg-950))] text-[rgb(var(--text))] antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

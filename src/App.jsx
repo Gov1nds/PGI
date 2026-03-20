@@ -3,13 +3,13 @@ import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import FloatingActions from "./components/FloatingActions.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
-import Pricing from "./pages/Pricing.jsx";
+import ConsultPopup from "./components/ConsultPopup.jsx";
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
 import Capabilities from "./pages/capabilities.jsx";
-import BOMAnalyzer from "./pages/BOMAnalyzer.jsx";  // ✅ ADD THIS LINE
-
+import BOMAnalyzer from "./pages/BOMAnalyzer.jsx";
+import Pricing from "./pages/Pricing.jsx";
 import Insights from "./pages/Insights.jsx";
 import InsightDetail from "./pages/InsightDetail.jsx";
 import News from "./pages/News.jsx";
@@ -17,7 +17,6 @@ import NewsDetail from "./pages/NewsDetail.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
-import ConsultPopup from "./components/ConsultPopup.jsx";
 
 export default function App() {
   return (
@@ -38,7 +37,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/capabilities" element={<Capabilities />} />
-          <Route path="/bom-analyzer" element={<BOMAnalyzer />} />  {/* ✅ ADD THIS LINE */}
+          <Route path="/bom-analyzer" element={<BOMAnalyzer />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/insights/:slug" element={<InsightDetail />} />

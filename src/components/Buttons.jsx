@@ -9,14 +9,12 @@ export function PrimaryButton({
   type = "button"
 }) {
   const baseStyle = `
-    inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold
-    text-white bg-[rgba(var(--brand-700))]
-    shadow-[0_12px_30px_rgba(22,163,74,0.25)]
-    hover:bg-[rgba(var(--brand-600))] transition
+    inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold
+    text-white btn-primary
+    disabled:opacity-50 disabled:cursor-not-allowed
     ${className}
-  `;
+  `.trim();
 
-  // 👉 If navigation link
   if (to) {
     return (
       <Link to={to} className={baseStyle}>
@@ -25,7 +23,6 @@ export function PrimaryButton({
     );
   }
 
-  // 👉 If button (CLICK ACTION)
   return (
     <button
       type={type}
@@ -38,16 +35,26 @@ export function PrimaryButton({
   );
 }
 
-export function SecondaryButton({ to, children }) {
+export function SecondaryButton({ to, children, className = "" }) {
+  const baseStyle = `
+    inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold
+    text-white/90 bg-white/5 backdrop-blur-sm
+    ring-1 ring-white/10
+    hover:bg-white/10 hover:ring-white/20 transition-all duration-300
+    ${className}
+  `.trim();
+
+  if (to) {
+    return (
+      <Link to={to} className={baseStyle}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <Link
-      to={to}
-      className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold
-                 text-slate-900 bg-white/70 backdrop-blur
-                 ring-1 ring-black/10
-                 hover:bg-white/90 hover:ring-black/20 transition"
-    >
+    <button className={baseStyle}>
       {children}
-    </Link>
+    </button>
   );
 }
