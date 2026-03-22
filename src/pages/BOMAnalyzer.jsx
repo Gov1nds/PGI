@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
+import { uploadBOM, unlockBOM } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 
-const API_BASE = "https://bom-intelligence-engine-production.up.railway.app";
+/* ── Constants ──────────────────────────────────────────── */
 
 const CURRENCIES = ["USD", "EUR", "INR", "CNY", "JPY", "GBP", "KRW", "MXN", "THB", "VND"];
 
@@ -86,6 +88,11 @@ const riskColor = (s) => {
   if (s >= 0.4) return "text-amber-400";
   return "text-emerald-400";
 };
+const riskBg = (level) => {
+  if (level === "HIGH") return "bg-red-500/15 text-red-400 border-red-500/20";
+  if (level === "LOW") return "bg-emerald-500/15 text-emerald-400 border-emerald-500/20";
+  return "bg-amber-500/15 text-amber-400 border-amber-500/20";
+};
 
 /* ── Animated counter ────────────────────────────────────── */
 function AnimNum({ value, prefix = "", suffix = "", duration = 900 }) {
@@ -108,24 +115,38 @@ function AnimNum({ value, prefix = "", suffix = "", duration = 900 }) {
 }
 
 /* ══════════════════════════════════════════════════════════ */
+/*  MAIN COMPONENT                                           */
+/* ══════════════════════════════════════════════════════════ */
 
 export default function BOMAnalyzer() {
+  const { user } = useAuth();
+
+  /* ── State ─────────────────────────────────────────── */
   const [step, setStep] = useState(1);
   const [file, setFile] = useState(null);
   const [country, setCountry] = useState("");
   const [stateRegion, setStateRegion] = useState("");
   const [city, setCity] = useState("");
   const [currency, setCurrency] = useState("USD");
-  const [email, setEmail] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState("");
-  const [report, setReport] = useState(null);
   const [error, setError] = useState(null);
+
+  // Full report state (authenticated users)
+  const [report, setReport] = useState(null);
+  const [strategy, setStrategy] = useState(null);
+
+  // Preview state (guest users)
+  const [previewData, setPreviewData] = useState(null);
+  const [bomId, setBomId] = useState(null);
+  const [sessionToken, setSessionToken] = useState(null);
+
+  // UI state
   const [expandedItem, setExpandedItem] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
 
-  const states = country ? Object.keys(LOCATION_DATA[country] || {}) : [];
-  const cities = country && stateRegion ? (LOCATION_DATA[country]?.[stateRegion] || []) : [];
+  const states_list = country ? Object.keys(LOCATION_DATA[country] || {}) : [];
+  const cities_list = country && stateRegion ? (LOCATION_DATA[country]?.[stateRegion] || []) : [];
 
   /* ── File handler ────────────────────────────────────── */
   const handleFile = (e) => {
@@ -141,7 +162,7 @@ export default function BOMAnalyzer() {
     setFile(f); setError(null);
   };
 
-  /* ── API call ────────────────────────────────────────── */
+  /* ── API call — goes to Platform API, NOT BOM analyzer ─ */
   const startAnalysis = async () => {
     if (!file) { setError("Upload a BOM file first"); setStep(1); return; }
     if (!country || !stateRegion || !city) { setError("Complete the location fields"); return; }
@@ -150,30 +171,28 @@ export default function BOMAnalyzer() {
     setProgress("Uploading BOM file...");
 
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("user_location", `${city}, ${stateRegion}, ${country}`);
-      fd.append("target_currency", currency);
-
+      const location = `${city}, ${stateRegion}, ${country}`;
       setProgress("Running intelligence pipeline...");
 
-      const res = await fetch(`${API_BASE}/api/analyze-bom`, { method: "POST", body: fd });
-
-      if (!res.ok) {
-        const txt = await res.text();
-        let msg = `Server error (${res.status})`;
-        try { msg = JSON.parse(txt).detail || msg; } catch {}
-        throw new Error(msg);
-      }
+      const data = await uploadBOM(file, location, currency);
 
       setProgress("Building report...");
-      const data = await res.json();
+      setBomId(data.bom_id);
 
-      if (!data.section_1_executive_summary) throw new Error("Invalid response from engine");
-
-      setReport(data);
-      setIsProcessing(false);
-      setStep(4);
+      if (data.preview?.is_preview) {
+        // ── Guest user: show limited preview ──
+        setPreviewData(data.preview);
+        setSessionToken(data.session_token);
+        setIsProcessing(false);
+        setStep(4); // preview step
+      } else {
+        // ── Authenticated user: show full report ──
+        const fullData = data.preview;
+        setReport(fullData.analyzer_report);
+        setStrategy(fullData.strategy);
+        setIsProcessing(false);
+        setStep(5); // full report step
+      }
     } catch (err) {
       setError(err.message || "Analysis failed");
       setIsProcessing(false);
@@ -181,20 +200,29 @@ export default function BOMAnalyzer() {
     }
   };
 
-  const handleEmail = () => {
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Enter a valid email"); return;
+  /* ── Unlock full report (guest → registers → unlocks) ── */
+  const handleUnlock = async () => {
+    if (!bomId) return;
+    try {
+      const data = await unlockBOM(bomId, sessionToken);
+      // data.full_report has the analyzer output, data.strategy has strategy
+      setReport(data.full_report?.analyzer || data.full_report || {});
+      setStrategy(data.strategy || {});
+      setPreviewData(null);
+      setStep(5);
+    } catch (err) {
+      setError(err.message || "Unlock failed — please login first");
     }
-    setError(null); setStep(5);
   };
 
   const reset = () => {
-    setStep(1); setFile(null); setReport(null); setError(null);
-    setCountry(""); setStateRegion(""); setCity(""); setEmail("");
+    setStep(1); setFile(null); setReport(null); setStrategy(null);
+    setPreviewData(null); setBomId(null); setSessionToken(null);
+    setError(null); setCountry(""); setStateRegion(""); setCity("");
     setExpandedItem(null); setActiveTab("overview");
   };
 
-  /* ── Derived data ────────────────────────────────────── */
+  /* ── Derived data (from full report) ─────────────────── */
   const s1 = report?.section_1_executive_summary || {};
   const s2 = report?.section_2_component_breakdown || [];
   const s3 = report?.section_3_sourcing_strategy || {};
@@ -209,14 +237,17 @@ export default function BOMAnalyzer() {
   /* ── Shared styles ───────────────────────────────────── */
   const card = "rounded-2xl bg-[#0d1117] border border-white/[0.06] overflow-hidden";
   const cardInner = "p-6 sm:p-8";
-  const glass = "backdrop-blur-xl bg-white/[0.02] border border-white/[0.06] rounded-2xl";
   const selectCls = `w-full px-4 py-3 bg-[#161b22] border border-white/[0.08] rounded-xl text-white/90 
     focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50
     appearance-none cursor-pointer transition-all text-sm
     bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.4)%22 stroke-width=%222%22%3e%3cpolyline points=%226 9 12 15 18 9%22/%3e%3c/svg%3e')]
     bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10`;
 
-  const stepNames = ["Upload", "Location", "Analyze", "Email", "Report"];
+  /* ── Step names adapt to auth state ──────────────────── */
+  const isGuest = !user;
+  const stepNames = isGuest
+    ? ["Upload", "Location", "Analyze", "Preview", "Report"]
+    : ["Upload", "Location", "Analyze", "—", "Report"];
 
   return (
     <div className="min-h-screen bg-[#010409]">
@@ -246,33 +277,33 @@ export default function BOMAnalyzer() {
         {error && (
           <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-500/[0.06] border border-red-500/20 rounded-xl flex items-start gap-3">
             <span className="text-red-400 text-sm mt-0.5">●</span>
-            <div>
-              <p className="text-red-300 text-sm">{error}</p>
-            </div>
-            <button onClick={() => setError(null)} className="ml-auto text-white/50 hover:text-white/60 text-sm">✕</button>
+            <p className="text-red-300 text-sm flex-1">{error}</p>
+            <button onClick={() => setError(null)} className="text-white/50 hover:text-white/60 text-sm">✕</button>
           </div>
         )}
 
         {/* ── Progress steps ───────────────────────────── */}
-        <div className="max-w-2xl mx-auto mb-10">
-          <div className="flex items-center justify-between">
-            {stepNames.map((name, i) => {
-              const s = i + 1;
-              const active = step >= s;
-              return (
-                <React.Fragment key={s}>
-                  <div className="flex flex-col items-center gap-1.5">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
-                      active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25" : "bg-white/[0.04] text-white/50 border border-white/[0.06]"
-                    }`}>{step > s ? "✓" : s}</div>
-                    <span className={`text-[10px] transition-colors ${active ? "text-white/60" : "text-white/20"}`}>{name}</span>
-                  </div>
-                  {s < 5 && <div className={`flex-1 h-px mx-2 mt-[-12px] transition-colors duration-500 ${step > s ? "bg-emerald-500/40" : "bg-white/[0.06]"}`} />}
-                </React.Fragment>
-              );
-            })}
+        {step < 5 && (
+          <div className="max-w-2xl mx-auto mb-10">
+            <div className="flex items-center justify-between">
+              {stepNames.filter((_, i) => !(isGuest ? false : i === 3)).map((name, i) => {
+                const s = i + 1;
+                const active = step >= s;
+                return (
+                  <React.Fragment key={s}>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
+                        active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25" : "bg-white/[0.04] text-white/50 border border-white/[0.06]"
+                      }`}>{step > s ? "✓" : s}</div>
+                      <span className={`text-[10px] transition-colors ${active ? "text-white/60" : "text-white/20"}`}>{name}</span>
+                    </div>
+                    {s < stepNames.length && <div className={`flex-1 h-px mx-2 mt-[-12px] transition-colors duration-500 ${step > s ? "bg-emerald-500/40" : "bg-white/[0.06]"}`} />}
+                  </React.Fragment>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ════════════════════════════════════════════════ */}
         {/* STEP 1 — File Upload                            */}
@@ -330,14 +361,14 @@ export default function BOMAnalyzer() {
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">State / Region</label>
                     <select value={stateRegion} onChange={(e) => { setStateRegion(e.target.value); setCity(""); }} disabled={!country} className={selectCls + " disabled:opacity-40"}>
                       <option value="" className="bg-[#161b22]">{country ? "Select" : "—"}</option>
-                      {states.map((s) => <option key={s} value={s} className="bg-[#161b22]">{s}</option>)}
+                      {states_list.map((s) => <option key={s} value={s} className="bg-[#161b22]">{s}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">City</label>
                     <select value={city} onChange={(e) => setCity(e.target.value)} disabled={!stateRegion} className={selectCls + " disabled:opacity-40"}>
                       <option value="" className="bg-[#161b22]">{stateRegion ? "Select" : "—"}</option>
-                      {cities.map((c) => <option key={c} value={c} className="bg-[#161b22]">{c}</option>)}
+                      {cities_list.map((c) => <option key={c} value={c} className="bg-[#161b22]">{c}</option>)}
                     </select>
                   </div>
                 </div>
@@ -385,32 +416,183 @@ export default function BOMAnalyzer() {
         )}
 
         {/* ════════════════════════════════════════════════ */}
-        {/* STEP 4 — Email                                  */}
+        {/* STEP 4 — Guest Preview (limited data + CTA)     */}
         {/* ════════════════════════════════════════════════ */}
-        {step === 4 && (
-          <div className="max-w-md mx-auto space-y-5 animate-[fadeIn_0.3s_ease]">
-            <div className={card}>
-              <div className={cardInner + " text-center"}>
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+        {step === 4 && previewData && (
+          <div className="max-w-3xl mx-auto space-y-6 animate-[fadeIn_0.5s_ease]">
+
+            {/* Success header */}
+            <div className="text-center mb-2">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                <svg className="w-7 h-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+              </div>
+              <h2 className="text-2xl text-white font-bold">Analysis Complete</h2>
+              <p className="text-white/50 text-sm mt-1">{previewData.total_parts} parts analyzed</p>
+            </div>
+
+            {/* Preview KPI cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className={card}>
+                <div className="p-5">
+                  <p className="text-white/40 text-xs font-medium mb-2">Estimated Cost Range</p>
+                  <p className="text-xl text-white font-bold tracking-tight">
+                    {currency} {fmt(previewData.cost_range?.min)} — {fmt(previewData.cost_range?.max)}
+                  </p>
+                  {previewData.total_cost && (
+                    <p className="text-emerald-400 text-xs mt-1.5">Best estimate: {currency} {fmt(previewData.total_cost)}</p>
+                  )}
                 </div>
-                <h2 className="text-2xl text-white font-bold">Analysis Complete</h2>
-                <p className="text-white/70 text-sm mt-2 mb-6">
-                  {meta.items} items · {meta.candidates} candidates · {meta.total_time_s}s
-                </p>
-                <input type="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-[#161b22] border border-white/[0.08] rounded-xl text-white placeholder-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-sm" />
+              </div>
+              <div className={card}>
+                <div className="p-5">
+                  <p className="text-white/40 text-xs font-medium mb-2">Lead Time</p>
+                  <p className="text-xl text-white font-bold tracking-tight">
+                    {previewData.lead_time?.min_days || "—"}–{previewData.lead_time?.max_days || "—"} days
+                  </p>
+                  <p className="text-white/50 text-xs mt-1.5">Expected: {previewData.lead_time?.expected_days || "—"} days</p>
+                </div>
+              </div>
+              <div className={card}>
+                <div className="p-5">
+                  <p className="text-white/40 text-xs font-medium mb-2">Risk Level</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={`inline-flex px-2.5 py-1 rounded-lg text-sm font-bold border ${riskBg(previewData.risk_level)}`}>
+                      {previewData.risk_level || "MEDIUM"}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-            <PrimaryButton onClick={handleEmail}>View Report →</PrimaryButton>
+
+            {/* What's included preview */}
+            {previewData.basic_processes?.length > 0 && (
+              <div className={card}>
+                <div className="p-5">
+                  <p className="text-white/40 text-xs font-medium mb-3">Key Insights</p>
+                  <div className="space-y-2">
+                    {previewData.basic_processes.map((reason, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className="text-emerald-400 text-xs mt-0.5">▸</span>
+                        <p className="text-white/70 text-sm">{reason}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Region distribution preview */}
+            {previewData.region_distribution && Object.keys(previewData.region_distribution).length > 0 && (
+              <div className={card}>
+                <div className="p-5">
+                  <p className="text-white/40 text-xs font-medium mb-3">Sourcing Regions</p>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(previewData.region_distribution).map(([region, count]) => (
+                      <span key={region} className="px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-xs text-white/70">
+                        {region} <span className="text-white/40">({count})</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Blurred teaser of hidden data */}
+            <div className="relative">
+              <div className={card + " opacity-40 blur-[2px] pointer-events-none select-none"}>
+                <div className="p-5 space-y-2">
+                  <p className="text-white/60 text-xs font-medium">Component Breakdown</p>
+                  {[1,2,3].map(i => (
+                    <div key={i} className="flex justify-between p-3 bg-white/[0.02] rounded-lg">
+                      <span className="text-white/50 text-sm">████████████ ██████</span>
+                      <span className="text-white/50 text-sm font-mono">███.██</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.06] rounded-full border border-white/[0.1]">
+                  <svg className="w-3.5 h-3.5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                  <span className="text-white/60 text-xs font-medium">Locked — Full breakdown available after sign up</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Unlock CTA ─────────────────────────────── */}
+            <div className="relative rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 via-blue-600/20 to-violet-600/20" />
+              <div className="absolute inset-0 bg-[#0d1117]/80" />
+              <div className="relative p-8 sm:p-10 text-center">
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Unlock Full Analysis
+                </h3>
+                <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">
+                  Get the complete BOM breakdown, cost optimization insights,
+                  procurement plan, and component-level sourcing decisions.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  {user ? (
+                    <button onClick={handleUnlock}
+                      className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-600/25">
+                      Unlock Full Report
+                    </button>
+                  ) : (
+                    <>
+                      <a href="/register"
+                        className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-600/25 inline-block">
+                        Create Free Account
+                      </a>
+                      <a href="/login" className="text-white/50 hover:text-white/70 text-sm transition-colors">
+                        Already have an account? Login
+                      </a>
+                    </>
+                  )}
+                </div>
+                <div className="flex items-center justify-center gap-6 mt-6 text-[11px] text-white/30">
+                  <span>✓ Full component breakdown</span>
+                  <span>✓ Cost optimization</span>
+                  <span>✓ Procurement plan</span>
+                  <span>✓ Saved project</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Reset */}
+            <div className="flex justify-center">
+              <button onClick={reset} className="px-5 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/60 text-sm font-medium transition-all">
+                ← Analyze Another BOM
+              </button>
+            </div>
           </div>
         )}
 
         {/* ════════════════════════════════════════════════ */}
-        {/* STEP 5 — Full Report                            */}
+        {/* STEP 5 — Full Report (authenticated users)      */}
         {/* ════════════════════════════════════════════════ */}
         {step === 5 && report && (
           <div className="space-y-6 animate-[fadeIn_0.4s_ease]">
+
+            {/* ── Report header with project info ──────── */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+              <div>
+                <h2 className="text-2xl font-bold text-white">Analysis Report</h2>
+                <p className="text-white/50 text-sm mt-1">
+                  {meta.items} items · {meta.candidates} candidates · {meta.total_time_s}s
+                  {bomId && <span className="text-white/30 ml-2">ID: {bomId.slice(0, 8)}</span>}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                {bomId && user && (
+                  <a href={`/project/${bomId}`}
+                    className="px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/20 rounded-lg text-emerald-400 text-xs font-medium transition-all">
+                    View Project →
+                  </a>
+                )}
+                <button onClick={reset} className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-white/60 text-xs font-medium transition-all">
+                  New Analysis
+                </button>
+              </div>
+            </div>
 
             {/* ── Tabs ─────────────────────────────────── */}
             <div className="flex gap-1 p-1 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit">
@@ -476,7 +658,7 @@ export default function BOMAnalyzer() {
                   </div>
                 </div>
 
-                {/* Decision distribution */}
+                {/* Decision distribution + recommendation */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className={card}>
                     <div className="p-5">
@@ -508,6 +690,15 @@ export default function BOMAnalyzer() {
             {/* ── TAB: Components ──────────────────────── */}
             {activeTab === "components" && (
               <div className="space-y-3">
+                {/* Component count badge */}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-white/40 text-xs">{s2.length} components</span>
+                  <span className="text-white/20">·</span>
+                  <span className="text-emerald-400/60 text-xs">{s2.filter(i => i.category === "standard").length} standard</span>
+                  <span className="text-violet-400/60 text-xs">{s2.filter(i => i.category === "custom").length} custom</span>
+                  <span className="text-amber-400/60 text-xs">{s2.filter(i => i.category === "raw_material").length} raw material</span>
+                </div>
+
                 {s2.map((item, i) => {
                   const v = item.selected_vendor || {};
                   const tlcB = v.tlc_breakdown || {};
@@ -532,7 +723,7 @@ export default function BOMAnalyzer() {
                           <p className="text-white font-mono text-sm">{currency} {fmt(v.simulated_tlc)}</p>
                           <p className={`text-xs font-medium ${modeColor(item.decision_mode)}`}>{modeLabel(item.decision_mode)}</p>
                         </div>
-                        <span className={`text-white/20 text-xs transition-transform ${open ? "rotate-180" : ""}`}>▼</span>
+                        <span className={`text-white/20 text-xs transition-transform duration-200 ${open ? "rotate-180" : ""}`}>▼</span>
                       </button>
 
                       {open && (
@@ -750,7 +941,7 @@ export default function BOMAnalyzer() {
               </div>
             )}
 
-            {/* ── Actions ──────────────────────────────── */}
+            {/* ── Bottom actions ───────────────────────── */}
             <div className="flex justify-center pt-4">
               <button onClick={reset} className="px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/70 text-sm font-medium transition-all">
                 ← Analyze Another BOM

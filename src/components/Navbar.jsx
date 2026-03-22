@@ -1,8 +1,9 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Container from "./Container.jsx";
 import Logo from "./Logo.jsx";
 import { navLinks } from "../content/siteData.js";
+import { useAuth } from "../context/AuthContext";
 
 function NavItem({ to, label, onClick }) {
   return (
@@ -21,8 +22,11 @@ function NavItem({ to, label, onClick }) {
 }
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -30,11 +34,24 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const close = () => setUserMenuOpen(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [userMenuOpen]);
+
+  const handleLogout = () => {
+    logout();
+    setUserMenuOpen(false);
+    navigate("/");
+  };
 
   return (
     <header
@@ -52,9 +69,10 @@ export default function Navbar() {
           {navLinks.filter(l => l.label !== "Contact").map((l) => (
             <NavItem key={l.to} to={l.to} label={l.label} />
           ))}
+          {user && <NavItem to="/dashboard" label="Projects" />}
         </nav>
 
-        {/* Desktop CTA */}
+        {/* Desktop right side */}
         <div className="hidden lg:flex items-center gap-3">
           <Link
             to="/bom-analyzer"
@@ -62,16 +80,70 @@ export default function Navbar() {
           >
             Analyze BOM
           </Link>
+
+          {user ? (
+            /* ── Logged-in: user avatar menu ── */
+            <div className="relative">
+              <button
+                onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition-all"
+              >
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center text-[10px] font-bold text-sky-400">
+                  {(user.full_name || user.email || "U")[0].toUpperCase()}
+                </div>
+                <span className="text-white/70 text-xs font-medium max-w-[100px] truncate">
+                  {user.full_name || user.email?.split("@")[0]}
+                </span>
+                <svg className={`w-3 h-3 text-white/30 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#161b22] border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-white/[0.06]">
+                    <p className="text-white text-xs font-medium truncate">{user.full_name || "User"}</p>
+                    <p className="text-white/40 text-[11px] truncate">{user.email}</p>
+                  </div>
+                  <Link to="/dashboard" onClick={() => setUserMenuOpen(false)}
+                    className="block px-4 py-2.5 text-xs text-white/70 hover:text-white hover:bg-white/[0.04] transition-colors">
+                    My Projects
+                  </Link>
+                  <button onClick={handleLogout}
+                    className="w-full text-left px-4 py-2.5 text-xs text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.05] transition-colors">
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* ── Guest: login / register buttons ── */
+            <>
+              <Link to="/login"
+                className="text-[13px] font-medium text-white/60 hover:text-white transition-colors">
+                Login
+              </Link>
+              <Link to="/register"
+                className="rounded-lg bg-white/[0.06] hover:bg-white/[0.1] px-4 py-2 text-[13px] font-medium text-white/80 border border-white/[0.08] transition-all">
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile actions */}
         <div className="flex items-center gap-3 lg:hidden">
-          <Link
-            to="/bom-analyzer"
-            className="rounded-lg bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-400 ring-1 ring-sky-500/20"
-          >
-            BOM
-          </Link>
+          {user ? (
+            <Link to="/dashboard"
+              className="rounded-lg bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-400 ring-1 ring-sky-500/20">
+              Projects
+            </Link>
+          ) : (
+            <Link to="/login"
+              className="rounded-lg bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-white/70 border border-white/[0.08]">
+              Login
+            </Link>
+          )}
 
           <button
             type="button"
@@ -80,48 +152,25 @@ export default function Navbar() {
             aria-label={open ? "Close menu" : "Open menu"}
           >
             <div className="h-5 w-5 flex flex-col justify-center items-center">
-              <span
-                className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${
-                  open ? "rotate-45 translate-y-[0.5px]" : "-translate-y-1"
-                }`}
-              />
-              <span
-                className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${
-                  open ? "opacity-0 scale-0" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${
-                  open ? "-rotate-45 -translate-y-[0.5px]" : "translate-y-1"
-                }`}
-              />
+              <span className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${open ? "rotate-45 translate-y-[0.5px]" : "-translate-y-1"}`} />
+              <span className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${open ? "opacity-0 scale-0" : "opacity-100"}`} />
+              <span className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${open ? "-rotate-45 -translate-y-[0.5px]" : "translate-y-1"}`} />
             </div>
           </button>
         </div>
       </Container>
 
       {/* Mobile fullscreen menu */}
-      <div
-        className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-40 transition-all duration-300 ${
-          open
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
-        }`}
-      >
+      <div className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-40 transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
         <div className="absolute inset-0 bg-[rgba(10,15,26,0.95)] backdrop-blur-xl" />
         <div className="relative h-full overflow-y-auto">
           <Container className="py-8">
             <div className="flex flex-col gap-1">
               {navLinks.map((l, idx) => (
-                <NavLink
-                  key={l.to}
-                  to={l.to}
-                  onClick={() => setOpen(false)}
+                <NavLink key={l.to} to={l.to} onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
-                      isActive
-                        ? "text-sky-400 bg-sky-500/10"
-                        : "text-white/70 hover:text-white hover:bg-white/5"
+                      isActive ? "text-sky-400 bg-sky-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
                     }`
                   }
                   style={{ animationDelay: `${idx * 40}ms` }}
@@ -129,27 +178,57 @@ export default function Navbar() {
                   {({ isActive }) => (
                     <>
                       <span>{l.label}</span>
-                      <svg className={`w-4 h-4 ${isActive ? 'text-sky-400' : 'text-white/20'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-4 h-4 ${isActive ? "text-sky-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </>
                   )}
                 </NavLink>
               ))}
+
+              {user && (
+                <NavLink to="/dashboard" onClick={() => setOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
+                      isActive ? "text-sky-400 bg-sky-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
+                    }`
+                  }>
+                  {({ isActive }) => (
+                    <>
+                      <span>My Projects</span>
+                      <svg className={`w-4 h-4 ${isActive ? "text-sky-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </>
+                  )}
+                </NavLink>
+              )}
             </div>
 
-            {/* Mobile CTA */}
-            <div className="mt-8 pt-6 border-t border-white/[0.06]">
-              <Link
-                to="/bom-analyzer"
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-xl btn-primary px-5 py-3.5 text-sm font-semibold text-white w-full"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+            {/* Mobile bottom actions */}
+            <div className="mt-8 pt-6 border-t border-white/[0.06] space-y-3">
+              <Link to="/bom-analyzer" onClick={() => setOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-xl btn-primary px-5 py-3.5 text-sm font-semibold text-white w-full">
                 Analyze Your BOM
               </Link>
+
+              {user ? (
+                <button onClick={() => { handleLogout(); setOpen(false); }}
+                  className="w-full rounded-xl px-5 py-3 text-sm font-medium text-red-400/70 hover:text-red-400 bg-red-500/[0.05] border border-red-500/10 transition-all">
+                  Sign Out
+                </button>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <Link to="/login" onClick={() => setOpen(false)}
+                    className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-white/70 bg-white/[0.04] border border-white/[0.08]">
+                    Login
+                  </Link>
+                  <Link to="/register" onClick={() => setOpen(false)}
+                    className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-white bg-white/[0.08] border border-white/[0.1]">
+                    Sign Up
+                  </Link>
+                </div>
+              )}
             </div>
           </Container>
         </div>

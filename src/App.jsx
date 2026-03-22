@@ -18,6 +18,12 @@ import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
+// New pages
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import ProjectDetail from "./pages/ProjectDetail.jsx";
+
 export default function App() {
   return (
     <>
@@ -45,6 +51,15 @@ export default function App() {
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+
+          {/* Auth */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Protected */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/project/:id" element={<ProjectDetail />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
