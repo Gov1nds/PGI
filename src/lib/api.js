@@ -3,7 +3,7 @@
  * All frontend requests go through here. Never call BOM analyzer directly.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8001";
+const API_BASE = "https://platform-api-production-d66b.up.railway.app";
 
 /**
  * Base fetch wrapper — injects auth token, handles 401 redirects.
