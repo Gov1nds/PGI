@@ -416,10 +416,10 @@ export default function BOMAnalyzer() {
         )}
 
         {/* ════════════════════════════════════════════════ */}
-        {/* STEP 4 — Guest Preview (limited data + CTA)     */}
+        {/* STEP 4 — Guest Preview (rich data + CTA)        */}
         {/* ════════════════════════════════════════════════ */}
         {step === 4 && previewData && (
-          <div className="max-w-3xl mx-auto space-y-6 animate-[fadeIn_0.5s_ease]">
+          <div className="max-w-4xl mx-auto space-y-6 animate-[fadeIn_0.5s_ease]">
 
             {/* Success header */}
             <div className="text-center mb-2">
@@ -427,96 +427,168 @@ export default function BOMAnalyzer() {
                 <svg className="w-7 h-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
               </div>
               <h2 className="text-2xl text-white font-bold">Analysis Complete</h2>
-              <p className="text-white/50 text-sm mt-1">{previewData.total_parts} parts analyzed</p>
+              <p className="text-white/50 text-sm mt-1">{previewData.total_parts} parts analyzed across {Object.keys(previewData.categories || {}).filter(k => (previewData.categories||{})[k] > 0).length} categories</p>
             </div>
 
-            {/* Preview KPI cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* KPI cards — 4 columns */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className={card}>
-                <div className="p-5">
-                  <p className="text-white/40 text-xs font-medium mb-2">Estimated Cost Range</p>
-                  <p className="text-xl text-white font-bold tracking-tight">
-                    {currency} {fmt(previewData.cost_range?.min)} — {fmt(previewData.cost_range?.max)}
-                  </p>
-                  {previewData.total_cost && (
-                    <p className="text-emerald-400 text-xs mt-1.5">Best estimate: {currency} {fmt(previewData.total_cost)}</p>
+                <div className="p-4">
+                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Est. Cost</p>
+                  <p className="text-lg text-white font-bold">{currency} {fmt(previewData.total_cost)}</p>
+                  {(previewData.cost_range?.[0] || previewData.cost_range?.min) && (
+                    <p className="text-white/40 text-[10px] mt-1">{currency} {fmt(previewData.cost_range?.[0] || previewData.cost_range?.min)} – {fmt(previewData.cost_range?.[1] || previewData.cost_range?.max)}</p>
                   )}
                 </div>
               </div>
               <div className={card}>
-                <div className="p-5">
-                  <p className="text-white/40 text-xs font-medium mb-2">Lead Time</p>
-                  <p className="text-xl text-white font-bold tracking-tight">
-                    {previewData.lead_time?.min_days || "—"}–{previewData.lead_time?.max_days || "—"} days
-                  </p>
-                  <p className="text-white/50 text-xs mt-1.5">Expected: {previewData.lead_time?.expected_days || "—"} days</p>
+                <div className="p-4">
+                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Lead Time</p>
+                  <p className="text-lg text-white font-bold">{previewData.lead_time?.min_days || previewData.lead_time?.avg_days || "—"}–{previewData.lead_time?.max_days || "—"} <span className="text-sm font-normal text-white/50">days</span></p>
                 </div>
               </div>
               <div className={card}>
-                <div className="p-5">
-                  <p className="text-white/40 text-xs font-medium mb-2">Risk Level</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className={`inline-flex px-2.5 py-1 rounded-lg text-sm font-bold border ${riskBg(previewData.risk_level)}`}>
-                      {previewData.risk_level || "MEDIUM"}
-                    </span>
-                  </div>
+                <div className="p-4">
+                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Savings</p>
+                  <p className="text-lg text-emerald-400 font-bold">{previewData.savings_percent ? `${previewData.savings_percent}%` : "—"}</p>
+                  <p className="text-white/40 text-[10px] mt-1">vs all-local sourcing</p>
+                </div>
+              </div>
+              <div className={card}>
+                <div className="p-4">
+                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Risk</p>
+                  <span className={`inline-flex px-2 py-0.5 rounded text-xs font-bold border ${riskBg(previewData.risk_level)}`}>
+                    {previewData.risk_level || "MEDIUM"}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* What's included preview */}
-            {previewData.basic_processes?.length > 0 && (
-              <div className={card}>
-                <div className="p-5">
-                  <p className="text-white/40 text-xs font-medium mb-3">Key Insights</p>
-                  <div className="space-y-2">
-                    {previewData.basic_processes.map((reason, i) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <span className="text-emerald-400 text-xs mt-0.5">▸</span>
-                        <p className="text-white/70 text-sm">{reason}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            {/* Category breakdown pills */}
+            {previewData.categories && Object.keys(previewData.categories).length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-white/30 text-xs">Categories:</span>
+                {Object.entries(previewData.categories).filter(([,v]) => v > 0).map(([cat, count]) => (
+                  <span key={cat} className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border ${
+                    cat === "standard" ? "bg-blue-500/10 border-blue-500/20 text-blue-400" :
+                    cat === "custom" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" :
+                    cat === "raw_material" ? "bg-purple-500/10 border-purple-500/20 text-purple-400" :
+                    "bg-white/[0.04] border-white/[0.08] text-white/50"
+                  }`}>
+                    {cat.replace("_", " ")} ({count})
+                  </span>
+                ))}
               </div>
             )}
 
-            {/* Region distribution preview */}
-            {previewData.region_distribution && Object.keys(previewData.region_distribution).length > 0 && (
+            {/* ── VISIBLE Component Breakdown (first 3 real items) ── */}
+            {previewData.visible_parts?.length > 0 && (
               <div className={card}>
                 <div className="p-5">
-                  <p className="text-white/40 text-xs font-medium mb-3">Sourcing Regions</p>
-                  <div className="flex flex-wrap gap-2">
-                    {Object.entries(previewData.region_distribution).map(([region, count]) => (
-                      <span key={region} className="px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-xs text-white/70">
-                        {region} <span className="text-white/40">({count})</span>
-                      </span>
-                    ))}
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Component Breakdown</p>
+                    <span className="text-white/30 text-[10px]">{previewData.visible_parts.length} of {previewData.total_parts} shown</span>
                   </div>
-                </div>
-              </div>
-            )}
 
-            {/* Blurred teaser of hidden data */}
-            <div className="relative">
-              <div className={card + " opacity-40 blur-[2px] pointer-events-none select-none"}>
-                <div className="p-5 space-y-2">
-                  <p className="text-white/60 text-xs font-medium">Component Breakdown</p>
-                  {[1,2,3].map(i => (
-                    <div key={i} className="flex justify-between p-3 bg-white/[0.02] rounded-lg">
-                      <span className="text-white/50 text-sm">████████████ ██████</span>
-                      <span className="text-white/50 text-sm font-mono">███.██</span>
+                  {/* Table header */}
+                  <div className="grid grid-cols-12 gap-2 px-3 pb-2 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-wider">
+                    <span className="col-span-4">Part</span>
+                    <span className="col-span-2">Category</span>
+                    <span className="col-span-1 text-right">Qty</span>
+                    <span className="col-span-2">Region</span>
+                    <span className="col-span-1">Process</span>
+                    <span className="col-span-2 text-right">Est. Cost</span>
+                  </div>
+
+                  {/* Visible rows */}
+                  {previewData.visible_parts.map((part, i) => (
+                    <div key={i} className="grid grid-cols-12 gap-2 px-3 py-3 border-b border-white/[0.04] items-center hover:bg-white/[0.02] transition-colors">
+                      <span className="col-span-4 text-white/80 text-sm truncate" title={part.part_name}>{part.part_name}</span>
+                      <span className={`col-span-2 text-[11px] font-medium ${
+                        part.category === "standard" ? "text-blue-400" :
+                        part.category === "custom" ? "text-amber-400" :
+                        part.category === "raw_material" ? "text-purple-400" : "text-white/40"
+                      }`}>{part.category?.replace("_", " ")}</span>
+                      <span className="col-span-1 text-white/50 text-sm text-right font-mono">{part.quantity}</span>
+                      <span className="col-span-2 text-white/50 text-sm">{part.best_region}</span>
+                      <span className="col-span-1 text-white/40 text-[11px]">{part.process}</span>
+                      <span className="col-span-2 text-white font-mono text-sm text-right">{currency} {fmt(part.best_cost)}</span>
                     </div>
                   ))}
+
+                  {/* Locked rows */}
+                  {previewData.locked_parts_count > 0 && (
+                    <div className="relative mt-1">
+                      {[1, 2].map(i => (
+                        <div key={i} className="grid grid-cols-12 gap-2 px-3 py-3 border-b border-white/[0.04] opacity-20 blur-[3px] select-none pointer-events-none">
+                          <span className="col-span-4 text-white/50 text-sm">████████ ██████</span>
+                          <span className="col-span-2 text-white/50 text-[11px]">██████</span>
+                          <span className="col-span-1 text-white/50 text-sm text-right">███</span>
+                          <span className="col-span-2 text-white/50 text-sm">█████</span>
+                          <span className="col-span-1 text-white/50 text-[11px]">███</span>
+                          <span className="col-span-2 text-white/50 text-sm text-right">███.██</span>
+                        </div>
+                      ))}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0d1117]/90 rounded-full border border-white/[0.1]">
+                          <svg className="w-3.5 h-3.5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                          <span className="text-white/60 text-xs font-medium">+{previewData.locked_parts_count} more parts — sign up to unlock</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.06] rounded-full border border-white/[0.1]">
-                  <svg className="w-3.5 h-3.5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                  <span className="text-white/60 text-xs font-medium">Locked — Full breakdown available after sign up</span>
+            )}
+
+            {/* Key insights */}
+            {previewData.basic_processes?.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className={card}>
+                  <div className="p-5">
+                    <p className="text-white/40 text-xs font-medium mb-3 uppercase tracking-wider">Strategy Insights</p>
+                    <div className="space-y-2">
+                      {previewData.basic_processes.map((reason, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="text-emerald-400 text-xs mt-0.5">▸</span>
+                          <p className="text-white/70 text-sm leading-relaxed">{reason}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Region distribution */}
+                {previewData.region_distribution && Object.keys(previewData.region_distribution).length > 0 && (
+                  <div className={card}>
+                    <div className="p-5">
+                      <p className="text-white/40 text-xs font-medium mb-3 uppercase tracking-wider">Sourcing Regions</p>
+                      <div className="space-y-2">
+                        {Object.entries(previewData.region_distribution).sort((a, b) => b[1] - a[1]).map(([region, pct]) => (
+                          <div key={region} className="flex items-center gap-3">
+                            <span className="text-white/70 text-sm w-20 truncate">{region}</span>
+                            <div className="flex-1 bg-white/[0.06] rounded-full h-2 overflow-hidden">
+                              <div className="h-full bg-emerald-500/60 rounded-full" style={{ width: `${Math.min(pct, 100)}%` }} />
+                            </div>
+                            <span className="text-white/40 text-xs font-mono w-10 text-right">{typeof pct === "number" ? pct.toFixed(0) : pct}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Decision summary */}
+            {previewData.decision_summary && (
+              <div className={card}>
+                <div className="p-5">
+                  <p className="text-white/40 text-xs font-medium mb-2 uppercase tracking-wider">AI Recommendation</p>
+                  <p className="text-white/70 text-sm leading-relaxed">{previewData.decision_summary}</p>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* ── Unlock CTA ─────────────────────────────── */}
             <div className="relative rounded-2xl overflow-hidden">
@@ -524,11 +596,11 @@ export default function BOMAnalyzer() {
               <div className="absolute inset-0 bg-[#0d1117]/80" />
               <div className="relative p-8 sm:p-10 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Unlock Full Analysis
+                  Get the Full Report
                 </h3>
                 <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">
-                  Get the complete BOM breakdown, cost optimization insights,
-                  procurement plan, and component-level sourcing decisions.
+                  Unlock detailed per-component sourcing, vendor selection,
+                  procurement plan, and downloadable cost optimization report.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   {user ? (
@@ -548,11 +620,12 @@ export default function BOMAnalyzer() {
                     </>
                   )}
                 </div>
-                <div className="flex items-center justify-center gap-6 mt-6 text-[11px] text-white/30">
-                  <span>✓ Full component breakdown</span>
-                  <span>✓ Cost optimization</span>
+                <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-[11px] text-white/30">
+                  <span>✓ All {previewData.total_parts} components</span>
+                  <span>✓ Vendor selection</span>
                   <span>✓ Procurement plan</span>
-                  <span>✓ Saved project</span>
+                  <span>✓ Cost optimization</span>
+                  <span>✓ RFQ generation</span>
                 </div>
               </div>
             </div>
