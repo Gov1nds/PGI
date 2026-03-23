@@ -1,9 +1,14 @@
 /**
  * PGI HUB — Centralized API Client
  * All frontend requests go through here. Never call BOM analyzer directly.
+ *
+ * API_BASE must be the PUBLIC Railway URL (browser cannot access .railway.internal)
+ * Set via Vercel env var: VITE_API_BASE=https://platform-api-production-d66b.up.railway.app
  */
 
-const API_BASE = "https://platform-api-production-d66b.up.railway.app";
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  "https://platform-api-production-d66b.up.railway.app";
 
 /**
  * Base fetch wrapper — injects auth token, handles 401 redirects.
