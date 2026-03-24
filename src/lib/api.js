@@ -14,11 +14,16 @@ const API_BASE =
  * Base fetch wrapper — injects auth token, handles 401 redirects.
  */
 export async function apiCall(path, options = {}) {
+  const cleanPath = path.trim(); // 🔥 FIX
+
   const token = localStorage.getItem("pgi_token");
   const headers = { ...options.headers };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}${cleanPath}`, {
+    ...options,
+    headers,
+  });
 
   if (res.status === 401) {
     localStorage.removeItem("pgi_token");
@@ -98,15 +103,23 @@ export async function loginUser(email, password) {
 }
 
 export async function registerUser(email, password, fullName) {
-  const res = await fetch(`${API_BASE}/api/v1/auth/register`, {
+  const url = `${API_BASE}/api/v1/auth/register`.trim();
+
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, full_name: fullName }),
+    body: JSON.stringify({
+      email: email.trim(),
+      password: password,
+      full_name: fullName.trim(),
+    }),
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Registration failed");
   }
+
   return res.json();
 }
 
