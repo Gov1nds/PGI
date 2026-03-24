@@ -1,24 +1,34 @@
 /**
  * PGI HUB — Centralized API Client
- * All frontend requests go through here. Never call BOM analyzer directly.
- *
- * API_BASE must be the PUBLIC Railway URL (browser cannot access .railway.internal)
- * Set via Vercel env var: VITE_API_BASE=https://platform-api-production-d66b.up.railway.app
  */
+
+function getSessionToken() {
+  let session = localStorage.getItem("pgi_session");
+
+  if (!session) {
+    session = crypto.randomUUID();
+    localStorage.setItem("pgi_session", session);
+  }
+
+  return session;
+}
 
 const API_BASE =
   import.meta.env.VITE_API_BASE ||
   "https://platform-api-production-d66b.up.railway.app";
 
 /**
- * Base fetch wrapper — injects auth token, handles 401 redirects.
+ * Base fetch wrapper
  */
 export async function apiCall(path, options = {}) {
-  const cleanPath = path.trim(); // 🔥 FIX
+  const cleanPath = path.trim();
 
   const token = localStorage.getItem("pgi_token");
   const headers = { ...options.headers };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
   const res = await fetch(`${API_BASE}${cleanPath}`, {
     ...options,
@@ -35,19 +45,22 @@ export async function apiCall(path, options = {}) {
 }
 
 // ═══════════════════════════════════════════════════
-// BOM endpoints
+// BOM
 // ═══════════════════════════════════════════════════
 
-/**
- * Upload BOM file → Platform API → BOM Analyzer.
- * Returns preview (guest) or full report (authenticated).
- */
-export async function uploadBOM(file, deliveryLocation, targetCurrency, priority = "cost") {
+export async function uploadBOM(
+  file,
+  deliveryLocation,
+  targetCurrency,
+  priority = "cost"
+) {
   const fd = new FormData();
+
   fd.append("file", file);
   fd.append("delivery_location", deliveryLocation);
   fd.append("target_currency", targetCurrency);
   fd.append("priority", priority);
+  fd.append("session_token", getSessionToken()); // 🔥 FIX
 
   const res = await apiCall("/api/v1/bom/upload", {
     method: "POST",
@@ -58,39 +71,40 @@ export async function uploadBOM(file, deliveryLocation, targetCurrency, priority
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || `Upload failed (${res.status})`);
   }
+
   return res.json();
 }
 
-/**
- * Unlock full report for a guest BOM using session token.
- */
 export async function unlockBOM(bomId, sessionToken) {
   const res = await apiCall("/api/v1/bom/unlock", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ bom_id: bomId, session_token: sessionToken }),
+    body: JSON.stringify({
+      bom_id: bomId,
+      session_token: sessionToken,
+    }),
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Unlock failed");
   }
+
   return res.json();
 }
 
 // ═══════════════════════════════════════════════════
-// Auth endpoints
+// AUTH
 // ═══════════════════════════════════════════════════
 
 export async function loginUser(email, password) {
-  const url = `${API_BASE}/api/v1/auth/login`.trim();
-
-  const res = await fetch(url, {
+  const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: email.trim(),
       password: password,
+      session_token: getSessionToken(), // 🔥 FIX
     }),
   });
 
@@ -99,19 +113,23 @@ export async function loginUser(email, password) {
     throw new Error(err.detail || "Login failed");
   }
 
-  return res.json();
+  const data = await res.json();
+
+  // 🔥 STORE TOKEN (CRITICAL)
+  localStorage.setItem("pgi_token", data.access_token);
+
+  return data;
 }
 
 export async function registerUser(email, password, fullName) {
-  const url = `${API_BASE}/api/v1/auth/register`.trim();
-
-  const res = await fetch(url, {
+  const res = await fetch(`${API_BASE}/api/v1/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: email.trim(),
       password: password,
       full_name: fullName.trim(),
+      session_token: getSessionToken(), // 🔥 FIX
     }),
   });
 
@@ -120,35 +138,55 @@ export async function registerUser(email, password, fullName) {
     throw new Error(err.detail || "Registration failed");
   }
 
-  return res.json();
+  const data = await res.json();
+
+  // 🔥 STORE TOKEN (IMPORTANT)
+  localStorage.setItem("pgi_token", data.access_token);
+
+  return data;
 }
 
 // ═══════════════════════════════════════════════════
-// Project endpoints
+// PROJECTS
 // ═══════════════════════════════════════════════════
 
 export async function listProjects() {
   const res = await apiCall("/api/v1/projects");
-  if (!res.ok) throw new Error("Failed to load projects");
+
+  if (!res.ok) {
+    throw new Error("Failed to load projects");
+  }
+
   return res.json();
 }
 
 export async function getProject(projectId) {
   const res = await apiCall(`/api/v1/projects/${projectId}`);
-  if (!res.ok) throw new Error("Project not found");
+
+  if (!res.ok) {
+    throw new Error("Project not found");
+  }
+
   return res.json();
 }
 
 // ═══════════════════════════════════════════════════
-// RFQ endpoints
+// RFQ
 // ═══════════════════════════════════════════════════
 
 export async function createRFQ(bomId, notes = "") {
   const res = await apiCall("/api/v1/rfq/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ bom_id: bomId, notes }),
+    body: JSON.stringify({
+      bom_id: bomId,
+      notes,
+    }),
   });
-  if (!res.ok) throw new Error("Failed to create RFQ");
+
+  if (!res.ok) {
+    throw new Error("Failed to create RFQ");
+  }
+
   return res.json();
 }
