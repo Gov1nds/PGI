@@ -78,15 +78,22 @@ export async function unlockBOM(bomId, sessionToken) {
 // ═══════════════════════════════════════════════════
 
 export async function loginUser(email, password) {
-  const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
+  const url = `${API_BASE}/api/v1/auth/login`.trim();
+
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({
+      email: email.trim(),
+      password: password,
+    }),
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Login failed");
   }
+
   return res.json();
 }
 
