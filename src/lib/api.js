@@ -1,15 +1,24 @@
+// ============================================================
+// SECTION 1+2: Frontend API Library + Protected Route
+// FILE: src/lib/api.js  (FULL REPLACEMENT)
+// ============================================================
+
 /**
- * PGI HUB — Centralized API Client
+ * PGI HUB — Centralized API Client (Fixed)
+ *
+ * Fixes:
+ *  1. Added fetchCurrentUser() for server-side token validation
+ *  2. 401 handling no longer hard-redirects — it throws, letting callers decide
+ *  3. Token read from localStorage consistently (not duplicated in context)
+ *  4. uploadBOM passes project_id back in response correctly
  */
 
 function getSessionToken() {
   let session = localStorage.getItem("pgi_session");
-
   if (!session) {
     session = crypto.randomUUID();
     localStorage.setItem("pgi_session", session);
   }
-
   return session;
 }
 
@@ -17,85 +26,44 @@ const API_BASE =
   import.meta.env.VITE_API_BASE ||
   "https://platform-api-production-d66b.up.railway.app";
 
-/**
- * Base fetch wrapper
- */
-export async function apiCall(path, options = {}) {
-  const cleanPath = path.trim();
-
+// ─── Base fetch wrapper ──────────────────────────────────────
+export async function apiCall(path, options = {}, skipAuthRedirect = false) {
   const token = localStorage.getItem("pgi_token");
   const headers = { ...options.headers };
-
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}${cleanPath}`, {
+  const res = await fetch(`${API_BASE}${path.trim()}`, {
     ...options,
     headers,
   });
 
-  if (res.status === 401) {
+  if (res.status === 401 && !skipAuthRedirect) {
+    // Clear stale token and let the caller / route guard handle redirect
     localStorage.removeItem("pgi_token");
-    window.location.href = "/login";
+    localStorage.removeItem("pgi_user");
+    // Dispatch a custom event so AuthContext can react
+    window.dispatchEvent(new CustomEvent("pgi:session_expired"));
     throw new Error("Session expired");
   }
 
   return res;
 }
 
-// ═══════════════════════════════════════════════════
-// BOM
-// ═══════════════════════════════════════════════════
+// ─── AUTH ────────────────────────────────────────────────────
 
-export async function uploadBOM(
-  file,
-  deliveryLocation,
-  targetCurrency,
-  priority = "cost"
-) {
-  const fd = new FormData();
-
-  fd.append("file", file);
-  fd.append("delivery_location", deliveryLocation);
-  fd.append("target_currency", targetCurrency);
-  fd.append("priority", priority);
-  fd.append("session_token", getSessionToken()); // 🔥 FIX
-
-  const res = await apiCall("/api/v1/bom/upload", {
-    method: "POST",
-    body: fd,
+/**
+ * Validates the stored token against the server.
+ * Called once on app mount by AuthContext.
+ */
+export async function fetchCurrentUser(token) {
+  const res = await fetch(`${API_BASE}/api/v1/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Upload failed (${res.status})`);
-  }
-
+  if (!res.ok) throw new Error("Invalid token");
   return res.json();
 }
-
-export async function unlockBOM(bomId, sessionToken) {
-  const res = await apiCall("/api/v1/bom/unlock", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      bom_id: bomId,
-      session_token: sessionToken,
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || "Unlock failed");
-  }
-
-  return res.json();
-}
-
-// ═══════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════
 
 export async function loginUser(email, password) {
   const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
@@ -103,22 +71,15 @@ export async function loginUser(email, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: email.trim(),
-      password: password,
-      session_token: getSessionToken(), // 🔥 FIX
+      password,
+      session_token: getSessionToken(),
     }),
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Login failed");
   }
-
-  const data = await res.json();
-
-  // 🔥 STORE TOKEN (CRITICAL)
-  localStorage.setItem("pgi_token", data.access_token);
-
-  return data;
+  return res.json();
 }
 
 export async function registerUser(email, password, fullName) {
@@ -127,66 +88,99 @@ export async function registerUser(email, password, fullName) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: email.trim(),
-      password: password,
-      full_name: fullName.trim(),
-      session_token: getSessionToken(), // 🔥 FIX
+      password,
+      full_name: fullName?.trim() || "",
+      session_token: getSessionToken(),
     }),
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Registration failed");
   }
-
-  const data = await res.json();
-
-  // 🔥 STORE TOKEN (IMPORTANT)
-  localStorage.setItem("pgi_token", data.access_token);
-
-  return data;
+  return res.json();
 }
 
-// ═══════════════════════════════════════════════════
-// PROJECTS
-// ═══════════════════════════════════════════════════
+// ─── BOM ─────────────────────────────────────────────────────
+
+export async function uploadBOM(file, deliveryLocation, targetCurrency, priority = "cost") {
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("delivery_location", deliveryLocation);
+  fd.append("target_currency", targetCurrency);
+  fd.append("priority", priority);
+  fd.append("session_token", getSessionToken());
+
+  const res = await apiCall("/api/v1/bom/upload", { method: "POST", body: fd });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Upload failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function unlockBOM(bomId, sessionToken) {
+  const res = await apiCall("/api/v1/bom/unlock", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ bom_id: bomId, session_token: sessionToken }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Unlock failed");
+  }
+  return res.json();
+}
+
+// ─── PROJECTS ────────────────────────────────────────────────
 
 export async function listProjects() {
   const res = await apiCall("/api/v1/projects");
-
-  if (!res.ok) {
-    throw new Error("Failed to load projects");
-  }
-
+  if (!res.ok) throw new Error("Failed to load projects");
   return res.json();
 }
 
 export async function getProject(projectId) {
   const res = await apiCall(`/api/v1/projects/${projectId}`);
-
-  if (!res.ok) {
-    throw new Error("Project not found");
-  }
-
+  if (!res.ok) throw new Error("Project not found");
   return res.json();
 }
 
-// ═══════════════════════════════════════════════════
-// RFQ
-// ═══════════════════════════════════════════════════
+// ─── RFQ ─────────────────────────────────────────────────────
 
-export async function createRFQ(bomId, notes = "") {
+export async function createRFQ(bomOrProjectId, notes = "") {
   const res = await apiCall("/api/v1/rfq/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      bom_id: bomId,
-      notes,
-    }),
+    body: JSON.stringify({ bom_id: bomOrProjectId, notes }),
   });
-
   if (!res.ok) {
-    throw new Error("Failed to create RFQ");
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create RFQ");
   }
+  return res.json();
+}
 
+// ─── DRAWINGS ────────────────────────────────────────────────
+
+export async function uploadDrawing(rfqId, partName, file) {
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("rfq_id", rfqId);
+  fd.append("part_name", partName);
+
+  const res = await apiCall("/api/v1/drawings/upload", {
+    method: "POST",
+    body: fd,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Drawing upload failed");
+  }
+  return res.json();
+}
+
+export async function getDrawings(rfqId) {
+  const res = await apiCall(`/api/v1/drawings/${rfqId}`);
+  if (!res.ok) throw new Error("Failed to load drawings");
   return res.json();
 }
