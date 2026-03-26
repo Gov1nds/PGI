@@ -8,7 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx"; // NEW
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
-import Capabilities from "./pages/capabilities.jsx";
+import capabilities from "./pages/capabilities.jsx";
 import BOMAnalyzer from "./pages/BOMAnalyzer.jsx";
 import Pricing from "./pages/Pricing.jsx";
 import Insights from "./pages/Insights.jsx";
@@ -22,7 +22,7 @@ import NotFound from "./pages/NotFound.jsx";
 // Auth pages
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import { Dashboard } from "./pages/Dashboard.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 
 export default function App() {
