@@ -1,19 +1,9 @@
-// ============================================================
-// SECTION 1: Frontend Auth / Session Fixes
-// FILE: src/context/AuthContext.jsx  (FULL REPLACEMENT)
-// ============================================================
-
 /**
- * PGI HUB — Auth Context (Fixed)
- *
- * Fixes:
- *  1. `loading` is true until auth hydration is confirmed
- *  2. Added /auth/me server validation on mount to catch expired tokens
- *  3. Token stored only here, not duplicated in loginUser/registerUser
- *  4. Proper logout clears all storage
+ * PGI HUB — Auth Context
+ * FIXED: Validates token via /auth/me on startup. Reliable loading state.
  */
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { loginUser, registerUser, fetchCurrentUser } from "../lib/api";
+import { loginUser, registerUser, fetchMe } from "../lib/api";
 
 const AuthContext = createContext(null);
 
@@ -25,46 +15,46 @@ export const useAuth = () => {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  // loading = true until we've confirmed auth state from server (or confirmed no token)
+  const [token, setToken] = useState(() => localStorage.getItem("pgi_token"));
   const [loading, setLoading] = useState(true);
 
-  // ── On mount: restore token from localStorage, then validate with server ──
-  useEffect(() => {
-    const storedToken = localStorage.getItem("pgi_token");
-    if (!storedToken) {
-      setLoading(false);
-      return;
-    }
-    // Token exists — validate it with the server
-    setToken(storedToken);
-    fetchCurrentUser(storedToken)
-      .then((userData) => {
-        setUser(userData);
-      })
-      .catch(() => {
-        // Token is invalid/expired — clean up silently
-        localStorage.removeItem("pgi_token");
-        localStorage.removeItem("pgi_user");
-        setToken(null);
-        setUser(null);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  // ── Persist token changes ──
+  // Persist token
   useEffect(() => {
     if (token) {
       localStorage.setItem("pgi_token", token);
     } else {
       localStorage.removeItem("pgi_token");
-      localStorage.removeItem("pgi_user");
     }
   }, [token]);
 
-  // ── Persist user changes ──
+  // FIXED: Validate token on startup via /auth/me
+  useEffect(() => {
+    const validateSession = async () => {
+      const storedToken = localStorage.getItem("pgi_token");
+      if (!storedToken) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const userData = await fetchMe();
+        setUser(userData);
+        localStorage.setItem("pgi_user", JSON.stringify(userData));
+      } catch {
+        // Token is invalid — clear it
+        localStorage.removeItem("pgi_token");
+        localStorage.removeItem("pgi_user");
+        setToken(null);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    validateSession();
+  }, []);
+
+  // Save user to localStorage when it changes
   useEffect(() => {
     if (user) {
       localStorage.setItem("pgi_user", JSON.stringify(user));
@@ -73,26 +63,27 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
-  const login = useCallback(async (email, password) => {
+  const login = async (email, password) => {
     const data = await loginUser(email, password);
     setToken(data.access_token);
     setUser(data.user);
     return data;
-  }, []);
+  };
 
-  const register = useCallback(async (email, password, fullName) => {
+  const register = async (email, password, fullName) => {
     const data = await registerUser(email, password, fullName);
     setToken(data.access_token);
     setUser(data.user);
     return data;
-  }, []);
+  };
 
-  const logout = useCallback(() => {
+  const logout = () => {
     setToken(null);
     setUser(null);
-    // Clear session token so next guest upload gets a fresh one
-    // (do NOT clear pgi_session — keep it for continuity)
-  }, []);
+    localStorage.removeItem("pgi_token");
+    localStorage.removeItem("pgi_user");
+    localStorage.removeItem("pgi_session");
+  };
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>

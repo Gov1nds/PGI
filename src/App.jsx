@@ -4,6 +4,7 @@ import Footer from "./components/Footer.jsx";
 import FloatingActions from "./components/FloatingActions.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import ConsultPopup from "./components/ConsultPopup.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx"; // NEW
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
@@ -18,7 +19,7 @@ import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
-// New pages
+// Auth pages
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -56,9 +57,13 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/project/:id" element={<ProjectDetail />} />
+          {/* FIXED: Protected routes now wrapped with ProtectedRoute */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute><Dashboard /></ProtectedRoute>
+          } />
+          <Route path="/project/:id" element={
+            <ProtectedRoute><ProjectDetail /></ProtectedRoute>
+          } />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
