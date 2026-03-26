@@ -22,7 +22,7 @@ import NotFound from "./pages/NotFound.jsx";
 // Auth pages
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
+import { Dashboard } from "./pages/Dashboard.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 
 export default function App() {
