@@ -1,9 +1,10 @@
 /**
  * PGI HUB — Auth Context
- * FIXED: Validates token via /auth/me on startup. Reliable loading state.
+ * FIXED: Gracefully handles missing /auth/me endpoint.
+ * Falls back to localStorage restoration if backend is unavailable.
  */
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { loginUser, registerUser, fetchMe } from "../lib/api";
+import { createContext, useContext, useState, useEffect } from "react";
+import { loginUser, registerUser } from "../lib/api";
 
 const AuthContext = createContext(null);
 
@@ -27,31 +28,53 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  // FIXED: Validate token on startup via /auth/me
+  // Restore session on startup
   useEffect(() => {
-    const validateSession = async () => {
+    const restoreSession = async () => {
       const storedToken = localStorage.getItem("pgi_token");
       if (!storedToken) {
         setLoading(false);
         return;
       }
 
+      // Try /auth/me first for proper validation
       try {
-        const userData = await fetchMe();
-        setUser(userData);
-        localStorage.setItem("pgi_user", JSON.stringify(userData));
-      } catch {
-        // Token is invalid — clear it
-        localStorage.removeItem("pgi_token");
-        localStorage.removeItem("pgi_user");
-        setToken(null);
-        setUser(null);
-      } finally {
-        setLoading(false);
+        const API_BASE =
+          import.meta.env.VITE_API_BASE ||
+          "https://platform-api-production-d66b.up.railway.app";
+
+        const res = await fetch(`${API_BASE}/api/v1/auth/me`, {
+          headers: { Authorization: `Bearer ${storedToken}` },
+        });
+
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+          localStorage.setItem("pgi_user", JSON.stringify(userData));
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        // /auth/me not available — fall through to localStorage
+        console.log("Auth validation unavailable, using cached session");
       }
+
+      // Fallback: restore from localStorage (original behavior)
+      const stored = localStorage.getItem("pgi_user");
+      if (stored && storedToken) {
+        try {
+          setUser(JSON.parse(stored));
+        } catch {
+          // corrupted data — clear it
+          localStorage.removeItem("pgi_user");
+          localStorage.removeItem("pgi_token");
+          setToken(null);
+        }
+      }
+      setLoading(false);
     };
 
-    validateSession();
+    restoreSession();
   }, []);
 
   // Save user to localStorage when it changes
