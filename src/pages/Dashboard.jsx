@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { useAuth } from "../context/AuthContext";
 import { listProjects } from "../lib/api";
@@ -17,28 +17,23 @@ const STATUS_STYLES = {
 };
 
 const fmt = (n) => {
-  if (n == null || isNaN(n)) return "\u2014";
+  if (n == null || isNaN(n)) return "—";
   return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
-// FIXED: currency helper — no more hardcoded $
-const fmtCost = (cost, currency) => {
-  if (cost == null || isNaN(cost)) return "\u2014";
-  const sym = { USD: "$", EUR: "\u20AC", GBP: "\u00A3", INR: "\u20B9", CNY: "\u00A5", JPY: "\u00A5" };
-  const prefix = sym[currency] || currency || "$";
-  return `${prefix} ${fmt(cost)}`;
-};
-
 export default function Dashboard() {
-  const { user } = useAuth();
-  // FIXED: No more "if (!user) navigate('/login')" — ProtectedRoute handles that
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // FIXED: wait for auth hydration before checking user
+    if (authLoading) return;
+    if (!user) { navigate("/login"); return; }
     loadProjects();
-  }, []);
+  }, [user, authLoading]);
 
   const loadProjects = async () => {
     setLoading(true);
@@ -78,6 +73,7 @@ export default function Dashboard() {
       </section>
 
       <Container className="py-8">
+        {/* Loading */}
         {loading && (
           <div className="text-center py-20">
             <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
@@ -85,6 +81,7 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Error */}
         {error && (
           <div className="max-w-lg mx-auto p-4 bg-red-500/[0.08] border border-red-500/20 rounded-xl text-center">
             <p className="text-red-300 text-sm">{error}</p>
@@ -92,6 +89,7 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Empty state */}
         {!loading && !error && projects.length === 0 && (
           <div className="text-center py-20">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
@@ -101,14 +99,19 @@ export default function Dashboard() {
             </div>
             <h3 className="text-white text-lg font-semibold">No projects yet</h3>
             <p className="text-white/40 text-sm mt-1 mb-6">Upload your first BOM to get started</p>
-            <Link to="/bom-analyzer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all">
+            <Link
+              to="/bom-analyzer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all"
+            >
               Upload BOM
             </Link>
           </div>
         )}
 
+        {/* Project list */}
         {!loading && projects.length > 0 && (
           <div className="space-y-3">
+            {/* Table header (desktop) */}
             <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-2 text-[11px] text-white/30 uppercase tracking-wider font-medium">
               <div className="col-span-4">Project</div>
               <div className="col-span-2">Status</div>
@@ -125,6 +128,7 @@ export default function Dashboard() {
                 className="block rounded-2xl bg-[#0d1117] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.01] transition-all group"
               >
                 <div className="p-5 sm:grid sm:grid-cols-12 sm:gap-4 sm:items-center">
+                  {/* Name */}
                   <div className="col-span-4 mb-3 sm:mb-0">
                     <p className="text-white text-sm font-medium group-hover:text-sky-400 transition-colors truncate">
                       {p.name || p.file_name || "Untitled BOM"}
@@ -132,34 +136,38 @@ export default function Dashboard() {
                     <p className="text-white/30 text-xs mt-0.5 font-mono">{p.project_id?.slice(0, 8)}</p>
                   </div>
 
+                  {/* Status */}
                   <div className="col-span-2 mb-2 sm:mb-0">
                     <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[p.status] || STATUS_STYLES.uploaded}`}>
                       {(p.status || "uploaded").replace(/_/g, " ")}
                     </span>
                   </div>
 
-                  {/* FIXED: Dynamic currency instead of hardcoded $ */}
+                  {/* Cost */}
                   <div className="col-span-2 text-right mb-2 sm:mb-0">
                     <p className="text-white/80 text-sm font-mono">
-                      {fmtCost(p.cost, p.currency)}
+                      {p.cost ? `$ ${fmt(p.cost)}` : "—"}
                     </p>
                     {p.savings_percent > 0 && (
-                      <p className="text-emerald-400 text-[10px] mt-0.5">{"\u2193"} {p.savings_percent.toFixed(1)}% savings</p>
+                      <p className="text-emerald-400 text-[10px] mt-0.5">↓ {p.savings_percent.toFixed(1)}% savings</p>
                     )}
                   </div>
 
+                  {/* Parts */}
                   <div className="col-span-1 text-right mb-2 sm:mb-0">
                     <p className="text-white/50 text-sm">{p.total_parts}</p>
                   </div>
 
+                  {/* Date */}
                   <div className="col-span-2 mb-2 sm:mb-0">
                     <p className="text-white/40 text-xs">
                       {p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", {
                         month: "short", day: "numeric", year: "numeric"
-                      }) : "\u2014"}
+                      }) : "—"}
                     </p>
                   </div>
 
+                  {/* Arrow */}
                   <div className="col-span-1 text-right">
                     <svg className="w-4 h-4 text-white/20 group-hover:text-sky-400 transition-colors inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

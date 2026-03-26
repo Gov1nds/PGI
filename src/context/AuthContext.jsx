@@ -1,7 +1,6 @@
 /**
  * PGI HUB — Auth Context
- * FIXED: Gracefully handles missing /auth/me endpoint.
- * Falls back to localStorage restoration if backend is unavailable.
+ * Provides user state, login, register, logout across the app.
  */
 import { createContext, useContext, useState, useEffect } from "react";
 import { loginUser, registerUser } from "../lib/api";
@@ -28,53 +27,15 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  // Restore session on startup
+  // Try to restore user from stored token
   useEffect(() => {
-    const restoreSession = async () => {
-      const storedToken = localStorage.getItem("pgi_token");
-      if (!storedToken) {
-        setLoading(false);
-        return;
-      }
-
-      // Try /auth/me first for proper validation
+    const stored = localStorage.getItem("pgi_user");
+    if (stored && token) {
       try {
-        const API_BASE =
-          import.meta.env.VITE_API_BASE ||
-          "https://platform-api-production-d66b.up.railway.app";
-
-        const res = await fetch(`${API_BASE}/api/v1/auth/me`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        });
-
-        if (res.ok) {
-          const userData = await res.json();
-          setUser(userData);
-          localStorage.setItem("pgi_user", JSON.stringify(userData));
-          setLoading(false);
-          return;
-        }
-      } catch (e) {
-        // /auth/me not available — fall through to localStorage
-        console.log("Auth validation unavailable, using cached session");
-      }
-
-      // Fallback: restore from localStorage (original behavior)
-      const stored = localStorage.getItem("pgi_user");
-      if (stored && storedToken) {
-        try {
-          setUser(JSON.parse(stored));
-        } catch {
-          // corrupted data — clear it
-          localStorage.removeItem("pgi_user");
-          localStorage.removeItem("pgi_token");
-          setToken(null);
-        }
-      }
-      setLoading(false);
-    };
-
-    restoreSession();
+        setUser(JSON.parse(stored));
+      } catch {}
+    }
+    setLoading(false);
   }, []);
 
   // Save user to localStorage when it changes
@@ -105,7 +66,6 @@ export function AuthProvider({ children }) {
     setUser(null);
     localStorage.removeItem("pgi_token");
     localStorage.removeItem("pgi_user");
-    localStorage.removeItem("pgi_session");
   };
 
   return (

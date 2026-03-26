@@ -1,14 +1,15 @@
 /**
  * PGI HUB — Centralized API Client
- * FIXED: 401 handling no longer aggressively wipes token.
  */
 
 function getSessionToken() {
   let session = localStorage.getItem("pgi_session");
+
   if (!session) {
     session = crypto.randomUUID();
     localStorage.setItem("pgi_session", session);
   }
+
   return session;
 }
 
@@ -18,7 +19,6 @@ const API_BASE =
 
 /**
  * Base fetch wrapper
- * FIXED: 401 handling is less aggressive
  */
 export async function apiCall(path, options = {}) {
   const cleanPath = path.trim();
@@ -36,13 +36,8 @@ export async function apiCall(path, options = {}) {
   });
 
   if (res.status === 401) {
-    // FIXED: Only clear token on explicit auth failure, not transient errors
     localStorage.removeItem("pgi_token");
-    localStorage.removeItem("pgi_user");
-    // Use soft redirect instead of hard window.location
-    if (typeof window !== "undefined" && !cleanPath.includes("/auth/")) {
-      window.location.href = "/login";
-    }
+    window.location.href = "/login";
     throw new Error("Session expired");
   }
 
@@ -60,6 +55,7 @@ export async function uploadBOM(
   priority = "cost"
 ) {
   const fd = new FormData();
+
   fd.append("file", file);
   fd.append("delivery_location", deliveryLocation);
   fd.append("target_currency", targetCurrency);
@@ -118,7 +114,9 @@ export async function loginUser(email, password) {
   }
 
   const data = await res.json();
+
   localStorage.setItem("pgi_token", data.access_token);
+
   return data;
 }
 
@@ -140,7 +138,9 @@ export async function registerUser(email, password, fullName) {
   }
 
   const data = await res.json();
+
   localStorage.setItem("pgi_token", data.access_token);
+
   return data;
 }
 
@@ -150,17 +150,21 @@ export async function registerUser(email, password, fullName) {
 
 export async function listProjects() {
   const res = await apiCall("/api/v1/projects");
+
   if (!res.ok) {
     throw new Error("Failed to load projects");
   }
+
   return res.json();
 }
 
 export async function getProject(projectId) {
   const res = await apiCall(`/api/v1/projects/${projectId}`);
+
   if (!res.ok) {
     throw new Error("Project not found");
   }
+
   return res.json();
 }
 
