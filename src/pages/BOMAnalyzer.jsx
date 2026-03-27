@@ -139,6 +139,7 @@ export default function BOMAnalyzer() {
   // Preview state (guest users)
   const [previewData, setPreviewData] = useState(null);
   const [bomId, setBomId] = useState(null);
+  const [projectId, setProjectId] = useState(null);
   const [sessionToken, setSessionToken] = useState(null);
 
   // UI state
@@ -178,6 +179,7 @@ export default function BOMAnalyzer() {
 
       setProgress("Building report...");
       setBomId(data.bom_id);
+      setProjectId(data.preview?.project_id || data.bom_id);
 
       if (data.preview?.is_preview) {
         // ── Guest user: show limited preview ──
@@ -217,7 +219,7 @@ export default function BOMAnalyzer() {
 
   const reset = () => {
     setStep(1); setFile(null); setReport(null); setStrategy(null);
-    setPreviewData(null); setBomId(null); setSessionToken(null);
+    setPreviewData(null); setBomId(null); setProjectId(null); setSessionToken(null);
     setError(null); setCountry(""); setStateRegion(""); setCity("");
     setExpandedItem(null); setActiveTab("overview");
   };
@@ -656,7 +658,7 @@ export default function BOMAnalyzer() {
               </div>
               <div className="flex gap-2">
                 {bomId && user && (
-                  <a href={`/project/${bomId}`}
+                  <a href={`/project/${projectId || bomId}`}
                     className="px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/20 rounded-lg text-emerald-400 text-xs font-medium transition-all">
                     View Project →
                   </a>

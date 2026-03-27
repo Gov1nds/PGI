@@ -36,7 +36,6 @@ export default function ProjectDetail() {
   const [rfqSuccess, setRfqSuccess] = useState(false);
 
   useEffect(() => {
-    // FIXED: wait for auth hydration before checking user
     if (authLoading) return;
     if (!user) { navigate("/login"); return; }
     loadProject();

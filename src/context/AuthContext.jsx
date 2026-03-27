@@ -1,6 +1,7 @@
 /**
  * PGI HUB — Auth Context
- * Provides user state, login, register, logout across the app.
+ * FIXED: Validates token via /auth/me with graceful fallback to localStorage.
+ * Clears pgi_user on logout. No new imports that could break build.
  */
 import { createContext, useContext, useState, useEffect } from "react";
 import { loginUser, registerUser } from "../lib/api";
@@ -27,15 +28,45 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  // Try to restore user from stored token
+  // Restore session on startup — try /auth/me, fall back to localStorage
   useEffect(() => {
-    const stored = localStorage.getItem("pgi_user");
-    if (stored && token) {
+    const restoreSession = async () => {
+      const storedToken = localStorage.getItem("pgi_token");
+      if (!storedToken) {
+        setLoading(false);
+        return;
+      }
+
+      // Try /auth/me for proper validation
       try {
-        setUser(JSON.parse(stored));
-      } catch {}
-    }
-    setLoading(false);
+        const API_BASE =
+          import.meta.env.VITE_API_BASE ||
+          "https://platform-api-production-d66b.up.railway.app";
+        const res = await fetch(`${API_BASE}/api/v1/auth/me`, {
+          headers: { Authorization: `Bearer ${storedToken}` },
+        });
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+          localStorage.setItem("pgi_user", JSON.stringify(userData));
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        // /auth/me not available — fall through to localStorage
+      }
+
+      // Fallback: restore from localStorage
+      const stored = localStorage.getItem("pgi_user");
+      if (stored && storedToken) {
+        try {
+          setUser(JSON.parse(stored));
+        } catch {}
+      }
+      setLoading(false);
+    };
+
+    restoreSession();
   }, []);
 
   // Save user to localStorage when it changes
