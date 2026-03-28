@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { useAuth } from "../context/AuthContext";
-import { getProject, createRFQ } from "../lib/api";
+import { getProject, createRFQ, uploadDrawing, getRFQ, getTracking } from "../lib/api";
 
 const STATUS_STYLES = {
   uploaded:       "bg-white/[0.06] text-white/60",
@@ -34,6 +34,10 @@ export default function ProjectDetail() {
   const [activeTab, setActiveTab] = useState("overview");
   const [rfqLoading, setRfqLoading] = useState(false);
   const [rfqSuccess, setRfqSuccess] = useState(false);
+  const [drawingFile, setDrawingFile] = useState(null);
+  const [drawingUploading, setDrawingUploading] = useState(false);
+  const [trackingData, setTrackingData] = useState(null);
+  const [rfqData, setRfqData] = useState(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -239,6 +243,8 @@ export default function ProjectDetail() {
                 ["overview", "Overview"],
                 ["components", "Components"],
                 ["strategy", "Strategy"],
+                ["rfq", "RFQ & Drawings"],
+                ["tracking", "Tracking"],
               ].map(([tid, label]) => (
                 <button key={tid} onClick={() => setActiveTab(tid)}
                   className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === tid ? "bg-sky-500 text-white" : "text-white/60 hover:text-white/80"}`}>
@@ -366,6 +372,160 @@ export default function ProjectDetail() {
                     <div className="p-6">
                       <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">Procurement Plan</h3>
                       <p className="text-white/50 text-xs">Full procurement plan with supplier allocation and timeline is available in this project.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* RFQ & Drawings tab */}
+            {activeTab === "rfq" && (
+              <div className="space-y-6">
+                {/* RFQ Status */}
+                <div className={card}>
+                  <div className="p-6">
+                    <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">RFQ Status</h3>
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className={`inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold uppercase ${
+                        project.rfq_status === "quoted" ? "bg-violet-500/15 text-violet-400" :
+                        project.rfq_status === "approved" ? "bg-emerald-500/15 text-emerald-400" :
+                        project.rfq_status === "sent" || project.rfq_status === "draft" ? "bg-amber-500/15 text-amber-400" :
+                        "bg-white/[0.06] text-white/50"
+                      }`}>
+                        {(project.rfq_status || "none").replace(/_/g, " ")}
+                      </span>
+                      {project.status === "analyzed" && project.rfq_status === "none" && !rfqSuccess && (
+                        <button onClick={handleRequestQuote} disabled={rfqLoading}
+                          className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold transition-all">
+                          {rfqLoading ? "Requesting..." : "Request Quote"}
+                        </button>
+                      )}
+                      {rfqSuccess && <span className="text-emerald-400 text-xs font-medium">✓ Quote Requested</span>}
+                    </div>
+
+                    {/* Custom parts requiring RFQ */}
+                    {s2.filter(item => item.category === "custom_mechanical" || item.category === "sheet_metal").length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-white/40 text-xs mb-2">Custom parts requiring quotes:</p>
+                        <div className="space-y-2">
+                          {s2.filter(item => item.category === "custom_mechanical" || item.category === "sheet_metal").map((item, i) => (
+                            <div key={i} className="flex items-center justify-between py-2 px-3 bg-white/[0.02] rounded-lg border border-white/[0.04]">
+                              <div>
+                                <p className="text-white text-xs font-medium">{item.description}</p>
+                                <p className="text-white/30 text-[10px]">{item.material || "—"} · {item.process || "—"}</p>
+                              </div>
+                              <span className="text-violet-400 text-[10px] font-semibold uppercase">RFQ Required</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Drawing Upload */}
+                <div className={card}>
+                  <div className="p-6">
+                    <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Upload Drawing</h3>
+                    <p className="text-white/40 text-xs mb-4">Upload technical drawings for custom parts to get accurate quotes within 24 hours.</p>
+                    <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-white/10 rounded-xl cursor-pointer hover:border-white/20 transition-all">
+                      <input type="file" accept=".pdf,.dxf,.dwg,.step,.stp,.iges,.igs,.png,.jpg"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          setDrawingUploading(true);
+                          try {
+                            // Use the project's bom_id to upload
+                            await uploadDrawing(id, f, f.name);
+                            setDrawingFile(f.name);
+                            setDrawingUploading(false);
+                          } catch (err) {
+                            setError(err.message);
+                            setDrawingUploading(false);
+                          }
+                        }}
+                      />
+                      {drawingUploading ? (
+                        <div className="text-center">
+                          <div className="w-6 h-6 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin mb-2" />
+                          <p className="text-white/40 text-xs">Uploading...</p>
+                        </div>
+                      ) : drawingFile ? (
+                        <div className="text-center">
+                          <svg className="w-6 h-6 mx-auto text-emerald-400 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                          <p className="text-emerald-400 text-xs font-medium">{drawingFile}</p>
+                          <p className="text-white/30 text-[10px] mt-1">Click to upload another</p>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <svg className="w-6 h-6 mx-auto text-white/30 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                          <p className="text-white/40 text-xs">PDF, DXF, DWG, STEP, IGES, or images</p>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tracking tab */}
+            {activeTab === "tracking" && (
+              <div className="space-y-6">
+                <div className={card}>
+                  <div className="p-6">
+                    <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Production Timeline</h3>
+                    <div className="space-y-0">
+                      {[
+                        { stage: "T0", label: "Order Placed", icon: "📋" },
+                        { stage: "T1", label: "Material Procurement", icon: "🔧" },
+                        { stage: "T2", label: "Manufacturing Started", icon: "⚙" },
+                        { stage: "T3", label: "QC / Inspection", icon: "🔍" },
+                        { stage: "T4", label: "Shipped / Delivered", icon: "📦" },
+                      ].map((step, i) => {
+                        const currentStage = project.tracking_stage || "init";
+                        const stageOrder = { init: -1, T0: 0, T1: 1, T2: 2, T3: 3, T4: 4 };
+                        const stepIdx = stageOrder[step.stage] ?? i;
+                        const currentIdx = stageOrder[currentStage] ?? -1;
+                        const done = stepIdx <= currentIdx;
+                        const active = stepIdx === currentIdx;
+
+                        return (
+                          <div key={step.stage} className="flex items-start gap-4">
+                            <div className="flex flex-col items-center">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
+                                active ? "bg-sky-500/20 border-2 border-sky-500 text-sky-400" :
+                                done ? "bg-emerald-500/15 text-emerald-400" :
+                                "bg-white/[0.04] text-white/20"
+                              }`}>
+                                {done && !active ? "✓" : step.icon}
+                              </div>
+                              {i < 4 && <div className={`w-px h-8 ${done ? "bg-emerald-500/30" : "bg-white/[0.06]"}`} />}
+                            </div>
+                            <div className="pb-6">
+                              <p className={`text-sm font-medium ${active ? "text-sky-400" : done ? "text-white/70" : "text-white/30"}`}>
+                                {step.label}
+                              </p>
+                              <p className="text-white/25 text-xs">{step.stage}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Status info */}
+                {(project.tracking_stage === "init" || !project.tracking_stage) && (
+                  <div className={card}>
+                    <div className="p-6 text-center">
+                      <p className="text-white/40 text-sm">Production tracking will be available once an RFQ is approved and manufacturing begins.</p>
+                      {project.rfq_status === "none" && (
+                        <button onClick={handleRequestQuote} disabled={rfqLoading}
+                          className="mt-4 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-semibold transition-all">
+                          {rfqLoading ? "Requesting..." : "Request Quote to Start"}
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}

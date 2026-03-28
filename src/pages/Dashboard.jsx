@@ -58,6 +58,9 @@ export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest"); // newest, oldest, cost_high, cost_low, name
 
   useEffect(() => {
     if (authLoading) return;
@@ -86,6 +89,31 @@ export default function Dashboard() {
   const activeCount = projects.filter(p => p.status && !["completed", "uploaded"].includes(p.status)).length;
 
   const statusOf = (s) => STATUS_CONFIG[s] || STATUS_CONFIG.uploaded;
+
+  // ── Search, filter, sort ──
+  const filteredProjects = projects
+    .filter(p => {
+      if (statusFilter !== "all" && p.status !== statusFilter) return false;
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const name = (p.name || "").toLowerCase();
+        const file = (p.file_name || "").toLowerCase();
+        const loc = (p.recommended_location || "").toLowerCase();
+        if (!name.includes(q) && !file.includes(q) && !loc.includes(q)) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "oldest": return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+        case "cost_high": return (b.cost || 0) - (a.cost || 0);
+        case "cost_low": return (a.cost || 0) - (b.cost || 0);
+        case "name": return (a.name || "").localeCompare(b.name || "");
+        default: return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+      }
+    });
+
+  const uniqueStatuses = [...new Set(projects.map(p => p.status).filter(Boolean))];
 
   return (
     <div className="db-root">
@@ -202,6 +230,39 @@ export default function Dashboard() {
         {/* Project list */}
         {!loading && projects.length > 0 && (
           <div className="db-project-list">
+            {/* Search / Filter / Sort controls */}
+            <FadeIn delay={160}>
+              <div className="db-controls">
+                <div className="db-search-wrap">
+                  <svg className="db-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <input
+                    type="text"
+                    className="db-search"
+                    placeholder="Search projects..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  {searchQuery && (
+                    <button className="db-search-clear" onClick={() => setSearchQuery("")}>✕</button>
+                  )}
+                </div>
+                <select className="db-filter" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                  <option value="all">All statuses</option>
+                  {uniqueStatuses.map(s => (
+                    <option key={s} value={s}>{(s || "").replace(/_/g, " ")}</option>
+                  ))}
+                </select>
+                <select className="db-filter" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                  <option value="cost_high">Cost: high → low</option>
+                  <option value="cost_low">Cost: low → high</option>
+                  <option value="name">Name A → Z</option>
+                </select>
+                <span className="db-result-count">{filteredProjects.length} of {projects.length}</span>
+              </div>
+            </FadeIn>
+
             {/* Table header */}
             <FadeIn delay={180}>
               <div className="db-list-head">
@@ -214,8 +275,18 @@ export default function Dashboard() {
               </div>
             </FadeIn>
 
+            {/* No results message */}
+            {filteredProjects.length === 0 && (
+              <FadeIn delay={200}>
+                <div className="db-no-results">
+                  <p>No projects match your filters</p>
+                  <button onClick={() => { setSearchQuery(""); setStatusFilter("all"); }} className="db-error-retry">Clear filters</button>
+                </div>
+              </FadeIn>
+            )}
+
             {/* Rows */}
-            {projects.map((p, i) => {
+            {filteredProjects.map((p, i) => {
               const sc = statusOf(p.status);
               return (
                 <FadeIn key={p.project_id} delay={220 + i * 50}>
@@ -550,6 +621,85 @@ export default function Dashboard() {
           flex-direction: column;
           gap: 6px;
         }
+
+        /* Controls — search, filter, sort */
+        .db-controls {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 16px;
+        }
+        .db-search-wrap {
+          position: relative;
+          flex: 1;
+          min-width: 180px;
+        }
+        .db-search-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--text-4);
+          pointer-events: none;
+        }
+        .db-search {
+          width: 100%;
+          padding: 9px 32px 9px 34px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          color: var(--text);
+          font-family: var(--font);
+          font-size: 12px;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        .db-search:focus { border-color: rgba(52,211,153,0.3); }
+        .db-search::placeholder { color: var(--text-4); }
+        .db-search-clear {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: var(--text-3);
+          cursor: pointer;
+          font-size: 12px;
+          padding: 4px;
+        }
+        .db-filter {
+          padding: 9px 30px 9px 12px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          color: var(--text-2);
+          font-family: var(--font);
+          font-size: 11px;
+          cursor: pointer;
+          appearance: none;
+          background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.25)%22 stroke-width=%222%22%3e%3cpolyline points=%226 9 12 15 18 9%22/%3e%3c/svg%3e');
+          background-size: 12px;
+          background-position: right 8px center;
+          background-repeat: no-repeat;
+          outline: none;
+        }
+        .db-filter:focus { border-color: rgba(52,211,153,0.3); }
+        .db-filter option { background: var(--surface); }
+        .db-result-count {
+          font-size: 10px;
+          color: var(--text-4);
+          white-space: nowrap;
+          padding: 0 4px;
+        }
+        .db-no-results {
+          text-align: center;
+          padding: 40px 20px;
+          color: var(--text-3);
+          font-size: 13px;
+        }
+        .db-no-results button { margin-top: 12px; }
 
         /* List header */
         .db-list-head {

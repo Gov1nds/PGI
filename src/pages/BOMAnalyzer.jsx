@@ -64,9 +64,24 @@ const LOCATION_DATA = {
 };
 
 /* ── Helpers ─────────────────────────────────────────────── */
-const fmt = (n, d = 2) => {
+const CURRENCY_CONFIG = {
+  USD: { locale: "en-US", decimals: 2 },
+  EUR: { locale: "de-DE", decimals: 2 },
+  INR: { locale: "en-IN", decimals: 2 },
+  CNY: { locale: "zh-CN", decimals: 2 },
+  JPY: { locale: "ja-JP", decimals: 0 },
+  GBP: { locale: "en-GB", decimals: 2 },
+  KRW: { locale: "ko-KR", decimals: 0 },
+  MXN: { locale: "es-MX", decimals: 2 },
+  THB: { locale: "th-TH", decimals: 2 },
+  VND: { locale: "vi-VN", decimals: 0 },
+};
+const fmt = (n, d = 2, cur = null) => {
   if (n == null || isNaN(n)) return "—";
-  return Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const cfg = cur ? CURRENCY_CONFIG[cur] : null;
+  const locale = cfg?.locale || "en-US";
+  const decimals = cfg ? cfg.decimals : d;
+  return Number(n).toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 };
 const pct = (n) => (n != null ? `${Number(n).toFixed(1)}%` : "—");
 const regionLabel = (r) => {
@@ -341,6 +356,9 @@ export default function BOMAnalyzer() {
           <div className="bom-error">
             <div className="bom-error-icon">!</div>
             <p className="bom-error-text">{error}</p>
+            {step === 2 && (
+              <button onClick={startAnalysis} className="bom-error-retry">Retry</button>
+            )}
             <button onClick={() => setError(null)} className="bom-error-close">✕</button>
           </div>
         )}
@@ -869,6 +887,30 @@ export default function BOMAnalyzer() {
 
                                 {open && (
                                   <div className="bom-comp-detail">
+                                    {/* Price Source & Freshness */}
+                                    <div className="bom-detail-section">
+                                      <span className="bom-detail-label">Price Source</span>
+                                      <div className="bom-detail-grid">
+                                        {[
+                                          ["Source", item.price_source || "estimated"],
+                                          ["Unit Price", item.unit_price != null ? `${currency} ${fmt(item.unit_price, 2, currency)}` : "RFQ"],
+                                          ["Region", (v.region || "—")],
+                                          ["Category", (item.category || "—").replace("_", " ")],
+                                        ].map(([l, val], j) => (
+                                          <div key={j} className="bom-detail-cell">
+                                            <span className="bom-detail-cell-label">{l}</span>
+                                            <span className="bom-detail-cell-val">{val}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      {/* Source vs display currency indicator */}
+                                      {currency !== "USD" && item.price_source && item.price_source !== "custom_rfq_required" && (
+                                        <p className="bom-currency-note">
+                                          Prices sourced in USD · displayed in {currency}
+                                        </p>
+                                      )}
+                                    </div>
+
                                     <div className="bom-detail-section">
                                       <span className="bom-detail-label">TLC Breakdown</span>
                                       <div className="bom-detail-grid">
@@ -943,6 +985,35 @@ export default function BOMAnalyzer() {
                                         {v.machining_time_hrs > 0 && (
                                           <p className="bom-process-meta">Machining: {fmt(v.machining_time_hrs)}h · Labor: {fmt(v.labor_hours)}h</p>
                                         )}
+                                      </div>
+                                    )}
+
+                                    {/* RFQ Actions for custom parts */}
+                                    {(cat === "custom_mechanical" || cat === "sheet_metal" || cat === "raw_material" || item.decision_mode === "exploration") && (
+                                      <div className="bom-detail-section">
+                                        <span className="bom-detail-label">Actions</span>
+                                        <div className="bom-rfq-actions">
+                                          {bomId && user ? (
+                                            <>
+                                              <button
+                                                className="bom-rfq-btn"
+                                                onClick={(e) => { e.stopPropagation(); window.location.href = `/project/${projectId || bomId}`; }}
+                                              >
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                                Request Quote
+                                              </button>
+                                              <button
+                                                className="bom-rfq-btn bom-rfq-btn-secondary"
+                                                onClick={(e) => { e.stopPropagation(); window.location.href = `/project/${projectId || bomId}`; }}
+                                              >
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                Upload Drawing
+                                              </button>
+                                            </>
+                                          ) : (
+                                            <a href="/register" className="bom-rfq-btn">Sign Up to Request Quote</a>
+                                          )}
+                                        </div>
                                       </div>
                                     )}
                                   </div>
@@ -1296,6 +1367,20 @@ export default function BOMAnalyzer() {
           flex-shrink: 0;
         }
         .bom-error-text { flex: 1; font-size: 13px; color: #fca5a5; }
+        .bom-error-retry {
+          padding: 5px 14px;
+          border-radius: 6px;
+          background: rgba(248,113,113,0.12);
+          border: 1px solid rgba(248,113,113,0.2);
+          color: #fca5a5;
+          font-family: var(--font);
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          flex-shrink: 0;
+        }
+        .bom-error-retry:hover { background: rgba(248,113,113,0.2); }
         .bom-error-close {
           background: none;
           border: none;
@@ -2125,6 +2210,17 @@ export default function BOMAnalyzer() {
         }
         .bom-code-dim { color: var(--text-3); }
 
+        .bom-currency-note {
+          margin-top: 8px;
+          font-size: 10px;
+          color: var(--text-3);
+          font-style: italic;
+          padding: 4px 8px;
+          background: rgba(56,189,248,0.04);
+          border-radius: 4px;
+          display: inline-block;
+        }
+
         .bom-risk-pills { display: flex; flex-wrap: wrap; gap: 8px; }
         .bom-risk-pill {
           display: flex;
@@ -2164,6 +2260,32 @@ export default function BOMAnalyzer() {
         }
         .bom-process-arrow { color: var(--text-4); font-size: 11px; }
         .bom-process-meta { font-size: 11px; color: var(--text-3); margin-top: 8px; }
+
+        /* ── RFQ Actions ─────────────────────────────── */
+        .bom-rfq-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .bom-rfq-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 16px;
+          border-radius: var(--radius-xs);
+          background: var(--accent);
+          border: none;
+          color: #050a0e;
+          font-family: var(--font);
+          font-size: 12px;
+          font-weight: 700;
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .bom-rfq-btn:hover { background: #4ade80; transform: translateY(-1px); }
+        .bom-rfq-btn-secondary {
+          background: rgba(167,139,250,0.1);
+          border: 1px solid rgba(167,139,250,0.2);
+          color: #c4b5fd;
+        }
+        .bom-rfq-btn-secondary:hover { background: rgba(167,139,250,0.2); }
 
         /* ── Strategy tab ────────────────────────────── */
         .bom-strat-list { display: flex; flex-direction: column; gap: 6px; }
