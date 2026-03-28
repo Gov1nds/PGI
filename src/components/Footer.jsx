@@ -4,8 +4,8 @@ import { navLinks, site } from "../content/siteData.js";
 
 export default function Footer() {
   return (
-    <footer className="mt-0 border-t border-white/[0.06] bg-navy-950/90">
-      <Container className="py-16">
+    <footer className="mt-0 border-t border-white/[0.06] bg-[rgba(10,15,26,0.8)]">
+      <Container className="py-14">
         <div className="grid gap-10 md:grid-cols-4">
 
           {/* Brand */}
@@ -13,14 +13,14 @@ export default function Footer() {
             <div className="flex items-center gap-2.5">
               <img src="/images/logo.png" alt="PGI Hub" className="h-9 w-9 rounded-lg bg-white/5 p-1.5 object-contain ring-1 ring-white/10" />
               <div>
-                <div className="text-sm font-semibold text-white">PGI <span className="gradient-text">Hub</span></div>
+                <div className="text-sm font-semibold text-white">PGI <span className="text-sky-400">Hub</span></div>
                 <div className="text-[10px] uppercase tracking-[0.1em] text-white/50">Manufacturing Network</div>
               </div>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-white/55">
+            <p className="mt-4 text-sm leading-relaxed text-white/75">
               Engineering-led manufacturing coordination across precision machining, electronics assembly, and global logistics.
             </p>
-            <div className="mt-5 space-y-2 text-sm text-white/60">
+            <div className="mt-5 space-y-2 text-sm text-white/80">
               <div className="flex items-center gap-2">
                 <svg className="w-3.5 h-3.5 text-sky-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                 <a className="hover:text-sky-400 transition-colors" href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
@@ -38,11 +38,11 @@ export default function Footer() {
 
           {/* Platform */}
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-white/35 mb-5">Platform</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-white/50 mb-4">Platform</div>
             <ul className="space-y-2.5">
               {navLinks.slice(0, 5).map((l) => (
                 <li key={l.to}>
-                  <Link to={l.to} className="text-sm text-white/60 hover:text-sky-400 transition-colors duration-200">{l.label}</Link>
+                  <Link to={l.to} className="text-sm text-white/80 hover:text-sky-400 transition-colors duration-200">{l.label}</Link>
                 </li>
               ))}
             </ul>
@@ -50,8 +50,8 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-white/35 mb-5">Manufacturing</div>
-            <ul className="space-y-2.5 text-sm text-white/60">
+            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-white/50 mb-4">Manufacturing</div>
+            <ul className="space-y-2.5 text-sm text-white/80">
               <li>Precision CNC Machining</li>
               <li>Sheet Metal Fabrication</li>
               <li>PCB Assembly (PCBA)</li>
@@ -63,8 +63,8 @@ export default function Footer() {
 
           {/* CTA */}
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-white/35 mb-5">Get Started</div>
-            <p className="text-sm text-white/55 leading-relaxed">
+            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-white/50 mb-4">Get Started</div>
+            <p className="text-sm text-white/75 leading-relaxed">
               Upload your BOM or send us CAD files for engineering review and manufacturing guidance.
             </p>
             <div className="mt-4 flex flex-col gap-2">
@@ -77,7 +77,7 @@ export default function Footer() {
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center rounded-lg bg-white/5 px-4 py-2.5 text-sm font-medium text-white/60 ring-1 ring-white/[0.06] hover:bg-white/10 hover:text-white/60 transition-all duration-300"
+                className="inline-flex items-center justify-center rounded-lg bg-white/5 px-4 py-2.5 text-sm font-medium text-white/60 ring-1 ring-white/[0.06] hover:bg-white/10 hover:text-white/80 transition-all duration-300"
               >
                 Contact Engineering
               </Link>
@@ -89,9 +89,9 @@ export default function Footer() {
         <div className="mt-12 flex flex-col gap-3 border-t border-white/[0.06] pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
           <div>© {new Date().getFullYear()} {site.name}. All rights reserved.</div>
           <div className="flex gap-5">
-            <a href="#" className="hover:text-white/60 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white/60 transition-colors">Terms</a>
-            <a href="#" className="hover:text-white/60 transition-colors">Cookie preferences</a>
+            <a href="#" className="hover:text-white/80 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-white/80 transition-colors">Terms</a>
+            <a href="#" className="hover:text-white/80 transition-colors">Cookie preferences</a>
           </div>
         </div>
       </Container>

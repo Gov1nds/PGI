@@ -5,9 +5,9 @@ export default function NotFound() {
   return (
     <section className="min-h-[60vh] flex items-center justify-center">
       <Container className="text-center py-20">
-        <div className="text-8xl font-bold gradient-text opacity-30 mb-4 font-mono">404</div>
-        <h1 className="text-2xl font-bold text-white tracking-tight mb-3">Page not found</h1>
-        <p className="text-sm text-white/50 mb-8 max-w-md mx-auto">
+        <div className="text-7xl font-bold text-sky-500/15 mb-4 font-mono">404</div>
+        <h1 className="text-2xl font-semibold text-white mb-3">Page not found</h1>
+        <p className="text-sm text-white/75 mb-8 max-w-md mx-auto">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <Link

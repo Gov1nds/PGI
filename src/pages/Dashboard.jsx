@@ -46,12 +46,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-navy-950">
+    <div className="min-h-screen bg-[#010409]">
       <section className="border-b border-white/[0.06]">
         <Container className="py-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight">Projects</h1>
+              <h1 className="text-3xl font-bold text-white">Projects</h1>
               <p className="text-white/50 text-sm mt-1">
                 {user?.full_name ? `Welcome, ${user.full_name}` : "Your BOM analyses and manufacturing projects"}
               </p>
@@ -78,7 +78,7 @@ export default function Dashboard() {
         )}
         {!loading && !error && projects.length === 0 && (
           <div className="text-center py-20">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-navy-800/50 border border-white/[0.06] flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
               <svg className="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
             </div>
             <h3 className="text-white text-lg font-semibold">No projects yet</h3>
@@ -88,7 +88,7 @@ export default function Dashboard() {
         )}
         {!loading && projects.length > 0 && (
           <div className="space-y-3">
-            <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-2 text-[10px] text-white/25 uppercase tracking-[0.12em] font-medium">
+            <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-2 text-[11px] text-white/30 uppercase tracking-wider font-medium">
               <div className="col-span-4">Project</div>
               <div className="col-span-2">Status</div>
               <div className="col-span-2 text-right">Est. Cost</div>
@@ -97,7 +97,7 @@ export default function Dashboard() {
               <div className="col-span-1"></div>
             </div>
             {projects.map((p) => (
-              <Link key={p.project_id} to={`/project/${p.project_id}`} className="block rounded-2xl glass-card border-white/[0.06] hover:border-white/[0.12] hover:bg-navy-700/40 hover:-translate-y-0.5 transition-all group">
+              <Link key={p.project_id} to={`/project/${p.project_id}`} className="block rounded-2xl bg-[#0d1117] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.01] transition-all group">
                 <div className="p-5 sm:grid sm:grid-cols-12 sm:gap-4 sm:items-center">
                   <div className="col-span-4 mb-3 sm:mb-0">
                     <p className="text-white text-sm font-medium group-hover:text-sky-400 transition-colors truncate">{p.name || p.file_name || "Untitled BOM"}</p>

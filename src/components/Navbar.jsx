@@ -12,7 +12,7 @@ function NavItem({ to, label, onClick }) {
       onClick={onClick}
       className={({ isActive }) =>
         `nav-link text-[13px] font-medium transition-colors duration-200 ${
-          isActive ? "text-sky-400 active" : "text-white/50 hover:text-white"
+          isActive ? "text-sky-400 active" : "text-white/60 hover:text-white"
         }`
       }
     >
@@ -57,11 +57,11 @@ export default function Navbar() {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-navy-950/85 backdrop-blur-xl border-b border-white/[0.06] shadow-lg shadow-black/20"
-          : "bg-transparent border-b border-white/[0.05]"
+          ? "bg-[rgba(10,15,26,0.8)] backdrop-blur-xl border-b border-white/[0.06] shadow-lg shadow-black/20"
+          : "bg-transparent border-b border-white/[0.04]"
       }`}
     >
-      <Container className="flex h-[68px] items-center justify-between">
+      <Container className="flex h-16 items-center justify-between">
         <Logo />
 
         {/* Desktop nav */}
@@ -88,7 +88,7 @@ export default function Navbar() {
                 onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition-all"
               >
-                <div className="w-7 h-7 rounded-full bg-sky-500/20 flex items-center justify-center text-[10px] font-bold text-sky-400">
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center text-[10px] font-bold text-sky-400">
                   {(user.full_name || user.email || "U")[0].toUpperCase()}
                 </div>
                 <span className="text-white/70 text-xs font-medium max-w-[100px] truncate">
@@ -100,7 +100,7 @@ export default function Navbar() {
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-navy-800 border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#161b22] border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-white/[0.06]">
                     <p className="text-white text-xs font-medium truncate">{user.full_name || "User"}</p>
                     <p className="text-white/40 text-[11px] truncate">{user.email}</p>
@@ -120,7 +120,7 @@ export default function Navbar() {
             /* ── Guest: login / register buttons ── */
             <>
               <Link to="/login"
-                className="text-[13px] font-medium text-white/50 hover:text-white transition-colors">
+                className="text-[13px] font-medium text-white/60 hover:text-white transition-colors">
                 Login
               </Link>
               <Link to="/register"
@@ -162,7 +162,7 @@ export default function Navbar() {
 
       {/* Mobile fullscreen menu */}
       <div className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-40 transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-navy-950/97 backdrop-blur-xl" />
+        <div className="absolute inset-0 bg-[rgba(10,15,26,0.95)] backdrop-blur-xl" />
         <div className="relative h-full overflow-y-auto">
           <Container className="py-8">
             <div className="flex flex-col gap-1">

@@ -74,9 +74,9 @@ const regionLabel = (r) => {
   return m[r] || r;
 };
 const modeColor = (m) => {
-  if (m === "exploration") return "text-amber-400";
-  if (m === "thompson_sampling") return "text-sky-400";
-  return "text-emerald-400";
+  if (m === "exploration") return "bom-text-warn";
+  if (m === "thompson_sampling") return "bom-text-info";
+  return "bom-text-accent";
 };
 const modeLabel = (m) => {
   if (m === "exploration") return "Explore";
@@ -84,18 +84,35 @@ const modeLabel = (m) => {
   return "Exploit";
 };
 const riskColor = (s) => {
-  if (s >= 0.7) return "text-red-400";
-  if (s >= 0.4) return "text-amber-400";
-  return "text-emerald-400";
+  if (s >= 0.7) return "bom-text-danger";
+  if (s >= 0.4) return "bom-text-warn";
+  return "bom-text-accent";
 };
 const riskBg = (level) => {
-  if (level === "HIGH") return "bg-red-500/15 text-red-400 border-red-500/20";
-  if (level === "LOW") return "bg-emerald-500/15 text-emerald-400 border-emerald-500/20";
-  return "bg-amber-500/15 text-amber-400 border-amber-500/20";
+  if (level === "HIGH") return "bom-badge-danger";
+  if (level === "LOW") return "bom-badge-success";
+  return "bom-badge-warn";
 };
 
+/* ── Stagger animation hook ──────────────────────────────── */
+function useStagger(items, delay = 60) {
+  const [visible, setVisible] = useState(0);
+  useEffect(() => {
+    if (!items || items.length === 0) return;
+    setVisible(0);
+    let i = 0;
+    const iv = setInterval(() => {
+      i++;
+      setVisible(i);
+      if (i >= items.length) clearInterval(iv);
+    }, delay);
+    return () => clearInterval(iv);
+  }, [items, delay]);
+  return visible;
+}
+
 /* ── Animated counter ────────────────────────────────────── */
-function AnimNum({ value, prefix = "", suffix = "", duration = 900 }) {
+function AnimNum({ value, prefix = "", suffix = "", duration = 1100 }) {
   const [display, setDisplay] = useState(0);
   const ref = useRef();
   useEffect(() => {
@@ -104,7 +121,7 @@ function AnimNum({ value, prefix = "", suffix = "", duration = 900 }) {
     const t0 = performance.now();
     const tick = (now) => {
       const p = Math.min((now - t0) / duration, 1);
-      const ease = 1 - Math.pow(1 - p, 3);
+      const ease = 1 - Math.pow(1 - p, 4);
       setDisplay(start + (target - start) * ease);
       if (p < 1) ref.current = requestAnimationFrame(tick);
     };
@@ -112,6 +129,37 @@ function AnimNum({ value, prefix = "", suffix = "", duration = 900 }) {
     return () => cancelAnimationFrame(ref.current);
   }, [value, duration]);
   return <>{prefix}{fmt(display)}{suffix}</>;
+}
+
+/* ── Fade-in wrapper ─────────────────────────────────────── */
+function FadeIn({ children, delay = 0, className = "", y = 16 }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShow(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+  return (
+    <div
+      className={className}
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? "translateY(0)" : `translateY(${y}px)`,
+        transition: `opacity 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ── Shimmer bar (loading skeleton) ──────────────────────── */
+function Shimmer({ w = "100%", h = 12 }) {
+  return (
+    <div
+      className="bom-shimmer"
+      style={{ width: w, height: h, borderRadius: 6 }}
+    />
+  );
 }
 
 /* ══════════════════════════════════════════════════════════ */
@@ -131,18 +179,15 @@ export default function BOMAnalyzer() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState("");
   const [error, setError] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
 
-  // Full report state (authenticated users)
   const [report, setReport] = useState(null);
   const [strategy, setStrategy] = useState(null);
-
-  // Preview state (guest users)
   const [previewData, setPreviewData] = useState(null);
   const [bomId, setBomId] = useState(null);
   const [projectId, setProjectId] = useState(null);
   const [sessionToken, setSessionToken] = useState(null);
 
-  // UI state
   const [expandedItem, setExpandedItem] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -151,7 +196,7 @@ export default function BOMAnalyzer() {
 
   /* ── File handler ────────────────────────────────────── */
   const handleFile = (e) => {
-    const f = e.target.files[0];
+    const f = e.target.files?.[0] || e.dataTransfer?.files?.[0];
     if (!f) return;
     const ext = f.name.toLowerCase();
     if (![".csv", ".xlsx", ".xls"].some((x) => ext.endsWith(x))) {
@@ -160,10 +205,14 @@ export default function BOMAnalyzer() {
     if (f.size > 10 * 1024 * 1024) {
       setError("File exceeds 10 MB limit"); setFile(null); return;
     }
-    setFile(f); setError(null);
+    setFile(f); setError(null); setDragOver(false);
   };
 
-  /* ── API call — goes to Platform API, NOT BOM analyzer ─ */
+  const handleDrop = (e) => { e.preventDefault(); handleFile(e); };
+  const handleDragOver = (e) => { e.preventDefault(); setDragOver(true); };
+  const handleDragLeave = () => setDragOver(false);
+
+  /* ── API call ─────────────────────────────────────────── */
   const startAnalysis = async () => {
     if (!file) { setError("Upload a BOM file first"); setStep(1); return; }
     if (!country || !stateRegion || !city) { setError("Complete the location fields"); return; }
@@ -182,18 +231,16 @@ export default function BOMAnalyzer() {
       setProjectId(data.preview?.project_id || data.bom_id);
 
       if (data.preview?.is_preview) {
-        // ── Guest user: show limited preview ──
         setPreviewData(data.preview);
         setSessionToken(data.session_token);
         setIsProcessing(false);
-        setStep(4); // preview step
+        setStep(4);
       } else {
-        // ── Authenticated user: show full report ──
         const fullData = data.preview;
         setReport(fullData.analyzer_report);
         setStrategy(fullData.strategy);
         setIsProcessing(false);
-        setStep(5); // full report step
+        setStep(5);
       }
     } catch (err) {
       setError(err.message || "Analysis failed");
@@ -202,12 +249,11 @@ export default function BOMAnalyzer() {
     }
   };
 
-  /* ── Unlock full report (guest → registers → unlocks) ── */
+  /* ── Unlock ───────────────────────────────────────────── */
   const handleUnlock = async () => {
     if (!bomId) return;
     try {
       const data = await unlockBOM(bomId, sessionToken);
-      // data.full_report has the analyzer output, data.strategy has strategy
       setReport(data.full_report?.analyzer || data.full_report || {});
       setStrategy(data.strategy || {});
       setPreviewData(null);
@@ -224,7 +270,7 @@ export default function BOMAnalyzer() {
     setExpandedItem(null); setActiveTab("overview");
   };
 
-  /* ── Derived data (from full report) ─────────────────── */
+  /* ── Derived data ────────────────────────────────────── */
   const s1 = report?.section_1_executive_summary || {};
   const s2 = report?.section_2_component_breakdown || [];
   const s3 = report?.section_3_sourcing_strategy || {};
@@ -236,19 +282,21 @@ export default function BOMAnalyzer() {
   const lt = s1.lead_time || {};
   const dd = s1.decision_distribution || {};
 
-  /* ── Category-wise grouping for step 5 components ──── */
+  /* ── Category grouping ────────────────────────────────── */
   const S5_CAT_ORDER = ["standard", "electrical", "electronics", "fastener", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
   const S5_CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", custom_mechanical: "Custom Mechanical", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
-  const S5_CAT_BADGE = {
-    standard: "bg-emerald-500/15 text-emerald-400",
-    electrical: "bg-sky-500/15 text-sky-400",
-    electronics: "bg-blue-500/15 text-blue-400",
-    fastener: "bg-cyan-500/15 text-cyan-400",
-    custom_mechanical: "bg-violet-500/15 text-violet-400",
-    sheet_metal: "bg-amber-500/15 text-amber-400",
-    raw_material: "bg-purple-500/15 text-purple-400",
-    unknown: "bg-white/[0.06] text-white/50",
+  const S5_CAT_ICONS = { standard: "◈", electrical: "⚡", electronics: "◉", fastener: "⊕", custom_mechanical: "⚙", sheet_metal: "◆", raw_material: "◇", unknown: "?" };
+  const S5_CAT_ACCENT = {
+    standard: { bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.15)", text: "#34d399", dot: "#34d399" },
+    electrical: { bg: "rgba(56,189,248,0.08)", border: "rgba(56,189,248,0.15)", text: "#38bdf8", dot: "#38bdf8" },
+    electronics: { bg: "rgba(96,165,250,0.08)", border: "rgba(96,165,250,0.15)", text: "#60a5fa", dot: "#60a5fa" },
+    fastener: { bg: "rgba(34,211,238,0.08)", border: "rgba(34,211,238,0.15)", text: "#22d3ee", dot: "#22d3ee" },
+    custom_mechanical: { bg: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)", text: "#a78bfa", dot: "#a78bfa" },
+    sheet_metal: { bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.15)", text: "#fbbf24", dot: "#fbbf24" },
+    raw_material: { bg: "rgba(192,132,252,0.08)", border: "rgba(192,132,252,0.15)", text: "#c084fc", dot: "#c084fc" },
+    unknown: { bg: "rgba(255,255,255,0.03)", border: "rgba(255,255,255,0.06)", text: "rgba(255,255,255,0.4)", dot: "rgba(255,255,255,0.3)" },
   };
+
   const groupedS2 = {};
   for (const item of s2) {
     const cat = item.category || "unknown";
@@ -256,343 +304,341 @@ export default function BOMAnalyzer() {
     groupedS2[cat].push(item);
   }
 
-  /* ── Shared styles ───────────────────────────────────── */
-  const card = "rounded-2xl bg-navy-800 border border-white/[0.06] overflow-hidden";
-  const cardInner = "p-6 sm:p-8";
-  const selectCls = `w-full px-4 py-3 bg-navy-700 border border-white/[0.08] rounded-xl text-white/90 
-    focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50
-    appearance-none cursor-pointer transition-all text-sm
-    bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.4)%22 stroke-width=%222%22%3e%3cpolyline points=%226 9 12 15 18 9%22/%3e%3c/svg%3e')]
-    bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10`;
-
-  /* ── Step names adapt to auth state ──────────────────── */
+  /* ── Step names ──────────────────────────────────────── */
   const isGuest = !user;
-  const stepNames = isGuest
-    ? ["Upload", "Location", "Analyze", "Preview", "Report"]
-    : ["Upload", "Location", "Analyze", "—", "Report"];
+  const stepDefs = isGuest
+    ? [{ n: "Upload", icon: "↑" }, { n: "Location", icon: "◎" }, { n: "Analyze", icon: "⟳" }, { n: "Preview", icon: "◉" }, { n: "Report", icon: "✦" }]
+    : [{ n: "Upload", icon: "↑" }, { n: "Location", icon: "◎" }, { n: "Analyze", icon: "⟳" }, { n: "Report", icon: "✦" }];
 
   return (
-    <div className="min-h-screen bg-navy-950">
-      {/* ── Header ─────────────────────────────────────── */}
-      <section className="relative border-b border-white/[0.06] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.03] via-transparent to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-500/[0.04] rounded-full blur-[120px]" />
-        <Container className="relative py-14 sm:py-20">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-emerald-400 text-xs font-medium tracking-wider uppercase">Intelligence Engine v2.0</span>
+    <div className="bom-root">
+      {/* ── Header ──────────────────────────────────── */}
+      <section className="bom-hero">
+        <div className="bom-hero-glow" />
+        <div className="bom-hero-grid" />
+        <Container className="bom-hero-inner">
+          <FadeIn delay={0}>
+            <div className="bom-hero-badge">
+              <span className="bom-hero-dot" />
+              <span>Intelligence Engine v2.0</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight tracking-tight">
-              BOM Analyzer
-            </h1>
-            <p className="mt-4 text-white/55 text-base leading-relaxed max-w-lg mx-auto">
+          </FadeIn>
+          <FadeIn delay={80}>
+            <h1 className="bom-hero-title">BOM Analyzer</h1>
+          </FadeIn>
+          <FadeIn delay={160}>
+            <p className="bom-hero-sub">
               Upload your Bill of Materials. Get AI-powered sourcing decisions
               with reinforcement learning optimization across 11 global regions.
             </p>
-          </div>
+          </FadeIn>
         </Container>
       </section>
 
-      <Container className="py-10 sm:py-14">
-        {/* ── Error ────────────────────────────────────── */}
+      <Container className="bom-body">
+        {/* ── Error toast ──────────────────────────────── */}
         {error && (
-          <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-500/[0.06] border border-red-500/20 rounded-xl flex items-start gap-3">
-            <span className="text-red-400 text-sm mt-0.5">●</span>
-            <p className="text-red-300 text-sm flex-1">{error}</p>
-            <button onClick={() => setError(null)} className="text-white/50 hover:text-white/60 text-sm">✕</button>
+          <div className="bom-error">
+            <div className="bom-error-icon">!</div>
+            <p className="bom-error-text">{error}</p>
+            <button onClick={() => setError(null)} className="bom-error-close">✕</button>
           </div>
         )}
 
-        {/* ── Progress steps ───────────────────────────── */}
+        {/* ── Step indicator ───────────────────────────── */}
         {step < 5 && (
-          <div className="max-w-2xl mx-auto mb-10">
-            <div className="flex items-center justify-between">
-              {stepNames.filter((_, i) => !(isGuest ? false : i === 3)).map((name, i) => {
+          <FadeIn delay={200}>
+            <div className="bom-steps">
+              {stepDefs.map((sd, i) => {
                 const s = i + 1;
-                const active = step >= s;
+                const done = step > s;
+                const active = step === s;
+                const future = step < s;
                 return (
                   <React.Fragment key={s}>
-                    <div className="flex flex-col items-center gap-1.5">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
-                        active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25" : "bg-navy-800/60 text-white/50 border border-white/[0.06]"
-                      }`}>{step > s ? "✓" : s}</div>
-                      <span className={`text-[10px] transition-colors ${active ? "text-white/60" : "text-white/20"}`}>{name}</span>
+                    <div className={`bom-step ${done ? "done" : ""} ${active ? "active" : ""} ${future ? "future" : ""}`}>
+                      <div className="bom-step-circle">
+                        {done ? (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                        ) : (
+                          <span className="bom-step-num">{s}</span>
+                        )}
+                      </div>
+                      <span className="bom-step-label">{sd.n}</span>
                     </div>
-                    {s < stepNames.length && <div className={`flex-1 h-px mx-2 mt-[-12px] transition-colors duration-500 ${step > s ? "bg-emerald-500/40" : "bg-white/[0.06]"}`} />}
+                    {s < stepDefs.length && (
+                      <div className={`bom-step-line ${done ? "done" : ""}`} />
+                    )}
                   </React.Fragment>
                 );
               })}
             </div>
-          </div>
+          </FadeIn>
         )}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* STEP 1 — File Upload                            */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* ═══════════════════════════════════════════════ */}
+        {/* STEP 1 — File Upload                           */}
+        {/* ═══════════════════════════════════════════════ */}
         {step === 1 && (
-          <div className="max-w-2xl mx-auto space-y-5 animate-[fadeIn_0.3s_ease]">
-            <div className={card}>
-              <div className={cardInner}>
-                <h2 className="text-xl text-white font-semibold mb-1">Upload BOM File</h2>
-                <p className="text-white/70 text-sm mb-6">CSV or Excel — up to 10 MB</p>
+          <FadeIn delay={100} className="bom-center-col">
+            <div className="bom-card bom-card-lg">
+              <div className="bom-card-body">
+                <div className="bom-section-header">
+                  <h2 className="bom-section-title">Upload BOM File</h2>
+                  <span className="bom-section-meta">CSV or Excel · up to 10 MB</span>
+                </div>
 
-                <label className={`relative flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer transition-all
-                  ${file ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-white/[0.08] hover:border-white/20 hover:bg-navy-800/40"}`}>
-                  <input type="file" accept=".csv,.xlsx,.xls" onChange={handleFile} className="absolute inset-0 opacity-0 cursor-pointer" />
+                <label
+                  className={`bom-dropzone ${file ? "has-file" : ""} ${dragOver ? "drag-over" : ""}`}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                >
+                  <input type="file" accept=".csv,.xlsx,.xls" onChange={handleFile} className="bom-dropzone-input" />
                   {file ? (
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">📄</div>
-                      <p className="text-emerald-400 font-medium text-sm">{file.name}</p>
-                      <p className="text-white/50 text-xs mt-1">{(file.size / 1024).toFixed(1)} KB</p>
+                    <div className="bom-dropzone-content">
+                      <div className="bom-file-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                      </div>
+                      <p className="bom-file-name">{file.name}</p>
+                      <p className="bom-file-size">{(file.size / 1024).toFixed(1)} KB · Ready to analyze</p>
                     </div>
                   ) : (
-                    <div className="text-center">
-                      <div className="text-3xl mb-2 opacity-40">⬆</div>
-                      <p className="text-white/80 text-sm">Drop file here or click to browse</p>
-                      <p className="text-white/50 text-xs mt-1">.csv .xlsx .xls</p>
+                    <div className="bom-dropzone-content">
+                      <div className="bom-upload-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      </div>
+                      <p className="bom-dropzone-label">Drop your file here, or <span className="bom-dropzone-browse">browse</span></p>
+                      <p className="bom-dropzone-hint">.csv  .xlsx  .xls</p>
                     </div>
                   )}
                 </label>
               </div>
             </div>
-            <PrimaryButton onClick={() => { if (!file) { setError("Select a file"); return; } setError(null); setStep(2); }} disabled={!file}>
+            <PrimaryButton onClick={() => { if (!file) { setError("Select a file"); return; } setError(null); setStep(2); }} disabled={!file} className="bom-primary-btn">
               Continue →
             </PrimaryButton>
-          </div>
+          </FadeIn>
         )}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* STEP 2 — Location + Currency                    */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* ═══════════════════════════════════════════════ */}
+        {/* STEP 2 — Location + Currency                   */}
+        {/* ═══════════════════════════════════════════════ */}
         {step === 2 && (
-          <div className="max-w-2xl mx-auto space-y-5 animate-[fadeIn_0.3s_ease]">
-            <div className={card}>
-              <div className={cardInner + " space-y-5"}>
-                <h2 className="text-xl text-white font-semibold">Delivery Location</h2>
+          <FadeIn delay={100} className="bom-center-col">
+            <div className="bom-card bom-card-lg">
+              <div className="bom-card-body">
+                <div className="bom-section-header">
+                  <h2 className="bom-section-title">Delivery Location</h2>
+                  <span className="bom-section-meta">Where should components be delivered?</span>
+                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-white/70 text-xs mb-1.5 font-medium">Country</label>
-                    <select value={country} onChange={(e) => { setCountry(e.target.value); setStateRegion(""); setCity(""); }} className={selectCls}>
-                      <option value="" className="bg-navy-700">Select</option>
-                      {Object.keys(LOCATION_DATA).map((c) => <option key={c} value={c} className="bg-navy-700">{c}</option>)}
+                <div className="bom-form-grid">
+                  <div className="bom-field">
+                    <label className="bom-label">Country</label>
+                    <select value={country} onChange={(e) => { setCountry(e.target.value); setStateRegion(""); setCity(""); }} className="bom-select">
+                      <option value="">Select country</option>
+                      {Object.keys(LOCATION_DATA).map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-white/70 text-xs mb-1.5 font-medium">State / Region</label>
-                    <select value={stateRegion} onChange={(e) => { setStateRegion(e.target.value); setCity(""); }} disabled={!country} className={selectCls + " disabled:opacity-40"}>
-                      <option value="" className="bg-navy-700">{country ? "Select" : "—"}</option>
-                      {states_list.map((s) => <option key={s} value={s} className="bg-navy-700">{s}</option>)}
+                  <div className="bom-field">
+                    <label className="bom-label">State / Region</label>
+                    <select value={stateRegion} onChange={(e) => { setStateRegion(e.target.value); setCity(""); }} disabled={!country} className="bom-select">
+                      <option value="">{country ? "Select region" : "—"}</option>
+                      {states_list.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-white/70 text-xs mb-1.5 font-medium">City</label>
-                    <select value={city} onChange={(e) => setCity(e.target.value)} disabled={!stateRegion} className={selectCls + " disabled:opacity-40"}>
-                      <option value="" className="bg-navy-700">{stateRegion ? "Select" : "—"}</option>
-                      {cities_list.map((c) => <option key={c} value={c} className="bg-navy-700">{c}</option>)}
+                  <div className="bom-field">
+                    <label className="bom-label">City</label>
+                    <select value={city} onChange={(e) => setCity(e.target.value)} disabled={!stateRegion} className="bom-select">
+                      <option value="">{stateRegion ? "Select city" : "—"}</option>
+                      {cities_list.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-white/70 text-xs mb-1.5 font-medium">Target Currency</label>
-                  <select value={currency} onChange={(e) => setCurrency(e.target.value)} className={selectCls + " max-w-[200px]"}>
-                    {CURRENCIES.map((c) => <option key={c} value={c} className="bg-navy-700">{c}</option>)}
+                <div className="bom-field" style={{ maxWidth: 220 }}>
+                  <label className="bom-label">Target Currency</label>
+                  <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="bom-select">
+                    {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
 
                 {country && stateRegion && city && (
-                  <div className="p-3 bg-emerald-500/[0.06] border border-emerald-500/20 rounded-lg">
-                    <p className="text-emerald-400 text-xs font-medium">✓ {city}, {stateRegion}, {country} · {currency}</p>
+                  <div className="bom-location-confirm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>{city}, {stateRegion}, {country} · {currency}</span>
                   </div>
                 )}
               </div>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(1)} className="px-5 py-2.5 rounded-xl bg-navy-800/60 hover:bg-white/[0.08] text-white/60 text-sm font-medium transition-all">← Back</button>
-              <PrimaryButton onClick={startAnalysis} disabled={!country || !stateRegion || !city}>
+            <div className="bom-btn-row">
+              <button onClick={() => setStep(1)} className="bom-ghost-btn">← Back</button>
+              <PrimaryButton onClick={startAnalysis} disabled={!country || !stateRegion || !city} className="bom-primary-btn">
                 Start Analysis →
               </PrimaryButton>
             </div>
-          </div>
+          </FadeIn>
         )}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* STEP 3 — Processing                             */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* ═══════════════════════════════════════════════ */}
+        {/* STEP 3 — Processing                            */}
+        {/* ═══════════════════════════════════════════════ */}
         {step === 3 && (
-          <div className="text-center py-20 animate-[fadeIn_0.3s_ease]">
-            <div className="relative inline-block">
-              <div className="w-16 h-16 rounded-full border-[3px] border-emerald-500/20 border-t-emerald-500 animate-spin" />
-              <div className="absolute inset-0 w-16 h-16 rounded-full border-[3px] border-transparent border-b-emerald-500/30 animate-spin" style={{ animationDuration: "1.5s", animationDirection: "reverse" }} />
+          <FadeIn delay={0} className="bom-processing">
+            <div className="bom-spinner-wrap">
+              <div className="bom-spinner-ring" />
+              <div className="bom-spinner-ring bom-spinner-ring-2" />
+              <div className="bom-spinner-core" />
             </div>
-            <p className="mt-8 text-white text-lg font-medium">{progress}</p>
-            <p className="mt-2 text-white/50 text-sm">{city}, {stateRegion}, {country}</p>
-            <div className="mt-6 flex items-center justify-center gap-1">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />
+            <p className="bom-processing-label">{progress}</p>
+            <p className="bom-processing-sub">{city}, {stateRegion}, {country}</p>
+            <div className="bom-processing-dots">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="bom-processing-dot" style={{ animationDelay: `${i * 0.2}s` }} />
               ))}
             </div>
-          </div>
+          </FadeIn>
         )}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* STEP 4 — Guest Preview (rich data + CTA)        */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* ═══════════════════════════════════════════════ */}
+        {/* STEP 4 — Guest Preview                         */}
+        {/* ═══════════════════════════════════════════════ */}
         {step === 4 && previewData && (
-          <div className="max-w-4xl mx-auto space-y-6 animate-[fadeIn_0.5s_ease]">
-
+          <div className="bom-report-wrap">
             {/* Success header */}
-            <div className="text-center mb-2">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                <svg className="w-7 h-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+            <FadeIn delay={0}>
+              <div className="bom-success-header">
+                <div className="bom-success-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h2 className="bom-report-title">Analysis Complete</h2>
+                <p className="bom-report-sub">
+                  {previewData.total_parts} parts analyzed across {Object.keys(previewData.categories || {}).filter(k => (previewData.categories||{})[k] > 0).length} categories
+                </p>
               </div>
-              <h2 className="text-2xl text-white font-bold">Analysis Complete</h2>
-              <p className="text-white/50 text-sm mt-1">{previewData.total_parts} parts analyzed across {Object.keys(previewData.categories || {}).filter(k => (previewData.categories||{})[k] > 0).length} categories</p>
-            </div>
+            </FadeIn>
 
-            {/* KPI cards — 4 columns */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className={card}>
-                <div className="p-4">
-                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Est. Cost</p>
-                  <p className="text-lg text-white font-bold">{currency} {fmt(previewData.total_cost)}</p>
-                  {(previewData.cost_range?.[0] || previewData.cost_range?.min) && (
-                    <p className="text-white/40 text-[10px] mt-1">{currency} {fmt(previewData.cost_range?.[0] || previewData.cost_range?.min)} – {fmt(previewData.cost_range?.[1] || previewData.cost_range?.max)}</p>
-                  )}
-                </div>
-              </div>
-              <div className={card}>
-                <div className="p-4">
-                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Lead Time</p>
-                  <p className="text-lg text-white font-bold">{previewData.lead_time?.min_days || previewData.lead_time?.avg_days || "—"}–{previewData.lead_time?.max_days || "—"} <span className="text-sm font-normal text-white/50">days</span></p>
-                </div>
-              </div>
-              <div className={card}>
-                <div className="p-4">
-                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Savings</p>
-                  <p className="text-lg text-emerald-400 font-bold">{previewData.savings_percent ? `${previewData.savings_percent}%` : "—"}</p>
-                  <p className="text-white/40 text-[10px] mt-1">vs all-local sourcing</p>
-                </div>
-              </div>
-              <div className={card}>
-                <div className="p-4">
-                  <p className="text-white/40 text-[10px] font-medium mb-1.5 uppercase tracking-wider">Risk</p>
-                  <span className={`inline-flex px-2 py-0.5 rounded text-xs font-bold border ${riskBg(previewData.risk_level)}`}>
-                    {previewData.risk_level || "MEDIUM"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Category breakdown pills */}
-            {previewData.categories && Object.keys(previewData.categories).length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-white/30 text-xs">Categories:</span>
-                {Object.entries(previewData.categories).filter(([,v]) => v > 0).map(([cat, count]) => (
-                  <span key={cat} className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border ${
-                    cat === "standard" ? "bg-blue-500/10 border-blue-500/20 text-blue-400" :
-                    cat === "custom" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" :
-                    cat === "raw_material" ? "bg-purple-500/10 border-purple-500/20 text-purple-400" :
-                    "bg-navy-800/60 border-white/[0.08] text-white/50"
-                  }`}>
-                    {cat.replace("_", " ")} ({count})
-                  </span>
+            {/* KPI row */}
+            <FadeIn delay={100}>
+              <div className="bom-kpi-grid bom-kpi-4">
+                {[
+                  { label: "Est. Cost", value: `${currency} ${fmt(previewData.total_cost)}`, sub: previewData.cost_range ? `${currency} ${fmt(previewData.cost_range?.[0] || previewData.cost_range?.min)} – ${fmt(previewData.cost_range?.[1] || previewData.cost_range?.max)}` : null },
+                  { label: "Lead Time", value: `${previewData.lead_time?.min_days || previewData.lead_time?.avg_days || "—"}–${previewData.lead_time?.max_days || "—"}`, suffix: "days" },
+                  { label: "Savings", value: previewData.savings_percent ? `${previewData.savings_percent}%` : "—", sub: "vs all-local sourcing", accent: true },
+                  { label: "Risk", badge: previewData.risk_level || "MEDIUM" },
+                ].map((kpi, i) => (
+                  <div key={i} className="bom-kpi-card">
+                    <span className="bom-kpi-label">{kpi.label}</span>
+                    {kpi.badge ? (
+                      <span className={`bom-kpi-badge ${riskBg(kpi.badge)}`}>{kpi.badge}</span>
+                    ) : (
+                      <span className={`bom-kpi-value ${kpi.accent ? "accent" : ""}`}>{kpi.value}{kpi.suffix && <span className="bom-kpi-suffix">{kpi.suffix}</span>}</span>
+                    )}
+                    {kpi.sub && <span className="bom-kpi-sub">{kpi.sub}</span>}
+                  </div>
                 ))}
               </div>
+            </FadeIn>
+
+            {/* Category pills */}
+            {previewData.categories && Object.keys(previewData.categories).length > 0 && (
+              <FadeIn delay={180}>
+                <div className="bom-cat-pills">
+                  <span className="bom-cat-pills-label">Categories</span>
+                  {Object.entries(previewData.categories).filter(([,v]) => v > 0).map(([cat, count]) => (
+                    <span key={cat} className="bom-cat-pill">{cat.replace("_", " ")} <b>{count}</b></span>
+                  ))}
+                </div>
+              </FadeIn>
             )}
 
-            {/* ── VISIBLE Component Breakdown (first 3 real items) ── */}
+            {/* Component table preview */}
             {previewData.visible_parts?.length > 0 && (
-              <div className={card}>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Component Breakdown</p>
-                    <span className="text-white/30 text-[10px]">{previewData.visible_parts.length} of {previewData.total_parts} shown</span>
-                  </div>
-
-                  {/* Table header */}
-                  <div className="grid grid-cols-12 gap-2 px-3 pb-2 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-wider">
-                    <span className="col-span-4">Part</span>
-                    <span className="col-span-2">Category</span>
-                    <span className="col-span-1 text-right">Qty</span>
-                    <span className="col-span-2">Region</span>
-                    <span className="col-span-1">Process</span>
-                    <span className="col-span-2 text-right">Est. Cost</span>
-                  </div>
-
-                  {/* Visible rows */}
-                  {previewData.visible_parts.map((part, i) => (
-                    <div key={i} className="grid grid-cols-12 gap-2 px-3 py-3 border-b border-white/[0.04] items-center hover:bg-navy-800/40 transition-colors">
-                      <span className="col-span-4 text-white/80 text-sm truncate" title={part.part_name}>{part.part_name}</span>
-                      <span className={`col-span-2 text-[11px] font-medium ${
-                        part.category === "standard" ? "text-blue-400" :
-                        part.category === "custom" ? "text-amber-400" :
-                        part.category === "raw_material" ? "text-purple-400" : "text-white/40"
-                      }`}>{part.category?.replace("_", " ")}</span>
-                      <span className="col-span-1 text-white/50 text-sm text-right font-mono">{part.quantity}</span>
-                      <span className="col-span-2 text-white/50 text-sm">{part.best_region}</span>
-                      <span className="col-span-1 text-white/40 text-[11px]">{part.process}</span>
-                      <span className="col-span-2 text-white font-mono text-sm text-right">{currency} {fmt(part.best_cost)}</span>
+              <FadeIn delay={260}>
+                <div className="bom-card">
+                  <div className="bom-card-body">
+                    <div className="bom-table-header">
+                      <span className="bom-table-title">Component Breakdown</span>
+                      <span className="bom-table-meta">{previewData.visible_parts.length} of {previewData.total_parts} shown</span>
                     </div>
-                  ))}
 
-                  {/* Locked rows */}
-                  {previewData.locked_parts_count > 0 && (
-                    <div className="relative mt-1">
-                      {[1, 2].map(i => (
-                        <div key={i} className="grid grid-cols-12 gap-2 px-3 py-3 border-b border-white/[0.04] opacity-20 blur-[3px] select-none pointer-events-none">
-                          <span className="col-span-4 text-white/50 text-sm">████████ ██████</span>
-                          <span className="col-span-2 text-white/50 text-[11px]">██████</span>
-                          <span className="col-span-1 text-white/50 text-sm text-right">███</span>
-                          <span className="col-span-2 text-white/50 text-sm">█████</span>
-                          <span className="col-span-1 text-white/50 text-[11px]">███</span>
-                          <span className="col-span-2 text-white/50 text-sm text-right">███.██</span>
+                    <div className="bom-table">
+                      <div className="bom-table-head">
+                        <span className="bom-th" style={{ flex: 3 }}>Part</span>
+                        <span className="bom-th" style={{ flex: 1.5 }}>Category</span>
+                        <span className="bom-th bom-th-right" style={{ flex: 0.8 }}>Qty</span>
+                        <span className="bom-th" style={{ flex: 1.2 }}>Region</span>
+                        <span className="bom-th" style={{ flex: 1 }}>Process</span>
+                        <span className="bom-th bom-th-right" style={{ flex: 1.5 }}>Est. Cost</span>
+                      </div>
+                      {previewData.visible_parts.map((part, i) => (
+                        <div key={i} className="bom-table-row" style={{ animationDelay: `${i * 60}ms` }}>
+                          <span className="bom-td bom-td-name" style={{ flex: 3 }} title={part.part_name}>{part.part_name}</span>
+                          <span className="bom-td bom-td-cat" style={{ flex: 1.5 }}>{part.category?.replace("_", " ")}</span>
+                          <span className="bom-td bom-td-mono bom-td-right" style={{ flex: 0.8 }}>{part.quantity}</span>
+                          <span className="bom-td" style={{ flex: 1.2 }}>{part.best_region}</span>
+                          <span className="bom-td bom-td-dim" style={{ flex: 1 }}>{part.process}</span>
+                          <span className="bom-td bom-td-mono bom-td-right bom-td-cost" style={{ flex: 1.5 }}>{currency} {fmt(part.best_cost)}</span>
                         </div>
                       ))}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-navy-800/90 rounded-full border border-white/[0.1]">
-                          <svg className="w-3.5 h-3.5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                          <span className="text-white/60 text-xs font-medium">+{previewData.locked_parts_count} more parts — sign up to unlock</span>
+
+                      {/* Locked rows */}
+                      {previewData.locked_parts_count > 0 && (
+                        <div className="bom-locked-overlay">
+                          {[1, 2].map(i => (
+                            <div key={i} className="bom-table-row bom-locked-row">
+                              <span className="bom-td" style={{ flex: 3 }}>████████ ██████</span>
+                              <span className="bom-td" style={{ flex: 1.5 }}>██████</span>
+                              <span className="bom-td" style={{ flex: 0.8 }}>███</span>
+                              <span className="bom-td" style={{ flex: 1.2 }}>█████</span>
+                              <span className="bom-td" style={{ flex: 1 }}>███</span>
+                              <span className="bom-td" style={{ flex: 1.5 }}>███.██</span>
+                            </div>
+                          ))}
+                          <div className="bom-locked-badge">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                            <span>+{previewData.locked_parts_count} more parts — sign up to unlock</span>
+                          </div>
                         </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            )}
+
+            {/* Insights + Regions */}
+            <FadeIn delay={340}>
+              <div className="bom-split-grid">
+                {previewData.basic_processes?.length > 0 && (
+                  <div className="bom-card">
+                    <div className="bom-card-body">
+                      <span className="bom-card-label">Strategy Insights</span>
+                      <div className="bom-insights-list">
+                        {previewData.basic_processes.map((reason, i) => (
+                          <div key={i} className="bom-insight-item">
+                            <span className="bom-insight-dot" />
+                            <p>{reason}</p>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Key insights */}
-            {previewData.basic_processes?.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className={card}>
-                  <div className="p-5">
-                    <p className="text-white/40 text-xs font-medium mb-3 uppercase tracking-wider">Strategy Insights</p>
-                    <div className="space-y-2">
-                      {previewData.basic_processes.map((reason, i) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <span className="text-emerald-400 text-xs mt-0.5">▸</span>
-                          <p className="text-white/70 text-sm leading-relaxed">{reason}</p>
-                        </div>
-                      ))}
-                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Region distribution */}
                 {previewData.region_distribution && Object.keys(previewData.region_distribution).length > 0 && (
-                  <div className={card}>
-                    <div className="p-5">
-                      <p className="text-white/40 text-xs font-medium mb-3 uppercase tracking-wider">Sourcing Regions</p>
-                      <div className="space-y-2">
-                        {Object.entries(previewData.region_distribution).sort((a, b) => b[1] - a[1]).map(([region, pct]) => (
-                          <div key={region} className="flex items-center gap-3">
-                            <span className="text-white/70 text-sm w-20 truncate">{region}</span>
-                            <div className="flex-1 bg-white/[0.06] rounded-full h-2 overflow-hidden">
-                              <div className="h-full bg-emerald-500/60 rounded-full" style={{ width: `${Math.min(pct, 100)}%` }} />
+                  <div className="bom-card">
+                    <div className="bom-card-body">
+                      <span className="bom-card-label">Sourcing Regions</span>
+                      <div className="bom-regions-list">
+                        {Object.entries(previewData.region_distribution).sort((a, b) => b[1] - a[1]).map(([region, pctVal]) => (
+                          <div key={region} className="bom-region-row">
+                            <span className="bom-region-name">{region}</span>
+                            <div className="bom-region-bar-wrap">
+                              <div className="bom-region-bar" style={{ width: `${Math.min(pctVal, 100)}%` }} />
                             </div>
-                            <span className="text-white/40 text-xs font-mono w-10 text-right">{typeof pct === "number" ? pct.toFixed(0) : pct}%</span>
+                            <span className="bom-region-pct">{typeof pctVal === "number" ? pctVal.toFixed(0) : pctVal}%</span>
                           </div>
                         ))}
                       </div>
@@ -600,463 +646,1625 @@ export default function BOMAnalyzer() {
                   </div>
                 )}
               </div>
-            )}
+            </FadeIn>
 
             {/* Decision summary */}
             {previewData.decision_summary && (
-              <div className={card}>
-                <div className="p-5">
-                  <p className="text-white/40 text-xs font-medium mb-2 uppercase tracking-wider">AI Recommendation</p>
-                  <p className="text-white/70 text-sm leading-relaxed">{previewData.decision_summary}</p>
+              <FadeIn delay={400}>
+                <div className="bom-card">
+                  <div className="bom-card-body">
+                    <span className="bom-card-label">AI Recommendation</span>
+                    <p className="bom-recommendation-text">{previewData.decision_summary}</p>
+                  </div>
                 </div>
-              </div>
+              </FadeIn>
             )}
 
-            {/* ── Unlock CTA ─────────────────────────────── */}
-            <div className="relative rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 via-blue-600/20 to-violet-600/20" />
-              <div className="absolute inset-0 bg-navy-800/80" />
-              <div className="relative p-8 sm:p-10 text-center">
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Get the Full Report
-                </h3>
-                <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">
-                  Unlock detailed per-component sourcing, vendor selection,
-                  procurement plan, and downloadable cost optimization report.
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                  {user ? (
-                    <button onClick={handleUnlock}
-                      className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-600/25">
-                      Unlock Full Report
-                    </button>
-                  ) : (
-                    <>
-                      <a href="/register"
-                        className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-600/25 inline-block">
-                        Create Free Account
-                      </a>
-                      <a href="/login" className="text-white/50 hover:text-white/70 text-sm transition-colors">
-                        Already have an account? Login
-                      </a>
-                    </>
-                  )}
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-[11px] text-white/30">
-                  <span>✓ All {previewData.total_parts} components</span>
-                  <span>✓ Vendor selection</span>
-                  <span>✓ Procurement plan</span>
-                  <span>✓ Cost optimization</span>
-                  <span>✓ RFQ generation</span>
+            {/* Unlock CTA */}
+            <FadeIn delay={480}>
+              <div className="bom-cta-card">
+                <div className="bom-cta-bg" />
+                <div className="bom-cta-content">
+                  <h3 className="bom-cta-title">Get the Full Report</h3>
+                  <p className="bom-cta-desc">
+                    Unlock detailed per-component sourcing, vendor selection,
+                    procurement plan, and downloadable cost optimization report.
+                  </p>
+                  <div className="bom-cta-actions">
+                    {user ? (
+                      <button onClick={handleUnlock} className="bom-cta-btn">Unlock Full Report</button>
+                    ) : (
+                      <>
+                        <a href="/register" className="bom-cta-btn">Create Free Account</a>
+                        <a href="/login" className="bom-cta-link">Already have an account? Login</a>
+                      </>
+                    )}
+                  </div>
+                  <div className="bom-cta-features">
+                    {["All " + previewData.total_parts + " components", "Vendor selection", "Procurement plan", "Cost optimization", "RFQ generation"].map((f, i) => (
+                      <span key={i} className="bom-cta-feature">✓ {f}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            </FadeIn>
 
-            {/* Reset */}
-            <div className="flex justify-center">
-              <button onClick={reset} className="px-5 py-2.5 bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/60 text-sm font-medium transition-all">
-                ← Analyze Another BOM
-              </button>
+            <div className="bom-center-row">
+              <button onClick={reset} className="bom-ghost-btn">← Analyze Another BOM</button>
             </div>
           </div>
         )}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* STEP 5 — Full Report (authenticated users)      */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* ═══════════════════════════════════════════════ */}
+        {/* STEP 5 — Full Report                           */}
+        {/* ═══════════════════════════════════════════════ */}
         {step === 5 && report && (
-          <div className="space-y-6 animate-[fadeIn_0.4s_ease]">
-
-            {/* ── Report header with project info ──────── */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-              <div>
-                <h2 className="text-2xl font-bold text-white">Analysis Report</h2>
-                <p className="text-white/50 text-sm mt-1">
-                  {meta.items} items · {meta.candidates} candidates · {meta.total_time_s}s
-                  {bomId && <span className="text-white/30 ml-2">ID: {bomId.slice(0, 8)}</span>}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                {bomId && user && (
-                  <a href={`/project/${projectId || bomId}`}
-                    className="px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/20 rounded-lg text-emerald-400 text-xs font-medium transition-all">
-                    View Project →
-                  </a>
-                )}
-                <button onClick={reset} className="px-4 py-2 bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-white/60 text-xs font-medium transition-all">
-                  New Analysis
-                </button>
-              </div>
-            </div>
-
-            {/* ── Tabs ─────────────────────────────────── */}
-            <div className="flex gap-1 p-1 bg-navy-800/50 rounded-xl border border-white/[0.06] max-w-fit">
-              {[
-                ["overview", "Overview"],
-                ["components", "Components"],
-                ["strategy", "Strategy"],
-                ["learning", "Learning"],
-              ].map(([id, label]) => (
-                <button key={id} onClick={() => setActiveTab(id)}
-                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === id ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-white/70 hover:text-white/70"}`}>
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* ── TAB: Overview ────────────────────────── */}
-            {activeTab === "overview" && (
-              <div className="space-y-6">
-                {/* KPIs */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  {[
-                    { label: "Total Cost", value: <AnimNum value={s1.total_cost} prefix={currency + " "} />, sub: `${pct(s1.optimization?.cost_savings_pct)} savings` },
-                    { label: "Lead Time", value: `${lt.min_days}–${lt.max_days}d`, sub: `Expected ${lt.expected_days} days` },
-                    { label: "Risk Score", value: <span className={riskColor(s1.risk_score)}>{fmt(s1.risk_score, 3)}</span>, sub: `${s2.length} items analyzed` },
-                    { label: "Engine", value: `${meta.total_time_s || 0}s`, sub: `${meta.candidates || 0} candidates` },
-                  ].map((kpi, i) => (
-                    <div key={i} className={card}>
-                      <div className="p-5">
-                        <p className="text-white/35 text-xs font-medium mb-2">{kpi.label}</p>
-                        <p className="text-2xl font-bold text-white tracking-tight">{kpi.value}</p>
-                        <p className="text-white/50 text-xs mt-1">{kpi.sub}</p>
-                      </div>
-                    </div>
-                  ))}
+          <div className="bom-report-wrap">
+            {/* Report header */}
+            <FadeIn delay={0}>
+              <div className="bom-report-header">
+                <div>
+                  <h2 className="bom-report-title" style={{ textAlign: "left" }}>Analysis Report</h2>
+                  <p className="bom-report-sub" style={{ textAlign: "left" }}>
+                    {meta.items} items · {meta.candidates} candidates · {meta.total_time_s}s
+                    {bomId && <span className="bom-report-id"> · ID: {bomId.slice(0, 8)}</span>}
+                  </p>
                 </div>
+                <div className="bom-report-actions">
+                  {bomId && user && (
+                    <a href={`/project/${projectId || bomId}`} className="bom-accent-btn">View Project →</a>
+                  )}
+                  <button onClick={reset} className="bom-ghost-btn bom-ghost-btn-sm">New Analysis</button>
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* Tabs */}
+            <FadeIn delay={80}>
+              <div className="bom-tabs">
+                {[
+                  ["overview", "Overview"],
+                  ["components", "Components"],
+                  ["strategy", "Strategy"],
+                  ["learning", "Learning"],
+                ].map(([id, label]) => (
+                  <button key={id} onClick={() => setActiveTab(id)} className={`bom-tab ${activeTab === id ? "active" : ""}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </FadeIn>
+
+            {/* ── TAB: Overview ──────────────────────────── */}
+            {activeTab === "overview" && (
+              <div className="bom-tab-content">
+                <FadeIn delay={100}>
+                  <div className="bom-kpi-grid bom-kpi-4">
+                    {[
+                      { label: "Total Cost", value: <AnimNum value={s1.total_cost} prefix={currency + " "} />, sub: `${pct(s1.optimization?.cost_savings_pct)} savings` },
+                      { label: "Lead Time", value: `${lt.min_days}–${lt.max_days}d`, sub: `Expected ${lt.expected_days} days` },
+                      { label: "Risk Score", value: <span className={riskColor(s1.risk_score)}>{fmt(s1.risk_score, 3)}</span>, sub: `${s2.length} items analyzed` },
+                      { label: "Engine", value: `${meta.total_time_s || 0}s`, sub: `${meta.candidates || 0} candidates` },
+                    ].map((kpi, i) => (
+                      <div key={i} className="bom-kpi-card">
+                        <span className="bom-kpi-label">{kpi.label}</span>
+                        <span className="bom-kpi-value">{kpi.value}</span>
+                        <span className="bom-kpi-sub">{kpi.sub}</span>
+                      </div>
+                    ))}
+                  </div>
+                </FadeIn>
 
                 {/* Cost breakdown */}
-                <div className={card}>
-                  <div className={cardInner}>
-                    <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Cost Breakdown</h3>
-                    <div className="space-y-3">
-                      {[
-                        { label: "Manufacturing", value: bd.manufacturing, color: "bg-emerald-500" },
-                        { label: "Logistics", value: bd.logistics, color: "bg-sky-500" },
-                        { label: "Tariffs & Duties", value: bd.tariffs, color: "bg-amber-500" },
-                        { label: "NRE / Tooling", value: bd.nre, color: "bg-violet-500" },
-                        { label: "Material", value: bd.material, color: "bg-rose-500" },
-                      ].map((row, i) => {
-                        const total = s1.total_cost || 1;
-                        const w = Math.max(2, ((row.value || 0) / total) * 100);
-                        return (
-                          <div key={i} className="flex items-center gap-4">
-                            <span className="text-white/80 text-xs w-28 shrink-0">{row.label}</span>
-                            <div className="flex-1 h-2 bg-navy-800/60 rounded-full overflow-hidden">
-                              <div className={`h-full rounded-full ${row.color}`} style={{ width: `${w}%`, transition: "width 1s ease" }} />
+                <FadeIn delay={200}>
+                  <div className="bom-card">
+                    <div className="bom-card-body">
+                      <span className="bom-card-label">Cost Breakdown</span>
+                      <div className="bom-cost-bars">
+                        {[
+                          { label: "Manufacturing", value: bd.manufacturing, color: "#34d399" },
+                          { label: "Logistics", value: bd.logistics, color: "#38bdf8" },
+                          { label: "Tariffs & Duties", value: bd.tariffs, color: "#fbbf24" },
+                          { label: "NRE / Tooling", value: bd.nre, color: "#a78bfa" },
+                          { label: "Material", value: bd.material, color: "#f87171" },
+                        ].map((row, i) => {
+                          const total = s1.total_cost || 1;
+                          const w = Math.max(2, ((row.value || 0) / total) * 100);
+                          return (
+                            <div key={i} className="bom-cost-row">
+                              <span className="bom-cost-label">{row.label}</span>
+                              <div className="bom-cost-track">
+                                <div className="bom-cost-fill" style={{ width: `${w}%`, background: row.color, transition: "width 1.2s cubic-bezier(0.16,1,0.3,1)" }} />
+                              </div>
+                              <span className="bom-cost-val">{currency} {fmt(row.value)}</span>
                             </div>
-                            <span className="text-white/70 text-xs font-mono w-24 text-right">{currency} {fmt(row.value)}</span>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </FadeIn>
 
-                {/* Decision distribution + recommendation */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className={card}>
-                    <div className="p-5">
-                      <p className="text-white/35 text-xs font-medium mb-3">Decision Distribution</p>
-                      <div className="flex items-end gap-3">
-                        <div className="flex-1">
-                          <div className="flex h-3 rounded-full overflow-hidden bg-navy-800/60">
-                            <div className="bg-emerald-500 rounded-l-full" style={{ width: `${dd.exploitation_pct || 0}%` }} />
-                            <div className="bg-amber-500 rounded-r-full" style={{ width: `${dd.exploration_pct || 0}%` }} />
+                <FadeIn delay={300}>
+                  <div className="bom-split-grid">
+                    <div className="bom-card">
+                      <div className="bom-card-body">
+                        <span className="bom-card-label">Decision Distribution</span>
+                        <div className="bom-decision-bar-wrap">
+                          <div className="bom-decision-bar">
+                            <div className="bom-decision-exploit" style={{ width: `${dd.exploitation_pct || 0}%` }} />
+                            <div className="bom-decision-explore" style={{ width: `${dd.exploration_pct || 0}%` }} />
                           </div>
-                          <div className="flex justify-between mt-2 text-[10px]">
-                            <span className="text-emerald-400">Exploit {pct(dd.exploitation_pct)}</span>
-                            <span className="text-amber-400">Explore {pct(dd.exploration_pct)}</span>
+                          <div className="bom-decision-legend">
+                            <span className="bom-legend-exploit">Exploit {pct(dd.exploitation_pct)}</span>
+                            <span className="bom-legend-explore">Explore {pct(dd.exploration_pct)}</span>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className={card}>
-                    <div className="p-5">
-                      <p className="text-white/35 text-xs font-medium mb-3">Recommendation</p>
-                      <p className="text-white/70 text-xs leading-relaxed">{s5.plan || "—"}</p>
+                    <div className="bom-card">
+                      <div className="bom-card-body">
+                        <span className="bom-card-label">Recommendation</span>
+                        <p className="bom-recommendation-text">{s5.plan || "—"}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </FadeIn>
               </div>
             )}
 
-            {/* ── TAB: Components — grouped by category ── */}
+            {/* ── TAB: Components ────────────────────────── */}
             {activeTab === "components" && (
-              <div className="space-y-6">
-                {/* Summary badges */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-white/40 text-xs">{s2.length} components</span>
-                  {S5_CAT_ORDER.filter(c => groupedS2[c]?.length > 0).map(c => (
-                    <span key={c} className={`px-2 py-0.5 rounded-lg text-[10px] font-medium ${S5_CAT_BADGE[c]}`}>
-                      {S5_CAT_LABELS[c]} ({groupedS2[c].length})
-                    </span>
-                  ))}
-                </div>
+              <div className="bom-tab-content">
+                <FadeIn delay={60}>
+                  <div className="bom-cat-pills" style={{ marginBottom: 24 }}>
+                    <span className="bom-cat-pills-label">{s2.length} components</span>
+                    {S5_CAT_ORDER.filter(c => groupedS2[c]?.length > 0).map(c => {
+                      const a = S5_CAT_ACCENT[c];
+                      return (
+                        <span key={c} className="bom-cat-pill-rich" style={{ background: a.bg, borderColor: a.border, color: a.text }}>
+                          <span style={{ opacity: 0.7 }}>{S5_CAT_ICONS[c]}</span> {S5_CAT_LABELS[c]} <b>{groupedS2[c].length}</b>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </FadeIn>
 
-                {S5_CAT_ORDER.filter(cat => groupedS2[cat]?.length > 0).map(cat => (
-                  <div key={cat}>
-                    <div className="flex items-center gap-2 mb-3 mt-2">
-                      <span className={`w-2 h-2 rounded-full ${S5_CAT_BADGE[cat].split(" ")[0].replace("/15", "/60").replace("/[0.06]", "/30")}`} />
-                      <h3 className="text-sm font-bold text-white/40 uppercase tracking-wider">{S5_CAT_LABELS[cat]}</h3>
-                      <span className="text-white/20 text-xs">({groupedS2[cat].length})</span>
-                    </div>
-                    <div className="space-y-3">
-                      {groupedS2[cat].map((item) => {
-                        const globalIdx = s2.indexOf(item);
-                        const v = item.selected_vendor || {};
-                        const tlcB = v.tlc_breakdown || {};
-                        const exp = item.explanation || {};
-                        const alts = item.alternatives || [];
-                        const open = expandedItem === globalIdx;
-                        return (
-                          <div key={globalIdx} className={card + " transition-all"}>
-                            <button onClick={() => setExpandedItem(open ? null : globalIdx)} className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-white/[0.01] transition-colors">
-                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${S5_CAT_BADGE[cat]}`}>
-                                {cat.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-white text-sm font-medium truncate">{item.description}</p>
-                                <p className="text-white/50 text-xs">Q: {item.quantity} · {regionLabel(v.region)} · {v.transport_mode || ""}</p>
-                              </div>
-                              <div className="text-right shrink-0">
-                                <p className="text-white font-mono text-sm">{v.simulated_tlc ? `${currency} ${fmt(v.simulated_tlc)}` : "RFQ"}</p>
-                                <p className={`text-xs font-medium ${modeColor(item.decision_mode)}`}>{modeLabel(item.decision_mode)}</p>
-                              </div>
-                              <span className={`text-white/20 text-xs transition-transform duration-200 ${open ? "rotate-180" : ""}`}>▼</span>
-                            </button>
+                {S5_CAT_ORDER.filter(cat => groupedS2[cat]?.length > 0).map((cat, catIdx) => {
+                  const a = S5_CAT_ACCENT[cat];
+                  return (
+                    <FadeIn key={cat} delay={100 + catIdx * 80}>
+                      <div className="bom-comp-group">
+                        <div className="bom-comp-group-header">
+                          <span className="bom-comp-group-dot" style={{ background: a.dot }} />
+                          <h3 className="bom-comp-group-title">{S5_CAT_LABELS[cat]}</h3>
+                          <span className="bom-comp-group-count">{groupedS2[cat].length}</span>
+                        </div>
+                        <div className="bom-comp-list">
+                          {groupedS2[cat].map((item) => {
+                            const globalIdx = s2.indexOf(item);
+                            const v = item.selected_vendor || {};
+                            const tlcB = v.tlc_breakdown || {};
+                            const exp = item.explanation || {};
+                            const alts = item.alternatives || [];
+                            const open = expandedItem === globalIdx;
+                            return (
+                              <div key={globalIdx} className={`bom-comp-card ${open ? "expanded" : ""}`}>
+                                <button onClick={() => setExpandedItem(open ? null : globalIdx)} className="bom-comp-summary">
+                                  <div className="bom-comp-icon" style={{ background: a.bg, color: a.text, borderColor: a.border }}>
+                                    {S5_CAT_ICONS[cat]}
+                                  </div>
+                                  <div className="bom-comp-info">
+                                    <p className="bom-comp-name">{item.description}</p>
+                                    <p className="bom-comp-meta">Q: {item.quantity} · {regionLabel(v.region)} · {v.transport_mode || ""}</p>
+                                  </div>
+                                  <div className="bom-comp-cost">
+                                    <p className="bom-comp-cost-val">{v.simulated_tlc ? `${currency} ${fmt(v.simulated_tlc)}` : "RFQ"}</p>
+                                    <p className={`bom-comp-mode ${modeColor(item.decision_mode)}`}>{modeLabel(item.decision_mode)}</p>
+                                  </div>
+                                  <span className={`bom-comp-chevron ${open ? "open" : ""}`}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                  </span>
+                                </button>
 
-                            {open && (
-                              <div className="border-t border-white/[0.04] p-4 sm:p-5 space-y-4 bg-white/[0.01]">
-                                {/* TLC Breakdown */}
-                                <div>
-                                  <p className="text-white/70 text-xs font-medium mb-2">TLC Breakdown</p>
-                                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                                    {[
-                                      ["Mfg", `${fmt(tlcB.c_mfg, 2)} × ${tlcB.quantity}`],
-                                      ["Logistics", fmt(tlcB.c_log)],
-                                      ["Tariff", fmt(tlcB.c_tariff)],
-                                      ["NRE", fmt(tlcB.c_nre)],
-                                      ["Inventory", fmt(tlcB.c_inventory)],
-                                      ["Risk", fmt(tlcB.c_risk)],
-                                      ["Compliance", fmt(tlcB.c_compliance)],
-                                      ["Industrial TLC", fmt(tlcB.industrial_tlc)],
-                                    ].map(([l, val], j) => (
-                                      <div key={j} className="p-2 bg-navy-800/40 rounded-lg">
-                                        <p className="text-white/50 mb-0.5">{l}</p>
-                                        <p className="text-white/80 font-mono">{val}</p>
+                                {open && (
+                                  <div className="bom-comp-detail">
+                                    <div className="bom-detail-section">
+                                      <span className="bom-detail-label">TLC Breakdown</span>
+                                      <div className="bom-detail-grid">
+                                        {[
+                                          ["Mfg", `${fmt(tlcB.c_mfg, 2)} × ${tlcB.quantity}`],
+                                          ["Logistics", fmt(tlcB.c_log)],
+                                          ["Tariff", fmt(tlcB.c_tariff)],
+                                          ["NRE", fmt(tlcB.c_nre)],
+                                          ["Inventory", fmt(tlcB.c_inventory)],
+                                          ["Risk", fmt(tlcB.c_risk)],
+                                          ["Compliance", fmt(tlcB.c_compliance)],
+                                          ["Industrial TLC", fmt(tlcB.industrial_tlc)],
+                                        ].map(([l, val], j) => (
+                                          <div key={j} className="bom-detail-cell">
+                                            <span className="bom-detail-cell-label">{l}</span>
+                                            <span className="bom-detail-cell-val">{val}</span>
+                                          </div>
+                                        ))}
                                       </div>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {/* Decision math */}
-                                <div>
-                                  <p className="text-white/70 text-xs font-medium mb-2">Decision Logic</p>
-                                  <div className="p-3 bg-navy-700 rounded-lg text-xs font-mono text-white/80 space-y-1 overflow-x-auto">
-                                    <p>{exp.math?.ucb || "—"}</p>
-                                    <p className="text-white/50">{exp.math?.tlc || "—"}</p>
-                                  </div>
-                                </div>
-
-                                {/* Risk */}
-                                <div className="flex flex-wrap gap-3">
-                                  {[
-                                    ["Supply", exp.risk?.supply],
-                                    ["Logistics", exp.risk?.logistics],
-                                    ["Cost Vol.", exp.risk?.cost_volatility],
-                                    ["Quality", exp.risk?.quality],
-                                  ].map(([l, val], j) => (
-                                    <div key={j} className="px-3 py-1.5 bg-navy-800/50 rounded-lg text-xs">
-                                      <span className="text-white/50">{l} </span>
-                                      <span className={riskColor(val || 0)}>{fmt(val, 3)}</span>
                                     </div>
-                                  ))}
-                                </div>
 
-                                {/* Alternatives */}
-                                {alts.length > 0 && (
-                                  <div>
-                                    <p className="text-white/70 text-xs font-medium mb-2">Alternatives</p>
-                                    <div className="space-y-1.5">
-                                      {alts.map((a, j) => (
-                                        <div key={j} className="flex items-center justify-between p-2 bg-navy-800/40 rounded-lg text-xs">
-                                          <span className="text-white/80">{a.supplier_name} · {regionLabel(a.region)}</span>
-                                          <span className="text-white/70 font-mono">{currency} {fmt(a.simulated_tlc)}</span>
+                                    <div className="bom-detail-section">
+                                      <span className="bom-detail-label">Decision Logic</span>
+                                      <div className="bom-code-block">
+                                        <p>{exp.math?.ucb || "—"}</p>
+                                        <p className="bom-code-dim">{exp.math?.tlc || "—"}</p>
+                                      </div>
+                                    </div>
+
+                                    <div className="bom-detail-section">
+                                      <span className="bom-detail-label">Risk Factors</span>
+                                      <div className="bom-risk-pills">
+                                        {[
+                                          ["Supply", exp.risk?.supply],
+                                          ["Logistics", exp.risk?.logistics],
+                                          ["Cost Vol.", exp.risk?.cost_volatility],
+                                          ["Quality", exp.risk?.quality],
+                                        ].map(([l, val], j) => (
+                                          <div key={j} className="bom-risk-pill">
+                                            <span className="bom-risk-pill-label">{l}</span>
+                                            <span className={`bom-risk-pill-val ${riskColor(val || 0)}`}>{fmt(val, 3)}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {alts.length > 0 && (
+                                      <div className="bom-detail-section">
+                                        <span className="bom-detail-label">Alternatives</span>
+                                        <div className="bom-alts-list">
+                                          {alts.map((al, j) => (
+                                            <div key={j} className="bom-alt-row">
+                                              <span>{al.supplier_name} · {regionLabel(al.region)}</span>
+                                              <span className="bom-alt-cost">{currency} {fmt(al.simulated_tlc)}</span>
+                                            </div>
+                                          ))}
                                         </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
+                                      </div>
+                                    )}
 
-                                {/* Process chain */}
-                                {v.process_chain && v.process_chain.length > 0 && (
-                                  <div>
-                                    <p className="text-white/70 text-xs font-medium mb-2">Process Chain</p>
-                                    <div className="flex flex-wrap gap-1.5">
-                                      {v.process_chain.map((p, j) => (
-                                        <span key={j} className="px-2 py-1 bg-violet-500/10 text-violet-300 text-[10px] rounded-md font-medium">{p}</span>
-                                      ))}
-                                    </div>
-                                    {v.machining_time_hrs > 0 && (
-                                      <p className="text-white/50 text-xs mt-2">Machining: {fmt(v.machining_time_hrs)}h · Labor: {fmt(v.labor_hours)}h</p>
+                                    {v.process_chain && v.process_chain.length > 0 && (
+                                      <div className="bom-detail-section">
+                                        <span className="bom-detail-label">Process Chain</span>
+                                        <div className="bom-process-chain">
+                                          {v.process_chain.map((p, j) => (
+                                            <React.Fragment key={j}>
+                                              <span className="bom-process-tag">{p}</span>
+                                              {j < v.process_chain.length - 1 && <span className="bom-process-arrow">→</span>}
+                                            </React.Fragment>
+                                          ))}
+                                        </div>
+                                        {v.machining_time_hrs > 0 && (
+                                          <p className="bom-process-meta">Machining: {fmt(v.machining_time_hrs)}h · Labor: {fmt(v.labor_hours)}h</p>
+                                        )}
+                                      </div>
                                     )}
                                   </div>
                                 )}
                               </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </FadeIn>
+                  );
+                })}
               </div>
             )}
 
-            {/* ── TAB: Strategy ────────────────────────── */}
+            {/* ── TAB: Strategy ──────────────────────────── */}
             {activeTab === "strategy" && (
-              <div className="space-y-6">
-                {/* Volume strategy */}
-                <div className={card}>
-                  <div className={cardInner}>
-                    <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Volume Strategy</h3>
-                    <div className="space-y-2">
-                      {(s3.volume_strategy || []).map((v, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-navy-800/40 rounded-lg text-xs">
-                          <div className="flex items-center gap-3">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
-                              v.type === "high" ? "bg-emerald-500/15 text-emerald-400" :
-                              v.type === "medium" ? "bg-sky-500/15 text-sky-400" :
-                              "bg-white/[0.06] text-white/80"
-                            }`}>{v.type}</span>
-                            <span className="text-white/70 truncate max-w-[200px]">{v.item}</span>
+              <div className="bom-tab-content">
+                <FadeIn delay={100}>
+                  <div className="bom-card">
+                    <div className="bom-card-body">
+                      <span className="bom-card-label">Volume Strategy</span>
+                      <div className="bom-strat-list">
+                        {(s3.volume_strategy || []).map((v, i) => (
+                          <div key={i} className="bom-strat-row">
+                            <span className={`bom-strat-type ${v.type === "high" ? "high" : v.type === "medium" ? "med" : "low"}`}>{v.type}</span>
+                            <span className="bom-strat-item">{v.item}</span>
+                            <span className="bom-strat-qty">Q: {v.qty}</span>
+                            <span className="bom-strat-region">{regionLabel(v.region)}</span>
+                            <span className="bom-strat-cost">{currency} {fmt(v.tlc)}</span>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <span className="text-white/50">Q: {v.qty}</span>
-                            <span className="text-white/80">{regionLabel(v.region)}</span>
-                            <span className="text-white font-mono">{currency} {fmt(v.tlc)}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Process summary */}
-                {(s3.process_summary || []).length > 0 && (
-                  <div className={card}>
-                    <div className={cardInner}>
-                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Custom Manufacturing</h3>
-                      {(s3.process_summary || []).map((p, i) => (
-                        <div key={i} className="p-4 bg-navy-800/40 rounded-lg mb-3 last:mb-0">
-                          <p className="text-white text-sm font-medium mb-2">{p.item}</p>
-                          <div className="flex flex-wrap gap-4 text-xs text-white/70">
-                            <span>Form: <span className="text-white/70">{p.material_form}</span></span>
-                            <span>Machining: <span className="text-white/70">{fmt(p.machining_hrs)}h</span></span>
-                            <span>Labor: <span className="text-white/70">{fmt(p.labor_hrs)}h</span></span>
-                          </div>
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {(p.process_chain || []).map((proc, j) => (
-                              <span key={j} className="px-2 py-0.5 bg-violet-500/10 text-violet-300 text-[10px] rounded font-medium">{proc}</span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Risk insights */}
-                {(s3.risk_insights || []).length > 0 && (
-                  <div className={card}>
-                    <div className={cardInner}>
-                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Risk Alerts</h3>
-                      {(s3.risk_insights || []).map((r, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 bg-red-500/[0.04] border border-red-500/10 rounded-lg mb-2 last:mb-0 text-xs">
-                          <span className="text-red-400">⚠</span>
-                          <span className="text-white/60">{r.item}</span>
-                          <span className="text-white/50">·</span>
-                          <span className="text-white/70">{r.supplier}</span>
-                          <span className="ml-auto text-red-300 font-mono">var: {fmt(r.variance, 3)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ── TAB: Learning ────────────────────────── */}
-            {activeTab === "learning" && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {[
-                    { label: "System Confidence", value: fmt(s6.system_confidence, 3) },
-                    { label: "Exploration Rate", value: fmt(s6.exploration_rate, 4) },
-                    { label: "Total Iterations", value: s6.total_iterations },
-                  ].map((kpi, i) => (
-                    <div key={i} className={card}>
-                      <div className="p-5">
-                        <p className="text-white/35 text-xs font-medium mb-1">{kpi.label}</p>
-                        <p className="text-xl font-bold text-white">{kpi.value}</p>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                </FadeIn>
+
+                {(s3.process_summary || []).length > 0 && (
+                  <FadeIn delay={200}>
+                    <div className="bom-card">
+                      <div className="bom-card-body">
+                        <span className="bom-card-label">Custom Manufacturing</span>
+                        {(s3.process_summary || []).map((p, i) => (
+                          <div key={i} className="bom-mfg-item">
+                            <p className="bom-mfg-name">{p.item}</p>
+                            <div className="bom-mfg-meta">
+                              <span>Form: {p.material_form}</span>
+                              <span>Machining: {fmt(p.machining_hrs)}h</span>
+                              <span>Labor: {fmt(p.labor_hrs)}h</span>
+                            </div>
+                            <div className="bom-process-chain" style={{ marginTop: 8 }}>
+                              {(p.process_chain || []).map((proc, j) => (
+                                <React.Fragment key={j}>
+                                  <span className="bom-process-tag">{proc}</span>
+                                  {j < (p.process_chain || []).length - 1 && <span className="bom-process-arrow">→</span>}
+                                </React.Fragment>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FadeIn>
+                )}
+
+                {(s3.risk_insights || []).length > 0 && (
+                  <FadeIn delay={300}>
+                    <div className="bom-card">
+                      <div className="bom-card-body">
+                        <span className="bom-card-label">Risk Alerts</span>
+                        {(s3.risk_insights || []).map((r, i) => (
+                          <div key={i} className="bom-risk-alert">
+                            <span className="bom-risk-alert-icon">⚠</span>
+                            <span className="bom-risk-alert-item">{r.item}</span>
+                            <span className="bom-risk-alert-sep">·</span>
+                            <span className="bom-risk-alert-supplier">{r.supplier}</span>
+                            <span className="bom-risk-alert-var">var: {fmt(r.variance, 3)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FadeIn>
+                )}
+              </div>
+            )}
+
+            {/* ── TAB: Learning ──────────────────────────── */}
+            {activeTab === "learning" && (
+              <div className="bom-tab-content">
+                <FadeIn delay={100}>
+                  <div className="bom-kpi-grid bom-kpi-3">
+                    {[
+                      { label: "System Confidence", value: fmt(s6.system_confidence, 3) },
+                      { label: "Exploration Rate", value: fmt(s6.exploration_rate, 4) },
+                      { label: "Total Iterations", value: s6.total_iterations },
+                    ].map((kpi, i) => (
+                      <div key={i} className="bom-kpi-card">
+                        <span className="bom-kpi-label">{kpi.label}</span>
+                        <span className="bom-kpi-value">{kpi.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </FadeIn>
 
                 {(s6.exploration_decisions || []).length > 0 && (
-                  <div className={card}>
-                    <div className={cardInner}>
-                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Exploration Decisions</h3>
-                      {s6.exploration_decisions.map((d, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-amber-500/[0.04] rounded-lg mb-2 text-xs">
-                          <span className="text-white/60">{d.item}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="text-white/50">{d.supplier}</span>
-                            <span className="text-amber-400 font-mono">gain: {fmt(d.info_gain, 3)}</span>
+                  <FadeIn delay={200}>
+                    <div className="bom-card">
+                      <div className="bom-card-body">
+                        <span className="bom-card-label">Exploration Decisions</span>
+                        {s6.exploration_decisions.map((d, i) => (
+                          <div key={i} className="bom-learn-row bom-learn-explore">
+                            <span className="bom-learn-item">{d.item}</span>
+                            <span className="bom-learn-supplier">{d.supplier}</span>
+                            <span className="bom-learn-gain">gain: {fmt(d.info_gain, 3)}</span>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </FadeIn>
                 )}
 
                 {(s6.high_uncertainty || []).length > 0 && (
-                  <div className={card}>
-                    <div className={cardInner}>
-                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">High Uncertainty Items</h3>
-                      {s6.high_uncertainty.map((h, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-navy-800/40 rounded-lg mb-2 text-xs">
-                          <span className="text-white/80">{h.item}</span>
-                          <span className={`font-mono ${riskColor(h.uncertainty)}`}>{fmt(h.uncertainty, 3)}</span>
-                        </div>
-                      ))}
+                  <FadeIn delay={300}>
+                    <div className="bom-card">
+                      <div className="bom-card-body">
+                        <span className="bom-card-label">High Uncertainty Items</span>
+                        {s6.high_uncertainty.map((h, i) => (
+                          <div key={i} className="bom-learn-row">
+                            <span className="bom-learn-item">{h.item}</span>
+                            <span className={`bom-learn-uncertainty ${riskColor(h.uncertainty)}`}>{fmt(h.uncertainty, 3)}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </FadeIn>
                 )}
 
-                <div className={card}>
-                  <div className="p-5">
-                    <p className="text-white/50 text-xs">{s6.note}</p>
+                <FadeIn delay={400}>
+                  <div className="bom-card">
+                    <div className="bom-card-body">
+                      <p className="bom-note">{s6.note}</p>
+                    </div>
                   </div>
-                </div>
+                </FadeIn>
               </div>
             )}
 
-            {/* ── Bottom actions ───────────────────────── */}
-            <div className="flex justify-center pt-4">
-              <button onClick={reset} className="px-6 py-3 bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/70 text-sm font-medium transition-all">
-                ← Analyze Another BOM
-              </button>
-            </div>
+            {/* Bottom */}
+            <FadeIn delay={100}>
+              <div className="bom-center-row" style={{ paddingTop: 16 }}>
+                <button onClick={reset} className="bom-ghost-btn">← Analyze Another BOM</button>
+              </div>
+            </FadeIn>
           </div>
         )}
       </Container>
 
+      {/* ═══════════════════════════════════════════════════ */}
+      {/* STYLES                                             */}
+      {/* ═══════════════════════════════════════════════════ */}
       <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        /* ── Root ────────────────────────────────────── */
+        .bom-root {
+          --bg: #050a0e;
+          --surface: #0a1019;
+          --surface-2: #0f1720;
+          --surface-3: #141d29;
+          --border: rgba(255,255,255,0.06);
+          --border-2: rgba(255,255,255,0.09);
+          --accent: #34d399;
+          --accent-dim: rgba(52,211,153,0.12);
+          --accent-glow: rgba(52,211,153,0.06);
+          --text: rgba(255,255,255,0.92);
+          --text-2: rgba(255,255,255,0.55);
+          --text-3: rgba(255,255,255,0.30);
+          --text-4: rgba(255,255,255,0.16);
+          --danger: #f87171;
+          --warn: #fbbf24;
+          --info: #38bdf8;
+          --radius: 14px;
+          --radius-sm: 10px;
+          --radius-xs: 7px;
+          --font: 'DM Sans', -apple-system, sans-serif;
+          --mono: 'JetBrains Mono', 'SF Mono', monospace;
+          min-height: 100vh;
+          background: var(--bg);
+          font-family: var(--font);
+          -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Semantic text classes ────────────────────── */
+        .bom-text-accent { color: var(--accent) !important; }
+        .bom-text-warn   { color: var(--warn) !important; }
+        .bom-text-info   { color: var(--info) !important; }
+        .bom-text-danger { color: var(--danger) !important; }
+
+        .bom-badge-danger  { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.18); }
+        .bom-badge-success { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.18); }
+        .bom-badge-warn    { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.18); }
+
+        /* ── Hero ────────────────────────────────────── */
+        .bom-hero {
+          position: relative;
+          border-bottom: 1px solid var(--border);
+          overflow: hidden;
+        }
+        .bom-hero-glow {
+          position: absolute;
+          top: -80px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 700px;
+          height: 500px;
+          background: radial-gradient(ellipse, rgba(52,211,153,0.06) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .bom-hero-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+          background-size: 60px 60px;
+          mask-image: radial-gradient(ellipse 60% 80% at 50% 40%, black, transparent);
+          pointer-events: none;
+        }
+        .bom-hero-inner {
+          position: relative;
+          padding: 64px 0 56px;
+          text-align: center;
+        }
+        .bom-hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 5px 14px;
+          border-radius: 100px;
+          background: var(--accent-dim);
+          border: 1px solid rgba(52,211,153,0.18);
+          margin-bottom: 24px;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--accent);
+        }
+        .bom-hero-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--accent);
+          animation: bom-pulse 2s ease infinite;
+        }
+        .bom-hero-title {
+          font-size: clamp(32px, 5vw, 48px);
+          font-weight: 700;
+          color: white;
+          letter-spacing: -0.025em;
+          line-height: 1.1;
+        }
+        .bom-hero-sub {
+          margin-top: 14px;
+          font-size: 15px;
+          color: var(--text-2);
+          max-width: 480px;
+          margin-left: auto;
+          margin-right: auto;
+          line-height: 1.6;
+        }
+
+        /* ── Body ────────────────────────────────────── */
+        .bom-body { padding: 40px 0 60px; }
+
+        /* ── Cards ───────────────────────────────────── */
+        .bom-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          overflow: hidden;
+          transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .bom-card:hover {
+          border-color: var(--border-2);
+        }
+        .bom-card-lg { max-width: 640px; margin: 0 auto; }
+        .bom-card-body { padding: 24px 28px; }
+
+        .bom-card-label {
+          display: block;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: var(--text-3);
+          margin-bottom: 16px;
+        }
+
+        /* ── Section header ──────────────────────────── */
+        .bom-section-header { margin-bottom: 24px; }
+        .bom-section-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: white;
+          letter-spacing: -0.01em;
+        }
+        .bom-section-meta {
+          display: block;
+          font-size: 13px;
+          color: var(--text-3);
+          margin-top: 4px;
+        }
+
+        /* ── Center col / row ────────────────────────── */
+        .bom-center-col {
+          max-width: 640px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .bom-center-row {
+          display: flex;
+          justify-content: center;
+        }
+
+        /* ── Error ───────────────────────────────────── */
+        .bom-error {
+          max-width: 640px;
+          margin: 0 auto 20px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 18px;
+          background: rgba(248,113,113,0.06);
+          border: 1px solid rgba(248,113,113,0.15);
+          border-radius: var(--radius-sm);
+        }
+        .bom-error-icon {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: rgba(248,113,113,0.15);
+          color: var(--danger);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          font-weight: 700;
+          flex-shrink: 0;
+        }
+        .bom-error-text { flex: 1; font-size: 13px; color: #fca5a5; }
+        .bom-error-close {
+          background: none;
+          border: none;
+          color: var(--text-3);
+          cursor: pointer;
+          font-size: 14px;
+          padding: 4px;
+        }
+
+        /* ── Steps ───────────────────────────────────── */
+        .bom-steps {
+          max-width: 560px;
+          margin: 0 auto 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .bom-step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+        }
+        .bom-step-circle {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 13px;
+          font-weight: 600;
+          transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+          border: 1.5px solid transparent;
+        }
+        .bom-step.done .bom-step-circle {
+          background: var(--accent);
+          color: white;
+          box-shadow: 0 0 20px rgba(52,211,153,0.25);
+        }
+        .bom-step.active .bom-step-circle {
+          background: var(--accent);
+          color: white;
+          box-shadow: 0 0 24px rgba(52,211,153,0.3);
+          transform: scale(1.08);
+        }
+        .bom-step.future .bom-step-circle {
+          background: var(--surface-2);
+          color: var(--text-3);
+          border-color: var(--border);
+        }
+        .bom-step-num { font-size: 13px; }
+        .bom-step-label {
+          font-size: 10px;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          transition: color 0.3s;
+        }
+        .bom-step.done .bom-step-label,
+        .bom-step.active .bom-step-label { color: var(--text-2); }
+        .bom-step.future .bom-step-label { color: var(--text-4); }
+
+        .bom-step-line {
+          flex: 1;
+          height: 1.5px;
+          margin: 0 10px;
+          margin-top: -18px;
+          background: var(--border);
+          transition: background 0.5s;
+          border-radius: 1px;
+        }
+        .bom-step-line.done {
+          background: linear-gradient(90deg, var(--accent), rgba(52,211,153,0.3));
+        }
+
+        /* ── Dropzone ────────────────────────────────── */
+        .bom-dropzone {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 200px;
+          border: 2px dashed var(--border-2);
+          border-radius: var(--radius);
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+          background: transparent;
+        }
+        .bom-dropzone:hover {
+          border-color: rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.015);
+        }
+        .bom-dropzone.drag-over {
+          border-color: var(--accent);
+          background: var(--accent-glow);
+          transform: scale(1.01);
+        }
+        .bom-dropzone.has-file {
+          border-color: rgba(52,211,153,0.35);
+          background: rgba(52,211,153,0.03);
+        }
+        .bom-dropzone-input {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          cursor: pointer;
+        }
+        .bom-dropzone-content { text-align: center; }
+        .bom-upload-icon {
+          margin: 0 auto 12px;
+          width: 56px;
+          height: 56px;
+          border-radius: 16px;
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-3);
+          transition: all 0.3s;
+        }
+        .bom-dropzone:hover .bom-upload-icon {
+          color: var(--text-2);
+          border-color: var(--border-2);
+          transform: translateY(-2px);
+        }
+        .bom-file-icon {
+          margin: 0 auto 10px;
+          width: 52px;
+          height: 52px;
+          border-radius: 14px;
+          background: var(--accent-dim);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--accent);
+        }
+        .bom-dropzone-label { font-size: 14px; color: var(--text-2); }
+        .bom-dropzone-browse { color: var(--accent); font-weight: 600; }
+        .bom-dropzone-hint { font-size: 12px; color: var(--text-3); margin-top: 4px; letter-spacing: 0.04em; }
+        .bom-file-name { font-size: 14px; color: var(--accent); font-weight: 600; }
+        .bom-file-size { font-size: 12px; color: var(--text-3); margin-top: 3px; }
+
+        /* ── Forms ───────────────────────────────────── */
+        .bom-form-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+          gap: 16px;
+          margin-bottom: 20px;
+        }
+        .bom-field { display: flex; flex-direction: column; gap: 6px; }
+        .bom-label {
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--text-3);
+          letter-spacing: 0.04em;
+        }
+        .bom-select {
+          width: 100%;
+          padding: 10px 36px 10px 14px;
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-xs);
+          color: var(--text);
+          font-family: var(--font);
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+          appearance: none;
+          background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.3)%22 stroke-width=%222%22%3e%3cpolyline points=%226 9 12 15 18 9%22/%3e%3c/svg%3e');
+          background-size: 14px;
+          background-position: right 12px center;
+          background-repeat: no-repeat;
+        }
+        .bom-select:focus {
+          outline: none;
+          border-color: rgba(52,211,153,0.4);
+          box-shadow: 0 0 0 3px rgba(52,211,153,0.08);
+        }
+        .bom-select:disabled { opacity: 0.35; cursor: not-allowed; }
+        .bom-select option { background: var(--surface-2); }
+
+        .bom-location-confirm {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 16px;
+          background: rgba(52,211,153,0.05);
+          border: 1px solid rgba(52,211,153,0.15);
+          border-radius: var(--radius-xs);
+          color: var(--accent);
+          font-size: 13px;
+          font-weight: 500;
+          margin-top: 4px;
+        }
+
+        /* ── Buttons ─────────────────────────────────── */
+        .bom-btn-row { display: flex; gap: 10px; }
+        .bom-ghost-btn {
+          padding: 10px 20px;
+          border-radius: var(--radius-sm);
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          color: var(--text-2);
+          font-family: var(--font);
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .bom-ghost-btn:hover { background: var(--surface-3); color: var(--text); }
+        .bom-ghost-btn-sm { padding: 7px 14px; font-size: 12px; }
+
+        .bom-accent-btn {
+          display: inline-flex;
+          align-items: center;
+          padding: 8px 16px;
+          border-radius: var(--radius-xs);
+          background: rgba(52,211,153,0.1);
+          border: 1px solid rgba(52,211,153,0.18);
+          color: var(--accent);
+          font-size: 12px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .bom-accent-btn:hover { background: rgba(52,211,153,0.16); }
+
+        /* ── Processing ──────────────────────────────── */
+        .bom-processing {
+          text-align: center;
+          padding: 80px 0;
+        }
+        .bom-spinner-wrap {
+          position: relative;
+          width: 72px;
+          height: 72px;
+          margin: 0 auto 32px;
+        }
+        .bom-spinner-ring {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          border: 2.5px solid rgba(52,211,153,0.1);
+          border-top-color: var(--accent);
+          animation: bom-spin 1s linear infinite;
+        }
+        .bom-spinner-ring-2 {
+          inset: 6px;
+          border-top-color: transparent;
+          border-right-color: rgba(52,211,153,0.4);
+          animation-duration: 1.6s;
+          animation-direction: reverse;
+        }
+        .bom-spinner-core {
+          position: absolute;
+          inset: 16px;
+          border-radius: 50%;
+          background: var(--accent-dim);
+          animation: bom-pulse 2s ease infinite;
+        }
+        .bom-processing-label {
+          font-size: 18px;
+          font-weight: 600;
+          color: white;
+        }
+        .bom-processing-sub {
+          font-size: 13px;
+          color: var(--text-3);
+          margin-top: 6px;
+        }
+        .bom-processing-dots {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+          margin-top: 24px;
+        }
+        .bom-processing-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: var(--accent);
+          animation: bom-pulse 1.4s ease infinite;
+        }
+
+        /* ── Report wrap ─────────────────────────────── */
+        .bom-report-wrap {
+          max-width: 960px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        /* ── Success header ──────────────────────────── */
+        .bom-success-header { text-align: center; margin-bottom: 8px; }
+        .bom-success-icon {
+          width: 56px;
+          height: 56px;
+          margin: 0 auto 16px;
+          border-radius: 50%;
+          background: var(--accent-dim);
+          border: 1px solid rgba(52,211,153,0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--accent);
+        }
+        .bom-report-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: white;
+          text-align: center;
+          letter-spacing: -0.02em;
+        }
+        .bom-report-sub {
+          font-size: 13px;
+          color: var(--text-3);
+          text-align: center;
+          margin-top: 4px;
+        }
+        .bom-report-id { color: var(--text-4); }
+
+        /* ── Report header bar ───────────────────────── */
+        .bom-report-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+        .bom-report-actions { display: flex; gap: 8px; }
+
+        /* ── KPI cards ───────────────────────────────── */
+        .bom-kpi-grid { display: grid; gap: 14px; }
+        .bom-kpi-4 { grid-template-columns: repeat(4, 1fr); }
+        .bom-kpi-3 { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 640px) {
+          .bom-kpi-4 { grid-template-columns: repeat(2, 1fr); }
+          .bom-kpi-3 { grid-template-columns: repeat(1, 1fr); }
+        }
+        .bom-kpi-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 20px 22px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          transition: border-color 0.25s, transform 0.25s;
+        }
+        .bom-kpi-card:hover {
+          border-color: var(--border-2);
+          transform: translateY(-1px);
+        }
+        .bom-kpi-label {
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: var(--text-3);
+        }
+        .bom-kpi-value {
+          font-size: 22px;
+          font-weight: 700;
+          color: white;
+          letter-spacing: -0.02em;
+          font-family: var(--font);
+        }
+        .bom-kpi-value.accent { color: var(--accent); }
+        .bom-kpi-suffix {
+          font-size: 13px;
+          font-weight: 400;
+          color: var(--text-3);
+          margin-left: 2px;
+        }
+        .bom-kpi-sub { font-size: 11px; color: var(--text-3); }
+        .bom-kpi-badge {
+          display: inline-flex;
+          align-self: flex-start;
+          padding: 3px 10px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.03em;
+        }
+
+        /* ── Category pills ──────────────────────────── */
+        .bom-cat-pills {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px;
+        }
+        .bom-cat-pills-label {
+          font-size: 11px;
+          color: var(--text-3);
+          margin-right: 4px;
+        }
+        .bom-cat-pill {
+          padding: 4px 12px;
+          border-radius: 100px;
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          font-size: 11px;
+          font-weight: 500;
+          color: var(--text-2);
+          text-transform: capitalize;
+        }
+        .bom-cat-pill b { color: var(--text); margin-left: 3px; }
+        .bom-cat-pill-rich {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 4px 12px;
+          border-radius: 100px;
+          border: 1px solid;
+          font-size: 11px;
+          font-weight: 500;
+        }
+        .bom-cat-pill-rich b { margin-left: 2px; }
+
+        /* ── Tables ──────────────────────────────────── */
+        .bom-table-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+        .bom-table-title {
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: var(--text-3);
+        }
+        .bom-table-meta { font-size: 10px; color: var(--text-4); }
+        .bom-table { width: 100%; }
+        .bom-table-head {
+          display: flex;
+          align-items: center;
+          padding: 0 12px 10px;
+          border-bottom: 1px solid var(--border);
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--text-4);
+        }
+        .bom-th { min-width: 0; }
+        .bom-th-right { text-align: right; }
+        .bom-table-row {
+          display: flex;
+          align-items: center;
+          padding: 12px;
+          border-bottom: 1px solid rgba(255,255,255,0.03);
+          transition: background 0.15s;
+          animation: bom-rowIn 0.4s ease both;
+        }
+        .bom-table-row:hover { background: rgba(255,255,255,0.015); }
+        .bom-td { min-width: 0; font-size: 13px; color: var(--text-2); }
+        .bom-td-name { color: var(--text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bom-td-cat { font-size: 11px; font-weight: 500; color: var(--text-3); text-transform: capitalize; }
+        .bom-td-mono { font-family: var(--mono); font-size: 12px; }
+        .bom-td-right { text-align: right; }
+        .bom-td-dim { font-size: 11px; color: var(--text-3); }
+        .bom-td-cost { color: white; font-weight: 500; }
+
+        /* ── Locked overlay ──────────────────────────── */
+        .bom-locked-overlay { position: relative; }
+        .bom-locked-row { opacity: 0.12; filter: blur(3px); pointer-events: none; user-select: none; }
+        .bom-locked-badge {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .bom-locked-badge > span {
+          font-size: 12px;
+          color: var(--text-2);
+          font-weight: 500;
+        }
+        .bom-locked-badge svg { color: var(--text-3); }
+
+        /* ── Split grid ──────────────────────────────── */
+        .bom-split-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 14px;
+        }
+        @media (max-width: 640px) {
+          .bom-split-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Insights ────────────────────────────────── */
+        .bom-insights-list { display: flex; flex-direction: column; gap: 10px; }
+        .bom-insight-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 13px;
+          color: var(--text-2);
+          line-height: 1.5;
+        }
+        .bom-insight-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: var(--accent);
+          margin-top: 7px;
+          flex-shrink: 0;
+        }
+
+        /* ── Regions bar ─────────────────────────────── */
+        .bom-regions-list { display: flex; flex-direction: column; gap: 10px; }
+        .bom-region-row { display: flex; align-items: center; gap: 12px; }
+        .bom-region-name {
+          width: 72px;
+          font-size: 12px;
+          color: var(--text-2);
+          flex-shrink: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .bom-region-bar-wrap {
+          flex: 1;
+          height: 6px;
+          background: rgba(255,255,255,0.04);
+          border-radius: 100px;
+          overflow: hidden;
+        }
+        .bom-region-bar {
+          height: 100%;
+          background: linear-gradient(90deg, var(--accent), rgba(52,211,153,0.5));
+          border-radius: 100px;
+          transition: width 1s cubic-bezier(0.16,1,0.3,1);
+        }
+        .bom-region-pct {
+          width: 36px;
+          text-align: right;
+          font-family: var(--mono);
+          font-size: 11px;
+          color: var(--text-3);
+        }
+
+        /* ── Recommendation ──────────────────────────── */
+        .bom-recommendation-text {
+          font-size: 13px;
+          color: var(--text-2);
+          line-height: 1.65;
+        }
+
+        /* ── CTA card ────────────────────────────────── */
+        .bom-cta-card {
+          position: relative;
+          border-radius: var(--radius);
+          overflow: hidden;
+        }
+        .bom-cta-bg {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(56,189,248,0.06), rgba(167,139,250,0.06));
+          border: 1px solid rgba(52,211,153,0.12);
+          border-radius: var(--radius);
+        }
+        .bom-cta-content {
+          position: relative;
+          padding: 44px 32px;
+          text-align: center;
+        }
+        .bom-cta-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: white;
+          letter-spacing: -0.01em;
+        }
+        .bom-cta-desc {
+          font-size: 14px;
+          color: var(--text-2);
+          max-width: 420px;
+          margin: 10px auto 28px;
+          line-height: 1.5;
+        }
+        .bom-cta-actions {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+        }
+        .bom-cta-btn {
+          display: inline-flex;
+          padding: 13px 32px;
+          background: var(--accent);
+          border: none;
+          border-radius: var(--radius-sm);
+          color: #050a0e;
+          font-family: var(--font);
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.25s;
+          box-shadow: 0 4px 24px rgba(52,211,153,0.25);
+        }
+        .bom-cta-btn:hover {
+          background: #4ade80;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 32px rgba(52,211,153,0.35);
+        }
+        .bom-cta-link {
+          font-size: 13px;
+          color: var(--text-3);
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .bom-cta-link:hover { color: var(--text-2); }
+        .bom-cta-features {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 16px;
+          margin-top: 28px;
+        }
+        .bom-cta-feature {
+          font-size: 11px;
+          color: var(--text-3);
+        }
+
+        /* ── Tabs ────────────────────────────────────── */
+        .bom-tabs {
+          display: inline-flex;
+          gap: 2px;
+          padding: 3px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+        }
+        .bom-tab {
+          padding: 8px 18px;
+          border: none;
+          border-radius: var(--radius-xs);
+          background: transparent;
+          color: var(--text-2);
+          font-family: var(--font);
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.25s;
+        }
+        .bom-tab:hover { color: var(--text); }
+        .bom-tab.active {
+          background: var(--accent);
+          color: white;
+          box-shadow: 0 2px 12px rgba(52,211,153,0.2);
+        }
+        .bom-tab-content { display: flex; flex-direction: column; gap: 20px; }
+
+        /* ── Cost bars ───────────────────────────────── */
+        .bom-cost-bars { display: flex; flex-direction: column; gap: 14px; }
+        .bom-cost-row { display: flex; align-items: center; gap: 16px; }
+        .bom-cost-label {
+          width: 110px;
+          font-size: 12px;
+          color: var(--text-2);
+          flex-shrink: 0;
+        }
+        .bom-cost-track {
+          flex: 1;
+          height: 7px;
+          background: rgba(255,255,255,0.03);
+          border-radius: 100px;
+          overflow: hidden;
+        }
+        .bom-cost-fill { height: 100%; border-radius: 100px; }
+        .bom-cost-val {
+          width: 100px;
+          text-align: right;
+          font-family: var(--mono);
+          font-size: 12px;
+          color: var(--text-2);
+        }
+
+        /* ── Decision bar ────────────────────────────── */
+        .bom-decision-bar-wrap { margin-top: 4px; }
+        .bom-decision-bar {
+          display: flex;
+          height: 10px;
+          border-radius: 100px;
+          overflow: hidden;
+          background: rgba(255,255,255,0.03);
+        }
+        .bom-decision-exploit { background: var(--accent); border-radius: 100px 0 0 100px; }
+        .bom-decision-explore { background: var(--warn); border-radius: 0 100px 100px 0; }
+        .bom-decision-legend {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 8px;
+          font-size: 10px;
+          font-weight: 600;
+        }
+        .bom-legend-exploit { color: var(--accent); }
+        .bom-legend-explore { color: var(--warn); }
+
+        /* ── Component cards ─────────────────────────── */
+        .bom-comp-group { margin-bottom: 8px; }
+        .bom-comp-group-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 12px;
+          padding-top: 4px;
+        }
+        .bom-comp-group-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .bom-comp-group-title {
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--text-2);
+        }
+        .bom-comp-group-count { font-size: 11px; color: var(--text-4); }
+        .bom-comp-list { display: flex; flex-direction: column; gap: 8px; }
+        .bom-comp-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          overflow: hidden;
+          transition: all 0.25s;
+        }
+        .bom-comp-card:hover { border-color: var(--border-2); }
+        .bom-comp-card.expanded { border-color: var(--border-2); }
+        .bom-comp-summary {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 16px 20px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          font-family: var(--font);
+          transition: background 0.15s;
+        }
+        .bom-comp-summary:hover { background: rgba(255,255,255,0.01); }
+        .bom-comp-icon {
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          border: 1px solid;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          font-weight: 700;
+          flex-shrink: 0;
+        }
+        .bom-comp-info { flex: 1; min-width: 0; }
+        .bom-comp-name {
+          font-size: 13px;
+          font-weight: 600;
+          color: white;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .bom-comp-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+        .bom-comp-cost { text-align: right; flex-shrink: 0; }
+        .bom-comp-cost-val { font-family: var(--mono); font-size: 13px; color: white; font-weight: 500; }
+        .bom-comp-mode { font-size: 11px; font-weight: 600; margin-top: 2px; }
+        .bom-comp-chevron {
+          color: var(--text-3);
+          transition: transform 0.25s;
+          flex-shrink: 0;
+        }
+        .bom-comp-chevron.open { transform: rotate(180deg); }
+
+        /* ── Detail panel ────────────────────────────── */
+        .bom-comp-detail {
+          border-top: 1px solid var(--border);
+          padding: 20px 24px;
+          background: rgba(255,255,255,0.008);
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          animation: bom-slideDown 0.3s ease;
+        }
+        .bom-detail-section { display: flex; flex-direction: column; gap: 8px; }
+        .bom-detail-label {
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--text-3);
+        }
+        .bom-detail-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+          gap: 8px;
+        }
+        .bom-detail-cell {
+          padding: 10px 12px;
+          background: var(--surface-2);
+          border-radius: var(--radius-xs);
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+        .bom-detail-cell-label { font-size: 10px; color: var(--text-3); }
+        .bom-detail-cell-val { font-family: var(--mono); font-size: 12px; color: var(--text); }
+
+        .bom-code-block {
+          padding: 14px 16px;
+          background: var(--surface-2);
+          border-radius: var(--radius-xs);
+          font-family: var(--mono);
+          font-size: 11px;
+          color: var(--text-2);
+          line-height: 1.6;
+          overflow-x: auto;
+        }
+        .bom-code-dim { color: var(--text-3); }
+
+        .bom-risk-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+        .bom-risk-pill {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 14px;
+          background: var(--surface-2);
+          border-radius: var(--radius-xs);
+          font-size: 12px;
+        }
+        .bom-risk-pill-label { color: var(--text-3); }
+        .bom-risk-pill-val { font-family: var(--mono); font-weight: 500; }
+
+        .bom-alts-list { display: flex; flex-direction: column; gap: 6px; }
+        .bom-alt-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 8px 14px;
+          background: var(--surface-2);
+          border-radius: var(--radius-xs);
+          font-size: 12px;
+          color: var(--text-2);
+        }
+        .bom-alt-cost { font-family: var(--mono); color: var(--text); font-weight: 500; }
+
+        .bom-process-chain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .bom-process-tag {
+          padding: 4px 10px;
+          background: rgba(167,139,250,0.08);
+          border: 1px solid rgba(167,139,250,0.15);
+          color: #c4b5fd;
+          font-size: 10px;
+          font-weight: 600;
+          border-radius: 6px;
+          letter-spacing: 0.02em;
+        }
+        .bom-process-arrow { color: var(--text-4); font-size: 11px; }
+        .bom-process-meta { font-size: 11px; color: var(--text-3); margin-top: 8px; }
+
+        /* ── Strategy tab ────────────────────────────── */
+        .bom-strat-list { display: flex; flex-direction: column; gap: 6px; }
+        .bom-strat-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 14px;
+          background: var(--surface-2);
+          border-radius: var(--radius-xs);
+          font-size: 12px;
+        }
+        .bom-strat-type {
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .bom-strat-type.high { background: rgba(52,211,153,0.1); color: var(--accent); }
+        .bom-strat-type.med { background: rgba(56,189,248,0.1); color: var(--info); }
+        .bom-strat-type.low { background: rgba(255,255,255,0.04); color: var(--text-2); }
+        .bom-strat-item { color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+        .bom-strat-qty { color: var(--text-3); }
+        .bom-strat-region { color: var(--text-2); }
+        .bom-strat-cost { font-family: var(--mono); color: white; font-weight: 500; margin-left: auto; }
+
+        .bom-mfg-item {
+          padding: 16px 18px;
+          background: var(--surface-2);
+          border-radius: var(--radius-xs);
+          margin-bottom: 10px;
+        }
+        .bom-mfg-item:last-child { margin-bottom: 0; }
+        .bom-mfg-name { font-size: 13px; font-weight: 600; color: white; margin-bottom: 8px; }
+        .bom-mfg-meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--text-3); }
+
+        .bom-risk-alert {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          background: rgba(248,113,113,0.03);
+          border: 1px solid rgba(248,113,113,0.08);
+          border-radius: var(--radius-xs);
+          font-size: 12px;
+          margin-bottom: 6px;
+        }
+        .bom-risk-alert:last-child { margin-bottom: 0; }
+        .bom-risk-alert-icon { color: var(--danger); }
+        .bom-risk-alert-item { color: var(--text-2); }
+        .bom-risk-alert-sep { color: var(--text-4); }
+        .bom-risk-alert-supplier { color: var(--text-2); }
+        .bom-risk-alert-var { margin-left: auto; font-family: var(--mono); color: #fca5a5; }
+
+        /* ── Learning tab ────────────────────────────── */
+        .bom-learn-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 14px;
+          background: var(--surface-2);
+          border-radius: var(--radius-xs);
+          font-size: 12px;
+          margin-bottom: 6px;
+        }
+        .bom-learn-row:last-child { margin-bottom: 0; }
+        .bom-learn-explore { background: rgba(251,191,36,0.03); }
+        .bom-learn-item { color: var(--text-2); }
+        .bom-learn-supplier { color: var(--text-3); }
+        .bom-learn-gain { font-family: var(--mono); color: var(--warn); }
+        .bom-learn-uncertainty { font-family: var(--mono); }
+        .bom-note { font-size: 12px; color: var(--text-3); line-height: 1.6; }
+
+        /* ── Shimmer ─────────────────────────────────── */
+        .bom-shimmer {
+          background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
+          background-size: 200% 100%;
+          animation: bom-shimmer 1.5s ease infinite;
+        }
+
+        /* ── Keyframes ───────────────────────────────── */
+        @keyframes bom-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        @keyframes bom-spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes bom-rowIn {
+          from { opacity: 0; transform: translateX(-8px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bom-slideDown {
+          from { opacity: 0; max-height: 0; }
+          to { opacity: 1; max-height: 2000px; }
+        }
+        @keyframes bom-shimmer {
+          to { background-position: -200% 0; }
+        }
       `}</style>
     </div>
   );

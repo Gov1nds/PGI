@@ -67,11 +67,11 @@ export default function ProjectDetail() {
     }
   };
 
-  const card = "rounded-2xl bg-navy-800 border border-white/[0.06] overflow-hidden";
+  const card = "rounded-2xl bg-[#0d1117] border border-white/[0.06] overflow-hidden";
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-navy-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
           <p className="text-white/40 text-sm mt-4">Loading project...</p>
@@ -82,7 +82,7 @@ export default function ProjectDetail() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-navy-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 text-sm mb-4">{error || "Project not found"}</p>
           <Link to="/dashboard" className="text-sky-400 hover:text-sky-300 text-sm">← Back to Dashboard</Link>
@@ -112,7 +112,7 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-950">
+    <div className="min-h-screen bg-[#010409]">
 
       {/* ── Header ────────────────────────────────────── */}
       <section className="border-b border-white/[0.06]">
@@ -126,7 +126,7 @@ export default function ProjectDetail() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold text-white tracking-tight">{project.name || project.file_name || "Untitled BOM"}</h1>
+                <h1 className="text-2xl font-bold text-white">{project.name || project.file_name || "Untitled BOM"}</h1>
                 <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[project.status] || STATUS_STYLES.uploaded}`}>
                   {(project.status || "uploaded").replace(/_/g, " ")}
                 </span>
@@ -158,7 +158,7 @@ export default function ProjectDetail() {
                 </span>
               )}
               <Link to="/bom-analyzer"
-                className="px-4 py-2.5 rounded-xl bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] text-white/60 text-sm font-medium transition-all"
+                className="px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-white/60 text-sm font-medium transition-all"
               >
                 New Analysis
               </Link>
@@ -234,7 +234,7 @@ export default function ProjectDetail() {
         {/* Tabs */}
         {(s2.length > 0 || project.decision_summary) && (
           <>
-            <div className="flex gap-1 p-1 bg-navy-800/50 rounded-xl border border-white/[0.06] max-w-fit mb-6">
+            <div className="flex gap-1 p-1 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit mb-6">
               {[
                 ["overview", "Overview"],
                 ["components", "Components"],
@@ -275,7 +275,7 @@ export default function ProjectDetail() {
                           return (
                             <div key={i} className="flex items-center gap-4">
                               <span className="text-white/70 text-xs w-28 shrink-0">{row.label}</span>
-                              <div className="flex-1 h-2 bg-navy-800/60 rounded-full overflow-hidden">
+                              <div className="flex-1 h-2 bg-white/[0.04] rounded-full overflow-hidden">
                                 <div className={`h-full rounded-full ${row.color}`} style={{ width: `${w}%`, transition: "width 1s ease" }} />
                               </div>
                               <span className="text-white/60 text-xs font-mono w-20 text-right">{cur} {fmt(row.value)}</span>
@@ -296,7 +296,7 @@ export default function ProjectDetail() {
                   <div key={cat}>
                     <div className="flex items-center gap-2 mb-3">
                       <span className={`w-2 h-2 rounded-full bg-${CAT_COLORS[cat] || "white"}-400`} />
-                      <h3 className="text-sm font-bold text-white/40 uppercase tracking-wider">{CAT_LABELS[cat] || cat}</h3>
+                      <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">{CAT_LABELS[cat] || cat}</h3>
                       <span className="text-white/30 text-xs">({groupedComponents[cat].length})</span>
                     </div>
                     <div className="space-y-2">
@@ -341,7 +341,7 @@ export default function ProjectDetail() {
                       <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Region Distribution</h3>
                       <div className="flex flex-wrap gap-3">
                         {Object.entries(strat.region_distribution).map(([region, count]) => (
-                          <div key={region} className="px-4 py-3 bg-navy-800/50 border border-white/[0.06] rounded-xl text-center min-w-[100px]">
+                          <div key={region} className="px-4 py-3 bg-white/[0.03] border border-white/[0.06] rounded-xl text-center min-w-[100px]">
                             <p className="text-white font-semibold text-lg">{count}</p>
                             <p className="text-white/40 text-xs mt-0.5">{region}</p>
                           </div>

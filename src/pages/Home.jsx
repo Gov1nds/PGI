@@ -27,12 +27,12 @@ const Home = () => {
 
               <h1 className="mt-6 text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-white leading-[1.1] hero-anim-2">
                 Global Manufacturing Network
-                <span className="block mt-2 gradient-text">
+                <span className="block mt-2 bg-gradient-to-r from-sky-400 via-cyan-300 to-sky-500 bg-clip-text text-transparent">
                   + Intelligent BOM Optimization
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/65 hero-anim-3">
+              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/85 hero-anim-3">
                 Reduce sourcing costs up to 40%. Get instant manufacturing strategy, cost estimation, and supplier recommendations from a network of 300+ verified partners.
               </p>
 
@@ -44,7 +44,7 @@ const Home = () => {
                   { val: 92, suffix: "%", label: "Reliability" },
                   { val: 9, suffix: "+ yrs", label: "Experience" },
                 ].map((s, i) => (
-                  <div key={i} className="rounded-xl bg-navy-800/50 p-3.5 ring-1 ring-white/[0.06] text-center">
+                  <div key={i} className="rounded-xl bg-white/[0.03] p-3.5 ring-1 ring-white/[0.06] text-center">
                     <div className="text-lg font-bold text-white">
                       <CountUp value={s.val} suffix={s.suffix} />
                     </div>
@@ -60,7 +60,7 @@ const Home = () => {
                 {/* Glow backdrop */}
                 <div className="absolute -inset-4 rounded-3xl bg-sky-500/5 blur-2xl" />
 
-                <div className="relative rounded-2xl bg-navy-800/85 backdrop-blur-xl p-7 sm:p-8 ring-1 ring-sky-500/10 bom-glow">
+                <div className="relative rounded-2xl bg-[rgba(16,22,38,0.8)] backdrop-blur-xl p-7 sm:p-8 ring-1 ring-sky-500/15 bom-glow">
                   {/* Header */}
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-sky-500/15 ring-1 ring-sky-500/30 flex items-center justify-center">
@@ -69,7 +69,7 @@ const Home = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-white">Analyze Your BOM Instantly</h3>
+                      <h3 className="text-lg font-semibold text-white">Analyze Your BOM Instantly</h3>
                       <p className="text-xs text-white/70">Free manufacturing intelligence</p>
                     </div>
                   </div>
@@ -102,7 +102,7 @@ const Home = () => {
                     </Link>
                     <Link
                       to="/bom-analyzer"
-                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-navy-800/60 px-5 py-3 text-sm font-medium text-white/60 ring-1 ring-white/[0.08] hover:bg-white/[0.08] hover:text-white/80 transition-all duration-300"
+                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/60 ring-1 ring-white/[0.08] hover:bg-white/[0.08] hover:text-white/80 transition-all duration-300"
                     >
                       Try with Demo Data
                     </Link>
@@ -124,22 +124,22 @@ const Home = () => {
 
       {/* ========== TRUSTED BY / PROCESS ========== */}
       <RevealSection>
-        <section className="py-24 bg-gradient-to-b from-navy-950 to-navy-900">
+        <section className="border-b border-white/[0.04] py-20 bg-gradient-to-b from-[rgb(10,15,26)] to-[rgb(13,18,30)]">
           <Container>
             <SectionHeading
               eyebrow="How It Works"
               title="Engineering-led manufacturing in 5 steps"
               desc="From design review to global delivery — structured, reliable, scalable."
             />
-            <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {processSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="group rounded-xl bg-navy-800/40 p-5 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-navy-800/60 transition-all duration-300 relative"
+                  className="group rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300 relative"
                 >
                   <div className="text-2xl font-bold text-sky-500/20 mb-3 font-mono">{step.number}</div>
-                  <h3 className="text-sm font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-xs text-white/50 leading-relaxed">{step.desc}</p>
+                  <h3 className="text-sm font-semibold text-white mb-2">{step.title}</h3>
+                  <p className="text-xs text-white/75 leading-relaxed">{step.desc}</p>
                   {idx < processSteps.length - 1 && (
                     <div className="hidden lg:block absolute top-1/2 -right-2 w-4 text-white/10">→</div>
                   )}
@@ -152,31 +152,31 @@ const Home = () => {
 
       {/* ========== SERVICES SECTION ========== */}
       <RevealSection>
-        <section className="py-24">
+        <section className="border-b border-white/[0.04] py-20">
           <Container>
             <SectionHeading
               eyebrow="Services"
               title="Complete manufacturing coordination"
               desc="End-to-end production management from engineering review to global delivery."
             />
-            <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {services.map((s, idx) => (
                 <div
                   key={idx}
-                  className="group rounded-2xl bg-navy-800/40 ring-1 ring-white/[0.06] overflow-hidden hover:ring-sky-500/20 hover:bg-navy-800/60 transition-all duration-300"
+                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-transparent opacity-50" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[rgb(10,15,26)] via-transparent to-transparent opacity-50" />
                   </div>
                   <div className="p-5">
                     <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors">{s.title}</h3>
-                    <p className="mt-2 text-sm text-white/50 leading-relaxed">{s.desc}</p>
+                    <p className="mt-2 text-sm text-white/75 leading-relaxed">{s.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-12 text-center">
+            <div className="mt-10 text-center">
               <PrimaryButton to="/services">Explore all services →</PrimaryButton>
             </div>
           </Container>
@@ -185,14 +185,14 @@ const Home = () => {
 
       {/* ========== CAPABILITIES / NETWORK ========== */}
       <RevealSection>
-        <section className="py-24 bg-gradient-to-b from-transparent to-violet-500/[0.02]">
+        <section className="border-b border-white/[0.04] py-20 bg-gradient-to-b from-transparent to-sky-500/[0.02]">
           <Container>
             <SectionHeading
               eyebrow="Manufacturing Network"
               title="Distributed production ecosystem"
               desc="Coordinated network of CNC, electronics, fabrication, and assembly partners across multiple regions."
             />
-            <div className="mt-16 grid gap-5 sm:grid-cols-2">
+            <div className="mt-14 grid gap-5 sm:grid-cols-2">
               {outdoorWorks.map((c, idx) => (
                 <ImageCard
                   key={idx}
@@ -202,7 +202,7 @@ const Home = () => {
                 />
               ))}
             </div>
-            <div className="mt-12 text-center">
+            <div className="mt-10 text-center">
               <PrimaryButton to="/capabilities">View full network →</PrimaryButton>
             </div>
           </Container>
@@ -211,19 +211,19 @@ const Home = () => {
 
       {/* ========== DIFFERENTIATORS ========== */}
       <RevealSection>
-        <section className="py-24">
+        <section className="border-b border-white/[0.04] py-20">
           <Container>
             <SectionHeading
               eyebrow="Why PGI Hub"
               title="Engineering-first manufacturing"
               desc="We combine engineering expertise with a distributed network to deliver reliable production at scale."
             />
-            <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {differentiators.map((d, idx) => (
-                <div key={idx} className="rounded-xl bg-navy-800/40 p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/15 transition-all duration-300">
+                <div key={idx} className="rounded-xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/15 transition-all duration-300">
                   <div className="text-2xl mb-3">{d.icon}</div>
-                  <h3 className="text-sm font-bold text-white">{d.title}</h3>
-                  <p className="mt-2 text-sm text-white/50 leading-relaxed">{d.desc}</p>
+                  <h3 className="text-sm font-semibold text-white">{d.title}</h3>
+                  <p className="mt-2 text-sm text-white/75 leading-relaxed">{d.desc}</p>
                 </div>
               ))}
             </div>
@@ -233,21 +233,21 @@ const Home = () => {
 
       {/* ========== TESTIMONIALS ========== */}
       <RevealSection>
-        <section className="py-24 bg-gradient-to-b from-violet-500/[0.02] to-transparent">
+        <section className="border-b border-white/[0.04] py-20 bg-gradient-to-b from-sky-500/[0.02] to-transparent">
           <Container>
             <SectionHeading
               eyebrow="Results"
               title="What our partners say"
             />
-            <div className="mt-16 grid gap-5 md:grid-cols-3">
+            <div className="mt-14 grid gap-5 md:grid-cols-3">
               {testimonials.map((t, idx) => (
-                <div key={idx} className="rounded-2xl bg-navy-800/40 p-6 ring-1 ring-white/[0.06]">
+                <div key={idx} className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06]">
                   <div className="inline-flex rounded-lg bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-400 ring-1 ring-sky-500/20 mb-4">
                     {t.metric}
                   </div>
                   <p className="text-sm text-white/60 leading-relaxed italic">"{t.quote}"</p>
                   <div className="mt-5 pt-4 border-t border-white/[0.06]">
-                    <div className="text-sm font-bold text-white">{t.person}</div>
+                    <div className="text-sm font-semibold text-white">{t.person}</div>
                     <div className="text-xs text-white/70">{t.company}</div>
                   </div>
                 </div>
@@ -259,7 +259,7 @@ const Home = () => {
 
       {/* ========== INSIGHTS SECTION ========== */}
       <RevealSection>
-        <section className="py-24">
+        <section className="border-b border-white/[0.04] py-20">
           <Container>
             <SectionHeading
               eyebrow="Insights"
@@ -267,12 +267,12 @@ const Home = () => {
               desc="Articles on scaling hardware production, supply chains, and distributed manufacturing best practices."
             />
 
-            <div className="mt-16 grid gap-5 md:grid-cols-3">
+            <div className="mt-14 grid gap-5 md:grid-cols-3">
               {insights.map((i, idx) => (
                 <Link
                   key={idx}
                   to={`/insights/${i.slug}`}
-                  className="group rounded-2xl bg-navy-800/40 ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-navy-800/60 flex flex-col"
+                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] flex flex-col"
                 >
                   <div className="relative overflow-hidden aspect-video">
                     <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
@@ -284,7 +284,7 @@ const Home = () => {
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
                     <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">{i.title}</h3>
-                    <p className="mt-2 text-sm text-white/50 flex-1">{i.excerpt}</p>
+                    <p className="mt-2 text-sm text-white/75 flex-1">{i.excerpt}</p>
                     <div className="mt-4 flex items-center justify-between text-xs text-white/50">
                       <span>{i.readTime}</span>
                       <span className="text-sky-400 font-medium group-hover:text-sky-300 transition-colors">Read →</span>
@@ -294,7 +294,7 @@ const Home = () => {
               ))}
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-10 text-center">
               <PrimaryButton to="/insights">Browse all insights →</PrimaryButton>
             </div>
           </Container>
@@ -303,7 +303,7 @@ const Home = () => {
 
       {/* ========== NEWS SECTION ========== */}
       <RevealSection>
-        <section className="py-24">
+        <section className="border-b border-white/[0.04] py-20">
           <Container>
             <SectionHeading
               eyebrow="Network Updates"
@@ -311,12 +311,12 @@ const Home = () => {
               desc="Latest developments, partnerships, and operational milestones across the PGI ecosystem."
             />
 
-            <div className="mt-16 grid gap-5 md:grid-cols-3">
+            <div className="mt-14 grid gap-5 md:grid-cols-3">
               {newsItems.map((n, idx) => (
                 <Link
                   key={idx}
                   to={`/news/${n.slug}`}
-                  className="group rounded-2xl bg-navy-800/40 ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-navy-800/60 flex flex-col"
+                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] flex flex-col"
                 >
                   <div className="relative overflow-hidden aspect-video">
                     <img src={n.image} alt={n.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
@@ -331,14 +331,14 @@ const Home = () => {
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
                     <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">{n.title}</h3>
-                    <p className="mt-2 text-sm text-white/50 flex-1">{n.excerpt}</p>
+                    <p className="mt-2 text-sm text-white/75 flex-1">{n.excerpt}</p>
                     <div className="mt-4 text-sky-400 text-sm font-medium group-hover:text-sky-300 transition-colors">Read update →</div>
                   </div>
                 </Link>
               ))}
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-10 text-center">
               <PrimaryButton to="/news">View all updates →</PrimaryButton>
             </div>
           </Container>
@@ -347,7 +347,7 @@ const Home = () => {
 
       {/* ========== SPECIALTIES ========== */}
       <RevealSection>
-        <section className="py-24">
+        <section className="border-b border-white/[0.04] py-20">
           <Container>
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-sky-400 mb-3">
@@ -355,8 +355,8 @@ const Home = () => {
                 Materials & Processes
                 <span className="w-6 h-px bg-sky-500/50" />
               </div>
-              <h2 className="mt-2 text-3xl font-bold text-white">Manufacturing Specialties</h2>
-              <p className="mt-3 text-white/50 max-w-xl mx-auto text-sm">Comprehensive capabilities across multiple disciplines</p>
+              <h2 className="mt-2 text-3xl font-semibold text-white">Manufacturing Specialties</h2>
+              <p className="mt-3 text-white/75 max-w-xl mx-auto text-sm">Comprehensive capabilities across multiple disciplines</p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -366,11 +366,11 @@ const Home = () => {
                 { category: "Electronics", items: ["PCB Design Support", "Component Sourcing", "SMT Assembly", "Through-Hole Assembly", "PCBA Testing", "Conformal Coating"] },
                 { category: "Finishing", items: ["Anodizing", "Powder Coating", "Plating", "Wire Harnesses", "Box Assembly", "Final Testing"] }
               ].map((spec, idx) => (
-                <div key={idx} className="rounded-xl bg-navy-800/40 p-5 ring-1 ring-white/[0.06]">
+                <div key={idx} className="rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.06]">
                   <h3 className="text-sm font-semibold text-sky-400 mb-4">{spec.category}</h3>
                   <ul className="space-y-2">
                     {spec.items.map((item, i) => (
-                      <li key={i} className="text-sm text-white/50 flex items-center gap-2.5">
+                      <li key={i} className="text-sm text-white/75 flex items-center gap-2.5">
                         <span className="w-1 h-1 rounded-full bg-sky-500/30 shrink-0" />
                         {item}
                       </li>
@@ -393,8 +393,8 @@ const Home = () => {
               <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-500/8 rounded-full blur-[100px]" />
               <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-cyan-500/8 rounded-full blur-[80px]" />
 
-              <div className="relative p-8 md:p-14 ring-1 ring-sky-500/10 rounded-2xl text-center">
-                <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+              <div className="relative p-8 md:p-14 ring-1 ring-sky-500/15 rounded-2xl text-center">
+                <h2 className="text-3xl md:text-4xl font-bold text-white">
                   Ready to optimize your production?
                 </h2>
                 <p className="mt-4 text-white/80 max-w-2xl mx-auto leading-relaxed">

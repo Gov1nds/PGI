@@ -27,7 +27,7 @@ export default function Login() {
     }
   };
 
-  const inputCls = "w-full px-4 py-3 bg-navy-800/60 border border-white/[0.08] rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500/30 transition-all";
+  const inputCls = "w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500/30 transition-all";
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center">
@@ -41,7 +41,7 @@ export default function Login() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Welcome back</h1>
+            <h1 className="text-2xl font-bold text-white">Welcome back</h1>
             <p className="text-white/50 text-sm mt-1">Sign in to your PGI HUB account</p>
           </div>
 
@@ -53,7 +53,7 @@ export default function Login() {
           )}
 
           {/* Form */}
-          <div className="rounded-2xl glass-card p-7">
+          <div className="rounded-2xl bg-white/[0.02] border border-white/[0.06] p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-white/60 text-xs font-medium mb-1.5">Email</label>

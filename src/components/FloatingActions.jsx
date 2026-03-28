@@ -57,7 +57,7 @@ export default function FloatingActions() {
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(8,11,22,0.0) 0%, rgba(8,11,22,0.92) 30%);
+            background: linear-gradient(180deg, rgba(10,15,26,0.0) 0%, rgba(10,15,26,0.92) 30%);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 14px 14px 0 0;

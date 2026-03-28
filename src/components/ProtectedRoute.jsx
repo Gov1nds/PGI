@@ -1,18 +1,27 @@
+/**
+ * ProtectedRoute — waits for auth hydration before rendering or redirecting.
+ * FIXES the auth hydration race that caused false logouts on page refresh.
+ */
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-navy-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
-          <p className="text-white/30 text-sm mt-5">Loading your workspace...</p>
+          <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
+          <p className="text-white/40 text-sm mt-4">Loading...</p>
         </div>
       </div>
     );
   }
-  if (!user) return <Navigate to="/login" replace />;
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   return children;
 }

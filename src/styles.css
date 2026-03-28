@@ -3,32 +3,30 @@
 @tailwind utilities;
 
 /* =========================================================
-   GLOBAL THEME — Deep Navy + Cyan/Violet Accents
-   Inspired by premium dark analytics dashboards
+   GLOBAL THEME VARIABLES — Premium Dark + Electric Cyan
    ========================================================= */
 
 :root {
-  /* Deep navy surfaces */
-  --bg-950: 8 11 22;
-  --bg-900: 12 16 30;
-  --card: 16 21 40;
+  /* Dark surfaces */
+  --bg-950: 10 15 26;
+  --bg-900: 13 18 30;
+  --card: 16 22 38;
 
   /* Text system */
-  --text: 230 235 250;
-  --muted: 140 155 190;
+  --text: 245 248 255;
+  --muted: 180 190 210;
 
-  /* Brand — cyan / electric blue */
+  /* Brand — electric cyan / blue */
   --brand-400: 56 189 248;
   --brand-500: 14 165 233;
   --brand-600: 2 132 199;
   --brand-700: 3 105 161;
 
-  /* Accent — violet / purple */
-  --accent-400: 168 85 247;
-  --accent-500: 139 92 246;
+  /* Accent — warm highlight */
+  --accent-400: 251 191 36;
 
   /* Corporate ink */
-  --ink-900: 8 11 22;
+  --ink-900: 10 15 26;
   --ink-700: 51 65 85;
 }
 
@@ -38,65 +36,72 @@
 
 body {
   font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.02em;
 }
 
 code, .font-mono {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
+/* =========================================================
+   TEXT SELECTION
+   ========================================================= */
+
 ::selection {
-  background: rgba(var(--brand-500) / 0.3);
+  background: rgba(var(--brand-500) / 0.25);
   color: #fff;
 }
 
 /* =========================================================
-   SCROLLBAR — Thin, themed
+   CUSTOM SCROLLBAR
    ========================================================= */
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(var(--brand-500) / 0.18); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(var(--brand-500) / 0.3); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(var(--bg-950));
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--brand-500) / 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--brand-500) / 0.5);
+}
 
 /* =========================================================
-   HERO ANIMATED BG — Deep navy atmosphere
+   HERO ANIMATED BG (no image)
    ========================================================= */
 
 .bg-hero {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(14,165,233,0.08), transparent),
-    radial-gradient(ellipse 50% 40% at 80% 60%, rgba(139,92,246,0.05), transparent),
-    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(14,165,233,0.03), transparent),
-    linear-gradient(180deg, rgb(8,11,22) 0%, rgb(12,16,30) 100%);
+  background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(14,165,233,0.12), transparent),
+              radial-gradient(ellipse 60% 50% at 80% 50%, rgba(56,189,248,0.06), transparent),
+              linear-gradient(180deg, rgb(10,15,26) 0%, rgb(13,18,30) 100%);
 }
 
+/* Animated grid overlay */
 .bg-hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(56,189,248,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56,189,248,0.025) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse 65% 60% at 50% 40%, black 10%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 65% 60% at 50% 40%, black 10%, transparent 70%);
+    linear-gradient(rgba(14,165,233,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14,165,233,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 70%);
   z-index: 0;
-  animation: gridDrift 25s linear infinite;
+  animation: gridDrift 20s linear infinite;
 }
 
 @keyframes gridDrift {
   0% { transform: translate(0, 0); }
-  100% { transform: translate(72px, 72px); }
+  100% { transform: translate(60px, 60px); }
 }
 
+/* Floating orbs */
 .bg-hero::after {
   content: "";
   position: absolute;
@@ -104,31 +109,34 @@ code, .font-mono {
   left: -10%;
   width: 60%;
   height: 80%;
-  background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 60%);
   border-radius: 50%;
   z-index: 0;
-  animation: orbFloat 18s ease-in-out infinite;
+  animation: orbFloat 12s ease-in-out infinite;
 }
 
 @keyframes orbFloat {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-  33% { transform: translate(5%, 8%) scale(1.05); opacity: 1; }
-  66% { transform: translate(-3%, -5%) scale(0.95); opacity: 0.7; }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5%, 8%) scale(1.05); }
+  66% { transform: translate(-3%, -5%) scale(0.95); }
 }
 
-.bg-hero > * { position: relative; z-index: 1; }
+.bg-hero > * {
+  position: relative;
+  z-index: 1;
+}
 
 /* =========================================================
-   HERO ANIMATIONS
+   HERO ANIMATIONS — staggered reveal
    ========================================================= */
 
 @keyframes slideInUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(30px); }
+  from { opacity: 0; transform: translateX(40px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
@@ -138,25 +146,25 @@ code, .font-mono {
 }
 
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(14,165,233,0.10), 0 0 60px rgba(139,92,246,0.04); }
-  50% { box-shadow: 0 0 30px rgba(14,165,233,0.18), 0 0 80px rgba(139,92,246,0.08); }
+  0%, 100% { box-shadow: 0 0 20px rgba(14,165,233,0.15), 0 0 60px rgba(14,165,233,0.05); }
+  50% { box-shadow: 0 0 30px rgba(14,165,233,0.25), 0 0 80px rgba(14,165,233,0.1); }
 }
 
-.hero-anim-1 { animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
-.hero-anim-2 { animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
-.hero-anim-3 { animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
-.hero-anim-4 { animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both; }
-.hero-anim-5 { animation: slideInRight 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both; }
+.hero-anim-1 { animation: slideInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+.hero-anim-2 { animation: slideInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both; }
+.hero-anim-3 { animation: slideInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both; }
+.hero-anim-4 { animation: slideInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both; }
+.hero-anim-5 { animation: slideInRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both; }
 
 /* =========================================================
-   SECTION REVEAL
+   SECTION REVEAL (scroll-triggered via IntersectionObserver)
    ========================================================= */
 
 .reveal-section {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .reveal-section.revealed {
   opacity: 1;
@@ -164,125 +172,120 @@ code, .font-mono {
 }
 
 /* =========================================================
-   GLOW CARD — Themed hover with violet/cyan glow
+   GLOW CARD
    ========================================================= */
 
 .glow-card {
   position: relative;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .glow-card::before {
   content: "";
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(56,189,248,0.15), transparent 50%, rgba(139,92,246,0.1));
+  background: linear-gradient(135deg, rgba(14,165,233,0.2), transparent 50%, rgba(56,189,248,0.1));
   z-index: -1;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.3s ease;
 }
-.glow-card:hover::before { opacity: 1; }
+.glow-card:hover::before {
+  opacity: 1;
+}
 .glow-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 20px 48px rgba(14,165,233,0.06), 0 8px 16px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(14,165,233,0.08);
 }
 
 /* =========================================================
-   GLASS CARD — Dashboard card style (key visual element)
+   BOM ANALYZER GLOW BOX
    ========================================================= */
 
-.glass-card {
-  background: rgba(16, 21, 42, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(100, 140, 255, 0.08);
-  border-radius: 16px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.bom-glow {
+  animation: glowPulse 3s ease-in-out infinite;
 }
-.glass-card:hover {
-  border-color: rgba(100, 140, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-.bom-glow { animation: glowPulse 4s ease-in-out infinite; }
 
 /* =========================================================
-   GLASS EFFECT — General
+   GLASS EFFECT
    ========================================================= */
 
 .glass {
-  background: rgba(16, 21, 42, 0.65);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  border: 1px solid rgba(100, 140, 255, 0.08);
+  background: rgba(16, 22, 38, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .glass-light {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(100, 140, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 /* =========================================================
-   BUTTONS — Cyan/violet gradient
+   CTA BUTTON STYLES
    ========================================================= */
 
 .btn-primary {
-  background: linear-gradient(135deg, rgb(var(--brand-500)), rgb(var(--brand-600)));
-  box-shadow: 0 4px 16px rgba(14,165,233,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(135deg, rgb(var(--brand-600)), rgb(var(--brand-700)));
+  box-shadow: 0 8px 24px rgba(14,165,233,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: all 0.25s ease;
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, rgb(var(--brand-400)), rgb(var(--brand-500)));
-  box-shadow: 0 8px 28px rgba(14,165,233,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+  background: linear-gradient(135deg, rgb(var(--brand-500)), rgb(var(--brand-600)));
+  box-shadow: 0 12px 32px rgba(14,165,233,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
   transform: translateY(-1px);
 }
-.btn-primary:active {
-  transform: translateY(0) scale(0.98);
+
+/* =========================================================
+   SMOOTH SCROLL
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* =========================================================
-   GRADIENT TEXT
+   CONTAINER
    ========================================================= */
 
-.gradient-text {
-  background: linear-gradient(135deg, rgb(var(--brand-400)), rgb(var(--accent-500)));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.container {
+  max-width: 1200px;
+  margin-inline: auto;
 }
 
 /* =========================================================
-   UTILITIES
+   FOCUS STYLE
    ========================================================= */
-
-html { scroll-behavior: smooth; }
-.container { max-width: 1200px; margin-inline: auto; }
 
 :focus-visible {
-  outline: 2px solid rgba(var(--brand-500) / 0.5);
+  outline: 2px solid rgba(var(--brand-500) / 0.55);
   outline-offset: 3px;
   border-radius: 8px;
 }
 
-/* Nav link underline */
-.nav-link { position: relative; }
+/* =========================================================
+   UNDERLINE HOVER ANIMATION (Navbar)
+   ========================================================= */
+
+.nav-link {
+  position: relative;
+}
 .nav-link::after {
   content: "";
   position: absolute;
-  left: 0; bottom: -3px;
-  width: 0; height: 2px;
-  background: linear-gradient(90deg, rgb(var(--brand-400)), rgb(var(--accent-400)));
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgb(var(--brand-400)), rgb(var(--brand-600)));
   border-radius: 1px;
-  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.nav-link:hover::after, .nav-link.active::after { width: 100%; }
-
-/* Section divider */
-.section-line {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(100, 140, 255, 0.1), transparent);
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
 }
 
 /* =========================================================
@@ -291,13 +294,27 @@ html { scroll-behavior: smooth; }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-anim-1, .hero-anim-2, .hero-anim-3,
-  .hero-anim-4, .hero-anim-5 { animation: none; opacity: 1; transform: none; }
-  .reveal-section { opacity: 1; transform: none; transition: none; }
+  .hero-anim-4, .hero-anim-5 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
   .bom-glow { animation: none; }
-  .bg-hero::before, .bg-hero::after { animation: none; }
-  .glow-card, .glass-card { transition: none; }
+  .bg-hero::before { animation: none; }
+  .bg-hero::after { animation: none; }
 }
 
+/* =========================================================
+   MOBILE SAFE AREA
+   ========================================================= */
+
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }

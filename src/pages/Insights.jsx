@@ -9,7 +9,7 @@ export default function Insights() {
   return (
     <div>
       {/* HERO */}
-      <section className="border-b border-white/[0.04] bg-gradient-to-b from-navy-950 to-navy-900 py-16 md:py-20">
+      <section className="border-b border-white/[0.04] bg-gradient-to-b from-[rgb(10,15,26)] to-[rgb(13,18,30)] py-16 md:py-20">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-sky-400 mb-4">
@@ -17,7 +17,7 @@ export default function Insights() {
               Engineering & Manufacturing Intelligence
               <span className="w-6 h-px bg-sky-500/50" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-white">
               Industry Insights
             </h1>
             <p className="mt-5 text-white/80 leading-relaxed max-w-2xl mx-auto">
@@ -34,7 +34,7 @@ export default function Insights() {
             <Link
               key={idx}
               to={`/insights/${i.slug}`}
-              className="group rounded-2xl bg-navy-800/40 ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-navy-800/60 flex flex-col h-full"
+              className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] flex flex-col h-full"
             >
               <div className="relative overflow-hidden aspect-video">
                 <img
@@ -53,7 +53,7 @@ export default function Insights() {
                 <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">
                   {i.title}
                 </h3>
-                <p className="mt-3 text-sm text-white/50 flex-1 leading-relaxed">{i.excerpt}</p>
+                <p className="mt-3 text-sm text-white/75 flex-1 leading-relaxed">{i.excerpt}</p>
                 <div className="mt-5 pt-4 border-t border-white/[0.06] flex items-center justify-between">
                   <span className="text-xs text-white/50">{i.readTime}</span>
                   <span className="text-sm text-sky-400 group-hover:text-sky-300 transition-colors font-medium">Read →</span>
@@ -65,11 +65,11 @@ export default function Insights() {
 
         {/* INFO */}
         <RevealSection className="mt-20">
-          <div className="rounded-2xl bg-navy-800/40 p-8 md:p-10 ring-1 ring-white/[0.06]">
+          <div className="rounded-2xl bg-white/[0.02] p-8 md:p-10 ring-1 ring-white/[0.06]">
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-4">About Our Insights</h2>
-                <p className="text-sm text-white/50 mb-4 leading-relaxed">
+                <h2 className="text-2xl font-semibold text-white mb-4">About Our Insights</h2>
+                <p className="text-sm text-white/75 mb-4 leading-relaxed">
                   Our insights are based on real-world manufacturing coordination across CNC facilities, electronics assembly partners, fabrication workshops, and global logistics providers.
                 </p>
                 <div className="space-y-2.5">
@@ -88,11 +88,11 @@ export default function Insights() {
                 </div>
               </div>
 
-              <div className="rounded-xl bg-navy-800/50 p-6 ring-1 ring-white/[0.06]">
-                <h3 className="text-lg font-bold text-white mb-4">Browse by Category</h3>
+              <div className="rounded-xl bg-white/[0.03] p-6 ring-1 ring-white/[0.06]">
+                <h3 className="text-lg font-semibold text-white mb-4">Browse by Category</h3>
                 <div className="space-y-2">
                   {["Manufacturing Strategy", "Supply Chain", "Industry Trends", "Quality Control", "Cost Optimization"].map((cat, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-navy-800/50 hover:bg-navy-700/60 transition-colors cursor-pointer">
+                    <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors cursor-pointer">
                       <span className="text-sm text-white/80">{cat}</span>
                       <span className="text-sky-400 text-sm">→</span>
                     </div>
@@ -105,9 +105,9 @@ export default function Insights() {
 
         {/* CTA */}
         <RevealSection className="mt-14">
-          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 via-violet-500/5 to-cyan-500/5 p-10 text-center ring-1 ring-sky-500/10">
-            <h2 className="text-2xl font-bold text-white">Subscribe to insights</h2>
-            <p className="mt-3 text-white/50 text-sm">Get manufacturing tips and industry updates directly to your inbox</p>
+          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 to-cyan-500/5 p-10 text-center ring-1 ring-sky-500/15">
+            <h2 className="text-2xl font-semibold text-white">Subscribe to insights</h2>
+            <p className="mt-3 text-white/75 text-sm">Get manufacturing tips and industry updates directly to your inbox</p>
             <div className="mt-6 flex gap-2.5 justify-center max-w-md mx-auto">
               <input
                 type="email"

@@ -8,7 +8,7 @@ export default function News() {
   return (
     <div>
       {/* HERO */}
-      <section className="border-b border-white/[0.04] bg-gradient-to-b from-navy-950 to-navy-900 py-16 md:py-20">
+      <section className="border-b border-white/[0.04] bg-gradient-to-b from-[rgb(10,15,26)] to-[rgb(13,18,30)] py-16 md:py-20">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-sky-400 mb-4">
@@ -16,7 +16,7 @@ export default function News() {
               Network Updates
               <span className="w-6 h-px bg-sky-500/50" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-white">
               Manufacturing Network Updates
             </h1>
             <p className="mt-5 text-white/80 leading-relaxed max-w-2xl mx-auto">
@@ -33,7 +33,7 @@ export default function News() {
             <Link
               key={idx}
               to={`/news/${n.slug}`}
-              className="group rounded-2xl bg-navy-800/40 ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-navy-800/60 flex flex-col h-full"
+              className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] flex flex-col h-full"
             >
               <div className="relative overflow-hidden aspect-video">
                 <img
@@ -55,7 +55,7 @@ export default function News() {
                 <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">
                   {n.title}
                 </h3>
-                <p className="mt-3 text-sm text-white/50 flex-1 leading-relaxed">{n.excerpt}</p>
+                <p className="mt-3 text-sm text-white/75 flex-1 leading-relaxed">{n.excerpt}</p>
                 <div className="mt-5 pt-4 border-t border-white/[0.06]">
                   <span className="text-sm text-sky-400 group-hover:text-sky-300 transition-colors font-medium">Read update →</span>
                 </div>
@@ -66,9 +66,9 @@ export default function News() {
 
         {/* INFO */}
         <RevealSection className="mt-20">
-          <div className="rounded-2xl bg-navy-800/40 p-8 md:p-10 ring-1 ring-white/[0.06]">
-            <h2 className="text-2xl font-bold text-white mb-4">About Network Updates</h2>
-            <p className="text-sm text-white/50 leading-relaxed mb-6">
+          <div className="rounded-2xl bg-white/[0.02] p-8 md:p-10 ring-1 ring-white/[0.06]">
+            <h2 className="text-2xl font-semibold text-white mb-4">About Network Updates</h2>
+            <p className="text-sm text-white/75 leading-relaxed mb-6">
               Our network updates highlight developments across PGI's manufacturing ecosystem, including new supplier partnerships, production capability expansions, and quality initiatives.
             </p>
             <div className="grid sm:grid-cols-3 gap-4">
@@ -77,7 +77,7 @@ export default function News() {
                 { icon: "⚡", title: "Capacity Expansion", desc: "New facilities and expanded production capabilities" },
                 { icon: "✓", title: "Quality Initiatives", desc: "Enhanced inspection and quality assurance processes" }
               ].map((item, i) => (
-                <div key={i} className="rounded-xl bg-navy-800/50 p-4 ring-1 ring-white/[0.04]">
+                <div key={i} className="rounded-xl bg-white/[0.03] p-4 ring-1 ring-white/[0.04]">
                   <div className="text-2xl mb-2">{item.icon}</div>
                   <h4 className="font-semibold text-white text-sm mb-1">{item.title}</h4>
                   <p className="text-xs text-white/70">{item.desc}</p>
@@ -89,9 +89,9 @@ export default function News() {
 
         {/* CTA */}
         <RevealSection className="mt-14">
-          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 via-violet-500/5 to-cyan-500/5 p-10 text-center ring-1 ring-sky-500/10">
-            <h2 className="text-2xl font-bold text-white">Stay updated</h2>
-            <p className="mt-3 text-white/50 text-sm">Get notifications about new manufacturing partnerships and capability expansions</p>
+          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 to-cyan-500/5 p-10 text-center ring-1 ring-sky-500/15">
+            <h2 className="text-2xl font-semibold text-white">Stay updated</h2>
+            <p className="mt-3 text-white/75 text-sm">Get notifications about new manufacturing partnerships and capability expansions</p>
             <div className="mt-6">
               <PrimaryButton to="/contact">Subscribe to updates</PrimaryButton>
             </div>
