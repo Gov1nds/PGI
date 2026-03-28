@@ -5,15 +5,15 @@ import { useAuth } from "../context/AuthContext";
 import { listProjects } from "../lib/api";
 
 const STATUS_STYLES = {
-  uploaded:       "bg-white/[0.06] text-white/60 border border-white/[0.08]",
-  analyzed:       "bg-sky-500/15 text-sky-400 border border-sky-500/20",
-  quoting:        "bg-amber-500/15 text-amber-400 border border-amber-500/20",
-  quoted:         "bg-violet-500/15 text-violet-400 border border-violet-500/20",
-  approved:       "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
-  in_production:  "bg-blue-500/15 text-blue-400 border border-blue-500/20",
-  qc_inspection:  "bg-orange-500/15 text-orange-400 border border-orange-500/20",
-  shipped:        "bg-cyan-500/15 text-cyan-400 border border-cyan-500/20",
-  completed:      "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
+  uploaded:       "bg-white/[0.06] text-white/60",
+  analyzed:       "bg-sky-500/15 text-sky-400",
+  quoting:        "bg-amber-500/15 text-amber-400",
+  quoted:         "bg-violet-500/15 text-violet-400",
+  approved:       "bg-emerald-500/15 text-emerald-400",
+  in_production:  "bg-blue-500/15 text-blue-400",
+  qc_inspection:  "bg-orange-500/15 text-orange-400",
+  shipped:        "bg-cyan-500/15 text-cyan-400",
+  completed:      "bg-emerald-500/15 text-emerald-400",
 };
 
 const fmt = (n) => {
@@ -46,61 +46,49 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080c15]">
-      {/* Header */}
-      <section className="border-b border-white/[0.05]">
-        <Container className="py-12">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+    <div className="min-h-screen bg-navy-950">
+      <section className="border-b border-white/[0.06]">
+        <Container className="py-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-white tracking-tight">Projects</h1>
-              <p className="text-white/45 text-sm mt-1.5">
-                {user?.full_name ? `Welcome back, ${user.full_name}` : "Your BOM analyses and manufacturing projects"}
+              <p className="text-white/50 text-sm mt-1">
+                {user?.full_name ? `Welcome, ${user.full_name}` : "Your BOM analyses and manufacturing projects"}
               </p>
             </div>
-            <Link to="/bom-analyzer" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all duration-300 shadow-lg shadow-sky-600/20 active:scale-[0.97]">
+            <Link to="/bom-analyzer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all shadow-lg shadow-sky-600/20">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
               New Analysis
             </Link>
           </div>
         </Container>
       </section>
-
-      <Container className="py-10">
-        {/* Loading */}
+      <Container className="py-8">
         {loading && (
-          <div className="text-center py-24">
-            <div className="relative w-12 h-12 mx-auto">
-              <div className="absolute inset-0 rounded-full border-2 border-sky-500/15 border-t-sky-500 animate-spin" />
-              <div className="absolute inset-1 rounded-full border-2 border-transparent border-b-sky-500/25 animate-spin" style={{ animationDuration: "1.5s", animationDirection: "reverse" }} />
-            </div>
-            <p className="text-white/35 text-sm mt-5 font-medium">Loading projects...</p>
+          <div className="text-center py-20">
+            <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
+            <p className="text-white/40 text-sm mt-4">Loading projects...</p>
           </div>
         )}
-
-        {/* Error */}
         {error && (
-          <div className="max-w-lg mx-auto p-5 bg-red-500/[0.06] border border-red-500/15 rounded-xl text-center">
+          <div className="max-w-lg mx-auto p-4 bg-red-500/[0.08] border border-red-500/20 rounded-xl text-center">
             <p className="text-red-300 text-sm">{error}</p>
-            <button onClick={loadProjects} className="text-red-400 hover:text-red-300 text-xs mt-3 underline underline-offset-2">Retry</button>
+            <button onClick={loadProjects} className="text-red-400 hover:text-red-300 text-xs mt-2 underline">Retry</button>
           </div>
         )}
-
-        {/* Empty state */}
         {!loading && !error && projects.length === 0 && (
-          <div className="text-center py-24">
-            <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
-              <svg className="w-9 h-9 text-white/15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+          <div className="text-center py-20">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-navy-800/50 border border-white/[0.06] flex items-center justify-center">
+              <svg className="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
             </div>
-            <h3 className="text-white text-lg font-bold">No projects yet</h3>
-            <p className="text-white/40 text-sm mt-2 mb-8 max-w-xs mx-auto">Upload your first Bill of Materials to get started with manufacturing intelligence</p>
-            <Link to="/bom-analyzer" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all">Upload BOM</Link>
+            <h3 className="text-white text-lg font-semibold">No projects yet</h3>
+            <p className="text-white/40 text-sm mt-1 mb-6">Upload your first BOM to get started</p>
+            <Link to="/bom-analyzer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all">Upload BOM</Link>
           </div>
         )}
-
-        {/* Project list */}
         {!loading && projects.length > 0 && (
           <div className="space-y-3">
-            <div className="hidden sm:grid grid-cols-12 gap-4 px-6 py-3 text-[10px] text-white/30 uppercase tracking-[0.12em] font-bold">
+            <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-2 text-[10px] text-white/25 uppercase tracking-[0.12em] font-medium">
               <div className="col-span-4">Project</div>
               <div className="col-span-2">Status</div>
               <div className="col-span-2 text-right">Est. Cost</div>
@@ -109,26 +97,26 @@ export default function Dashboard() {
               <div className="col-span-1"></div>
             </div>
             {projects.map((p) => (
-              <Link key={p.project_id} to={`/project/${p.project_id}`} className="block rounded-2xl bg-[#0d111c] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.02] transition-all duration-300 group shadow-card hover:shadow-card-hover">
-                <div className="p-5 sm:p-6 sm:grid sm:grid-cols-12 sm:gap-4 sm:items-center">
+              <Link key={p.project_id} to={`/project/${p.project_id}`} className="block rounded-2xl glass-card border-white/[0.06] hover:border-white/[0.12] hover:bg-navy-700/40 hover:-translate-y-0.5 transition-all group">
+                <div className="p-5 sm:grid sm:grid-cols-12 sm:gap-4 sm:items-center">
                   <div className="col-span-4 mb-3 sm:mb-0">
-                    <p className="text-white text-sm font-semibold group-hover:text-sky-400 transition-colors truncate">{p.name || p.file_name || "Untitled BOM"}</p>
-                    <p className="text-white/25 text-[11px] mt-1 font-mono">{p.project_id?.slice(0, 8)}</p>
+                    <p className="text-white text-sm font-medium group-hover:text-sky-400 transition-colors truncate">{p.name || p.file_name || "Untitled BOM"}</p>
+                    <p className="text-white/30 text-xs mt-0.5 font-mono">{p.project_id?.slice(0, 8)}</p>
                   </div>
                   <div className="col-span-2 mb-2 sm:mb-0">
-                    <span className={`inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLES[p.status] || STATUS_STYLES.uploaded}`}>{(p.status || "uploaded").replace(/_/g, " ")}</span>
+                    <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[p.status] || STATUS_STYLES.uploaded}`}>{(p.status || "uploaded").replace(/_/g, " ")}</span>
                   </div>
                   <div className="col-span-2 text-right mb-2 sm:mb-0">
                     <p className="text-white/80 text-sm font-mono">{p.cost ? `${p.currency || "USD"} ${fmt(p.cost)}` : "—"}</p>
-                    {p.savings_percent > 0 && (<p className="text-emerald-400 text-[10px] mt-0.5 font-semibold">↓ {p.savings_percent.toFixed(1)}% savings</p>)}
-                    {p.lead_time > 0 && (<p className="text-white/25 text-[10px]">{Math.round(p.lead_time)}d lead</p>)}
+                    {p.savings_percent > 0 && (<p className="text-emerald-400 text-[10px] mt-0.5">↓ {p.savings_percent.toFixed(1)}% savings</p>)}
+                    {p.lead_time > 0 && (<p className="text-white/30 text-[10px]">{Math.round(p.lead_time)}d lead</p>)}
                   </div>
-                  <div className="col-span-1 text-right mb-2 sm:mb-0"><p className="text-white/45 text-sm font-mono">{p.total_parts}</p></div>
+                  <div className="col-span-1 text-right mb-2 sm:mb-0"><p className="text-white/50 text-sm">{p.total_parts}</p></div>
                   <div className="col-span-2 mb-2 sm:mb-0">
-                    <p className="text-white/35 text-xs">{p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}</p>
+                    <p className="text-white/40 text-xs">{p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}</p>
                   </div>
                   <div className="col-span-1 text-right">
-                    <svg className="w-4 h-4 text-white/15 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-all inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                    <svg className="w-4 h-4 text-white/20 group-hover:text-sky-400 transition-colors inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                   </div>
                 </div>
               </Link>

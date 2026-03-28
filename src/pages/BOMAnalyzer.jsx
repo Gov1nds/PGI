@@ -257,10 +257,10 @@ export default function BOMAnalyzer() {
   }
 
   /* ── Shared styles ───────────────────────────────────── */
-  const card = "rounded-2xl bg-[#0d111c] border border-white/[0.06] overflow-hidden shadow-card";
+  const card = "rounded-2xl bg-navy-800 border border-white/[0.06] overflow-hidden";
   const cardInner = "p-6 sm:p-8";
-  const selectCls = `w-full px-4 py-3 bg-[#121724] border border-white/[0.08] rounded-xl text-white/90 
-    focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40
+  const selectCls = `w-full px-4 py-3 bg-navy-700 border border-white/[0.08] rounded-xl text-white/90 
+    focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50
     appearance-none cursor-pointer transition-all text-sm
     bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.4)%22 stroke-width=%222%22%3e%3cpolyline points=%226 9 12 15 18 9%22/%3e%3c/svg%3e')]
     bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10`;
@@ -272,21 +272,21 @@ export default function BOMAnalyzer() {
     : ["Upload", "Location", "Analyze", "—", "Report"];
 
   return (
-    <div className="min-h-screen bg-[#080c15]">
+    <div className="min-h-screen bg-navy-950">
       {/* ── Header ─────────────────────────────────────── */}
-      <section className="relative border-b border-white/[0.05] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.04] via-transparent to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-emerald-500/[0.03] rounded-full blur-[140px]" />
-        <Container className="relative py-16 sm:py-22">
+      <section className="relative border-b border-white/[0.06] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.03] via-transparent to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-500/[0.04] rounded-full blur-[120px]" />
+        <Container className="relative py-14 sm:py-20">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-7">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-emerald-400 text-[11px] font-semibold tracking-wider uppercase">Intelligence Engine v2.0</span>
+              <span className="text-emerald-400 text-xs font-medium tracking-wider uppercase">Intelligence Engine v2.0</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
+            <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight tracking-tight">
               BOM Analyzer
             </h1>
-            <p className="mt-5 text-white/65 text-base leading-[1.7] max-w-lg mx-auto">
+            <p className="mt-4 text-white/55 text-base leading-relaxed max-w-lg mx-auto">
               Upload your Bill of Materials. Get AI-powered sourcing decisions
               with reinforcement learning optimization across 11 global regions.
             </p>
@@ -313,11 +313,11 @@ export default function BOMAnalyzer() {
                 const active = step >= s;
                 return (
                   <React.Fragment key={s}>
-                    <div className="flex flex-col items-center gap-2">
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${
-                        active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 ring-4 ring-emerald-500/10" : "bg-white/[0.04] text-white/40 border border-white/[0.06]"
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
+                        active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25" : "bg-navy-800/60 text-white/50 border border-white/[0.06]"
                       }`}>{step > s ? "✓" : s}</div>
-                      <span className={`text-[10px] font-medium transition-colors ${active ? "text-white/55" : "text-white/20"}`}>{name}</span>
+                      <span className={`text-[10px] transition-colors ${active ? "text-white/60" : "text-white/20"}`}>{name}</span>
                     </div>
                     {s < stepNames.length && <div className={`flex-1 h-px mx-2 mt-[-12px] transition-colors duration-500 ${step > s ? "bg-emerald-500/40" : "bg-white/[0.06]"}`} />}
                   </React.Fragment>
@@ -338,7 +338,7 @@ export default function BOMAnalyzer() {
                 <p className="text-white/70 text-sm mb-6">CSV or Excel — up to 10 MB</p>
 
                 <label className={`relative flex flex-col items-center justify-center h-44 border-2 border-dashed rounded-xl cursor-pointer transition-all
-                  ${file ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-white/[0.08] hover:border-white/20 hover:bg-white/[0.02]"}`}>
+                  ${file ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-white/[0.08] hover:border-white/20 hover:bg-navy-800/40"}`}>
                   <input type="file" accept=".csv,.xlsx,.xls" onChange={handleFile} className="absolute inset-0 opacity-0 cursor-pointer" />
                   {file ? (
                     <div className="text-center">
@@ -375,22 +375,22 @@ export default function BOMAnalyzer() {
                   <div>
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">Country</label>
                     <select value={country} onChange={(e) => { setCountry(e.target.value); setStateRegion(""); setCity(""); }} className={selectCls}>
-                      <option value="" className="bg-[#121724]">Select</option>
-                      {Object.keys(LOCATION_DATA).map((c) => <option key={c} value={c} className="bg-[#121724]">{c}</option>)}
+                      <option value="" className="bg-navy-700">Select</option>
+                      {Object.keys(LOCATION_DATA).map((c) => <option key={c} value={c} className="bg-navy-700">{c}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">State / Region</label>
                     <select value={stateRegion} onChange={(e) => { setStateRegion(e.target.value); setCity(""); }} disabled={!country} className={selectCls + " disabled:opacity-40"}>
-                      <option value="" className="bg-[#121724]">{country ? "Select" : "—"}</option>
-                      {states_list.map((s) => <option key={s} value={s} className="bg-[#121724]">{s}</option>)}
+                      <option value="" className="bg-navy-700">{country ? "Select" : "—"}</option>
+                      {states_list.map((s) => <option key={s} value={s} className="bg-navy-700">{s}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">City</label>
                     <select value={city} onChange={(e) => setCity(e.target.value)} disabled={!stateRegion} className={selectCls + " disabled:opacity-40"}>
-                      <option value="" className="bg-[#121724]">{stateRegion ? "Select" : "—"}</option>
-                      {cities_list.map((c) => <option key={c} value={c} className="bg-[#121724]">{c}</option>)}
+                      <option value="" className="bg-navy-700">{stateRegion ? "Select" : "—"}</option>
+                      {cities_list.map((c) => <option key={c} value={c} className="bg-navy-700">{c}</option>)}
                     </select>
                   </div>
                 </div>
@@ -398,7 +398,7 @@ export default function BOMAnalyzer() {
                 <div>
                   <label className="block text-white/70 text-xs mb-1.5 font-medium">Target Currency</label>
                   <select value={currency} onChange={(e) => setCurrency(e.target.value)} className={selectCls + " max-w-[200px]"}>
-                    {CURRENCIES.map((c) => <option key={c} value={c} className="bg-[#121724]">{c}</option>)}
+                    {CURRENCIES.map((c) => <option key={c} value={c} className="bg-navy-700">{c}</option>)}
                   </select>
                 </div>
 
@@ -410,7 +410,7 @@ export default function BOMAnalyzer() {
               </div>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setStep(1)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/60 text-sm font-medium transition-all">← Back</button>
+              <button onClick={() => setStep(1)} className="px-5 py-2.5 rounded-xl bg-navy-800/60 hover:bg-white/[0.08] text-white/60 text-sm font-medium transition-all">← Back</button>
               <PrimaryButton onClick={startAnalysis} disabled={!country || !stateRegion || !city}>
                 Start Analysis →
               </PrimaryButton>
@@ -422,16 +422,13 @@ export default function BOMAnalyzer() {
         {/* STEP 3 — Processing                             */}
         {/* ════════════════════════════════════════════════ */}
         {step === 3 && (
-          <div className="text-center py-24 animate-[fadeIn_0.3s_ease]">
+          <div className="text-center py-20 animate-[fadeIn_0.3s_ease]">
             <div className="relative inline-block">
-              <div className="w-18 h-18 rounded-full border-[3px] border-emerald-500/15 border-t-emerald-500 animate-spin" style={{ width: 72, height: 72 }} />
-              <div className="absolute inset-0 rounded-full border-[3px] border-transparent border-b-emerald-500/25 animate-spin" style={{ width: 72, height: 72, animationDuration: "1.5s", animationDirection: "reverse" }} />
-              <div className="absolute inset-3 rounded-full bg-emerald-500/5 flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
-              </div>
+              <div className="w-16 h-16 rounded-full border-[3px] border-emerald-500/20 border-t-emerald-500 animate-spin" />
+              <div className="absolute inset-0 w-16 h-16 rounded-full border-[3px] border-transparent border-b-emerald-500/30 animate-spin" style={{ animationDuration: "1.5s", animationDirection: "reverse" }} />
             </div>
-            <p className="mt-10 text-white text-lg font-semibold">{progress}</p>
-            <p className="mt-2 text-white/40 text-sm">{city}, {stateRegion}, {country}</p>
+            <p className="mt-8 text-white text-lg font-medium">{progress}</p>
+            <p className="mt-2 text-white/50 text-sm">{city}, {stateRegion}, {country}</p>
             <div className="mt-6 flex items-center justify-center gap-1">
               {[0, 1, 2].map((i) => (
                 <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />
@@ -498,7 +495,7 @@ export default function BOMAnalyzer() {
                     cat === "standard" ? "bg-blue-500/10 border-blue-500/20 text-blue-400" :
                     cat === "custom" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" :
                     cat === "raw_material" ? "bg-purple-500/10 border-purple-500/20 text-purple-400" :
-                    "bg-white/[0.04] border-white/[0.08] text-white/50"
+                    "bg-navy-800/60 border-white/[0.08] text-white/50"
                   }`}>
                     {cat.replace("_", " ")} ({count})
                   </span>
@@ -527,7 +524,7 @@ export default function BOMAnalyzer() {
 
                   {/* Visible rows */}
                   {previewData.visible_parts.map((part, i) => (
-                    <div key={i} className="grid grid-cols-12 gap-2 px-3 py-3 border-b border-white/[0.04] items-center hover:bg-white/[0.02] transition-colors">
+                    <div key={i} className="grid grid-cols-12 gap-2 px-3 py-3 border-b border-white/[0.04] items-center hover:bg-navy-800/40 transition-colors">
                       <span className="col-span-4 text-white/80 text-sm truncate" title={part.part_name}>{part.part_name}</span>
                       <span className={`col-span-2 text-[11px] font-medium ${
                         part.category === "standard" ? "text-blue-400" :
@@ -555,7 +552,7 @@ export default function BOMAnalyzer() {
                         </div>
                       ))}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0d111c]/90 rounded-full border border-white/[0.1]">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-navy-800/90 rounded-full border border-white/[0.1]">
                           <svg className="w-3.5 h-3.5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                           <span className="text-white/60 text-xs font-medium">+{previewData.locked_parts_count} more parts — sign up to unlock</span>
                         </div>
@@ -618,7 +615,7 @@ export default function BOMAnalyzer() {
             {/* ── Unlock CTA ─────────────────────────────── */}
             <div className="relative rounded-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 via-blue-600/20 to-violet-600/20" />
-              <div className="absolute inset-0 bg-[#0d111c]/80" />
+              <div className="absolute inset-0 bg-navy-800/80" />
               <div className="relative p-8 sm:p-10 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
                   Get the Full Report
@@ -657,7 +654,7 @@ export default function BOMAnalyzer() {
 
             {/* Reset */}
             <div className="flex justify-center">
-              <button onClick={reset} className="px-5 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/60 text-sm font-medium transition-all">
+              <button onClick={reset} className="px-5 py-2.5 bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/60 text-sm font-medium transition-all">
                 ← Analyze Another BOM
               </button>
             </div>
@@ -686,14 +683,14 @@ export default function BOMAnalyzer() {
                     View Project →
                   </a>
                 )}
-                <button onClick={reset} className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-white/60 text-xs font-medium transition-all">
+                <button onClick={reset} className="px-4 py-2 bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-white/60 text-xs font-medium transition-all">
                   New Analysis
                 </button>
               </div>
             </div>
 
             {/* ── Tabs ─────────────────────────────────── */}
-            <div className="flex gap-1 p-1.5 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit">
+            <div className="flex gap-1 p-1 bg-navy-800/50 rounded-xl border border-white/[0.06] max-w-fit">
               {[
                 ["overview", "Overview"],
                 ["components", "Components"],
@@ -701,7 +698,7 @@ export default function BOMAnalyzer() {
                 ["learning", "Learning"],
               ].map(([id, label]) => (
                 <button key={id} onClick={() => setActiveTab(id)}
-                  className={`px-5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 ${activeTab === id ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-white/55 hover:text-white/70 hover:bg-white/[0.04]"}`}>
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === id ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-white/70 hover:text-white/70"}`}>
                   {label}
                 </button>
               ))}
@@ -731,7 +728,7 @@ export default function BOMAnalyzer() {
                 {/* Cost breakdown */}
                 <div className={card}>
                   <div className={cardInner}>
-                    <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">Cost Breakdown</h3>
+                    <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Cost Breakdown</h3>
                     <div className="space-y-3">
                       {[
                         { label: "Manufacturing", value: bd.manufacturing, color: "bg-emerald-500" },
@@ -745,7 +742,7 @@ export default function BOMAnalyzer() {
                         return (
                           <div key={i} className="flex items-center gap-4">
                             <span className="text-white/80 text-xs w-28 shrink-0">{row.label}</span>
-                            <div className="flex-1 h-2 bg-white/[0.04] rounded-full overflow-hidden">
+                            <div className="flex-1 h-2 bg-navy-800/60 rounded-full overflow-hidden">
                               <div className={`h-full rounded-full ${row.color}`} style={{ width: `${w}%`, transition: "width 1s ease" }} />
                             </div>
                             <span className="text-white/70 text-xs font-mono w-24 text-right">{currency} {fmt(row.value)}</span>
@@ -763,7 +760,7 @@ export default function BOMAnalyzer() {
                       <p className="text-white/35 text-xs font-medium mb-3">Decision Distribution</p>
                       <div className="flex items-end gap-3">
                         <div className="flex-1">
-                          <div className="flex h-3 rounded-full overflow-hidden bg-white/[0.04]">
+                          <div className="flex h-3 rounded-full overflow-hidden bg-navy-800/60">
                             <div className="bg-emerald-500 rounded-l-full" style={{ width: `${dd.exploitation_pct || 0}%` }} />
                             <div className="bg-amber-500 rounded-r-full" style={{ width: `${dd.exploration_pct || 0}%` }} />
                           </div>
@@ -802,7 +799,7 @@ export default function BOMAnalyzer() {
                   <div key={cat}>
                     <div className="flex items-center gap-2 mb-3 mt-2">
                       <span className={`w-2 h-2 rounded-full ${S5_CAT_BADGE[cat].split(" ")[0].replace("/15", "/60").replace("/[0.06]", "/30")}`} />
-                      <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">{S5_CAT_LABELS[cat]}</h3>
+                      <h3 className="text-sm font-bold text-white/40 uppercase tracking-wider">{S5_CAT_LABELS[cat]}</h3>
                       <span className="text-white/20 text-xs">({groupedS2[cat].length})</span>
                     </div>
                     <div className="space-y-3">
@@ -846,7 +843,7 @@ export default function BOMAnalyzer() {
                                       ["Compliance", fmt(tlcB.c_compliance)],
                                       ["Industrial TLC", fmt(tlcB.industrial_tlc)],
                                     ].map(([l, val], j) => (
-                                      <div key={j} className="p-2 bg-white/[0.02] rounded-lg">
+                                      <div key={j} className="p-2 bg-navy-800/40 rounded-lg">
                                         <p className="text-white/50 mb-0.5">{l}</p>
                                         <p className="text-white/80 font-mono">{val}</p>
                                       </div>
@@ -857,7 +854,7 @@ export default function BOMAnalyzer() {
                                 {/* Decision math */}
                                 <div>
                                   <p className="text-white/70 text-xs font-medium mb-2">Decision Logic</p>
-                                  <div className="p-3 bg-[#121724] rounded-lg text-xs font-mono text-white/80 space-y-1 overflow-x-auto">
+                                  <div className="p-3 bg-navy-700 rounded-lg text-xs font-mono text-white/80 space-y-1 overflow-x-auto">
                                     <p>{exp.math?.ucb || "—"}</p>
                                     <p className="text-white/50">{exp.math?.tlc || "—"}</p>
                                   </div>
@@ -871,7 +868,7 @@ export default function BOMAnalyzer() {
                                     ["Cost Vol.", exp.risk?.cost_volatility],
                                     ["Quality", exp.risk?.quality],
                                   ].map(([l, val], j) => (
-                                    <div key={j} className="px-3 py-1.5 bg-white/[0.03] rounded-lg text-xs">
+                                    <div key={j} className="px-3 py-1.5 bg-navy-800/50 rounded-lg text-xs">
                                       <span className="text-white/50">{l} </span>
                                       <span className={riskColor(val || 0)}>{fmt(val, 3)}</span>
                                     </div>
@@ -884,7 +881,7 @@ export default function BOMAnalyzer() {
                                     <p className="text-white/70 text-xs font-medium mb-2">Alternatives</p>
                                     <div className="space-y-1.5">
                                       {alts.map((a, j) => (
-                                        <div key={j} className="flex items-center justify-between p-2 bg-white/[0.02] rounded-lg text-xs">
+                                        <div key={j} className="flex items-center justify-between p-2 bg-navy-800/40 rounded-lg text-xs">
                                           <span className="text-white/80">{a.supplier_name} · {regionLabel(a.region)}</span>
                                           <span className="text-white/70 font-mono">{currency} {fmt(a.simulated_tlc)}</span>
                                         </div>
@@ -924,10 +921,10 @@ export default function BOMAnalyzer() {
                 {/* Volume strategy */}
                 <div className={card}>
                   <div className={cardInner}>
-                    <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">Volume Strategy</h3>
+                    <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Volume Strategy</h3>
                     <div className="space-y-2">
                       {(s3.volume_strategy || []).map((v, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-white/[0.02] rounded-lg text-xs">
+                        <div key={i} className="flex items-center justify-between p-3 bg-navy-800/40 rounded-lg text-xs">
                           <div className="flex items-center gap-3">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
                               v.type === "high" ? "bg-emerald-500/15 text-emerald-400" :
@@ -951,9 +948,9 @@ export default function BOMAnalyzer() {
                 {(s3.process_summary || []).length > 0 && (
                   <div className={card}>
                     <div className={cardInner}>
-                      <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">Custom Manufacturing</h3>
+                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Custom Manufacturing</h3>
                       {(s3.process_summary || []).map((p, i) => (
-                        <div key={i} className="p-4 bg-white/[0.02] rounded-lg mb-3 last:mb-0">
+                        <div key={i} className="p-4 bg-navy-800/40 rounded-lg mb-3 last:mb-0">
                           <p className="text-white text-sm font-medium mb-2">{p.item}</p>
                           <div className="flex flex-wrap gap-4 text-xs text-white/70">
                             <span>Form: <span className="text-white/70">{p.material_form}</span></span>
@@ -975,7 +972,7 @@ export default function BOMAnalyzer() {
                 {(s3.risk_insights || []).length > 0 && (
                   <div className={card}>
                     <div className={cardInner}>
-                      <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">Risk Alerts</h3>
+                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Risk Alerts</h3>
                       {(s3.risk_insights || []).map((r, i) => (
                         <div key={i} className="flex items-center gap-3 p-3 bg-red-500/[0.04] border border-red-500/10 rounded-lg mb-2 last:mb-0 text-xs">
                           <span className="text-red-400">⚠</span>
@@ -1012,7 +1009,7 @@ export default function BOMAnalyzer() {
                 {(s6.exploration_decisions || []).length > 0 && (
                   <div className={card}>
                     <div className={cardInner}>
-                      <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">Exploration Decisions</h3>
+                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">Exploration Decisions</h3>
                       {s6.exploration_decisions.map((d, i) => (
                         <div key={i} className="flex items-center justify-between p-3 bg-amber-500/[0.04] rounded-lg mb-2 text-xs">
                           <span className="text-white/60">{d.item}</span>
@@ -1029,9 +1026,9 @@ export default function BOMAnalyzer() {
                 {(s6.high_uncertainty || []).length > 0 && (
                   <div className={card}>
                     <div className={cardInner}>
-                      <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">High Uncertainty Items</h3>
+                      <h3 className="text-sm font-bold text-white/40 mb-4 uppercase tracking-wider">High Uncertainty Items</h3>
                       {s6.high_uncertainty.map((h, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-white/[0.02] rounded-lg mb-2 text-xs">
+                        <div key={i} className="flex items-center justify-between p-3 bg-navy-800/40 rounded-lg mb-2 text-xs">
                           <span className="text-white/80">{h.item}</span>
                           <span className={`font-mono ${riskColor(h.uncertainty)}`}>{fmt(h.uncertainty, 3)}</span>
                         </div>
@@ -1050,7 +1047,7 @@ export default function BOMAnalyzer() {
 
             {/* ── Bottom actions ───────────────────────── */}
             <div className="flex justify-center pt-4">
-              <button onClick={reset} className="px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/70 text-sm font-medium transition-all">
+              <button onClick={reset} className="px-6 py-3 bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] rounded-xl text-white/70 text-sm font-medium transition-all">
                 ← Analyze Another BOM
               </button>
             </div>

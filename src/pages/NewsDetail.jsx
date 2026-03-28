@@ -49,51 +49,51 @@ export default function NewsDetail() {
 
   return (
     <div>
-      <section className="border-b border-white/[0.05] py-16 md:py-24 bg-gradient-to-b from-[#080c15] to-[#0b0f1b]">
+      <section className="border-b border-white/[0.04] py-14 md:py-20 bg-gradient-to-b from-navy-950 to-navy-900">
         <Container>
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-5">
               <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25">
                 {news.category}
               </span>
-              <span className="text-xs text-white/40">{news.date}</span>
+              <span className="text-xs text-white/50">{news.date}</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight">
               {news.title}
             </h1>
-            <p className="mt-6 text-lg text-white/65">{news.excerpt}</p>
+            <p className="mt-6 text-lg text-white/80">{news.excerpt}</p>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-white/[0.05]">
+      <section className="border-b border-white/[0.04]">
         <Container className="py-8">
-          <div className="rounded-2xl overflow-hidden aspect-video bg-white/[0.02]">
+          <div className="rounded-2xl overflow-hidden aspect-video bg-navy-800/40">
             <img src={news.image} alt={news.title} className="w-full h-full object-cover" />
           </div>
         </Container>
       </section>
 
-      <section className="py-20 md:py-24">
+      <section className="py-16 md:py-20">
         <Container>
           <div className="max-w-3xl mx-auto">
             {content.sections.map((section, idx) => (
               <div key={idx} className="mb-10">
-                <h2 className="text-xl font-semibold text-white mb-4">{section.title}</h2>
-                <p className="text-white/65 leading-relaxed">{section.content}</p>
+                <h2 className="text-xl font-bold text-white mb-4">{section.title}</h2>
+                <p className="text-white/80 leading-relaxed">{section.content}</p>
               </div>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.05] py-20 md:py-24">
+      <section className="border-t border-white/[0.04] py-16 md:py-20">
         <Container>
-          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 to-cyan-500/5 p-8 md:p-12 ring-1 ring-sky-500/15 text-center">
-            <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3">
+          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 via-violet-500/5 to-cyan-500/5 p-8 md:p-12 ring-1 ring-sky-500/10 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
               Ready to scale your production?
             </h2>
-            <p className="text-white/60 max-w-xl mx-auto mb-8 text-sm">
+            <p className="text-white/50 max-w-xl mx-auto mb-8 text-sm">
               Contact our engineering team to discuss your manufacturing requirements.
             </p>
             <PrimaryButton to="/contact">Contact Engineering</PrimaryButton>
@@ -101,25 +101,25 @@ export default function NewsDetail() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.05] py-20 md:py-24">
+      <section className="border-t border-white/[0.04] py-16 md:py-20">
         <Container>
           <div className="text-center mb-10">
             <div className="text-xs font-semibold uppercase tracking-[0.15em] text-sky-400 mb-2">More Updates</div>
-            <h2 className="text-2xl font-semibold text-white">Related News</h2>
+            <h2 className="text-2xl font-bold text-white">Related News</h2>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
             {newsItems.filter((n) => n.slug !== slug).slice(0, 3).map((n, idx) => (
               <Link
                 key={idx}
                 to={`/news/${n.slug}`}
-                className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden shadow-card transition-all duration-300 hover:ring-sky-500/20 flex flex-col"
+                className="group rounded-2xl bg-navy-800/40 ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 flex flex-col"
               >
                 <div className="relative overflow-hidden aspect-video">
                   <img src={n.image} alt={n.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                 </div>
                 <div className="p-5 flex-1 flex flex-col">
                   <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors">{n.title}</h3>
-                  <p className="mt-2 text-sm text-white/60 flex-1">{n.excerpt}</p>
+                  <p className="mt-2 text-sm text-white/50 flex-1">{n.excerpt}</p>
                   <div className="mt-4 text-sky-400 text-sm font-medium">Read →</div>
                 </div>
               </Link>

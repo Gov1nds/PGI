@@ -5,15 +5,15 @@ import { useAuth } from "../context/AuthContext";
 import { getProject, createRFQ } from "../lib/api";
 
 const STATUS_STYLES = {
-  uploaded:       "bg-white/[0.06] text-white/60 border border-white/[0.08]",
-  analyzed:       "bg-sky-500/15 text-sky-400 border border-sky-500/20",
-  quoting:        "bg-amber-500/15 text-amber-400 border border-amber-500/20",
-  quoted:         "bg-violet-500/15 text-violet-400 border border-violet-500/20",
-  approved:       "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
-  in_production:  "bg-blue-500/15 text-blue-400 border border-blue-500/20",
-  qc_inspection:  "bg-orange-500/15 text-orange-400 border border-orange-500/20",
-  shipped:        "bg-cyan-500/15 text-cyan-400 border border-cyan-500/20",
-  completed:      "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
+  uploaded:       "bg-white/[0.06] text-white/60",
+  analyzed:       "bg-sky-500/15 text-sky-400",
+  quoting:        "bg-amber-500/15 text-amber-400",
+  quoted:         "bg-violet-500/15 text-violet-400",
+  approved:       "bg-emerald-500/15 text-emerald-400",
+  in_production:  "bg-blue-500/15 text-blue-400",
+  qc_inspection:  "bg-orange-500/15 text-orange-400",
+  shipped:        "bg-cyan-500/15 text-cyan-400",
+  completed:      "bg-emerald-500/15 text-emerald-400",
 };
 
 const fmt = (n, d = 2) => {
@@ -67,17 +67,14 @@ export default function ProjectDetail() {
     }
   };
 
-  const card = "rounded-2xl bg-[#0d111c] border border-white/[0.06] overflow-hidden shadow-card";
+  const card = "rounded-2xl bg-navy-800 border border-white/[0.06] overflow-hidden";
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080c15] flex items-center justify-center">
+      <div className="min-h-screen bg-navy-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="relative w-12 h-12 mx-auto">
-            <div className="absolute inset-0 rounded-full border-2 border-sky-500/15 border-t-sky-500 animate-spin" />
-            <div className="absolute inset-1 rounded-full border-2 border-transparent border-b-sky-500/25 animate-spin" style={{ animationDuration: "1.5s", animationDirection: "reverse" }} />
-          </div>
-          <p className="text-white/35 text-sm mt-5 font-medium">Loading project...</p>
+          <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
+          <p className="text-white/40 text-sm mt-4">Loading project...</p>
         </div>
       </div>
     );
@@ -85,7 +82,7 @@ export default function ProjectDetail() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-[#080c15] flex items-center justify-center">
+      <div className="min-h-screen bg-navy-950 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 text-sm mb-4">{error || "Project not found"}</p>
           <Link to="/dashboard" className="text-sky-400 hover:text-sky-300 text-sm">← Back to Dashboard</Link>
@@ -115,7 +112,7 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080c15]">
+    <div className="min-h-screen bg-navy-950">
 
       {/* ── Header ────────────────────────────────────── */}
       <section className="border-b border-white/[0.06]">
@@ -129,7 +126,7 @@ export default function ProjectDetail() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold text-white">{project.name || project.file_name || "Untitled BOM"}</h1>
+                <h1 className="text-2xl font-bold text-white tracking-tight">{project.name || project.file_name || "Untitled BOM"}</h1>
                 <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[project.status] || STATUS_STYLES.uploaded}`}>
                   {(project.status || "uploaded").replace(/_/g, " ")}
                 </span>
@@ -161,7 +158,7 @@ export default function ProjectDetail() {
                 </span>
               )}
               <Link to="/bom-analyzer"
-                className="px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-white/60 text-sm font-medium transition-all"
+                className="px-4 py-2.5 rounded-xl bg-navy-800/60 hover:bg-white/[0.08] border border-white/[0.06] text-white/60 text-sm font-medium transition-all"
               >
                 New Analysis
               </Link>
@@ -237,14 +234,14 @@ export default function ProjectDetail() {
         {/* Tabs */}
         {(s2.length > 0 || project.decision_summary) && (
           <>
-            <div className="flex gap-1 p-1.5 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit mb-8">
+            <div className="flex gap-1 p-1 bg-navy-800/50 rounded-xl border border-white/[0.06] max-w-fit mb-6">
               {[
                 ["overview", "Overview"],
                 ["components", "Components"],
                 ["strategy", "Strategy"],
               ].map(([tid, label]) => (
                 <button key={tid} onClick={() => setActiveTab(tid)}
-                  className={`px-5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 ${activeTab === tid ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20" : "text-white/55 hover:text-white/70 hover:bg-white/[0.04]"}`}>
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === tid ? "bg-sky-500 text-white" : "text-white/60 hover:text-white/80"}`}>
                   {label}
                 </button>
               ))}
@@ -278,7 +275,7 @@ export default function ProjectDetail() {
                           return (
                             <div key={i} className="flex items-center gap-4">
                               <span className="text-white/70 text-xs w-28 shrink-0">{row.label}</span>
-                              <div className="flex-1 h-2 bg-white/[0.04] rounded-full overflow-hidden">
+                              <div className="flex-1 h-2 bg-navy-800/60 rounded-full overflow-hidden">
                                 <div className={`h-full rounded-full ${row.color}`} style={{ width: `${w}%`, transition: "width 1s ease" }} />
                               </div>
                               <span className="text-white/60 text-xs font-mono w-20 text-right">{cur} {fmt(row.value)}</span>
@@ -299,7 +296,7 @@ export default function ProjectDetail() {
                   <div key={cat}>
                     <div className="flex items-center gap-2 mb-3">
                       <span className={`w-2 h-2 rounded-full bg-${CAT_COLORS[cat] || "white"}-400`} />
-                      <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">{CAT_LABELS[cat] || cat}</h3>
+                      <h3 className="text-sm font-bold text-white/40 uppercase tracking-wider">{CAT_LABELS[cat] || cat}</h3>
                       <span className="text-white/30 text-xs">({groupedComponents[cat].length})</span>
                     </div>
                     <div className="space-y-2">
@@ -344,7 +341,7 @@ export default function ProjectDetail() {
                       <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Region Distribution</h3>
                       <div className="flex flex-wrap gap-3">
                         {Object.entries(strat.region_distribution).map(([region, count]) => (
-                          <div key={region} className="px-4 py-3 bg-white/[0.03] border border-white/[0.06] rounded-xl text-center min-w-[100px]">
+                          <div key={region} className="px-4 py-3 bg-navy-800/50 border border-white/[0.06] rounded-xl text-center min-w-[100px]">
                             <p className="text-white font-semibold text-lg">{count}</p>
                             <p className="text-white/40 text-xs mt-0.5">{region}</p>
                           </div>
