@@ -7,7 +7,7 @@ import { RevealSection } from "../components/RevealSection.jsx";
 export default function Services() {
   return (
     <div>
-      <section className="bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)] py-20 md:py-24">
+      <section className="bg-gradient-to-b from-[#080c15] to-[#0b0f1b] py-20 md:py-24">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-400 mb-5">
@@ -25,10 +25,10 @@ export default function Services() {
           <Container>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {services.map((s, idx) => (
-                <div key={idx} className="group rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-400 flex flex-col hover:-translate-y-1 shadow-card hover:shadow-card-hover">
+                <div key={idx} className="group rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300 flex flex-col hover:-translate-y-1 shadow-card hover:shadow-card-hover">
                   <div className="relative overflow-hidden rounded-xl aspect-video mb-5">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[rgb(8,12,21)]/40 to-transparent" />
+                    <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#080c1566] to-transparent" />
                   </div>
                   <h3 className="text-base font-bold text-white group-hover:text-sky-400 transition-colors">{s.title}</h3>
                   <p className="mt-2.5 text-sm text-white/55 leading-relaxed">{s.desc}</p>

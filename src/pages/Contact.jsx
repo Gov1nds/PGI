@@ -5,7 +5,7 @@ import { site } from "../content/siteData.js";
 export default function Contact() {
   return (
     <div>
-      <section className="bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)] py-20 md:py-24">
+      <section className="bg-gradient-to-b from-[#080c15] to-[#0b0f1b] py-20 md:py-24">
         <div className="section-divider mb-20" />
         <Container>
           <SectionHeading

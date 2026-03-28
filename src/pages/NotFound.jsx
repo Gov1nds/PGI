@@ -3,7 +3,7 @@ import Container from "../components/Container.jsx";
 
 export default function NotFound() {
   return (
-    <section className="min-h-[60vh] flex items-center justify-center bg-[rgb(8,12,21)]">
+    <section className="min-h-[60vh] flex items-center justify-center bg-[#080c15]">
       <Container className="text-center py-20">
         <div className="text-8xl font-bold gradient-text mb-6 font-mono opacity-30">404</div>
         <h1 className="text-2xl font-bold text-white mb-3">Page not found</h1>

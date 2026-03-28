@@ -21,7 +21,7 @@ export default function ConsultPopup({ delayMs = 10000 }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={dismiss} />
-      <div className="relative w-full max-w-md rounded-2xl bg-[rgb(15,20,35)] ring-1 ring-white/[0.08] p-8 shadow-2xl shadow-black/40 animate-[fadeInScale_0.3s_cubic-bezier(0.16,1,0.3,1)]">
+      <div className="relative w-full max-w-md rounded-2xl bg-[#0f1423] ring-1 ring-white/[0.08] p-8 shadow-2xl shadow-black/40 animate-[fadeInScale_0.3s_cubic-bezier(0.16,1,0.3,1)]">
         <button
           onClick={dismiss}
           className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white/60 hover:bg-white/[0.06] transition-all"

@@ -7,7 +7,7 @@ export default function About() {
   return (
     <div>
       {/* HERO */}
-      <section className="bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)]">
+      <section className="bg-gradient-to-b from-[#080c15] to-[#0b0f1b]">
         <Container className="py-20 md:py-24">
           <div className="grid gap-14 md:grid-cols-2 md:items-center">
             <div>
@@ -27,7 +27,7 @@ export default function About() {
             </div>
             <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.06] shadow-elevated">
               <img src="/images/about-hero.jpg" alt="PGI Manufacturing Network" className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[rgb(8,12,21)]/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#080c154d] to-transparent" />
             </div>
           </div>
         </Container>

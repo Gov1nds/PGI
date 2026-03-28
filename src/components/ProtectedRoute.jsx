@@ -10,7 +10,7 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[rgb(8,12,21)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#080c15] flex items-center justify-center">
         <div className="text-center">
           <div className="relative w-12 h-12 mx-auto">
             <div className="absolute inset-0 rounded-full border-2 border-sky-500/15 border-t-sky-500 animate-spin" />

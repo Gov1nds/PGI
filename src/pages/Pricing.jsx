@@ -15,7 +15,7 @@ export default function Pricing() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)] py-20 md:py-24">
+      <section className="bg-gradient-to-b from-[#080c15] to-[#0b0f1b] py-20 md:py-24">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-400 mb-5">
@@ -31,7 +31,7 @@ export default function Pricing() {
         {/* CARDS */}
         <div className="grid gap-5 lg:grid-cols-3 mb-20">
           {pricingPlans.map((p) => (
-            <div key={p.key} className={`relative overflow-hidden rounded-2xl p-8 ring-1 transition-all duration-400 flex flex-col hover:-translate-y-1 ${p.highlight ? "bg-gradient-to-br from-sky-500/10 to-sky-500/[0.02] ring-sky-500/25 shadow-xl shadow-sky-500/[0.06]" : "bg-white/[0.02] ring-white/[0.06] hover:ring-white/[0.12] shadow-card"}`}>
+            <div key={p.key} className={`relative overflow-hidden rounded-2xl p-8 ring-1 transition-all duration-300 flex flex-col hover:-translate-y-1 ${p.highlight ? "bg-gradient-to-br from-sky-500/10 to-sky-500/[0.02] ring-sky-500/25 shadow-xl shadow-sky-500/[0.06]" : "bg-white/[0.02] ring-white/[0.06] hover:ring-white/[0.12] shadow-card"}`}>
               {p.highlight && (
                 <div className="absolute right-4 top-4 rounded-full bg-sky-500/15 px-3 py-0.5 text-[10px] font-bold text-sky-300 ring-1 ring-sky-500/25 tracking-wider uppercase">Popular</div>
               )}

@@ -4,7 +4,7 @@ import { navLinks, site } from "../content/siteData.js";
 
 export default function Footer() {
   return (
-    <footer className="mt-0 border-t border-white/[0.05] bg-[rgba(8,12,21,0.9)]">
+    <footer className="mt-0 border-t border-white/[0.05] bg-[#080c15e6]">
       <Container className="py-16">
         <div className="grid gap-12 md:grid-cols-4">
 

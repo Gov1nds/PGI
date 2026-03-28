@@ -34,7 +34,7 @@ export default function Register() {
   const inputCls = "w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/25 transition-all duration-200";
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-[rgb(8,12,21)]">
+    <div className="min-h-[80vh] flex items-center justify-center bg-[#080c15]">
       <Container className="py-16">
         <div className="max-w-sm mx-auto">
 

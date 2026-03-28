@@ -56,7 +56,7 @@ export default function Navbar() {
     <header
       className={`sticky top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-[rgba(8,12,21,0.82)] backdrop-blur-2xl border-b border-white/[0.06] shadow-lg shadow-black/20"
+          ? "bg-[#080c15d1] backdrop-blur-2xl border-b border-white/[0.06] shadow-lg shadow-black/20"
           : "bg-transparent border-b border-white/[0.03]"
       }`}
     >
@@ -98,7 +98,7 @@ export default function Navbar() {
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-52 rounded-xl bg-[rgb(15,20,35)] border border-white/[0.08] shadow-elevated overflow-hidden z-50 animate-[fadeInScale_0.15s_ease]">
+                <div className="absolute right-0 mt-2 w-52 rounded-xl bg-[#0f1423] border border-white/[0.08] shadow-elevated overflow-hidden z-50 animate-[fadeInScale_0.15s_ease]">
                   <div className="px-4 py-3 border-b border-white/[0.06]">
                     <p className="text-white text-xs font-semibold truncate">{user.full_name || "User"}</p>
                     <p className="text-white/35 text-[11px] truncate mt-0.5">{user.email}</p>
@@ -159,7 +159,7 @@ export default function Navbar() {
 
       {/* Mobile fullscreen menu */}
       <div className={`lg:hidden fixed inset-x-0 top-[68px] bottom-0 z-40 transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-[rgba(8,12,21,0.96)] backdrop-blur-2xl" />
+        <div className="absolute inset-0 bg-[#080c15f5] backdrop-blur-2xl" />
         <div className="relative h-full overflow-y-auto">
           <Container className="py-8">
             <div className="flex flex-col gap-1">

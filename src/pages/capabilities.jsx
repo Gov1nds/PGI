@@ -8,7 +8,7 @@ import { RevealSection } from "../components/RevealSection.jsx";
 export default function Capabilities() {
   return (
     <div>
-      <section className="bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)] py-20 md:py-24">
+      <section className="bg-gradient-to-b from-[#080c15] to-[#0b0f1b] py-20 md:py-24">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-400 mb-5">
@@ -23,9 +23,9 @@ export default function Capabilities() {
       <Container className="py-20 md:py-24">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-20">
           {outdoorWorks.map((o, idx) => (
-            <div key={idx} className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] hover:ring-sky-500/20 overflow-hidden transition-all duration-400 flex flex-col hover:-translate-y-1 shadow-card hover:shadow-card-hover">
+            <div key={idx} className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] hover:ring-sky-500/20 overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-1 shadow-card hover:shadow-card-hover">
               <div className="relative overflow-hidden aspect-video">
-                <img src={o.image} alt={o.title} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
+                <img src={o.image} alt={o.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
               </div>
               <div className="p-5 flex-1 flex flex-col">
                 <h3 className="text-sm font-bold text-white">{o.title}</h3>

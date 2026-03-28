@@ -8,7 +8,7 @@ import { RevealSection } from "../components/RevealSection.jsx";
 export default function Insights() {
   return (
     <div>
-      <section className="bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)] py-20 md:py-24">
+      <section className="bg-gradient-to-b from-[#080c15] to-[#0b0f1b] py-20 md:py-24">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-400 mb-5">
@@ -28,10 +28,10 @@ export default function Insights() {
         <div className="grid gap-6 md:grid-cols-3">
           {insights.map((i, idx) => (
             <Link key={idx} to={`/insights/${i.slug}`}
-              className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-400 hover:ring-sky-500/20 hover:bg-white/[0.04] hover:-translate-y-1 flex flex-col h-full shadow-card hover:shadow-card-hover"
+              className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] hover:-translate-y-1 flex flex-col h-full shadow-card hover:shadow-card-hover"
             >
               <div className="relative overflow-hidden aspect-video">
-                <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
+                <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                 <div className="absolute top-3 left-3">
                   <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25 backdrop-blur-sm">
                     {i.category}

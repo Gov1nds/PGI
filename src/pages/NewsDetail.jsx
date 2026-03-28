@@ -49,7 +49,7 @@ export default function NewsDetail() {
 
   return (
     <div>
-      <section className="border-b border-white/[0.05] py-16 md:py-24 bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)]">
+      <section className="border-b border-white/[0.05] py-16 md:py-24 bg-gradient-to-b from-[#080c15] to-[#0b0f1b]">
         <Container>
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-5">

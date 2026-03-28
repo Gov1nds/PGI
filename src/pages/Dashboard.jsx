@@ -46,7 +46,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[rgb(8,12,21)]">
+    <div className="min-h-screen bg-[#080c15]">
       {/* Header */}
       <section className="border-b border-white/[0.05]">
         <Container className="py-12">
@@ -109,7 +109,7 @@ export default function Dashboard() {
               <div className="col-span-1"></div>
             </div>
             {projects.map((p) => (
-              <Link key={p.project_id} to={`/project/${p.project_id}`} className="block rounded-2xl bg-[rgb(13,17,28)] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.02] transition-all duration-300 group shadow-card hover:shadow-card-hover">
+              <Link key={p.project_id} to={`/project/${p.project_id}`} className="block rounded-2xl bg-[#0d111c] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.02] transition-all duration-300 group shadow-card hover:shadow-card-hover">
                 <div className="p-5 sm:p-6 sm:grid sm:grid-cols-12 sm:gap-4 sm:items-center">
                   <div className="col-span-4 mb-3 sm:mb-0">
                     <p className="text-white text-sm font-semibold group-hover:text-sky-400 transition-colors truncate">{p.name || p.file_name || "Untitled BOM"}</p>

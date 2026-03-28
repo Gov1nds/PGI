@@ -67,11 +67,11 @@ export default function ProjectDetail() {
     }
   };
 
-  const card = "rounded-2xl bg-[rgb(13,17,28)] border border-white/[0.06] overflow-hidden shadow-card";
+  const card = "rounded-2xl bg-[#0d111c] border border-white/[0.06] overflow-hidden shadow-card";
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[rgb(8,12,21)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#080c15] flex items-center justify-center">
         <div className="text-center">
           <div className="relative w-12 h-12 mx-auto">
             <div className="absolute inset-0 rounded-full border-2 border-sky-500/15 border-t-sky-500 animate-spin" />
@@ -85,7 +85,7 @@ export default function ProjectDetail() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-[rgb(8,12,21)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#080c15] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 text-sm mb-4">{error || "Project not found"}</p>
           <Link to="/dashboard" className="text-sky-400 hover:text-sky-300 text-sm">← Back to Dashboard</Link>
@@ -115,7 +115,7 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[rgb(8,12,21)]">
+    <div className="min-h-screen bg-[#080c15]">
 
       {/* ── Header ────────────────────────────────────── */}
       <section className="border-b border-white/[0.06]">

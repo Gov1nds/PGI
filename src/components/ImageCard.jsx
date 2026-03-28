@@ -7,13 +7,13 @@ export default function ImageCard({ title, desc, image, to, tag }) {
   return (
     <Wrapper
       {...wrapperProps}
-      className={`group block overflow-hidden rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] transition-all duration-400 hover:bg-white/[0.05] ${
+      className={`group block overflow-hidden rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] transition-all duration-300 hover:bg-white/[0.05] ${
         to ? "hover:ring-sky-500/25 hover:shadow-xl hover:shadow-sky-500/[0.04] hover:-translate-y-1" : ""
       }`}
     >
       <div className="relative aspect-[16/10] overflow-hidden">
-        <img src={image} alt={title} className="h-full w-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[rgb(8,12,21)] via-[rgb(8,12,21)]/20 to-transparent opacity-60" />
+        <img src={image} alt={title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#080c15] via-transparent to-transparent opacity-60" />
         {tag && (
           <div className="absolute left-3 top-3 rounded-full bg-black/50 backdrop-blur-md px-3 py-1 text-[10px] font-semibold text-white/80 ring-1 ring-white/10">
             {tag}

@@ -59,7 +59,7 @@ const Home = () => {
               <div className="relative">
                 <div className="absolute -inset-6 rounded-3xl bg-sky-500/[0.04] blur-3xl" />
 
-                <div className="relative rounded-2xl bg-[rgba(15,20,35,0.85)] backdrop-blur-xl p-7 sm:p-8 ring-1 ring-sky-500/15 bom-glow">
+                <div className="relative rounded-2xl bg-[#0f1423/85] backdrop-blur-xl p-7 sm:p-8 ring-1 ring-sky-500/15 bom-glow">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-11 h-11 rounded-xl bg-sky-500/15 ring-1 ring-sky-500/25 flex items-center justify-center">
                       <svg className="w-5 h-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,7 +123,7 @@ const Home = () => {
 
       {/* ========== HOW IT WORKS ========== */}
       <RevealSection>
-        <section className="py-24 bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)]">
+        <section className="py-24 bg-gradient-to-b from-[#080c15] to-[#0b0f1b]">
           <div className="section-divider mb-24" />
           <Container>
             <SectionHeading
@@ -135,7 +135,7 @@ const Home = () => {
               {processSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="group rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-400 relative"
+                  className="group rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300 relative"
                 >
                   <div className="text-2xl font-bold text-sky-500/15 mb-3 font-mono group-hover:text-sky-500/30 transition-colors">{step.number}</div>
                   <h3 className="text-sm font-bold text-white mb-2">{step.title}</h3>
@@ -164,11 +164,11 @@ const Home = () => {
               {services.map((s, idx) => (
                 <div
                   key={idx}
-                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-400 hover:-translate-y-1"
+                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[rgb(8,12,21)] via-transparent to-transparent opacity-50" />
+                    <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#080c15] via-transparent to-transparent opacity-50" />
                   </div>
                   <div className="p-5">
                     <h3 className="text-[15px] font-bold text-white group-hover:text-sky-400 transition-colors">{s.title}</h3>
@@ -218,7 +218,7 @@ const Home = () => {
             />
             <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {differentiators.map((d, idx) => (
-                <div key={idx} className="rounded-xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/15 hover:bg-white/[0.04] transition-all duration-400 group">
+                <div key={idx} className="rounded-xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/15 hover:bg-white/[0.04] transition-all duration-300 group">
                   <div className="text-2xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">{d.icon}</div>
                   <h3 className="text-sm font-bold text-white">{d.title}</h3>
                   <p className="mt-2.5 text-sm text-white/60 leading-relaxed">{d.desc}</p>
@@ -266,10 +266,10 @@ const Home = () => {
             <div className="mt-16 grid gap-5 md:grid-cols-3">
               {insights.map((i, idx) => (
                 <Link key={idx} to={`/insights/${i.slug}`}
-                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-400 hover:ring-sky-500/20 hover:bg-white/[0.04] hover:-translate-y-1 flex flex-col"
+                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] hover:-translate-y-1 flex flex-col"
                 >
                   <div className="relative overflow-hidden aspect-video">
-                    <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
+                    <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                     <div className="absolute top-3 left-3">
                       <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25 backdrop-blur-sm">
                         {i.category}
@@ -307,10 +307,10 @@ const Home = () => {
             <div className="mt-16 grid gap-5 md:grid-cols-3">
               {newsItems.map((n, idx) => (
                 <Link key={idx} to={`/news/${n.slug}`}
-                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-400 hover:ring-sky-500/20 hover:bg-white/[0.04] hover:-translate-y-1 flex flex-col"
+                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] hover:-translate-y-1 flex flex-col"
                 >
                   <div className="relative overflow-hidden aspect-video">
-                    <img src={n.image} alt={n.title} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
+                    <img src={n.image} alt={n.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                     <div className="absolute top-3 left-3">
                       <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25 backdrop-blur-sm">
                         {n.category}
