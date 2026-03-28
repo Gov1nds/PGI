@@ -4,22 +4,53 @@ import Container from "../components/Container.jsx";
 import { useAuth } from "../context/AuthContext";
 import { listProjects } from "../lib/api";
 
-const STATUS_STYLES = {
-  uploaded:       "bg-white/[0.06] text-white/60",
-  analyzed:       "bg-sky-500/15 text-sky-400",
-  quoting:        "bg-amber-500/15 text-amber-400",
-  quoted:         "bg-violet-500/15 text-violet-400",
-  approved:       "bg-emerald-500/15 text-emerald-400",
-  in_production:  "bg-blue-500/15 text-blue-400",
-  qc_inspection:  "bg-orange-500/15 text-orange-400",
-  shipped:        "bg-cyan-500/15 text-cyan-400",
-  completed:      "bg-emerald-500/15 text-emerald-400",
+/* ── Status config ───────────────────────────────────────── */
+const STATUS_CONFIG = {
+  uploaded:      { bg: "rgba(255,255,255,0.04)", text: "rgba(255,255,255,0.5)",  border: "rgba(255,255,255,0.06)", dot: "rgba(255,255,255,0.3)" },
+  analyzed:      { bg: "rgba(56,189,248,0.08)",  text: "#38bdf8",               border: "rgba(56,189,248,0.15)",  dot: "#38bdf8" },
+  quoting:       { bg: "rgba(251,191,36,0.08)",  text: "#fbbf24",               border: "rgba(251,191,36,0.15)",  dot: "#fbbf24" },
+  quoted:        { bg: "rgba(167,139,250,0.08)", text: "#a78bfa",               border: "rgba(167,139,250,0.15)", dot: "#a78bfa" },
+  approved:      { bg: "rgba(52,211,153,0.08)",  text: "#34d399",               border: "rgba(52,211,153,0.15)",  dot: "#34d399" },
+  in_production: { bg: "rgba(96,165,250,0.08)",  text: "#60a5fa",               border: "rgba(96,165,250,0.15)",  dot: "#60a5fa" },
+  qc_inspection: { bg: "rgba(251,146,60,0.08)",  text: "#fb923c",               border: "rgba(251,146,60,0.15)",  dot: "#fb923c" },
+  shipped:       { bg: "rgba(34,211,238,0.08)",  text: "#22d3ee",               border: "rgba(34,211,238,0.15)",  dot: "#22d3ee" },
+  completed:     { bg: "rgba(52,211,153,0.08)",  text: "#34d399",               border: "rgba(52,211,153,0.15)",  dot: "#34d399" },
 };
 
 const fmt = (n) => {
   if (n == null || isNaN(n)) return "—";
   return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
+
+/* ── Fade-in wrapper (matches BOM Analyzer) ──────────────── */
+function FadeIn({ children, delay = 0, className = "" }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShow(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+  return (
+    <div
+      className={className}
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? "translateY(0)" : "translateY(14px)",
+        transition: `opacity 0.5s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.5s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ── Skeleton shimmer ────────────────────────────────────── */
+function Skeleton({ w = "100%", h = 14, r = 6 }) {
+  return <div className="db-shimmer" style={{ width: w, height: h, borderRadius: r }} />;
+}
+
+/* ══════════════════════════════════════════════════════════ */
+/*  DASHBOARD COMPONENT                                      */
+/* ══════════════════════════════════════════════════════════ */
 
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -35,6 +66,7 @@ export default function Dashboard() {
 
   const loadProjects = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await listProjects();
       setProjects(data);
@@ -45,85 +77,650 @@ export default function Dashboard() {
     }
   };
 
+  /* ── Derived stats ─────────────────────────────────────── */
+  const totalCost = projects.reduce((s, p) => s + (p.cost || 0), 0);
+  const totalParts = projects.reduce((s, p) => s + (p.total_parts || 0), 0);
+  const avgSavings = projects.filter(p => p.savings_percent > 0).length > 0
+    ? projects.filter(p => p.savings_percent > 0).reduce((s, p) => s + p.savings_percent, 0) / projects.filter(p => p.savings_percent > 0).length
+    : 0;
+  const activeCount = projects.filter(p => p.status && !["completed", "uploaded"].includes(p.status)).length;
+
+  const statusOf = (s) => STATUS_CONFIG[s] || STATUS_CONFIG.uploaded;
+
   return (
-    <div className="min-h-screen bg-[#010409]">
-      <section className="border-b border-white/[0.06]">
-        <Container className="py-10">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-white">Projects</h1>
-              <p className="text-white/50 text-sm mt-1">
-                {user?.full_name ? `Welcome, ${user.full_name}` : "Your BOM analyses and manufacturing projects"}
-              </p>
+    <div className="db-root">
+      {/* ── Hero / Header ────────────────────────────────── */}
+      <section className="db-hero">
+        <div className="db-hero-glow" />
+        <div className="db-hero-grid" />
+        <Container className="db-hero-inner">
+          <FadeIn delay={0}>
+            <div className="db-hero-row">
+              <div className="db-hero-text">
+                <h1 className="db-title">Projects</h1>
+                <p className="db-subtitle">
+                  {user?.full_name ? `Welcome back, ${user.full_name}` : "Your BOM analyses and manufacturing projects"}
+                </p>
+              </div>
+              <Link to="/bom-analyzer" className="db-new-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="4" x2="12" y2="20" /><line x1="4" y1="12" x2="20" y2="12" /></svg>
+                New Analysis
+              </Link>
             </div>
-            <Link to="/bom-analyzer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all shadow-lg shadow-sky-600/20">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-              New Analysis
-            </Link>
-          </div>
+          </FadeIn>
+
+          {/* ── Stat cards (only when loaded with data) ──── */}
+          {!loading && !error && projects.length > 0 && (
+            <FadeIn delay={120}>
+              <div className="db-stats">
+                {[
+                  { label: "Total Projects", value: projects.length, icon: (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 17L12 22L22 17"/><path d="M2 12L12 17L22 12"/><path d="M12 2L2 7L12 12L22 7L12 2Z"/></svg>
+                  )},
+                  { label: "Active", value: activeCount, icon: (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22 12H18L15 21L9 3L6 12H2"/></svg>
+                  )},
+                  { label: "Total Parts", value: totalParts.toLocaleString(), icon: (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                  )},
+                  { label: "Avg. Savings", value: avgSavings > 0 ? `${avgSavings.toFixed(1)}%` : "—", accent: avgSavings > 0, icon: (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                  )},
+                ].map((stat, i) => (
+                  <div key={i} className="db-stat-card">
+                    <div className="db-stat-icon">{stat.icon}</div>
+                    <div>
+                      <p className="db-stat-label">{stat.label}</p>
+                      <p className={`db-stat-value ${stat.accent ? "accent" : ""}`}>{stat.value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          )}
         </Container>
       </section>
-      <Container className="py-8">
+
+      {/* ── Content ──────────────────────────────────────── */}
+      <Container className="db-body">
+
+        {/* Loading skeleton */}
         {loading && (
-          <div className="text-center py-20">
-            <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
-            <p className="text-white/40 text-sm mt-4">Loading projects...</p>
-          </div>
-        )}
-        {error && (
-          <div className="max-w-lg mx-auto p-4 bg-red-500/[0.08] border border-red-500/20 rounded-xl text-center">
-            <p className="text-red-300 text-sm">{error}</p>
-            <button onClick={loadProjects} className="text-red-400 hover:text-red-300 text-xs mt-2 underline">Retry</button>
-          </div>
-        )}
-        {!loading && !error && projects.length === 0 && (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
-              <svg className="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-            </div>
-            <h3 className="text-white text-lg font-semibold">No projects yet</h3>
-            <p className="text-white/40 text-sm mt-1 mb-6">Upload your first BOM to get started</p>
-            <Link to="/bom-analyzer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition-all">Upload BOM</Link>
-          </div>
-        )}
-        {!loading && projects.length > 0 && (
-          <div className="space-y-3">
-            <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-2 text-[11px] text-white/30 uppercase tracking-wider font-medium">
-              <div className="col-span-4">Project</div>
-              <div className="col-span-2">Status</div>
-              <div className="col-span-2 text-right">Est. Cost</div>
-              <div className="col-span-1 text-right">Parts</div>
-              <div className="col-span-2">Date</div>
-              <div className="col-span-1"></div>
-            </div>
-            {projects.map((p) => (
-              <Link key={p.project_id} to={`/project/${p.project_id}`} className="block rounded-2xl bg-[#0d1117] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.01] transition-all group">
-                <div className="p-5 sm:grid sm:grid-cols-12 sm:gap-4 sm:items-center">
-                  <div className="col-span-4 mb-3 sm:mb-0">
-                    <p className="text-white text-sm font-medium group-hover:text-sky-400 transition-colors truncate">{p.name || p.file_name || "Untitled BOM"}</p>
-                    <p className="text-white/30 text-xs mt-0.5 font-mono">{p.project_id?.slice(0, 8)}</p>
+          <FadeIn delay={0}>
+            <div className="db-skeleton-wrap">
+              {[0, 1, 2, 3].map(i => (
+                <div key={i} className="db-skeleton-row" style={{ animationDelay: `${i * 80}ms` }}>
+                  <div className="db-skeleton-left">
+                    <Skeleton w="60%" h={14} />
+                    <Skeleton w="30%" h={10} />
                   </div>
-                  <div className="col-span-2 mb-2 sm:mb-0">
-                    <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[p.status] || STATUS_STYLES.uploaded}`}>{(p.status || "uploaded").replace(/_/g, " ")}</span>
-                  </div>
-                  <div className="col-span-2 text-right mb-2 sm:mb-0">
-                    <p className="text-white/80 text-sm font-mono">{p.cost ? `${p.currency || "USD"} ${fmt(p.cost)}` : "—"}</p>
-                    {p.savings_percent > 0 && (<p className="text-emerald-400 text-[10px] mt-0.5">↓ {p.savings_percent.toFixed(1)}% savings</p>)}
-                    {p.lead_time > 0 && (<p className="text-white/30 text-[10px]">{Math.round(p.lead_time)}d lead</p>)}
-                  </div>
-                  <div className="col-span-1 text-right mb-2 sm:mb-0"><p className="text-white/50 text-sm">{p.total_parts}</p></div>
-                  <div className="col-span-2 mb-2 sm:mb-0">
-                    <p className="text-white/40 text-xs">{p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}</p>
-                  </div>
-                  <div className="col-span-1 text-right">
-                    <svg className="w-4 h-4 text-white/20 group-hover:text-sky-400 transition-colors inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                  </div>
+                  <Skeleton w={64} h={24} r={8} />
+                  <Skeleton w={80} h={14} />
+                  <Skeleton w={28} h={14} />
+                  <Skeleton w={72} h={12} />
                 </div>
+              ))}
+            </div>
+          </FadeIn>
+        )}
+
+        {/* Error */}
+        {error && (
+          <FadeIn delay={0}>
+            <div className="db-error">
+              <div className="db-error-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <p className="db-error-text">{error}</p>
+              <button onClick={loadProjects} className="db-error-retry">Retry</button>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* Empty state */}
+        {!loading && !error && projects.length === 0 && (
+          <FadeIn delay={0}>
+            <div className="db-empty">
+              <div className="db-empty-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="12" y1="12" x2="12" y2="18" />
+                  <line x1="9" y1="15" x2="15" y2="15" />
+                </svg>
+              </div>
+              <h3 className="db-empty-title">No projects yet</h3>
+              <p className="db-empty-desc">Upload your first BOM to get started with AI-powered sourcing analysis</p>
+              <Link to="/bom-analyzer" className="db-new-btn" style={{ marginTop: 8 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="4" x2="12" y2="20" /><line x1="4" y1="12" x2="20" y2="12" /></svg>
+                Upload BOM
               </Link>
-            ))}
+            </div>
+          </FadeIn>
+        )}
+
+        {/* Project list */}
+        {!loading && projects.length > 0 && (
+          <div className="db-project-list">
+            {/* Table header */}
+            <FadeIn delay={180}>
+              <div className="db-list-head">
+                <span className="db-lh" style={{ flex: 3 }}>Project</span>
+                <span className="db-lh" style={{ flex: 1.5 }}>Status</span>
+                <span className="db-lh db-lh-right" style={{ flex: 2 }}>Est. Cost</span>
+                <span className="db-lh db-lh-right" style={{ flex: 0.8 }}>Parts</span>
+                <span className="db-lh" style={{ flex: 1.5 }}>Date</span>
+                <span className="db-lh" style={{ flex: 0.5 }}></span>
+              </div>
+            </FadeIn>
+
+            {/* Rows */}
+            {projects.map((p, i) => {
+              const sc = statusOf(p.status);
+              return (
+                <FadeIn key={p.project_id} delay={220 + i * 50}>
+                  <Link to={`/project/${p.project_id}`} className="db-project-row">
+                    {/* Project name */}
+                    <div className="db-pr-name" style={{ flex: 3 }}>
+                      <div className="db-pr-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      </div>
+                      <div className="db-pr-name-inner">
+                        <p className="db-pr-title">{p.name || p.file_name || "Untitled BOM"}</p>
+                        <p className="db-pr-id">{p.project_id?.slice(0, 8)}</p>
+                      </div>
+                    </div>
+
+                    {/* Status */}
+                    <div style={{ flex: 1.5 }}>
+                      <span
+                        className="db-status-badge"
+                        style={{ background: sc.bg, color: sc.text, borderColor: sc.border }}
+                      >
+                        <span className="db-status-dot" style={{ background: sc.dot }} />
+                        {(p.status || "uploaded").replace(/_/g, " ")}
+                      </span>
+                    </div>
+
+                    {/* Cost */}
+                    <div className="db-pr-cost" style={{ flex: 2 }}>
+                      <p className="db-pr-cost-val">{p.cost ? `${p.currency || "USD"} ${fmt(p.cost)}` : "—"}</p>
+                      {p.savings_percent > 0 && (
+                        <p className="db-pr-savings">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                          {p.savings_percent.toFixed(1)}% savings
+                        </p>
+                      )}
+                      {p.lead_time > 0 && (
+                        <p className="db-pr-lead">{Math.round(p.lead_time)}d lead</p>
+                      )}
+                    </div>
+
+                    {/* Parts */}
+                    <div className="db-pr-parts" style={{ flex: 0.8 }}>
+                      <span>{p.total_parts}</span>
+                    </div>
+
+                    {/* Date */}
+                    <div className="db-pr-date" style={{ flex: 1.5 }}>
+                      {p.created_at
+                        ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                        : "—"}
+                    </div>
+
+                    {/* Arrow */}
+                    <div className="db-pr-arrow" style={{ flex: 0.5 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                    </div>
+                  </Link>
+                </FadeIn>
+              );
+            })}
           </div>
         )}
       </Container>
+
+      {/* ═══════════════════════════════════════════════════ */}
+      {/* STYLES                                             */}
+      {/* ═══════════════════════════════════════════════════ */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        .db-root {
+          --bg: #050a0e;
+          --surface: #0a1019;
+          --surface-2: #0f1720;
+          --surface-3: #141d29;
+          --border: rgba(255,255,255,0.06);
+          --border-2: rgba(255,255,255,0.09);
+          --border-3: rgba(255,255,255,0.14);
+          --accent: #34d399;
+          --accent-dim: rgba(52,211,153,0.10);
+          --text: rgba(255,255,255,0.92);
+          --text-2: rgba(255,255,255,0.55);
+          --text-3: rgba(255,255,255,0.30);
+          --text-4: rgba(255,255,255,0.14);
+          --radius: 14px;
+          --radius-sm: 10px;
+          --radius-xs: 7px;
+          --font: 'DM Sans', -apple-system, sans-serif;
+          --mono: 'JetBrains Mono', 'SF Mono', monospace;
+          min-height: 100vh;
+          background: var(--bg);
+          font-family: var(--font);
+          -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Hero ────────────────────────────────────── */
+        .db-hero {
+          position: relative;
+          border-bottom: 1px solid var(--border);
+          overflow: hidden;
+        }
+        .db-hero-glow {
+          position: absolute;
+          top: -100px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 800px;
+          height: 500px;
+          background: radial-gradient(ellipse, rgba(52,211,153,0.04) 0%, transparent 65%);
+          pointer-events: none;
+        }
+        .db-hero-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+          background-size: 64px 64px;
+          mask-image: radial-gradient(ellipse 50% 70% at 50% 50%, black, transparent);
+          pointer-events: none;
+        }
+        .db-hero-inner {
+          position: relative;
+          padding: 44px 0 40px;
+        }
+
+        .db-hero-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+        .db-hero-text {}
+        .db-title {
+          font-size: clamp(26px, 4vw, 34px);
+          font-weight: 700;
+          color: white;
+          letter-spacing: -0.025em;
+        }
+        .db-subtitle {
+          font-size: 14px;
+          color: var(--text-3);
+          margin-top: 4px;
+        }
+
+        /* ── New analysis button ─────────────────────── */
+        .db-new-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 22px;
+          background: var(--accent);
+          border: none;
+          border-radius: var(--radius-sm);
+          color: #050a0e;
+          font-family: var(--font);
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+          box-shadow: 0 2px 16px rgba(52,211,153,0.2);
+        }
+        .db-new-btn:hover {
+          background: #4ade80;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 24px rgba(52,211,153,0.3);
+        }
+        .db-new-btn:active { transform: translateY(0); }
+
+        /* ── Stat cards ──────────────────────────────── */
+        .db-stats {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin-top: 28px;
+        }
+        @media (max-width: 720px) {
+          .db-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        .db-stat-card {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 16px 20px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          transition: border-color 0.25s, transform 0.25s;
+        }
+        .db-stat-card:hover {
+          border-color: var(--border-2);
+          transform: translateY(-1px);
+        }
+        .db-stat-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 12px;
+          background: var(--accent-dim);
+          border: 1px solid rgba(52,211,153,0.12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--accent);
+          flex-shrink: 0;
+        }
+        .db-stat-label {
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.07em;
+          color: var(--text-3);
+          margin-bottom: 2px;
+        }
+        .db-stat-value {
+          font-size: 20px;
+          font-weight: 700;
+          color: white;
+          letter-spacing: -0.02em;
+        }
+        .db-stat-value.accent { color: var(--accent); }
+
+        /* ── Body ────────────────────────────────────── */
+        .db-body { padding: 32px 0 60px; }
+
+        /* ── Skeleton loading ────────────────────────── */
+        .db-skeleton-wrap {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .db-skeleton-row {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          padding: 20px 24px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          animation: db-skeletonIn 0.5s ease both;
+        }
+        .db-skeleton-left {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .db-shimmer {
+          background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
+          background-size: 200% 100%;
+          animation: db-shimmer 1.5s ease infinite;
+        }
+
+        /* ── Error ───────────────────────────────────── */
+        .db-error {
+          max-width: 480px;
+          margin: 48px auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          padding: 32px;
+          background: rgba(248,113,113,0.04);
+          border: 1px solid rgba(248,113,113,0.12);
+          border-radius: var(--radius);
+          text-align: center;
+        }
+        .db-error-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: rgba(248,113,113,0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #f87171;
+        }
+        .db-error-text { font-size: 13px; color: #fca5a5; line-height: 1.5; }
+        .db-error-retry {
+          padding: 6px 16px;
+          border-radius: var(--radius-xs);
+          background: rgba(248,113,113,0.08);
+          border: 1px solid rgba(248,113,113,0.15);
+          color: #f87171;
+          font-family: var(--font);
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .db-error-retry:hover { background: rgba(248,113,113,0.14); }
+
+        /* ── Empty state ─────────────────────────────── */
+        .db-empty {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 72px 24px;
+          text-align: center;
+        }
+        .db-empty-icon {
+          width: 72px;
+          height: 72px;
+          border-radius: 20px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-3);
+          margin-bottom: 20px;
+        }
+        .db-empty-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: white;
+          letter-spacing: -0.01em;
+        }
+        .db-empty-desc {
+          font-size: 13px;
+          color: var(--text-3);
+          margin-top: 6px;
+          margin-bottom: 24px;
+          max-width: 320px;
+          line-height: 1.5;
+        }
+
+        /* ── Project list ────────────────────────────── */
+        .db-project-list {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        /* List header */
+        .db-list-head {
+          display: none;
+          align-items: center;
+          padding: 0 24px 8px;
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.07em;
+          color: var(--text-4);
+        }
+        @media (min-width: 640px) {
+          .db-list-head { display: flex; }
+        }
+        .db-lh { min-width: 0; }
+        .db-lh-right { text-align: right; }
+
+        /* Project row */
+        .db-project-row {
+          display: flex;
+          align-items: center;
+          padding: 18px 24px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          text-decoration: none;
+          transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+          gap: 12px;
+          cursor: pointer;
+        }
+        .db-project-row:hover {
+          border-color: var(--border-3);
+          background: rgba(255,255,255,0.012);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive stacking */
+        @media (max-width: 639px) {
+          .db-project-row {
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+          .db-project-row > * { flex: unset !important; }
+          .db-pr-name { width: 100%; }
+          .db-pr-arrow { display: none !important; }
+        }
+
+        /* Name cell */
+        .db-pr-name {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          min-width: 0;
+        }
+        .db-pr-avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-3);
+          flex-shrink: 0;
+          transition: all 0.25s;
+        }
+        .db-project-row:hover .db-pr-avatar {
+          background: var(--accent-dim);
+          border-color: rgba(52,211,153,0.15);
+          color: var(--accent);
+        }
+        .db-pr-name-inner { min-width: 0; }
+        .db-pr-title {
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--text);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          transition: color 0.2s;
+        }
+        .db-project-row:hover .db-pr-title { color: var(--accent); }
+        .db-pr-id {
+          font-family: var(--mono);
+          font-size: 10px;
+          color: var(--text-4);
+          margin-top: 2px;
+        }
+
+        /* Status badge */
+        .db-status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 4px 10px;
+          border-radius: 100px;
+          border: 1px solid;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          white-space: nowrap;
+        }
+        .db-status-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+
+        /* Cost cell */
+        .db-pr-cost { text-align: right; }
+        .db-pr-cost-val {
+          font-family: var(--mono);
+          font-size: 13px;
+          color: var(--text);
+          font-weight: 500;
+        }
+        .db-pr-savings {
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          font-size: 10px;
+          color: var(--accent);
+          font-weight: 600;
+          margin-top: 2px;
+        }
+        .db-pr-lead {
+          font-size: 10px;
+          color: var(--text-4);
+          margin-top: 1px;
+        }
+
+        /* Parts */
+        .db-pr-parts {
+          text-align: right;
+          font-size: 13px;
+          color: var(--text-2);
+          font-family: var(--mono);
+        }
+
+        /* Date */
+        .db-pr-date {
+          font-size: 12px;
+          color: var(--text-3);
+        }
+
+        /* Arrow */
+        .db-pr-arrow {
+          display: flex;
+          justify-content: flex-end;
+          color: var(--text-4);
+          transition: all 0.25s;
+        }
+        .db-project-row:hover .db-pr-arrow {
+          color: var(--accent);
+          transform: translateX(3px);
+        }
+
+        /* ── Keyframes ───────────────────────────────── */
+        @keyframes db-shimmer {
+          to { background-position: -200% 0; }
+        }
+        @keyframes db-skeletonIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
