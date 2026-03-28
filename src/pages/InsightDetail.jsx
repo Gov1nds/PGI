@@ -52,31 +52,31 @@ export default function InsightDetail() {
 
   return (
     <div>
-      <section className="border-b border-white/[0.04] py-14 md:py-20 bg-gradient-to-b from-[rgb(10,15,26)] to-[rgb(13,18,30)]">
+      <section className="border-b border-white/[0.05] py-16 md:py-24 bg-gradient-to-b from-[rgb(8,12,21)] to-[rgb(11,15,27)]">
         <Container>
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-5">
               <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25">
                 {insight.category}
               </span>
-              <span className="text-xs text-white/50">{insight.readTime}</span>
+              <span className="text-xs text-white/40">{insight.readTime}</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
               {insight.title}
             </h1>
-            <p className="mt-6 text-lg text-white/80">{insight.excerpt}</p>
+            <p className="mt-6 text-lg text-white/65">{insight.excerpt}</p>
             <div className="mt-6 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-sky-500/10 ring-1 ring-sky-500/20 flex items-center justify-center text-xs font-bold text-sky-400">P</div>
               <div>
                 <p className="text-sm font-semibold text-white">{insight.author}</p>
-                <p className="text-xs text-white/50">Manufacturing Insights</p>
+                <p className="text-xs text-white/40">Manufacturing Insights</p>
               </div>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-white/[0.04]">
+      <section className="border-b border-white/[0.05]">
         <Container className="py-8">
           <div className="rounded-2xl overflow-hidden aspect-video bg-white/[0.02]">
             <img src={insight.image} alt={insight.title} className="w-full h-full object-cover" />
@@ -84,26 +84,26 @@ export default function InsightDetail() {
         </Container>
       </section>
 
-      <section className="py-16 md:py-20">
+      <section className="py-20 md:py-24">
         <Container>
           <div className="max-w-3xl mx-auto">
             {content.sections.map((section, idx) => (
               <div key={idx} className="mb-10">
                 <h2 className="text-xl font-semibold text-white mb-4">{section.title}</h2>
-                <p className="text-white/80 leading-relaxed">{section.content}</p>
+                <p className="text-white/65 leading-relaxed">{section.content}</p>
               </div>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-16 md:py-20">
+      <section className="border-t border-white/[0.05] py-20 md:py-24">
         <Container>
           <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 to-cyan-500/5 p-8 md:p-12 ring-1 ring-sky-500/15 text-center">
             <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3">
               Ready to optimize your manufacturing?
             </h2>
-            <p className="text-white/75 max-w-xl mx-auto mb-8 text-sm">
+            <p className="text-white/60 max-w-xl mx-auto mb-8 text-sm">
               Let our engineering team review your product and manufacturing strategy.
             </p>
             <PrimaryButton to="/contact">Request Engineering Review</PrimaryButton>
@@ -111,7 +111,7 @@ export default function InsightDetail() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-16 md:py-20">
+      <section className="border-t border-white/[0.05] py-20 md:py-24">
         <Container>
           <div className="text-center mb-10">
             <div className="text-xs font-semibold uppercase tracking-[0.15em] text-sky-400 mb-2">More Insights</div>
@@ -122,14 +122,14 @@ export default function InsightDetail() {
               <Link
                 key={idx}
                 to={`/insights/${i.slug}`}
-                className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 flex flex-col"
+                className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden shadow-card transition-all duration-300 hover:ring-sky-500/20 flex flex-col"
               >
                 <div className="relative overflow-hidden aspect-video">
                   <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                 </div>
                 <div className="p-5 flex-1 flex flex-col">
                   <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors">{i.title}</h3>
-                  <p className="mt-2 text-sm text-white/75 flex-1">{i.excerpt}</p>
+                  <p className="mt-2 text-sm text-white/60 flex-1">{i.excerpt}</p>
                   <div className="mt-4 text-sky-400 text-sm font-medium">Read →</div>
                 </div>
               </Link>

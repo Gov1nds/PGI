@@ -10,10 +10,13 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
+      <div className="min-h-screen bg-[rgb(8,12,21)] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
-          <p className="text-white/40 text-sm mt-4">Loading...</p>
+          <div className="relative w-12 h-12 mx-auto">
+            <div className="absolute inset-0 rounded-full border-2 border-sky-500/15 border-t-sky-500 animate-spin" />
+            <div className="absolute inset-1 rounded-full border-2 border-transparent border-b-sky-500/25 animate-spin" style={{ animationDuration: "1.5s", animationDirection: "reverse" }} />
+          </div>
+          <p className="text-white/35 text-sm mt-5 font-medium">Loading your workspace...</p>
         </div>
       </div>
     );

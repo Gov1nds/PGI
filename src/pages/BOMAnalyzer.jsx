@@ -257,10 +257,10 @@ export default function BOMAnalyzer() {
   }
 
   /* ── Shared styles ───────────────────────────────────── */
-  const card = "rounded-2xl bg-[#0d1117] border border-white/[0.06] overflow-hidden";
+  const card = "rounded-2xl bg-[rgb(13,17,28)] border border-white/[0.06] overflow-hidden shadow-card";
   const cardInner = "p-6 sm:p-8";
-  const selectCls = `w-full px-4 py-3 bg-[#161b22] border border-white/[0.08] rounded-xl text-white/90 
-    focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50
+  const selectCls = `w-full px-4 py-3 bg-[rgb(18,23,36)] border border-white/[0.08] rounded-xl text-white/90 
+    focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40
     appearance-none cursor-pointer transition-all text-sm
     bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.4)%22 stroke-width=%222%22%3e%3cpolyline points=%226 9 12 15 18 9%22/%3e%3c/svg%3e')]
     bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10`;
@@ -272,21 +272,21 @@ export default function BOMAnalyzer() {
     : ["Upload", "Location", "Analyze", "—", "Report"];
 
   return (
-    <div className="min-h-screen bg-[#010409]">
+    <div className="min-h-screen bg-[rgb(8,12,21)]">
       {/* ── Header ─────────────────────────────────────── */}
-      <section className="relative border-b border-white/[0.06] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.03] via-transparent to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-500/[0.04] rounded-full blur-[120px]" />
-        <Container className="relative py-14 sm:py-20">
+      <section className="relative border-b border-white/[0.05] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.04] via-transparent to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-emerald-500/[0.03] rounded-full blur-[140px]" />
+        <Container className="relative py-16 sm:py-22">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-7">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-emerald-400 text-xs font-medium tracking-wider uppercase">Intelligence Engine v2.0</span>
+              <span className="text-emerald-400 text-[11px] font-semibold tracking-wider uppercase">Intelligence Engine v2.0</span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
               BOM Analyzer
             </h1>
-            <p className="mt-4 text-white/80 text-base leading-relaxed max-w-lg mx-auto">
+            <p className="mt-5 text-white/65 text-base leading-[1.7] max-w-lg mx-auto">
               Upload your Bill of Materials. Get AI-powered sourcing decisions
               with reinforcement learning optimization across 11 global regions.
             </p>
@@ -313,11 +313,11 @@ export default function BOMAnalyzer() {
                 const active = step >= s;
                 return (
                   <React.Fragment key={s}>
-                    <div className="flex flex-col items-center gap-1.5">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
-                        active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25" : "bg-white/[0.04] text-white/50 border border-white/[0.06]"
+                    <div className="flex flex-col items-center gap-2">
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${
+                        active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 ring-4 ring-emerald-500/10" : "bg-white/[0.04] text-white/40 border border-white/[0.06]"
                       }`}>{step > s ? "✓" : s}</div>
-                      <span className={`text-[10px] transition-colors ${active ? "text-white/60" : "text-white/20"}`}>{name}</span>
+                      <span className={`text-[10px] font-medium transition-colors ${active ? "text-white/55" : "text-white/20"}`}>{name}</span>
                     </div>
                     {s < stepNames.length && <div className={`flex-1 h-px mx-2 mt-[-12px] transition-colors duration-500 ${step > s ? "bg-emerald-500/40" : "bg-white/[0.06]"}`} />}
                   </React.Fragment>
@@ -375,22 +375,22 @@ export default function BOMAnalyzer() {
                   <div>
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">Country</label>
                     <select value={country} onChange={(e) => { setCountry(e.target.value); setStateRegion(""); setCity(""); }} className={selectCls}>
-                      <option value="" className="bg-[#161b22]">Select</option>
-                      {Object.keys(LOCATION_DATA).map((c) => <option key={c} value={c} className="bg-[#161b22]">{c}</option>)}
+                      <option value="" className="bg-[rgb(18,23,36)]">Select</option>
+                      {Object.keys(LOCATION_DATA).map((c) => <option key={c} value={c} className="bg-[rgb(18,23,36)]">{c}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">State / Region</label>
                     <select value={stateRegion} onChange={(e) => { setStateRegion(e.target.value); setCity(""); }} disabled={!country} className={selectCls + " disabled:opacity-40"}>
-                      <option value="" className="bg-[#161b22]">{country ? "Select" : "—"}</option>
-                      {states_list.map((s) => <option key={s} value={s} className="bg-[#161b22]">{s}</option>)}
+                      <option value="" className="bg-[rgb(18,23,36)]">{country ? "Select" : "—"}</option>
+                      {states_list.map((s) => <option key={s} value={s} className="bg-[rgb(18,23,36)]">{s}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-white/70 text-xs mb-1.5 font-medium">City</label>
                     <select value={city} onChange={(e) => setCity(e.target.value)} disabled={!stateRegion} className={selectCls + " disabled:opacity-40"}>
-                      <option value="" className="bg-[#161b22]">{stateRegion ? "Select" : "—"}</option>
-                      {cities_list.map((c) => <option key={c} value={c} className="bg-[#161b22]">{c}</option>)}
+                      <option value="" className="bg-[rgb(18,23,36)]">{stateRegion ? "Select" : "—"}</option>
+                      {cities_list.map((c) => <option key={c} value={c} className="bg-[rgb(18,23,36)]">{c}</option>)}
                     </select>
                   </div>
                 </div>
@@ -398,7 +398,7 @@ export default function BOMAnalyzer() {
                 <div>
                   <label className="block text-white/70 text-xs mb-1.5 font-medium">Target Currency</label>
                   <select value={currency} onChange={(e) => setCurrency(e.target.value)} className={selectCls + " max-w-[200px]"}>
-                    {CURRENCIES.map((c) => <option key={c} value={c} className="bg-[#161b22]">{c}</option>)}
+                    {CURRENCIES.map((c) => <option key={c} value={c} className="bg-[rgb(18,23,36)]">{c}</option>)}
                   </select>
                 </div>
 
@@ -422,13 +422,16 @@ export default function BOMAnalyzer() {
         {/* STEP 3 — Processing                             */}
         {/* ════════════════════════════════════════════════ */}
         {step === 3 && (
-          <div className="text-center py-20 animate-[fadeIn_0.3s_ease]">
+          <div className="text-center py-24 animate-[fadeIn_0.3s_ease]">
             <div className="relative inline-block">
-              <div className="w-16 h-16 rounded-full border-[3px] border-emerald-500/20 border-t-emerald-500 animate-spin" />
-              <div className="absolute inset-0 w-16 h-16 rounded-full border-[3px] border-transparent border-b-emerald-500/30 animate-spin" style={{ animationDuration: "1.5s", animationDirection: "reverse" }} />
+              <div className="w-18 h-18 rounded-full border-[3px] border-emerald-500/15 border-t-emerald-500 animate-spin" style={{ width: 72, height: 72 }} />
+              <div className="absolute inset-0 rounded-full border-[3px] border-transparent border-b-emerald-500/25 animate-spin" style={{ width: 72, height: 72, animationDuration: "1.5s", animationDirection: "reverse" }} />
+              <div className="absolute inset-3 rounded-full bg-emerald-500/5 flex items-center justify-center">
+                <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
+              </div>
             </div>
-            <p className="mt-8 text-white text-lg font-medium">{progress}</p>
-            <p className="mt-2 text-white/50 text-sm">{city}, {stateRegion}, {country}</p>
+            <p className="mt-10 text-white text-lg font-semibold">{progress}</p>
+            <p className="mt-2 text-white/40 text-sm">{city}, {stateRegion}, {country}</p>
             <div className="mt-6 flex items-center justify-center gap-1">
               {[0, 1, 2].map((i) => (
                 <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />
@@ -552,7 +555,7 @@ export default function BOMAnalyzer() {
                         </div>
                       ))}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0d1117]/90 rounded-full border border-white/[0.1]">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-[rgb(13,17,28)]/90 rounded-full border border-white/[0.1]">
                           <svg className="w-3.5 h-3.5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                           <span className="text-white/60 text-xs font-medium">+{previewData.locked_parts_count} more parts — sign up to unlock</span>
                         </div>
@@ -615,7 +618,7 @@ export default function BOMAnalyzer() {
             {/* ── Unlock CTA ─────────────────────────────── */}
             <div className="relative rounded-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 via-blue-600/20 to-violet-600/20" />
-              <div className="absolute inset-0 bg-[#0d1117]/80" />
+              <div className="absolute inset-0 bg-[rgb(13,17,28)]/80" />
               <div className="relative p-8 sm:p-10 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
                   Get the Full Report
@@ -690,7 +693,7 @@ export default function BOMAnalyzer() {
             </div>
 
             {/* ── Tabs ─────────────────────────────────── */}
-            <div className="flex gap-1 p-1 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit">
+            <div className="flex gap-1 p-1.5 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit">
               {[
                 ["overview", "Overview"],
                 ["components", "Components"],
@@ -698,7 +701,7 @@ export default function BOMAnalyzer() {
                 ["learning", "Learning"],
               ].map(([id, label]) => (
                 <button key={id} onClick={() => setActiveTab(id)}
-                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === id ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-white/70 hover:text-white/70"}`}>
+                  className={`px-5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 ${activeTab === id ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-white/55 hover:text-white/70 hover:bg-white/[0.04]"}`}>
                   {label}
                 </button>
               ))}
@@ -854,7 +857,7 @@ export default function BOMAnalyzer() {
                                 {/* Decision math */}
                                 <div>
                                   <p className="text-white/70 text-xs font-medium mb-2">Decision Logic</p>
-                                  <div className="p-3 bg-[#161b22] rounded-lg text-xs font-mono text-white/80 space-y-1 overflow-x-auto">
+                                  <div className="p-3 bg-[rgb(18,23,36)] rounded-lg text-xs font-mono text-white/80 space-y-1 overflow-x-auto">
                                     <p>{exp.math?.ucb || "—"}</p>
                                     <p className="text-white/50">{exp.math?.tlc || "—"}</p>
                                   </div>

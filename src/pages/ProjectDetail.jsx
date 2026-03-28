@@ -5,15 +5,15 @@ import { useAuth } from "../context/AuthContext";
 import { getProject, createRFQ } from "../lib/api";
 
 const STATUS_STYLES = {
-  uploaded:       "bg-white/[0.06] text-white/60",
-  analyzed:       "bg-sky-500/15 text-sky-400",
-  quoting:        "bg-amber-500/15 text-amber-400",
-  quoted:         "bg-violet-500/15 text-violet-400",
-  approved:       "bg-emerald-500/15 text-emerald-400",
-  in_production:  "bg-blue-500/15 text-blue-400",
-  qc_inspection:  "bg-orange-500/15 text-orange-400",
-  shipped:        "bg-cyan-500/15 text-cyan-400",
-  completed:      "bg-emerald-500/15 text-emerald-400",
+  uploaded:       "bg-white/[0.06] text-white/60 border border-white/[0.08]",
+  analyzed:       "bg-sky-500/15 text-sky-400 border border-sky-500/20",
+  quoting:        "bg-amber-500/15 text-amber-400 border border-amber-500/20",
+  quoted:         "bg-violet-500/15 text-violet-400 border border-violet-500/20",
+  approved:       "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
+  in_production:  "bg-blue-500/15 text-blue-400 border border-blue-500/20",
+  qc_inspection:  "bg-orange-500/15 text-orange-400 border border-orange-500/20",
+  shipped:        "bg-cyan-500/15 text-cyan-400 border border-cyan-500/20",
+  completed:      "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
 };
 
 const fmt = (n, d = 2) => {
@@ -67,14 +67,17 @@ export default function ProjectDetail() {
     }
   };
 
-  const card = "rounded-2xl bg-[#0d1117] border border-white/[0.06] overflow-hidden";
+  const card = "rounded-2xl bg-[rgb(13,17,28)] border border-white/[0.06] overflow-hidden shadow-card";
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
+      <div className="min-h-screen bg-[rgb(8,12,21)] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
-          <p className="text-white/40 text-sm mt-4">Loading project...</p>
+          <div className="relative w-12 h-12 mx-auto">
+            <div className="absolute inset-0 rounded-full border-2 border-sky-500/15 border-t-sky-500 animate-spin" />
+            <div className="absolute inset-1 rounded-full border-2 border-transparent border-b-sky-500/25 animate-spin" style={{ animationDuration: "1.5s", animationDirection: "reverse" }} />
+          </div>
+          <p className="text-white/35 text-sm mt-5 font-medium">Loading project...</p>
         </div>
       </div>
     );
@@ -82,7 +85,7 @@ export default function ProjectDetail() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
+      <div className="min-h-screen bg-[rgb(8,12,21)] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 text-sm mb-4">{error || "Project not found"}</p>
           <Link to="/dashboard" className="text-sky-400 hover:text-sky-300 text-sm">← Back to Dashboard</Link>
@@ -112,7 +115,7 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#010409]">
+    <div className="min-h-screen bg-[rgb(8,12,21)]">
 
       {/* ── Header ────────────────────────────────────── */}
       <section className="border-b border-white/[0.06]">
@@ -234,14 +237,14 @@ export default function ProjectDetail() {
         {/* Tabs */}
         {(s2.length > 0 || project.decision_summary) && (
           <>
-            <div className="flex gap-1 p-1 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit mb-6">
+            <div className="flex gap-1 p-1.5 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit mb-8">
               {[
                 ["overview", "Overview"],
                 ["components", "Components"],
                 ["strategy", "Strategy"],
               ].map(([tid, label]) => (
                 <button key={tid} onClick={() => setActiveTab(tid)}
-                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === tid ? "bg-sky-500 text-white" : "text-white/60 hover:text-white/80"}`}>
+                  className={`px-5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 ${activeTab === tid ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20" : "text-white/55 hover:text-white/70 hover:bg-white/[0.04]"}`}>
                   {label}
                 </button>
               ))}

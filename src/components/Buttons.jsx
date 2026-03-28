@@ -9,8 +9,8 @@ export function PrimaryButton({
   type = "button"
 }) {
   const baseStyle = `
-    inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold
-    text-white btn-primary
+    inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold
+    text-white btn-primary tracking-[-0.01em]
     disabled:opacity-50 disabled:cursor-not-allowed
     ${className}
   `.trim();
@@ -37,10 +37,12 @@ export function PrimaryButton({
 
 export function SecondaryButton({ to, children, className = "" }) {
   const baseStyle = `
-    inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold
-    text-white/90 bg-white/5 backdrop-blur-sm
-    ring-1 ring-white/10
-    hover:bg-white/10 hover:ring-white/20 transition-all duration-300
+    inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold
+    text-white/80 bg-white/[0.04] backdrop-blur-sm
+    ring-1 ring-white/[0.08]
+    hover:bg-white/[0.08] hover:ring-white/[0.14] hover:text-white
+    active:scale-[0.98]
+    transition-all duration-300
     ${className}
   `.trim();
 
