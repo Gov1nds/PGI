@@ -19,6 +19,8 @@ const API_BASE =
 
 /**
  * Base fetch wrapper
+ * FIXED: No longer destroys session on transient 401.
+ * Only clears auth on confirmed, non-retryable 401 from auth-sensitive endpoints.
  */
 export async function apiCall(path, options = {}) {
   const cleanPath = path.trim();
@@ -30,15 +32,37 @@ export async function apiCall(path, options = {}) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}${cleanPath}`, {
-    ...options,
-    headers,
-  });
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${cleanPath}`, {
+      ...options,
+      headers,
+    });
+  } catch (networkErr) {
+    // Network failure — do NOT clear auth, just throw
+    throw new Error("Network error — please check your connection");
+  }
 
   if (res.status === 401) {
-    localStorage.removeItem("pgi_token");
-    window.location.href = "/login";
-    throw new Error("Session expired");
+    // Verify the token is truly invalid by hitting /auth/me
+    // before destroying the session
+    try {
+      const verify = await fetch(`${API_BASE}/api/v1/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (verify.status === 401) {
+        // Confirmed: token is invalid
+        localStorage.removeItem("pgi_token");
+        localStorage.removeItem("pgi_user");
+        window.dispatchEvent(new Event("pgi_auth_expired"));
+        throw new Error("Session expired — please log in again");
+      }
+    } catch (verifyErr) {
+      // /auth/me itself failed (network) — don't destroy session
+      if (verifyErr.message === "Session expired — please log in again") throw verifyErr;
+    }
+    // If verify passed or errored out, return the original 401 response
+    // so the caller can decide what to do
   }
 
   return res;
@@ -186,5 +210,51 @@ export async function createRFQ(bomId, notes = "") {
     throw new Error("Failed to create RFQ");
   }
 
+  return res.json();
+}
+
+export async function getRFQ(rfqId) {
+  const res = await apiCall(`/api/v1/rfq/${rfqId}`);
+  if (!res.ok) throw new Error("RFQ not found");
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════════
+// TRACKING
+// ═══════════════════════════════════════════════════
+
+export async function getTracking(rfqId) {
+  const res = await apiCall(`/api/v1/tracking/rfq/${rfqId}`);
+  if (!res.ok) throw new Error("Tracking not found");
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════════
+// DRAWINGS
+// ═══════════════════════════════════════════════════
+
+export async function uploadDrawing(rfqId, file, partName = "", partNotes = "", rfqItemId = null) {
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("rfq_id", rfqId);
+  fd.append("part_name", partName);
+  fd.append("part_notes", partNotes);
+  if (rfqItemId) fd.append("rfq_item_id", rfqItemId);
+
+  const res = await apiCall("/api/v1/drawings/upload", {
+    method: "POST",
+    body: fd,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Drawing upload failed");
+  }
+  return res.json();
+}
+
+export async function listDrawings(rfqId) {
+  const res = await apiCall(`/api/v1/drawings/${rfqId}`);
+  if (!res.ok) throw new Error("Failed to load drawings");
   return res.json();
 }

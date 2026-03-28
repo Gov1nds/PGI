@@ -236,6 +236,26 @@ export default function BOMAnalyzer() {
   const lt = s1.lead_time || {};
   const dd = s1.decision_distribution || {};
 
+  /* ── Category-wise grouping for step 5 components ──── */
+  const S5_CAT_ORDER = ["standard", "electrical", "electronics", "fastener", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
+  const S5_CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", custom_mechanical: "Custom Mechanical", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
+  const S5_CAT_BADGE = {
+    standard: "bg-emerald-500/15 text-emerald-400",
+    electrical: "bg-sky-500/15 text-sky-400",
+    electronics: "bg-blue-500/15 text-blue-400",
+    fastener: "bg-cyan-500/15 text-cyan-400",
+    custom_mechanical: "bg-violet-500/15 text-violet-400",
+    sheet_metal: "bg-amber-500/15 text-amber-400",
+    raw_material: "bg-purple-500/15 text-purple-400",
+    unknown: "bg-white/[0.06] text-white/50",
+  };
+  const groupedS2 = {};
+  for (const item of s2) {
+    const cat = item.category || "unknown";
+    if (!groupedS2[cat]) groupedS2[cat] = [];
+    groupedS2[cat].push(item);
+  }
+
   /* ── Shared styles ───────────────────────────────────── */
   const card = "rounded-2xl bg-[#0d1117] border border-white/[0.06] overflow-hidden";
   const cardInner = "p-6 sm:p-8";
@@ -762,127 +782,136 @@ export default function BOMAnalyzer() {
               </div>
             )}
 
-            {/* ── TAB: Components ──────────────────────── */}
+            {/* ── TAB: Components — grouped by category ── */}
             {activeTab === "components" && (
-              <div className="space-y-3">
-                {/* Component count badge */}
-                <div className="flex items-center gap-2 mb-2">
+              <div className="space-y-6">
+                {/* Summary badges */}
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="text-white/40 text-xs">{s2.length} components</span>
-                  <span className="text-white/20">·</span>
-                  <span className="text-emerald-400/60 text-xs">{s2.filter(i => i.category === "standard").length} standard</span>
-                  <span className="text-violet-400/60 text-xs">{s2.filter(i => i.category === "custom").length} custom</span>
-                  <span className="text-amber-400/60 text-xs">{s2.filter(i => i.category === "raw_material").length} raw material</span>
+                  {S5_CAT_ORDER.filter(c => groupedS2[c]?.length > 0).map(c => (
+                    <span key={c} className={`px-2 py-0.5 rounded-lg text-[10px] font-medium ${S5_CAT_BADGE[c]}`}>
+                      {S5_CAT_LABELS[c]} ({groupedS2[c].length})
+                    </span>
+                  ))}
                 </div>
 
-                {s2.map((item, i) => {
-                  const v = item.selected_vendor || {};
-                  const tlcB = v.tlc_breakdown || {};
-                  const exp = item.explanation || {};
-                  const alts = item.alternatives || [];
-                  const open = expandedItem === i;
-                  return (
-                    <div key={i} className={card + " transition-all"}>
-                      <button onClick={() => setExpandedItem(open ? null : i)} className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-white/[0.01] transition-colors">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                          item.category === "custom" ? "bg-violet-500/15 text-violet-400" :
-                          item.category === "raw_material" ? "bg-amber-500/15 text-amber-400" :
-                          "bg-emerald-500/15 text-emerald-400"
-                        }`}>
-                          {item.category === "custom" ? "C" : item.category === "raw_material" ? "R" : "S"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white text-sm font-medium truncate">{item.description}</p>
-                          <p className="text-white/50 text-xs">Q: {item.quantity} · {regionLabel(v.region)} · {v.transport_mode}</p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-white font-mono text-sm">{currency} {fmt(v.simulated_tlc)}</p>
-                          <p className={`text-xs font-medium ${modeColor(item.decision_mode)}`}>{modeLabel(item.decision_mode)}</p>
-                        </div>
-                        <span className={`text-white/20 text-xs transition-transform duration-200 ${open ? "rotate-180" : ""}`}>▼</span>
-                      </button>
-
-                      {open && (
-                        <div className="border-t border-white/[0.04] p-4 sm:p-5 space-y-4 bg-white/[0.01]">
-                          {/* TLC Breakdown */}
-                          <div>
-                            <p className="text-white/70 text-xs font-medium mb-2">TLC Breakdown</p>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                              {[
-                                ["Mfg", `${fmt(tlcB.c_mfg, 2)} × ${tlcB.quantity}`],
-                                ["Logistics", fmt(tlcB.c_log)],
-                                ["Tariff", fmt(tlcB.c_tariff)],
-                                ["NRE", fmt(tlcB.c_nre)],
-                                ["Inventory", fmt(tlcB.c_inventory)],
-                                ["Risk", fmt(tlcB.c_risk)],
-                                ["Compliance", fmt(tlcB.c_compliance)],
-                                ["Industrial TLC", fmt(tlcB.industrial_tlc)],
-                              ].map(([l, val], j) => (
-                                <div key={j} className="p-2 bg-white/[0.02] rounded-lg">
-                                  <p className="text-white/50 mb-0.5">{l}</p>
-                                  <p className="text-white/80 font-mono">{val}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Decision math */}
-                          <div>
-                            <p className="text-white/70 text-xs font-medium mb-2">Decision Logic</p>
-                            <div className="p-3 bg-[#161b22] rounded-lg text-xs font-mono text-white/80 space-y-1 overflow-x-auto">
-                              <p>{exp.math?.ucb || "—"}</p>
-                              <p className="text-white/50">{exp.math?.tlc || "—"}</p>
-                            </div>
-                          </div>
-
-                          {/* Risk */}
-                          <div className="flex flex-wrap gap-3">
-                            {[
-                              ["Supply", exp.risk?.supply],
-                              ["Logistics", exp.risk?.logistics],
-                              ["Cost Vol.", exp.risk?.cost_volatility],
-                              ["Quality", exp.risk?.quality],
-                            ].map(([l, val], j) => (
-                              <div key={j} className="px-3 py-1.5 bg-white/[0.03] rounded-lg text-xs">
-                                <span className="text-white/50">{l} </span>
-                                <span className={riskColor(val || 0)}>{fmt(val, 3)}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Alternatives */}
-                          {alts.length > 0 && (
-                            <div>
-                              <p className="text-white/70 text-xs font-medium mb-2">Alternatives</p>
-                              <div className="space-y-1.5">
-                                {alts.map((a, j) => (
-                                  <div key={j} className="flex items-center justify-between p-2 bg-white/[0.02] rounded-lg text-xs">
-                                    <span className="text-white/80">{a.supplier_name} · {regionLabel(a.region)}</span>
-                                    <span className="text-white/70 font-mono">{currency} {fmt(a.simulated_tlc)}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Process chain */}
-                          {v.process_chain && v.process_chain.length > 0 && (
-                            <div>
-                              <p className="text-white/70 text-xs font-medium mb-2">Process Chain</p>
-                              <div className="flex flex-wrap gap-1.5">
-                                {v.process_chain.map((p, j) => (
-                                  <span key={j} className="px-2 py-1 bg-violet-500/10 text-violet-300 text-[10px] rounded-md font-medium">{p}</span>
-                                ))}
-                              </div>
-                              {v.machining_time_hrs > 0 && (
-                                <p className="text-white/50 text-xs mt-2">Machining: {fmt(v.machining_time_hrs)}h · Labor: {fmt(v.labor_hours)}h</p>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                {S5_CAT_ORDER.filter(cat => groupedS2[cat]?.length > 0).map(cat => (
+                  <div key={cat}>
+                    <div className="flex items-center gap-2 mb-3 mt-2">
+                      <span className={`w-2 h-2 rounded-full ${S5_CAT_BADGE[cat].split(" ")[0].replace("/15", "/60").replace("/[0.06]", "/30")}`} />
+                      <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">{S5_CAT_LABELS[cat]}</h3>
+                      <span className="text-white/20 text-xs">({groupedS2[cat].length})</span>
                     </div>
-                  );
-                })}
+                    <div className="space-y-3">
+                      {groupedS2[cat].map((item) => {
+                        const globalIdx = s2.indexOf(item);
+                        const v = item.selected_vendor || {};
+                        const tlcB = v.tlc_breakdown || {};
+                        const exp = item.explanation || {};
+                        const alts = item.alternatives || [];
+                        const open = expandedItem === globalIdx;
+                        return (
+                          <div key={globalIdx} className={card + " transition-all"}>
+                            <button onClick={() => setExpandedItem(open ? null : globalIdx)} className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-white/[0.01] transition-colors">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${S5_CAT_BADGE[cat]}`}>
+                                {cat.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-white text-sm font-medium truncate">{item.description}</p>
+                                <p className="text-white/50 text-xs">Q: {item.quantity} · {regionLabel(v.region)} · {v.transport_mode || ""}</p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <p className="text-white font-mono text-sm">{v.simulated_tlc ? `${currency} ${fmt(v.simulated_tlc)}` : "RFQ"}</p>
+                                <p className={`text-xs font-medium ${modeColor(item.decision_mode)}`}>{modeLabel(item.decision_mode)}</p>
+                              </div>
+                              <span className={`text-white/20 text-xs transition-transform duration-200 ${open ? "rotate-180" : ""}`}>▼</span>
+                            </button>
+
+                            {open && (
+                              <div className="border-t border-white/[0.04] p-4 sm:p-5 space-y-4 bg-white/[0.01]">
+                                {/* TLC Breakdown */}
+                                <div>
+                                  <p className="text-white/70 text-xs font-medium mb-2">TLC Breakdown</p>
+                                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                                    {[
+                                      ["Mfg", `${fmt(tlcB.c_mfg, 2)} × ${tlcB.quantity}`],
+                                      ["Logistics", fmt(tlcB.c_log)],
+                                      ["Tariff", fmt(tlcB.c_tariff)],
+                                      ["NRE", fmt(tlcB.c_nre)],
+                                      ["Inventory", fmt(tlcB.c_inventory)],
+                                      ["Risk", fmt(tlcB.c_risk)],
+                                      ["Compliance", fmt(tlcB.c_compliance)],
+                                      ["Industrial TLC", fmt(tlcB.industrial_tlc)],
+                                    ].map(([l, val], j) => (
+                                      <div key={j} className="p-2 bg-white/[0.02] rounded-lg">
+                                        <p className="text-white/50 mb-0.5">{l}</p>
+                                        <p className="text-white/80 font-mono">{val}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Decision math */}
+                                <div>
+                                  <p className="text-white/70 text-xs font-medium mb-2">Decision Logic</p>
+                                  <div className="p-3 bg-[#161b22] rounded-lg text-xs font-mono text-white/80 space-y-1 overflow-x-auto">
+                                    <p>{exp.math?.ucb || "—"}</p>
+                                    <p className="text-white/50">{exp.math?.tlc || "—"}</p>
+                                  </div>
+                                </div>
+
+                                {/* Risk */}
+                                <div className="flex flex-wrap gap-3">
+                                  {[
+                                    ["Supply", exp.risk?.supply],
+                                    ["Logistics", exp.risk?.logistics],
+                                    ["Cost Vol.", exp.risk?.cost_volatility],
+                                    ["Quality", exp.risk?.quality],
+                                  ].map(([l, val], j) => (
+                                    <div key={j} className="px-3 py-1.5 bg-white/[0.03] rounded-lg text-xs">
+                                      <span className="text-white/50">{l} </span>
+                                      <span className={riskColor(val || 0)}>{fmt(val, 3)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Alternatives */}
+                                {alts.length > 0 && (
+                                  <div>
+                                    <p className="text-white/70 text-xs font-medium mb-2">Alternatives</p>
+                                    <div className="space-y-1.5">
+                                      {alts.map((a, j) => (
+                                        <div key={j} className="flex items-center justify-between p-2 bg-white/[0.02] rounded-lg text-xs">
+                                          <span className="text-white/80">{a.supplier_name} · {regionLabel(a.region)}</span>
+                                          <span className="text-white/70 font-mono">{currency} {fmt(a.simulated_tlc)}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Process chain */}
+                                {v.process_chain && v.process_chain.length > 0 && (
+                                  <div>
+                                    <p className="text-white/70 text-xs font-medium mb-2">Process Chain</p>
+                                    <div className="flex flex-wrap gap-1.5">
+                                      {v.process_chain.map((p, j) => (
+                                        <span key={j} className="px-2 py-1 bg-violet-500/10 text-violet-300 text-[10px] rounded-md font-medium">{p}</span>
+                                      ))}
+                                    </div>
+                                    {v.machining_time_hrs > 0 && (
+                                      <p className="text-white/50 text-xs mt-2">Machining: {fmt(v.machining_time_hrs)}h · Labor: {fmt(v.labor_hours)}h</p>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 

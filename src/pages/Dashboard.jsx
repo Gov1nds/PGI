@@ -30,7 +30,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) { navigate("/login"); return; }
     loadProjects();
   }, [user, authLoading]);
 
@@ -108,8 +107,9 @@ export default function Dashboard() {
                     <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[p.status] || STATUS_STYLES.uploaded}`}>{(p.status || "uploaded").replace(/_/g, " ")}</span>
                   </div>
                   <div className="col-span-2 text-right mb-2 sm:mb-0">
-                    <p className="text-white/80 text-sm font-mono">{p.cost ? `$ ${fmt(p.cost)}` : "—"}</p>
+                    <p className="text-white/80 text-sm font-mono">{p.cost ? `${p.currency || "USD"} ${fmt(p.cost)}` : "—"}</p>
                     {p.savings_percent > 0 && (<p className="text-emerald-400 text-[10px] mt-0.5">↓ {p.savings_percent.toFixed(1)}% savings</p>)}
+                    {p.lead_time > 0 && (<p className="text-white/30 text-[10px]">{Math.round(p.lead_time)}d lead</p>)}
                   </div>
                   <div className="col-span-1 text-right mb-2 sm:mb-0"><p className="text-white/50 text-sm">{p.total_parts}</p></div>
                   <div className="col-span-2 mb-2 sm:mb-0">

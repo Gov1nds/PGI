@@ -3,8 +3,8 @@
  * FIXED: Validates token via /auth/me with graceful fallback to localStorage.
  * Clears pgi_user on logout. No new imports that could break build.
  */
-import { createContext, useContext, useState, useEffect } from "react";
-import { loginUser, registerUser } from "../lib/api";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { loginUser, registerUser, apiCall } from "../lib/api";
 
 const AuthContext = createContext(null);
 
@@ -37,14 +37,9 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      // Try /auth/me for proper validation
+      // Try /auth/me for proper validation (uses apiCall to avoid duplication)
       try {
-        const API_BASE =
-          import.meta.env.VITE_API_BASE ||
-          "https://platform-api-production-d66b.up.railway.app";
-        const res = await fetch(`${API_BASE}/api/v1/auth/me`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        });
+        const res = await apiCall("/api/v1/auth/me");
         if (res.ok) {
           const userData = await res.json();
           setUser(userData);
@@ -67,6 +62,16 @@ export function AuthProvider({ children }) {
     };
 
     restoreSession();
+  }, []);
+
+  // Listen for confirmed auth expiry from apiCall
+  useEffect(() => {
+    const handleExpiry = () => {
+      setToken(null);
+      setUser(null);
+    };
+    window.addEventListener("pgi_auth_expired", handleExpiry);
+    return () => window.removeEventListener("pgi_auth_expired", handleExpiry);
   }, []);
 
   // Save user to localStorage when it changes

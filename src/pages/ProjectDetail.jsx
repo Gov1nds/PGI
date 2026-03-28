@@ -37,7 +37,6 @@ export default function ProjectDetail() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) { navigate("/login"); return; }
     loadProject();
   }, [id, user, authLoading]);
 
@@ -99,6 +98,18 @@ export default function ProjectDetail() {
   const s2 = report.section_2_component_breakdown || [];
   const bd = s1.cost_breakdown || {};
   const lt = s1.lead_time || {};
+  const cur = s1.currency || strat.currency || (project.metadata || {}).currency || "USD";
+
+  // Group components by category for section-wise display
+  const CATEGORY_ORDER = ["standard", "electrical", "electronics", "fastener", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
+  const CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", custom_mechanical: "Custom Mechanical", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
+  const CAT_COLORS = { standard: "emerald", electrical: "sky", electronics: "blue", fastener: "cyan", custom_mechanical: "violet", sheet_metal: "amber", raw_material: "purple", unknown: "white" };
+  const groupedComponents = {};
+  for (const item of s2) {
+    const cat = item.category || "unknown";
+    if (!groupedComponents[cat]) groupedComponents[cat] = [];
+    groupedComponents[cat].push(item);
+  }
 
   return (
     <div className="min-h-screen bg-[#010409]">
@@ -191,7 +202,7 @@ export default function ProjectDetail() {
           <div className={card}>
             <div className="p-5">
               <p className="text-white/35 text-xs font-medium mb-1">Estimated Cost</p>
-              <p className="text-xl font-bold text-white">$ {fmt(project.average_cost)}</p>
+              <p className="text-xl font-bold text-white">{cur} {fmt(project.average_cost)}</p>
               {project.cost_range_low > 0 && (
                 <p className="text-white/40 text-xs mt-1">{fmt(project.cost_range_low)} — {fmt(project.cost_range_high)}</p>
               )}
@@ -267,7 +278,7 @@ export default function ProjectDetail() {
                               <div className="flex-1 h-2 bg-white/[0.04] rounded-full overflow-hidden">
                                 <div className={`h-full rounded-full ${row.color}`} style={{ width: `${w}%`, transition: "width 1s ease" }} />
                               </div>
-                              <span className="text-white/60 text-xs font-mono w-20 text-right">$ {fmt(row.value)}</span>
+                              <span className="text-white/60 text-xs font-mono w-20 text-right">{cur} {fmt(row.value)}</span>
                             </div>
                           );
                         })}
@@ -278,33 +289,46 @@ export default function ProjectDetail() {
               </div>
             )}
 
-            {/* Components tab */}
+            {/* Components tab — grouped by category */}
             {activeTab === "components" && s2.length > 0 && (
-              <div className="space-y-2">
-                {s2.map((item, i) => {
-                  const v = item.selected_vendor || {};
-                  return (
-                    <div key={i} className={card}>
-                      <div className="p-4 flex items-center gap-4">
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                          item.category === "custom" ? "bg-violet-500/15 text-violet-400" :
-                          item.category === "raw_material" ? "bg-amber-500/15 text-amber-400" :
-                          "bg-emerald-500/15 text-emerald-400"
-                        }`}>
-                          {item.category === "custom" ? "C" : item.category === "raw_material" ? "R" : "S"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white text-sm font-medium truncate">{item.description}</p>
-                          <p className="text-white/40 text-xs">Q: {item.quantity} · {v.supplier_name || v.region || "—"}</p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-white font-mono text-sm">$ {fmt(v.simulated_tlc)}</p>
-                          <p className="text-white/40 text-xs">{v.expected_lead_days}d</p>
-                        </div>
-                      </div>
+              <div className="space-y-6">
+                {CATEGORY_ORDER.filter(cat => groupedComponents[cat]?.length > 0).map(cat => (
+                  <div key={cat}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className={`w-2 h-2 rounded-full bg-${CAT_COLORS[cat] || "white"}-400`} />
+                      <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">{CAT_LABELS[cat] || cat}</h3>
+                      <span className="text-white/30 text-xs">({groupedComponents[cat].length})</span>
                     </div>
-                  );
-                })}
+                    <div className="space-y-2">
+                      {groupedComponents[cat].map((item, i) => {
+                        const v = item.selected_vendor || {};
+                        return (
+                          <div key={`${cat}-${i}`} className={card}>
+                            <div className="p-4 flex items-center gap-4">
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                                cat.includes("custom") || cat === "sheet_metal" ? "bg-violet-500/15 text-violet-400" :
+                                cat === "raw_material" ? "bg-amber-500/15 text-amber-400" :
+                                cat === "electrical" || cat === "electronics" ? "bg-sky-500/15 text-sky-400" :
+                                cat === "fastener" ? "bg-cyan-500/15 text-cyan-400" :
+                                "bg-emerald-500/15 text-emerald-400"
+                              }`}>
+                                {cat.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-white text-sm font-medium truncate">{item.description}</p>
+                                <p className="text-white/40 text-xs">Q: {item.quantity} · {v.region || "—"}{item.process ? ` · ${item.process}` : ""}</p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <p className="text-white font-mono text-sm">{v.simulated_tlc ? `${cur} ${fmt(v.simulated_tlc)}` : "RFQ"}</p>
+                                {item.price_source && <p className="text-white/30 text-[10px]">{item.price_source}</p>}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
