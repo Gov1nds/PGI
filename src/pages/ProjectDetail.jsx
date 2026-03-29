@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { useAuth } from "../context/AuthContext";
-import { getProject, createRFQ, uploadDrawing, getRFQ, getTracking } from "../lib/api";
+import { getProject, createRFQ, uploadDrawing, getRFQ, getTracking, getProjectSnapshots, getStrategyRuns } from "../lib/api";
 
 const STATUS_STYLES = {
   uploaded:       "bg-white/[0.06] text-white/60",
@@ -38,6 +38,9 @@ export default function ProjectDetail() {
   const [drawingUploading, setDrawingUploading] = useState(false);
   const [trackingData, setTrackingData] = useState(null);
   const [rfqData, setRfqData] = useState(null);
+  const [snapshots, setSnapshots] = useState(null);
+  const [strategyRuns, setStrategyRuns] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -245,6 +248,7 @@ export default function ProjectDetail() {
                 ["strategy", "Strategy"],
                 ["rfq", "RFQ & Drawings"],
                 ["tracking", "Tracking"],
+                ["history", "History"],
               ].map(([tid, label]) => (
                 <button key={tid} onClick={() => setActiveTab(tid)}
                   className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === tid ? "bg-sky-500 text-white" : "text-white/60 hover:text-white/80"}`}>
@@ -526,6 +530,127 @@ export default function ProjectDetail() {
                           {rfqLoading ? "Requesting..." : "Request Quote to Start"}
                         </button>
                       )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* History tab — report snapshots + strategy runs */}
+            {activeTab === "history" && (
+              <div className="space-y-6">
+                {/* Load history on first view */}
+                {!snapshots && !historyLoading && (
+                  <div className="text-center py-8">
+                    <button
+                      onClick={async () => {
+                        setHistoryLoading(true);
+                        try {
+                          const [snaps, runs] = await Promise.all([
+                            getProjectSnapshots(id),
+                            getStrategyRuns(id),
+                          ]);
+                          setSnapshots(snaps || []);
+                          setStrategyRuns(runs || []);
+                        } catch (err) {
+                          setError(err.message);
+                        } finally {
+                          setHistoryLoading(false);
+                        }
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 text-sm font-semibold hover:bg-sky-500/20 transition-all"
+                    >
+                      Load Version History
+                    </button>
+                  </div>
+                )}
+
+                {historyLoading && (
+                  <div className="text-center py-8">
+                    <div className="w-8 h-8 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
+                    <p className="text-white/40 text-xs mt-3">Loading history...</p>
+                  </div>
+                )}
+
+                {/* Report Snapshots */}
+                {snapshots && snapshots.length > 0 && (
+                  <div className={card}>
+                    <div className="p-6">
+                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Report Versions</h3>
+                      <div className="space-y-2">
+                        {snapshots.map((snap, i) => (
+                          <div key={snap.id} className={`flex items-center justify-between py-3 px-4 rounded-lg border transition-all ${
+                            i === 0 ? "bg-emerald-500/5 border-emerald-500/15" : "bg-white/[0.02] border-white/[0.04]"
+                          }`}>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="text-white text-sm font-medium">Version {snap.version}</p>
+                                {i === 0 && (
+                                  <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-[10px] font-semibold uppercase">Current</span>
+                                )}
+                              </div>
+                              <p className="text-white/30 text-xs mt-0.5">
+                                {snap.total_parts} parts · {snap.priority} priority · Engine {snap.analyzer_version || "—"}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-white/40 text-xs">
+                                {snap.created_at ? new Date(snap.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Strategy Runs */}
+                {strategyRuns && strategyRuns.length > 0 && (
+                  <div className={card}>
+                    <div className="p-6">
+                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Strategy Runs</h3>
+                      <div className="space-y-2">
+                        {strategyRuns.map((run, i) => (
+                          <div key={run.id} className={`flex items-center justify-between py-3 px-4 rounded-lg border transition-all ${
+                            run.is_current ? "bg-sky-500/5 border-sky-500/15" : "bg-white/[0.02] border-white/[0.04]"
+                          }`}>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="text-white text-sm font-medium">Run v{run.version}</p>
+                                {run.is_current && (
+                                  <span className="px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 text-[10px] font-semibold uppercase">Active</span>
+                                )}
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase ${
+                                  run.priority === "speed" ? "bg-amber-500/15 text-amber-400" : "bg-emerald-500/15 text-emerald-400"
+                                }`}>
+                                  {run.priority}
+                                </span>
+                              </div>
+                              <p className="text-white/30 text-xs mt-0.5">
+                                {run.recommended_location || "—"} · {run.total_parts} parts
+                                {run.savings_percent ? ` · ${run.savings_percent.toFixed(1)}% savings` : ""}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              {run.average_cost && (
+                                <p className="text-white font-mono text-sm">{cur} {Number(run.average_cost).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                              )}
+                              <p className="text-white/40 text-xs">
+                                {run.created_at ? new Date(run.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {snapshots && snapshots.length === 0 && strategyRuns && strategyRuns.length === 0 && (
+                  <div className={card}>
+                    <div className="p-6 text-center">
+                      <p className="text-white/40 text-sm">No version history available yet. Re-analyze the BOM to create a new version.</p>
                     </div>
                   </div>
                 )}

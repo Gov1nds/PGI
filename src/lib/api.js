@@ -258,3 +258,35 @@ export async function listDrawings(rfqId) {
   if (!res.ok) throw new Error("Failed to load drawings");
   return res.json();
 }
+
+// ═══════════════════════════════════════════════════
+// REPORT SNAPSHOTS
+// ═══════════════════════════════════════════════════
+
+export async function getProjectSnapshots(projectId) {
+  const res = await apiCall(`/api/v1/projects/${projectId}/snapshots`);
+  if (!res.ok) throw new Error("Failed to load snapshots");
+  return res.json();
+}
+
+export async function getProjectSnapshot(projectId, version) {
+  const res = await apiCall(`/api/v1/projects/${projectId}/snapshots/${version}`);
+  if (!res.ok) throw new Error("Snapshot not found");
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════════
+// STRATEGY RUNS
+// ═══════════════════════════════════════════════════
+
+export async function getStrategyRuns(projectId) {
+  const res = await apiCall(`/api/v1/projects/${projectId}/strategy-runs`);
+  if (!res.ok) throw new Error("Failed to load strategy runs");
+  return res.json();
+}
+
+export async function getStrategyRun(projectId, runId) {
+  const res = await apiCall(`/api/v1/projects/${projectId}/strategy-runs/${runId}`);
+  if (!res.ok) throw new Error("Strategy run not found");
+  return res.json();
+}
