@@ -298,14 +298,15 @@ export default function BOMAnalyzer() {
   const dd = s1.decision_distribution || {};
 
   /* ── Category grouping ────────────────────────────────── */
-  const S5_CAT_ORDER = ["standard", "electrical", "electronics", "fastener", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
-  const S5_CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", custom_mechanical: "Custom Mechanical", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
-  const S5_CAT_ICONS = { standard: "◈", electrical: "⚡", electronics: "◉", fastener: "⊕", custom_mechanical: "⚙", sheet_metal: "◆", raw_material: "◇", unknown: "?" };
+  const S5_CAT_ORDER = ["standard", "electrical", "electronics", "fastener", "machined", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
+  const S5_CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", machined: "Machined Parts", custom_mechanical: "Custom Manufacturing", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
+  const S5_CAT_ICONS = { standard: "◈", electrical: "⚡", electronics: "◉", fastener: "⊕", machined: "⚙", custom_mechanical: "🔧", sheet_metal: "◆", raw_material: "◇", unknown: "?" };
   const S5_CAT_ACCENT = {
     standard: { bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.15)", text: "#34d399", dot: "#34d399" },
     electrical: { bg: "rgba(56,189,248,0.08)", border: "rgba(56,189,248,0.15)", text: "#38bdf8", dot: "#38bdf8" },
     electronics: { bg: "rgba(96,165,250,0.08)", border: "rgba(96,165,250,0.15)", text: "#60a5fa", dot: "#60a5fa" },
     fastener: { bg: "rgba(34,211,238,0.08)", border: "rgba(34,211,238,0.15)", text: "#22d3ee", dot: "#22d3ee" },
+    machined: { bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.15)", text: "#f472b6", dot: "#f472b6" },
     custom_mechanical: { bg: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)", text: "#a78bfa", dot: "#a78bfa" },
     sheet_metal: { bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.15)", text: "#fbbf24", dot: "#fbbf24" },
     raw_material: { bg: "rgba(192,132,252,0.08)", border: "rgba(192,132,252,0.15)", text: "#c084fc", dot: "#c084fc" },
@@ -989,7 +990,7 @@ export default function BOMAnalyzer() {
                                     )}
 
                                     {/* RFQ Actions for custom parts */}
-                                    {(cat === "custom_mechanical" || cat === "sheet_metal" || cat === "raw_material" || item.decision_mode === "exploration") && (
+                                    {(cat === "machined" || cat === "custom_mechanical" || cat === "sheet_metal" || cat === "raw_material" || item.decision_mode === "exploration") && (
                                       <div className="bom-detail-section">
                                         <span className="bom-detail-label">Actions</span>
                                         <div className="bom-rfq-actions">

@@ -105,9 +105,9 @@ export default function ProjectDetail() {
   const cur = s1.currency || strat.currency || (project.metadata || {}).currency || "USD";
 
   // Group components by category for section-wise display
-  const CATEGORY_ORDER = ["standard", "electrical", "electronics", "fastener", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
-  const CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", custom_mechanical: "Custom Mechanical", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
-  const CAT_COLORS = { standard: "emerald", electrical: "sky", electronics: "blue", fastener: "cyan", custom_mechanical: "violet", sheet_metal: "amber", raw_material: "purple", unknown: "white" };
+  const CATEGORY_ORDER = ["standard", "electrical", "electronics", "fastener", "machined", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
+  const CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", machined: "Machined Parts", custom_mechanical: "Custom Manufacturing", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
+  const CAT_COLORS = { standard: "emerald", electrical: "sky", electronics: "blue", fastener: "cyan", machined: "pink", custom_mechanical: "violet", sheet_metal: "amber", raw_material: "purple", unknown: "white" };
   const groupedComponents = {};
   for (const item of s2) {
     const cat = item.category || "unknown";
@@ -312,7 +312,7 @@ export default function ProjectDetail() {
                           <div key={`${cat}-${i}`} className={card}>
                             <div className="p-4 flex items-center gap-4">
                               <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                                cat.includes("custom") || cat === "sheet_metal" ? "bg-violet-500/15 text-violet-400" :
+                                cat.includes("custom") || cat === "sheet_metal" || cat === "machined" ? "bg-violet-500/15 text-violet-400" :
                                 cat === "raw_material" ? "bg-amber-500/15 text-amber-400" :
                                 cat === "electrical" || cat === "electronics" ? "bg-sky-500/15 text-sky-400" :
                                 cat === "fastener" ? "bg-cyan-500/15 text-cyan-400" :
@@ -404,11 +404,11 @@ export default function ProjectDetail() {
                     </div>
 
                     {/* Custom parts requiring RFQ */}
-                    {s2.filter(item => item.category === "custom_mechanical" || item.category === "sheet_metal").length > 0 && (
+                    {s2.filter(item => item.category === "machined" || item.category === "custom_mechanical" || item.category === "sheet_metal").length > 0 && (
                       <div className="mt-4">
                         <p className="text-white/40 text-xs mb-2">Custom parts requiring quotes:</p>
                         <div className="space-y-2">
-                          {s2.filter(item => item.category === "custom_mechanical" || item.category === "sheet_metal").map((item, i) => (
+                          {s2.filter(item => item.category === "machined" || item.category === "custom_mechanical" || item.category === "sheet_metal").map((item, i) => (
                             <div key={i} className="flex items-center justify-between py-2 px-3 bg-white/[0.02] rounded-lg border border-white/[0.04]">
                               <div>
                                 <p className="text-white text-xs font-medium">{item.description}</p>
