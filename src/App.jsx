@@ -27,6 +27,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ProjectWorkspace from "./pages/ProjectWorkspace.jsx";
 import VendorDiscovery from "./pages/VendorDiscovery.jsx";
 import Analytics from "./pages/Analytics.jsx";
+
 export default function App() {
   return (
     <>
@@ -54,8 +55,25 @@ export default function App() {
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/project/:id/vendors" element={<ProtectedRoute><VendorDiscovery /></ProtectedRoute>} />
-          <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+
+          <Route
+            path="/project/:id/vendors"
+            element={
+              <ProtectedRoute>
+                <VendorDiscovery />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Protected */}
           <Route
             path="/dashboard"
@@ -74,14 +92,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-        <Route
-           path="/project/:id/vendors"
-             element={
-         <ProtectedRoute>
-           <VendorPage />
-          </ProtectedRoute>
-           }
-               />
+
           <Route
             path="/project/:id/workspace"
             element={
