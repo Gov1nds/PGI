@@ -5,14 +5,7 @@ import { uploadBOM, unlockBOM } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-/* ── Constants ──────────────────────────────────────────── */
-  const navigate = useNavigate();
 
-  const [analysisStatus, setAnalysisStatus] = useState("guest_preview");
-  const [reportVisibilityLevel, setReportVisibilityLevel] = useState("preview");
-  const [unlockStatus, setUnlockStatus] = useState("locked");
-  const [guestBomId, setGuestBomId] = useState(null);
-  const [workspaceRoute, setWorkspaceRoute] = useState(null);
 
 const CURRENCIES = ["USD", "EUR", "INR", "CNY", "JPY", "GBP", "KRW", "MXN", "THB", "VND"];
 
@@ -191,7 +184,14 @@ function Shimmer({ w = "100%", h = 12 }) {
 
 export default function BOMAnalyzer() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [analysisStatus, setAnalysisStatus] = useState("guest_preview");
+  const [reportVisibilityLevel, setReportVisibilityLevel] = useState("preview");
+  const [unlockStatus, setUnlockStatus] = useState("locked");
+  const [guestBomId, setGuestBomId] = useState(null);
+  const [workspaceRoute, setWorkspaceRoute] = useState(null);
 
+  // existing state...
   /* ── State ─────────────────────────────────────────── */
   const [step, setStep] = useState(1);
   const [file, setFile] = useState(null);
