@@ -13,6 +13,14 @@ import {
   uploadDrawing,
 } from "../lib/api";
 import ProjectEventTimeline from "../components/ProjectEventTimeline.jsx";
+import RFQComparisonMatrix from "../components/RFQComparisonMatrix.jsx";
+import {
+  getRFQQuotes,
+  getRFQComparison,
+  selectRFQVendor,
+  rejectRFQVendor,
+  sendRFQ,
+} from "../lib/api";
 
 const STATUS_STYLES = {
   draft: "bg-white/[0.06] text-white/60",
@@ -84,7 +92,47 @@ export default function ProjectDetail() {
   const [rfqSuccess, setRfqSuccess] = useState(false);
   const [drawingFile, setDrawingFile] = useState(null);
   const [drawingUploading, setDrawingUploading] = useState(false);
+  const [rfqQuotes, setRfqQuotes] = useState(null);
+  const [rfqComparison, setRfqComparison] = useState(null);
+  const [comparisonSortBy, setComparisonSortBy] = useState("total_cost");
+  const [comparisonFilters, setComparisonFilters] = useState({ minVendorScore: "", maxCost: "", maxLeadTime: "", maxMoq: "",maxRisk: "",});                 
+  const [comparisonLoading, setComparisonLoading] = useState(false);
+   
+  useEffect(() => {
+  if (activeTab !== "comparison") return;
+  if (!project?.current_rfq_id) return;
 
+  const loadComparison = async () => {
+    setComparisonLoading(true);
+    try {
+      const filters = {
+        sort_by: comparisonSortBy,
+        min_vendor_score: comparisonFilters.minVendorScore,
+        max_cost: comparisonFilters.maxCost,
+        max_lead_time: comparisonFilters.maxLeadTime,
+        max_moq: comparisonFilters.maxMoq,
+        max_risk: comparisonFilters.maxRisk,
+      };
+      const [quotes, comparison] = await Promise.all([
+        getRFQQuotes(project.current_rfq_id),
+        getRFQComparison(project.current_rfq_id, filters),
+      ]);
+      setRfqQuotes(quotes);
+      setRfqComparison(comparison);
+    } catch (err) {
+      setError(err.message || "Failed to load RFQ comparison");
+    } finally {
+      setComparisonLoading(false);
+    }
+  };
+
+  loadComparison();
+}, [
+  activeTab,
+  project?.current_rfq_id,
+  comparisonSortBy,
+  comparisonFilters, // ✅ ADD THIS
+]);
   useEffect(() => {
     if (authLoading) return;
     loadProject();
@@ -430,32 +478,86 @@ export default function ProjectDetail() {
         </div>
       );
     }
-
-    if (activeTab === "comparison") {
-      return (
-        <div className="space-y-6">
-          <div className={cardClass}>
-            <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Quote comparison</h3>
-            </div>
-            <div className="p-5">
-              <p className="text-white/70">
-                Quote comparison is the next control-tower surface. The project now carries the canonical RFQ pointer and quote-ready state.
-              </p>
-              <p className="mt-3 text-sm text-white/40">
-                current_quote_id: {project.current_quote_id || "—"}
-              </p>
-            </div>
-          </div>
-
-          <div className={cardClass}>
-            <div className="p-5 text-sm text-white/35">
-              When quote rows are persisted, render a matrix here with price, lead time, availability, and terms side by side.
-            </div>
+if (activeTab === "comparison") {
+  return (
+    <div className="space-y-6">
+      {!project?.current_rfq_id ? (
+        <div className={cardClass}>
+          <div className="p-5 text-sm text-white/35">
+            No RFQ is attached to this project yet. Create and send an RFQ first.
           </div>
         </div>
-      );
-    }
+      ) : (
+        <>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={async () => {
+  await sendRFQ(project.current_rfq_id, {
+    vendor_response_deadline_days: 7,
+  });
+
+  // Force reload comparison
+  setComparisonLoading(true);
+  try {
+    const filters = {
+      sort_by: comparisonSortBy,
+      min_vendor_score: comparisonFilters.minVendorScore,
+      max_cost: comparisonFilters.maxCost,
+      max_lead_time: comparisonFilters.maxLeadTime,
+      max_moq: comparisonFilters.maxMoq,
+      max_risk: comparisonFilters.maxRisk,
+    };
+
+    const [quotes, comparison] = await Promise.all([
+      getRFQQuotes(project.current_rfq_id),
+      getRFQComparison(project.current_rfq_id, filters),
+    ]);
+
+    setRfqQuotes(quotes);
+    setRfqComparison(comparison);
+  } catch (err) {
+    setError(err.message || "Failed to refresh RFQ");
+  } finally {
+    setComparisonLoading(false);
+  }
+}}
+              className="rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-400"
+            >
+              Send / refresh RFQ
+            </button>
+
+            <span className="text-xs text-white/35">
+              Quotes loaded: {rfqQuotes?.quote_history?.length || 0}
+            </span>
+          </div>
+
+          {comparisonLoading ? (
+            <div className="text-sm text-white/35">
+              Loading quote comparison...
+            </div>
+          ) : (
+            <RFQComparisonMatrix
+              comparison={rfqComparison}
+              sortBy={comparisonSortBy}
+              setSortBy={setComparisonSortBy}
+              filters={comparisonFilters}
+              setFilters={setComparisonFilters}
+              selectedVendorId={project.current_quote_id}
+              onSelectVendor={async (payload) => {
+                await selectRFQVendor(project.current_rfq_id, payload);
+                await loadProject();
+              }}
+              onRejectVendor={async (payload) => {
+                await rejectRFQVendor(project.current_rfq_id, payload);
+                await loadProject();
+              }}
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
     if (activeTab === "chat") {
       return (

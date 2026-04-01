@@ -362,3 +362,62 @@ export async function updateProjectStatus(projectId, status, notes = "") {
 
   return res.json();
 }
+export async function sendRFQ(rfqId, payload = {}) {
+  const res = await apiCall(`/api/v1/rfq/${rfqId}/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to send RFQ");
+  }
+  return res.json();
+}
+
+export async function getRFQQuotes(rfqId) {
+  const res = await apiCall(`/api/v1/rfq/${rfqId}/quotes`);
+  if (!res.ok) throw new Error("Failed to load RFQ quotes");
+  return res.json();
+}
+
+export async function getRFQComparison(rfqId, filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.sort_by) params.set("sort_by", filters.sort_by);
+  if (filters.min_vendor_score !== undefined && filters.min_vendor_score !== null && filters.min_vendor_score !== "") params.set("min_vendor_score", String(filters.min_vendor_score));
+  if (filters.max_cost !== undefined && filters.max_cost !== null && filters.max_cost !== "") params.set("max_cost", String(filters.max_cost));
+  if (filters.max_lead_time !== undefined && filters.max_lead_time !== null && filters.max_lead_time !== "") params.set("max_lead_time", String(filters.max_lead_time));
+  if (filters.max_moq !== undefined && filters.max_moq !== null && filters.max_moq !== "") params.set("max_moq", String(filters.max_moq));
+  if (filters.max_risk !== undefined && filters.max_risk !== null && filters.max_risk !== "") params.set("max_risk", String(filters.max_risk));
+
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  const res = await apiCall(`/api/v1/rfq/${rfqId}/compare${suffix}`);
+  if (!res.ok) throw new Error("Failed to load RFQ comparison");
+  return res.json();
+}
+
+export async function selectRFQVendor(rfqId, payload) {
+  const res = await apiCall(`/api/v1/rfq/${rfqId}/select`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to select vendor");
+  }
+  return res.json();
+}
+
+export async function rejectRFQVendor(rfqId, payload) {
+  const res = await apiCall(`/api/v1/rfq/${rfqId}/reject-vendor`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to reject vendor");
+  }
+  return res.json();
+}
