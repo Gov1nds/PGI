@@ -1,27 +1,67 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { useAuth } from "../context/AuthContext";
-import { getProject, createRFQ, uploadDrawing, getRFQ, getTracking, getProjectSnapshots, getStrategyRuns } from "../lib/api";
+import {
+  createRFQ,
+  getProject,
+  getProjectEvents,
+  getProjectSnapshots,
+  getRFQ,
+  getStrategyRuns,
+  getTracking,
+  uploadDrawing,
+} from "../lib/api";
+import ProjectEventTimeline from "../components/ProjectEventTimeline.jsx";
 
 const STATUS_STYLES = {
-  uploaded:       "bg-white/[0.06] text-white/60",
-  analyzed:       "bg-sky-500/15 text-sky-400",
-  quoting:        "bg-amber-500/15 text-amber-400",
-  quoted:         "bg-violet-500/15 text-violet-400",
-  approved:       "bg-emerald-500/15 text-emerald-400",
-  in_production:  "bg-blue-500/15 text-blue-400",
-  qc_inspection:  "bg-orange-500/15 text-orange-400",
-  shipped:        "bg-cyan-500/15 text-cyan-400",
-  completed:      "bg-emerald-500/15 text-emerald-400",
+  draft: "bg-white/[0.06] text-white/60",
+  guest_preview: "bg-sky-500/15 text-sky-400",
+  project_hydrated: "bg-blue-500/15 text-blue-400",
+  strategy: "bg-violet-500/15 text-violet-400",
+  vendor_match: "bg-cyan-500/15 text-cyan-400",
+  rfq_pending: "bg-amber-500/15 text-amber-400",
+  rfq_sent: "bg-amber-500/15 text-amber-400",
+  quote_compare: "bg-violet-500/15 text-violet-400",
+  negotiation: "bg-pink-500/15 text-pink-400",
+  vendor_selected: "bg-emerald-500/15 text-emerald-400",
+  po_issued: "bg-blue-500/15 text-blue-400",
+  in_production: "bg-blue-500/15 text-blue-400",
+  qc_inspection: "bg-orange-500/15 text-orange-400",
+  shipped: "bg-cyan-500/15 text-cyan-400",
+  delivered: "bg-emerald-500/15 text-emerald-400",
+  spend_recorded: "bg-emerald-500/15 text-emerald-400",
+  completed: "bg-emerald-500/15 text-emerald-400",
+  error: "bg-red-500/15 text-red-400",
 };
 
+const TABS = [
+  { id: "overview", label: "Overview" },
+  { id: "strategy", label: "Strategy" },
+  { id: "vendor-match", label: "Vendor match" },
+  { id: "rfq", label: "RFQ" },
+  { id: "comparison", label: "Comparison" },
+  { id: "chat", label: "Chat" },
+  { id: "order", label: "Order" },
+  { id: "tracking", label: "Tracking" },
+  { id: "analytics", label: "Analytics" },
+  { id: "history", label: "History" },
+];
+
 const fmt = (n, d = 2) => {
-  if (n == null || isNaN(n)) return "—";
+  if (n == null || Number.isNaN(Number(n))) return "—";
   return Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 };
 
-const STAGES = ["uploaded", "analyzed", "quoting", "quoted", "approved", "in_production", "qc_inspection", "shipped", "completed"];
+function Stat({ label, value, hint }) {
+  return (
+    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+      <p className="text-[10px] uppercase tracking-wider text-white/25">{label}</p>
+      <p className="mt-2 text-lg font-semibold text-white">{value}</p>
+      {hint && <p className="mt-1 text-xs text-white/35">{hint}</p>}
+    </div>
+  );
+}
 
 export default function ProjectDetail() {
   const { id } = useParams();
@@ -29,23 +69,31 @@ export default function ProjectDetail() {
   const navigate = useNavigate();
 
   const [project, setProject] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [trackingData, setTrackingData] = useState([]);
+  const [rfqData, setRfqData] = useState(null);
+  const [snapshots, setSnapshots] = useState([]);
+  const [strategyRuns, setStrategyRuns] = useState([]);
+
   const [loading, setLoading] = useState(true);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
+
   const [rfqLoading, setRfqLoading] = useState(false);
   const [rfqSuccess, setRfqSuccess] = useState(false);
   const [drawingFile, setDrawingFile] = useState(null);
   const [drawingUploading, setDrawingUploading] = useState(false);
-  const [trackingData, setTrackingData] = useState(null);
-  const [rfqData, setRfqData] = useState(null);
-  const [snapshots, setSnapshots] = useState(null);
-  const [strategyRuns, setStrategyRuns] = useState(null);
-  const [historyLoading, setHistoryLoading] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
     loadProject();
-  }, [id, user, authLoading]);
+  }, [id, authLoading, user]);
+
+  useEffect(() => {
+    if (!project) return;
+    loadOperationalData(project.current_rfq_id);
+  }, [project?.current_rfq_id]);
 
   const loadProject = async () => {
     setLoading(true);
@@ -53,9 +101,34 @@ export default function ProjectDetail() {
       const data = await getProject(id);
       setProject(data);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Project not found");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadOperationalData = async (rfqId) => {
+    try {
+      const next = await getProjectEvents(id);
+      setEvents(next || []);
+
+      if (rfqId) {
+        try {
+          const rfq = await getRFQ(rfqId);
+          setRfqData(rfq);
+        } catch {
+          setRfqData(null);
+        }
+
+        try {
+          const tracking = await getTracking(rfqId);
+          setTrackingData(tracking || []);
+        } catch {
+          setTrackingData([]);
+        }
+      }
+    } catch {
+      setEvents([]);
     }
   };
 
@@ -65,24 +138,70 @@ export default function ProjectDetail() {
     try {
       await createRFQ(id);
       setRfqSuccess(true);
-      // Reload to get updated status
       await loadProject();
+      await loadOperationalData(project?.current_rfq_id || id);
+      setActiveTab("rfq");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to create RFQ");
     } finally {
       setRfqLoading(false);
     }
   };
 
-  const card = "rounded-2xl bg-[#0d1117] border border-white/[0.06] overflow-hidden";
+  const handleUploadDrawing = async () => {
+    if (!drawingFile || !project?.current_rfq_id) return;
+    setDrawingUploading(true);
+    try {
+      await uploadDrawing(project.current_rfq_id, drawingFile, "", "", null);
+      setDrawingFile(null);
+      await loadOperationalData(project.current_rfq_id);
+    } catch (err) {
+      setError(err.message || "Drawing upload failed");
+    } finally {
+      setDrawingUploading(false);
+    }
+  };
+
+  const loadHistory = async () => {
+    if (historyLoading) return;
+    setHistoryLoading(true);
+    try {
+      const [snaps, runs] = await Promise.all([
+        getProjectSnapshots(id),
+        getStrategyRuns(id),
+      ]);
+      setSnapshots(snaps || []);
+      setStrategyRuns(runs || []);
+    } catch (err) {
+      setError(err.message || "Failed to load history");
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const cardClass = "rounded-2xl border border-white/[0.06] bg-[#0d1117] overflow-hidden";
+
+  const stage = (project?.workflow_stage || project?.status || "draft").toLowerCase();
+  const report = project?.analyzer_report || {};
+  const strategy = project?.strategy || {};
+  const s1 = report.section_1_executive_summary || {};
+  const s2 = report.section_2_component_breakdown || [];
+  const currency = s1.currency || strategy.currency || (project?.metadata || {}).currency || "USD";
+
+  const groupedComponents = useMemo(() => {
+    const groups = {};
+    for (const item of s2) {
+      const cat = item.category || "unknown";
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(item);
+    }
+    return groups;
+  }, [s2]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#010409] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
-          <p className="text-white/40 text-sm mt-4">Loading project...</p>
-        </div>
+        <div className="text-white/40 text-sm">Loading project...</div>
       </div>
     );
   }
@@ -98,44 +217,414 @@ export default function ProjectDetail() {
     );
   }
 
-  const stageIdx = STAGES.indexOf(project.status);
-  const report = project.analyzer_report || {};
-  const strat = project.strategy || {};
-  const s1 = report.section_1_executive_summary || {};
-  const s2 = report.section_2_component_breakdown || [];
-  const bd = s1.cost_breakdown || {};
-  const lt = s1.lead_time || {};
-  const cur = s1.currency || strat.currency || (project.metadata || {}).currency || "USD";
+  const nextAction = project.next_action || project?.metadata?.next_action || "Review project";
 
-  // Group components by category for section-wise display
-  const CATEGORY_ORDER = ["standard", "electrical", "electronics", "fastener", "machined", "custom_mechanical", "sheet_metal", "raw_material", "unknown"];
-  const CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", machined: "Machined Parts", custom_mechanical: "Custom Manufacturing", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
-  const CAT_COLORS = { standard: "emerald", electrical: "sky", electronics: "blue", fastener: "cyan", machined: "pink", custom_mechanical: "violet", sheet_metal: "amber", raw_material: "purple", unknown: "white" };
-  const groupedComponents = {};
-  for (const item of s2) {
-    const cat = item.category || "unknown";
-    if (!groupedComponents[cat]) groupedComponents[cat] = [];
-    groupedComponents[cat].push(item);
-  }
+  const renderTab = () => {
+    if (activeTab === "overview") {
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <Stat label="Workflow stage" value={(project.workflow_stage || project.status || "draft").replace(/_/g, " ")} hint={nextAction} />
+            <Stat label="Visibility" value={(project.visibility_level || project.visibility || "private").replace(/_/g, " ")} hint="Access control for the workspace" />
+            <Stat label="RFQ status" value={(project.rfq_status || "none").replace(/_/g, " ")} hint={project.current_rfq_id ? "RFQ linked" : "No RFQ yet"} />
+            <Stat label="Tracking" value={(project.tracking_stage || "init").replace(/_/g, " ")} hint={project.current_shipment_id ? "Shipment linked" : "No shipment yet"} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <div className={`${cardClass} xl:col-span-2`}>
+              <div className="border-b border-white/[0.06] px-5 py-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Project summary</h3>
+              </div>
+              <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Stat label="Estimated cost" value={`${currency} ${fmt(project.cost || project.average_cost || 0)}`} />
+                <Stat label="Savings" value={project.savings_percent != null ? `${fmt(project.savings_percent)}%` : "—"} />
+                <Stat label="Lead time" value={project.lead_time != null ? `${fmt(project.lead_time)} days` : "—"} />
+                <Stat label="Recommended region" value={project.recommended_location || "—"} />
+              </div>
+              <div className="px-5 pb-5">
+                <p className="text-sm text-white/55">{project.decision_summary || "No decision summary available yet."}</p>
+              </div>
+            </div>
+
+            <div className={cardClass}>
+              <div className="border-b border-white/[0.06] px-5 py-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Next action</h3>
+              </div>
+              <div className="p-5">
+                <p className="text-white text-lg font-semibold">{nextAction}</p>
+                <p className="mt-2 text-sm text-white/35">
+                  {project.workflow_stage === "rfq_pending" || project.workflow_stage === "rfq_sent"
+                    ? "Send RFQs and collect vendor responses."
+                    : project.workflow_stage === "quote_compare"
+                      ? "Compare quotes and short-list vendors."
+                      : project.workflow_stage === "in_production" || project.workflow_stage === "shipped"
+                        ? "Track the current shipment and production milestones."
+                        : "Review the project and continue the procurement flow."}
+                </p>
+                {project.workflow_stage === "project_hydrated" && (
+                  <button
+                    onClick={handleRequestQuote}
+                    disabled={rfqLoading}
+                    className="mt-4 w-full rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
+                  >
+                    {rfqLoading ? "Creating RFQ..." : "Create RFQ"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <ProjectEventTimeline events={events} title="Project timeline" />
+        </div>
+      );
+    }
+
+    if (activeTab === "strategy") {
+      const recommended = strategy.recommended_strategy || {};
+      const partDecisions = strategy.part_level_decisions || [];
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <Stat label="Best location" value={recommended.location || project.recommended_location || "—"} />
+            <Stat label="Global optimization" value={strategy.global_optimization?.best_strategy_name || "—"} />
+            <Stat label="Confidence" value={strategy.system_confidence != null ? `${fmt(strategy.system_confidence * 100, 1)}%` : "—"} />
+          </div>
+
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Strategy summary</h3>
+            </div>
+            <div className="p-5">
+              <p className="text-white/70">{strategy.decision_summary || project.decision_summary || "No strategy summary yet."}</p>
+              {recommended.reasons?.length > 0 && (
+                <ul className="mt-4 space-y-2 text-sm text-white/45">
+                  {recommended.reasons.map((reason, idx) => (
+                    <li key={idx}>• {reason}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Per-part decisions</h3>
+            </div>
+            <div className="divide-y divide-white/[0.05]">
+              {partDecisions.length === 0 ? (
+                <div className="p-5 text-sm text-white/35">No part-level decisions available.</div>
+              ) : (
+                partDecisions.map((item, idx) => (
+                  <div key={idx} className="p-5">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-white font-medium">{item.part_name || item.description || item.item_id || "Part"}</p>
+                        <p className="text-xs text-white/35 mt-1">{item.category || "unknown"} · {item.best_region || "—"}</p>
+                      </div>
+                      <p className="text-sm text-white/70">{item.best_cost != null ? `${currency} ${fmt(item.best_cost)}` : "—"}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === "vendor-match") {
+      return (
+        <div className="space-y-6">
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Vendor match state</h3>
+            </div>
+            <div className="p-5">
+              <p className="text-white/70">
+                The backend currently stores the canonical project record and RFQ state. Vendor shortlist scoring can be attached here next.
+              </p>
+              <p className="mt-3 text-sm text-white/40">
+                Recommended region: {project.recommended_location || "—"}
+              </p>
+              <p className="text-sm text-white/40">
+                Workflow stage: {(project.workflow_stage || project.status || "draft").replace(/_/g, " ")}
+              </p>
+            </div>
+          </div>
+
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Matching signals</h3>
+            </div>
+            <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Stat label="Category summary" value={Object.keys((project.categories || {})).length || 0} hint="From canonical BOM analysis" />
+              <Stat label="Current vendor match" value={project.current_vendor_match_id || "—"} hint="Will populate after vendor ranking" />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === "rfq") {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-semibold text-white">RFQ workspace</h3>
+              <p className="text-sm text-white/35">Create or inspect the sourcing request from this project.</p>
+            </div>
+            <button
+              onClick={handleRequestQuote}
+              disabled={rfqLoading}
+              className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
+            >
+              {rfqLoading ? "Creating..." : "Create RFQ"}
+            </button>
+          </div>
+
+          <div className={cardClass}>
+            <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+              <Stat label="RFQ status" value={(project.rfq_status || "none").replace(/_/g, " ")} />
+              <Stat label="Current RFQ" value={project.current_rfq_id || "—"} />
+              <Stat label="Drawing files" value={drawingFile ? drawingFile.name : "No drawing selected"} />
+            </div>
+          </div>
+
+          {rfqData ? (
+            <div className={cardClass}>
+              <div className="border-b border-white/[0.06] px-5 py-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">RFQ summary</h3>
+              </div>
+              <div className="p-5 space-y-4">
+                <p className="text-sm text-white/45">RFQ ID: {rfqData.id}</p>
+                <p className="text-sm text-white/45">Status: {rfqData.status}</p>
+                <p className="text-sm text-white/45">Currency: {rfqData.currency || "USD"}</p>
+                <p className="text-sm text-white/45">Final cost: {rfqData.total_final_cost ? `${currency} ${fmt(rfqData.total_final_cost)}` : "—"}</p>
+              </div>
+            </div>
+          ) : (
+            <div className={cardClass}>
+              <div className="p-5 text-sm text-white/35">No RFQ loaded yet.</div>
+            </div>
+          )}
+
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Drawings</h3>
+            </div>
+            <div className="p-5 space-y-3">
+              <input
+                type="file"
+                onChange={(e) => setDrawingFile(e.target.files?.[0] || null)}
+                className="block w-full text-sm text-white/55"
+              />
+              <button
+                onClick={handleUploadDrawing}
+                disabled={!drawingFile || drawingUploading || !project.current_rfq_id}
+                className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+              >
+                {drawingUploading ? "Uploading..." : "Upload drawing"}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === "comparison") {
+      return (
+        <div className="space-y-6">
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Quote comparison</h3>
+            </div>
+            <div className="p-5">
+              <p className="text-white/70">
+                Quote comparison is the next control-tower surface. The project now carries the canonical RFQ pointer and quote-ready state.
+              </p>
+              <p className="mt-3 text-sm text-white/40">
+                current_quote_id: {project.current_quote_id || "—"}
+              </p>
+            </div>
+          </div>
+
+          <div className={cardClass}>
+            <div className="p-5 text-sm text-white/35">
+              When quote rows are persisted, render a matrix here with price, lead time, availability, and terms side by side.
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === "chat") {
+      return (
+        <div className="space-y-6">
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Negotiation thread</h3>
+            </div>
+            <div className="p-5 text-sm text-white/40">
+              Chat and threaded negotiation history are not yet backed by a dedicated message model. This tab should connect to a future thread service.
+            </div>
+          </div>
+
+          <ProjectEventTimeline events={events} title="Audit trail" />
+        </div>
+      );
+    }
+
+    if (activeTab === "order") {
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <Stat label="PO" value={project.current_po_id || "—"} />
+            <Stat label="Shipment" value={project.current_shipment_id || "—"} />
+            <Stat label="Invoice" value={project.current_invoice_id || "—"} />
+            <Stat label="Delivery" value={(project.workflow_stage || "draft").replace(/_/g, " ")} />
+          </div>
+
+          <div className={cardClass}>
+            <div className="p-5 text-sm text-white/40">
+              Purchase order placement should attach the PO record, vendor acceptance, and shipment booking to this project.
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === "tracking") {
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <Stat label="Production stage" value={(project.tracking_stage || "init").replace(/_/g, " ")} />
+            <Stat label="Current RFQ" value={project.current_rfq_id || "—"} />
+            <Stat label="Current shipment" value={project.current_shipment_id || "—"} />
+          </div>
+
+          <div className={cardClass}>
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Tracking timeline</h3>
+            </div>
+            <div className="p-5">
+              {trackingData.length === 0 ? (
+                <p className="text-sm text-white/35">No tracking entries yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {trackingData.map((item, idx) => (
+                    <div key={`${item.rfq_id}-${item.stage}-${idx}`} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm text-white">{item.stage}</p>
+                        <p className="text-xs text-white/35">{item.progress_percent}%</p>
+                      </div>
+                      <p className="mt-1 text-xs text-white/40">{item.status_message || "No note"}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === "analytics") {
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <Stat label="Cost" value={`${currency} ${fmt(project.cost || project.average_cost || 0)}`} />
+            <Stat label="Savings" value={project.savings_percent != null ? `${fmt(project.savings_percent)}%` : "—"} />
+            <Stat label="Lead time" value={project.lead_time != null ? `${fmt(project.lead_time)} days` : "—"} />
+            <Stat label="Total parts" value={project.total_parts || 0} />
+          </div>
+
+          <ProjectEventTimeline events={events} title="Learning / event log" />
+        </div>
+      );
+    }
+
+    if (activeTab === "history") {
+      return (
+        <div className="space-y-6">
+          {!historyLoading && snapshots.length === 0 && strategyRuns.length === 0 && (
+            <div className="text-center">
+              <button
+                onClick={loadHistory}
+                className="rounded-xl bg-sky-500/10 border border-sky-500/20 px-5 py-2.5 text-sm font-semibold text-sky-400 hover:bg-sky-500/20"
+              >
+                Load version history
+              </button>
+            </div>
+          )}
+
+          {historyLoading && <div className="text-sm text-white/35">Loading version history...</div>}
+
+          {snapshots.length > 0 && (
+            <div className={cardClass}>
+              <div className="border-b border-white/[0.06] px-5 py-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Report versions</h3>
+              </div>
+              <div className="divide-y divide-white/[0.05]">
+                {snapshots.map((snap) => (
+                  <div key={snap.id} className="p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm text-white">Version {snap.version}</p>
+                        <p className="text-xs text-white/35">{snap.total_parts} parts · {snap.priority} priority</p>
+                      </div>
+                      <p className="text-xs text-white/35">{snap.created_at ? new Date(snap.created_at).toLocaleString() : "—"}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {strategyRuns.length > 0 && (
+            <div className={cardClass}>
+              <div className="border-b border-white/[0.06] px-5 py-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Strategy runs</h3>
+              </div>
+              <div className="divide-y divide-white/[0.05]">
+                {strategyRuns.map((run) => (
+                  <div key={run.id} className="p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm text-white">Run v{run.version}</p>
+                        <p className="text-xs text-white/35">{run.recommended_location || "—"} · {run.total_parts} parts</p>
+                      </div>
+                      <p className="text-xs text-white/35">{run.created_at ? new Date(run.created_at).toLocaleString() : "—"}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <ProjectEventTimeline events={events} title="Project events" />
+        </div>
+      );
+    }
+
+    return <div className="text-sm text-white/35">Tab not found.</div>;
+  };
 
   return (
     <div className="min-h-screen bg-[#010409]">
-
-      {/* ── Header ────────────────────────────────────── */}
       <section className="border-b border-white/[0.06]">
         <Container className="py-8">
           <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
-            <Link to="/dashboard" className="hover:text-white/60 transition-colors">Projects</Link>
+            <Link to="/dashboard" className="hover:text-white/60 transition-colors">Control tower</Link>
             <span>/</span>
             <span className="text-white/60">{project.name || "Project"}</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-2xl font-bold text-white">{project.name || project.file_name || "Untitled BOM"}</h1>
-                <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[project.status] || STATUS_STYLES.uploaded}`}>
-                  {(project.status || "uploaded").replace(/_/g, " ")}
+                <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[stage] || STATUS_STYLES.draft}`}>
+                  {stage.replace(/_/g, " ")}
                 </span>
               </div>
               <div className="flex flex-wrap gap-4 text-xs text-white/40">
@@ -148,24 +637,19 @@ export default function ProjectDetail() {
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-2">
-              {project.status === "analyzed" && !rfqSuccess && (
+            <div className="flex flex-wrap gap-2">
+              {project.workflow_stage === "project_hydrated" && !rfqSuccess && (
                 <button
                   onClick={handleRequestQuote}
                   disabled={rfqLoading}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-semibold transition-all shadow-lg shadow-emerald-600/20"
+                  className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
                 >
-                  {rfqLoading ? "Requesting..." : "Request Quote"}
+                  {rfqLoading ? "Creating RFQ..." : "Create RFQ"}
                 </button>
               )}
-              {rfqSuccess && (
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
-                  ✓ Quote Requested
-                </span>
-              )}
-              <Link to="/bom-analyzer"
-                className="px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-white/60 text-sm font-medium transition-all"
+              <Link
+                to="/bom-analyzer"
+                className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
               >
                 New Analysis
               </Link>
@@ -174,490 +658,28 @@ export default function ProjectDetail() {
         </Container>
       </section>
 
-      {/* ── Progress tracker ──────────────────────────── */}
       <section className="border-b border-white/[0.06]">
-        <Container className="py-5">
-          <div className="flex items-center gap-1 overflow-x-auto">
-            {STAGES.map((stage, i) => {
-              const done = i <= stageIdx;
-              const current = i === stageIdx;
-              return (
-                <div key={stage} className="flex items-center">
-                  <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap transition-all ${
-                    current ? "bg-sky-500/15 text-sky-400 border border-sky-500/20" :
-                    done ? "text-emerald-400/70" :
-                    "text-white/20"
-                  }`}>
-                    {done && !current && <span className="text-emerald-400">✓</span>}
-                    {stage.replace(/_/g, " ")}
-                  </div>
-                  {i < STAGES.length - 1 && (
-                    <div className={`w-4 h-px mx-0.5 ${i < stageIdx ? "bg-emerald-500/40" : "bg-white/[0.06]"}`} />
-                  )}
-                </div>
-              );
-            })}
+        <Container className="py-4">
+          <div className="flex gap-2 overflow-x-auto">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
+                  activeTab === tab.id
+                    ? "bg-sky-500/15 text-sky-400 border border-sky-500/20"
+                    : "bg-white/[0.03] text-white/45 border border-white/[0.06] hover:bg-white/[0.05]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </Container>
       </section>
 
-      {/* ── Content ───────────────────────────────────── */}
       <Container className="py-8">
-
-        {/* KPI row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className={card}>
-            <div className="p-5">
-              <p className="text-white/35 text-xs font-medium mb-1">Estimated Cost</p>
-              <p className="text-xl font-bold text-white">{cur} {fmt(project.average_cost)}</p>
-              {project.cost_range_low > 0 && (
-                <p className="text-white/40 text-xs mt-1">{fmt(project.cost_range_low)} — {fmt(project.cost_range_high)}</p>
-              )}
-            </div>
-          </div>
-          <div className={card}>
-            <div className="p-5">
-              <p className="text-white/35 text-xs font-medium mb-1">Savings</p>
-              <p className="text-xl font-bold text-emerald-400">{project.savings_percent ? `${project.savings_percent.toFixed(1)}%` : "—"}</p>
-              <p className="text-white/40 text-xs mt-1">vs baseline</p>
-            </div>
-          </div>
-          <div className={card}>
-            <div className="p-5">
-              <p className="text-white/35 text-xs font-medium mb-1">Lead Time</p>
-              <p className="text-xl font-bold text-white">{project.lead_time ? `${Math.round(project.lead_time)}d` : "—"}</p>
-              <p className="text-white/40 text-xs mt-1">estimated</p>
-            </div>
-          </div>
-          <div className={card}>
-            <div className="p-5">
-              <p className="text-white/35 text-xs font-medium mb-1">Location</p>
-              <p className="text-lg font-bold text-white">{project.recommended_location || "—"}</p>
-              <p className="text-white/40 text-xs mt-1">recommended</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        {(s2.length > 0 || project.decision_summary) && (
-          <>
-            <div className="flex gap-1 p-1 bg-white/[0.03] rounded-xl border border-white/[0.06] max-w-fit mb-6">
-              {[
-                ["overview", "Overview"],
-                ["components", "Components"],
-                ["strategy", "Strategy"],
-                ["rfq", "RFQ & Drawings"],
-                ["tracking", "Tracking"],
-                ["history", "History"],
-              ].map(([tid, label]) => (
-                <button key={tid} onClick={() => setActiveTab(tid)}
-                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${activeTab === tid ? "bg-sky-500 text-white" : "text-white/60 hover:text-white/80"}`}>
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Overview tab */}
-            {activeTab === "overview" && (
-              <div className="space-y-6">
-                {project.decision_summary && (
-                  <div className={card}>
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">Decision Summary</h3>
-                      <p className="text-white/70 text-sm leading-relaxed">{project.decision_summary}</p>
-                    </div>
-                  </div>
-                )}
-
-                {Object.keys(bd).length > 0 && (
-                  <div className={card}>
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Cost Breakdown</h3>
-                      <div className="space-y-3">
-                        {[
-                          { label: "Manufacturing", value: bd.manufacturing, color: "bg-emerald-500" },
-                          { label: "Logistics", value: bd.logistics, color: "bg-sky-500" },
-                          { label: "Tariffs", value: bd.tariffs, color: "bg-amber-500" },
-                          { label: "NRE / Tooling", value: bd.nre, color: "bg-violet-500" },
-                        ].filter(r => r.value > 0).map((row, i) => {
-                          const total = s1.total_cost || 1;
-                          const w = Math.max(2, ((row.value || 0) / total) * 100);
-                          return (
-                            <div key={i} className="flex items-center gap-4">
-                              <span className="text-white/70 text-xs w-28 shrink-0">{row.label}</span>
-                              <div className="flex-1 h-2 bg-white/[0.04] rounded-full overflow-hidden">
-                                <div className={`h-full rounded-full ${row.color}`} style={{ width: `${w}%`, transition: "width 1s ease" }} />
-                              </div>
-                              <span className="text-white/60 text-xs font-mono w-20 text-right">{cur} {fmt(row.value)}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Components tab — grouped by category */}
-            {activeTab === "components" && s2.length > 0 && (
-              <div className="space-y-6">
-                {CATEGORY_ORDER.filter(cat => groupedComponents[cat]?.length > 0).map(cat => (
-                  <div key={cat}>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`w-2 h-2 rounded-full bg-${CAT_COLORS[cat] || "white"}-400`} />
-                      <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">{CAT_LABELS[cat] || cat}</h3>
-                      <span className="text-white/30 text-xs">({groupedComponents[cat].length})</span>
-                    </div>
-                    <div className="space-y-2">
-                      {groupedComponents[cat].map((item, i) => {
-                        const v = item.selected_vendor || {};
-                        return (
-                          <div key={`${cat}-${i}`} className={card}>
-                            <div className="p-4 flex items-center gap-4">
-                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                                cat.includes("custom") || cat === "sheet_metal" || cat === "machined" ? "bg-violet-500/15 text-violet-400" :
-                                cat === "raw_material" ? "bg-amber-500/15 text-amber-400" :
-                                cat === "electrical" || cat === "electronics" ? "bg-sky-500/15 text-sky-400" :
-                                cat === "fastener" ? "bg-cyan-500/15 text-cyan-400" :
-                                "bg-emerald-500/15 text-emerald-400"
-                              }`}>
-                                {cat.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-white text-sm font-medium truncate">{item.description}</p>
-                                <p className="text-white/40 text-xs">Q: {item.quantity} · {v.region || "—"}{item.process ? ` · ${item.process}` : ""}</p>
-                              </div>
-                              <div className="text-right shrink-0">
-                                <p className="text-white font-mono text-sm">{v.simulated_tlc ? `${cur} ${fmt(v.simulated_tlc)}` : "RFQ"}</p>
-                                {item.price_source && <p className="text-white/30 text-[10px]">{item.price_source}</p>}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Strategy tab */}
-            {activeTab === "strategy" && (
-              <div className="space-y-6">
-                {strat.region_distribution && Object.keys(strat.region_distribution).length > 0 && (
-                  <div className={card}>
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Region Distribution</h3>
-                      <div className="flex flex-wrap gap-3">
-                        {Object.entries(strat.region_distribution).map(([region, count]) => (
-                          <div key={region} className="px-4 py-3 bg-white/[0.03] border border-white/[0.06] rounded-xl text-center min-w-[100px]">
-                            <p className="text-white font-semibold text-lg">{count}</p>
-                            <p className="text-white/40 text-xs mt-0.5">{region}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {strat.decision_summary && (
-                  <div className={card}>
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">Strategy Summary</h3>
-                      <p className="text-white/60 text-sm leading-relaxed">{strat.decision_summary}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Procurement plan preview */}
-                {project.procurement_plan && (
-                  <div className={card}>
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">Procurement Plan</h3>
-                      <p className="text-white/50 text-xs">Full procurement plan with supplier allocation and timeline is available in this project.</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* RFQ & Drawings tab */}
-            {activeTab === "rfq" && (
-              <div className="space-y-6">
-                {/* RFQ Status */}
-                <div className={card}>
-                  <div className="p-6">
-                    <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">RFQ Status</h3>
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className={`inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold uppercase ${
-                        project.rfq_status === "quoted" ? "bg-violet-500/15 text-violet-400" :
-                        project.rfq_status === "approved" ? "bg-emerald-500/15 text-emerald-400" :
-                        project.rfq_status === "sent" || project.rfq_status === "draft" ? "bg-amber-500/15 text-amber-400" :
-                        "bg-white/[0.06] text-white/50"
-                      }`}>
-                        {(project.rfq_status || "none").replace(/_/g, " ")}
-                      </span>
-                      {project.status === "analyzed" && project.rfq_status === "none" && !rfqSuccess && (
-                        <button onClick={handleRequestQuote} disabled={rfqLoading}
-                          className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold transition-all">
-                          {rfqLoading ? "Requesting..." : "Request Quote"}
-                        </button>
-                      )}
-                      {rfqSuccess && <span className="text-emerald-400 text-xs font-medium">✓ Quote Requested</span>}
-                    </div>
-
-                    {/* Custom parts requiring RFQ */}
-                    {s2.filter(item => item.category === "machined" || item.category === "custom_mechanical" || item.category === "sheet_metal").length > 0 && (
-                      <div className="mt-4">
-                        <p className="text-white/40 text-xs mb-2">Custom parts requiring quotes:</p>
-                        <div className="space-y-2">
-                          {s2.filter(item => item.category === "machined" || item.category === "custom_mechanical" || item.category === "sheet_metal").map((item, i) => (
-                            <div key={i} className="flex items-center justify-between py-2 px-3 bg-white/[0.02] rounded-lg border border-white/[0.04]">
-                              <div>
-                                <p className="text-white text-xs font-medium">{item.description}</p>
-                                <p className="text-white/30 text-[10px]">{item.material || "—"} · {item.process || "—"}</p>
-                              </div>
-                              <span className="text-violet-400 text-[10px] font-semibold uppercase">RFQ Required</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Drawing Upload */}
-                <div className={card}>
-                  <div className="p-6">
-                    <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Upload Drawing</h3>
-                    <p className="text-white/40 text-xs mb-4">Upload technical drawings for custom parts to get accurate quotes within 24 hours.</p>
-                    <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-white/10 rounded-xl cursor-pointer hover:border-white/20 transition-all">
-                      <input type="file" accept=".pdf,.dxf,.dwg,.step,.stp,.iges,.igs,.png,.jpg"
-                        className="hidden"
-                        onChange={async (e) => {
-                          const f = e.target.files?.[0];
-                          if (!f) return;
-                          setDrawingUploading(true);
-                          try {
-                            // Use the project's bom_id to upload
-                            await uploadDrawing(id, f, f.name);
-                            setDrawingFile(f.name);
-                            setDrawingUploading(false);
-                          } catch (err) {
-                            setError(err.message);
-                            setDrawingUploading(false);
-                          }
-                        }}
-                      />
-                      {drawingUploading ? (
-                        <div className="text-center">
-                          <div className="w-6 h-6 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin mb-2" />
-                          <p className="text-white/40 text-xs">Uploading...</p>
-                        </div>
-                      ) : drawingFile ? (
-                        <div className="text-center">
-                          <svg className="w-6 h-6 mx-auto text-emerald-400 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                          <p className="text-emerald-400 text-xs font-medium">{drawingFile}</p>
-                          <p className="text-white/30 text-[10px] mt-1">Click to upload another</p>
-                        </div>
-                      ) : (
-                        <div className="text-center">
-                          <svg className="w-6 h-6 mx-auto text-white/30 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                          <p className="text-white/40 text-xs">PDF, DXF, DWG, STEP, IGES, or images</p>
-                        </div>
-                      )}
-                    </label>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Tracking tab */}
-            {activeTab === "tracking" && (
-              <div className="space-y-6">
-                <div className={card}>
-                  <div className="p-6">
-                    <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Production Timeline</h3>
-                    <div className="space-y-0">
-                      {[
-                        { stage: "T0", label: "Order Placed", icon: "📋" },
-                        { stage: "T1", label: "Material Procurement", icon: "🔧" },
-                        { stage: "T2", label: "Manufacturing Started", icon: "⚙" },
-                        { stage: "T3", label: "QC / Inspection", icon: "🔍" },
-                        { stage: "T4", label: "Shipped / Delivered", icon: "📦" },
-                      ].map((step, i) => {
-                        const currentStage = project.tracking_stage || "init";
-                        const stageOrder = { init: -1, T0: 0, T1: 1, T2: 2, T3: 3, T4: 4 };
-                        const stepIdx = stageOrder[step.stage] ?? i;
-                        const currentIdx = stageOrder[currentStage] ?? -1;
-                        const done = stepIdx <= currentIdx;
-                        const active = stepIdx === currentIdx;
-
-                        return (
-                          <div key={step.stage} className="flex items-start gap-4">
-                            <div className="flex flex-col items-center">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
-                                active ? "bg-sky-500/20 border-2 border-sky-500 text-sky-400" :
-                                done ? "bg-emerald-500/15 text-emerald-400" :
-                                "bg-white/[0.04] text-white/20"
-                              }`}>
-                                {done && !active ? "✓" : step.icon}
-                              </div>
-                              {i < 4 && <div className={`w-px h-8 ${done ? "bg-emerald-500/30" : "bg-white/[0.06]"}`} />}
-                            </div>
-                            <div className="pb-6">
-                              <p className={`text-sm font-medium ${active ? "text-sky-400" : done ? "text-white/70" : "text-white/30"}`}>
-                                {step.label}
-                              </p>
-                              <p className="text-white/25 text-xs">{step.stage}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Status info */}
-                {(project.tracking_stage === "init" || !project.tracking_stage) && (
-                  <div className={card}>
-                    <div className="p-6 text-center">
-                      <p className="text-white/40 text-sm">Production tracking will be available once an RFQ is approved and manufacturing begins.</p>
-                      {project.rfq_status === "none" && (
-                        <button onClick={handleRequestQuote} disabled={rfqLoading}
-                          className="mt-4 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-semibold transition-all">
-                          {rfqLoading ? "Requesting..." : "Request Quote to Start"}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* History tab — report snapshots + strategy runs */}
-            {activeTab === "history" && (
-              <div className="space-y-6">
-                {/* Load history on first view */}
-                {!snapshots && !historyLoading && (
-                  <div className="text-center py-8">
-                    <button
-                      onClick={async () => {
-                        setHistoryLoading(true);
-                        try {
-                          const [snaps, runs] = await Promise.all([
-                            getProjectSnapshots(id),
-                            getStrategyRuns(id),
-                          ]);
-                          setSnapshots(snaps || []);
-                          setStrategyRuns(runs || []);
-                        } catch (err) {
-                          setError(err.message);
-                        } finally {
-                          setHistoryLoading(false);
-                        }
-                      }}
-                      className="px-5 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 text-sm font-semibold hover:bg-sky-500/20 transition-all"
-                    >
-                      Load Version History
-                    </button>
-                  </div>
-                )}
-
-                {historyLoading && (
-                  <div className="text-center py-8">
-                    <div className="w-8 h-8 mx-auto rounded-full border-2 border-sky-500/20 border-t-sky-500 animate-spin" />
-                    <p className="text-white/40 text-xs mt-3">Loading history...</p>
-                  </div>
-                )}
-
-                {/* Report Snapshots */}
-                {snapshots && snapshots.length > 0 && (
-                  <div className={card}>
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Report Versions</h3>
-                      <div className="space-y-2">
-                        {snapshots.map((snap, i) => (
-                          <div key={snap.id} className={`flex items-center justify-between py-3 px-4 rounded-lg border transition-all ${
-                            i === 0 ? "bg-emerald-500/5 border-emerald-500/15" : "bg-white/[0.02] border-white/[0.04]"
-                          }`}>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="text-white text-sm font-medium">Version {snap.version}</p>
-                                {i === 0 && (
-                                  <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-[10px] font-semibold uppercase">Current</span>
-                                )}
-                              </div>
-                              <p className="text-white/30 text-xs mt-0.5">
-                                {snap.total_parts} parts · {snap.priority} priority · Engine {snap.analyzer_version || "—"}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-white/40 text-xs">
-                                {snap.created_at ? new Date(snap.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Strategy Runs */}
-                {strategyRuns && strategyRuns.length > 0 && (
-                  <div className={card}>
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Strategy Runs</h3>
-                      <div className="space-y-2">
-                        {strategyRuns.map((run, i) => (
-                          <div key={run.id} className={`flex items-center justify-between py-3 px-4 rounded-lg border transition-all ${
-                            run.is_current ? "bg-sky-500/5 border-sky-500/15" : "bg-white/[0.02] border-white/[0.04]"
-                          }`}>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="text-white text-sm font-medium">Run v{run.version}</p>
-                                {run.is_current && (
-                                  <span className="px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 text-[10px] font-semibold uppercase">Active</span>
-                                )}
-                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase ${
-                                  run.priority === "speed" ? "bg-amber-500/15 text-amber-400" : "bg-emerald-500/15 text-emerald-400"
-                                }`}>
-                                  {run.priority}
-                                </span>
-                              </div>
-                              <p className="text-white/30 text-xs mt-0.5">
-                                {run.recommended_location || "—"} · {run.total_parts} parts
-                                {run.savings_percent ? ` · ${run.savings_percent.toFixed(1)}% savings` : ""}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              {run.average_cost && (
-                                <p className="text-white font-mono text-sm">{cur} {Number(run.average_cost).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                              )}
-                              <p className="text-white/40 text-xs">
-                                {run.created_at ? new Date(run.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {snapshots && snapshots.length === 0 && strategyRuns && strategyRuns.length === 0 && (
-                  <div className={card}>
-                    <div className="p-6 text-center">
-                      <p className="text-white/40 text-sm">No version history available yet. Re-analyze the BOM to create a new version.</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
+        {renderTab()}
       </Container>
     </div>
   );

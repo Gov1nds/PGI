@@ -290,3 +290,29 @@ export async function getStrategyRun(projectId, runId) {
   if (!res.ok) throw new Error("Strategy run not found");
   return res.json();
 }
+export async function getProjectMetrics() {
+  const res = await apiCall("/api/v1/projects/metrics");
+  if (!res.ok) throw new Error("Failed to load project metrics");
+  return res.json();
+}
+
+export async function getProjectEvents(projectId) {
+  const res = await apiCall(`/api/v1/projects/${projectId}/events`);
+  if (!res.ok) throw new Error("Failed to load project events");
+  return res.json();
+}
+
+export async function updateProjectStatus(projectId, status, notes = "") {
+  const res = await apiCall(`/api/v1/projects/${projectId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status, notes }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Project update failed");
+  }
+
+  return res.json();
+}

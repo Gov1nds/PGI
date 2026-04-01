@@ -1,10 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { uploadBOM, unlockBOM } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 
 /* ── Constants ──────────────────────────────────────────── */
+  const navigate = useNavigate();
+
+  const [analysisStatus, setAnalysisStatus] = useState("guest_preview");
+  const [reportVisibilityLevel, setReportVisibilityLevel] = useState("preview");
+  const [unlockStatus, setUnlockStatus] = useState("locked");
+  const [guestBomId, setGuestBomId] = useState(null);
+  const [workspaceRoute, setWorkspaceRoute] = useState(null);
 
 const CURRENCIES = ["USD", "EUR", "INR", "CNY", "JPY", "GBP", "KRW", "MXN", "THB", "VND"];
 
@@ -228,61 +235,101 @@ export default function BOMAnalyzer() {
   const handleDragLeave = () => setDragOver(false);
 
   /* ── API call ─────────────────────────────────────────── */
-  const startAnalysis = async () => {
+    const startAnalysis = async () => {
     if (!file) { setError("Upload a BOM file first"); setStep(1); return; }
     if (!country || !stateRegion || !city) { setError("Complete the location fields"); return; }
 
-    setStep(3); setIsProcessing(true); setError(null);
+    setStep(3);
+    setIsProcessing(true);
+    setError(null);
     setProgress("Uploading BOM file...");
 
     try {
       const location = `${city}, ${stateRegion}, ${country}`;
       setProgress("Running intelligence pipeline...");
 
-      const data = await uploadBOM(file, location, currency);
+      const data = await uploadBOM(file, location, currency, "cost");
 
       setProgress("Building report...");
-      setBomId(data.bom_id);
-      setProjectId(data.preview?.project_id || data.bom_id);
+      const preview = data.preview || {};
+      const nextProjectId = data.project_id || preview.project_id || data.bom_id;
+      const nextWorkspaceRoute = data.workspace_route || preview.workspace_route || `/project/${nextProjectId}`;
 
-      if (data.preview?.is_preview) {
-        setPreviewData(data.preview);
-        setSessionToken(data.session_token);
+      setBomId(data.bom_id || preview.guest_bom_id || null);
+      setGuestBomId(data.guest_bom_id || preview.guest_bom_id || data.bom_id || null);
+      setProjectId(nextProjectId);
+      setSessionToken(data.session_token || preview.session_token || null);
+      setAnalysisStatus(data.analysis_status || preview.analysis_status || (preview.is_preview ? "guest_preview" : "authenticated_unlocked"));
+      setReportVisibilityLevel(data.report_visibility_level || preview.report_visibility_level || (preview.is_preview ? "preview" : "full"));
+      setUnlockStatus(data.unlock_status || preview.unlock_status || (preview.is_preview ? "locked" : "unlocked"));
+      setWorkspaceRoute(nextWorkspaceRoute);
+
+      if (preview.is_preview) {
+        setPreviewData(preview);
         setIsProcessing(false);
         setStep(4);
       } else {
-        const fullData = data.preview;
-        setReport(fullData.analyzer_report);
-        setStrategy(fullData.strategy);
+        const fullData = preview;
+        setReport(fullData.analyzer_report || fullData.full_report || {});
+        setStrategy(fullData.strategy || {});
+        setPreviewData(null);
         setIsProcessing(false);
-        setStep(5);
+        setStep(6);
+        navigate(nextWorkspaceRoute, { replace: true });
       }
     } catch (err) {
       setError(err.message || "Analysis failed");
       setIsProcessing(false);
       setStep(2);
     }
-  };
+   };
 
   /* ── Unlock ───────────────────────────────────────────── */
-  const handleUnlock = async () => {
+    const handleUnlock = async () => {
     if (!bomId) return;
     try {
       const data = await unlockBOM(bomId, sessionToken);
+
+      const nextProjectId = data.project_id || projectId || bomId;
+      const nextWorkspaceRoute = data.workspace_route || `/project/${nextProjectId}`;
+
       setReport(data.full_report?.analyzer || data.full_report || {});
       setStrategy(data.strategy || {});
       setPreviewData(null);
-      setStep(5);
+      setProjectId(nextProjectId);
+      setAnalysisStatus(data.analysis_status || "authenticated_unlocked");
+      setReportVisibilityLevel(data.report_visibility_level || "full");
+      setUnlockStatus(data.unlock_status || "unlocked");
+      setWorkspaceRoute(nextWorkspaceRoute);
+      setStep(6);
+
+      navigate(nextWorkspaceRoute, { replace: true });
     } catch (err) {
       setError(err.message || "Unlock failed — please login first");
     }
   };
 
+  // ── Reset ─────────────────────────────────────────────── (6.5)
   const reset = () => {
-    setStep(1); setFile(null); setReport(null); setStrategy(null);
-    setPreviewData(null); setBomId(null); setProjectId(null); setSessionToken(null);
-    setError(null); setCountry(""); setStateRegion(""); setCity("");
-    setExpandedItem(null); setActiveTab("overview");
+    setStep(1);
+    setFile(null);
+    setReport(null);
+    setStrategy(null);
+    setPreviewData(null);
+    setBomId(null);
+    setGuestBomId(null);
+    setProjectId(null);
+    setSessionToken(null);
+    setWorkspaceRoute(null);
+    setAnalysisStatus("guest_preview");
+    setReportVisibilityLevel("preview");
+    setUnlockStatus("locked");
+    setError(null);
+    setCountry("");
+    setStateRegion("");
+    setCity("");
+    setExpandedItem(null);
+    setActiveTab("overview");
   };
 
   /* ── Derived data ────────────────────────────────────── */
@@ -320,11 +367,24 @@ export default function BOMAnalyzer() {
     groupedS2[cat].push(item);
   }
 
-  /* ── Step names ──────────────────────────────────────── */
-  const isGuest = !user;
-  const stepDefs = isGuest
-    ? [{ n: "Upload", icon: "↑" }, { n: "Location", icon: "◎" }, { n: "Analyze", icon: "⟳" }, { n: "Preview", icon: "◉" }, { n: "Report", icon: "✦" }]
-    : [{ n: "Upload", icon: "↑" }, { n: "Location", icon: "◎" }, { n: "Analyze", icon: "⟳" }, { n: "Report", icon: "✦" }];
+  /* ── Workflow stage + step definitions ───────────────── (6.6) */
+  const workflowStage = useMemo(() => {
+    if (step === 1) return 1;
+    if (step === 2) return 2;
+    if (isProcessing) return 3;
+    if (previewData && unlockStatus !== "unlocked") return 4;
+    if (unlockStatus === "unlocked" && report) return 6;
+    return Math.min(step, 6);
+  }, [step, isProcessing, previewData, unlockStatus, report]);
+
+  const stepDefs = [
+    { n: "Upload", icon: "↑" },
+    { n: "Normalize", icon: "◎" },
+    { n: "Analyze", icon: "⟳" },
+    { n: "Preview", icon: "◉" },
+    { n: "Unlock", icon: "🔓" },
+    { n: "Workspace", icon: "✦" },
+  ];
 
   return (
     <div className="bom-root">
@@ -364,15 +424,15 @@ export default function BOMAnalyzer() {
           </div>
         )}
 
-        {/* ── Step indicator ───────────────────────────── */}
-        {step < 5 && (
+        {/* ── Step indicator ───────────────────────────── (6.7) */}
+        {workflowStage < 6 && (
           <FadeIn delay={200}>
             <div className="bom-steps">
               {stepDefs.map((sd, i) => {
                 const s = i + 1;
-                const done = step > s;
-                const active = step === s;
-                const future = step < s;
+                const done = workflowStage > s;
+                const active = workflowStage === s;
+                const future = workflowStage < s;
                 return (
                   <React.Fragment key={s}>
                     <div className={`bom-step ${done ? "done" : ""} ${active ? "active" : ""} ${future ? "future" : ""}`}>
@@ -448,8 +508,9 @@ export default function BOMAnalyzer() {
             <div className="bom-card bom-card-lg">
               <div className="bom-card-body">
                 <div className="bom-section-header">
-                  <h2 className="bom-section-title">Delivery Location</h2>
-                  <span className="bom-section-meta">Where should components be delivered?</span>
+                  {/* 6.8 — updated heading */}
+                  <h2 className="bom-section-title">Normalize Analysis Context</h2>
+                  <span className="bom-section-meta">Location and currency are used to normalize the BOM before classification.</span>
                 </div>
 
                 <div className="bom-form-grid">
@@ -691,7 +752,7 @@ export default function BOMAnalyzer() {
                   </p>
                   <div className="bom-cta-actions">
                     {user ? (
-                      <button onClick={handleUnlock} className="bom-cta-btn">Unlock Full Report</button>
+                      <button onClick={handleUnlock} className="bom-cta-btn">Unlock & Continue to Workspace</button>
                     ) : (
                       <>
                         <a href="/register" className="bom-cta-btn">Create Free Account</a>
@@ -730,8 +791,14 @@ export default function BOMAnalyzer() {
                   </p>
                 </div>
                 <div className="bom-report-actions">
+                  {/* 6.10 — replaced <a> with navigate button */}
                   {bomId && user && (
-                    <a href={`/project/${projectId || bomId}`} className="bom-accent-btn">View Project →</a>
+                    <button
+                      onClick={() => navigate(workspaceRoute || `/project/${projectId || bomId}`, { replace: true })}
+                      className="bom-accent-btn"
+                    >
+                      Open Workspace →
+                    </button>
                   )}
                   <button onClick={reset} className="bom-ghost-btn bom-ghost-btn-sm">New Analysis</button>
                 </div>
@@ -1608,6 +1675,8 @@ export default function BOMAnalyzer() {
           font-size: 12px;
           font-weight: 600;
           text-decoration: none;
+          cursor: pointer;
+          font-family: var(--font);
           transition: all 0.2s;
         }
         .bom-accent-btn:hover { background: rgba(52,211,153,0.16); }
