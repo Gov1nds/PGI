@@ -238,6 +238,94 @@ export async function submitVendorFeedback(vendorId, payload) {
   return res.json();
 }
 
+export async function getChatThreads(projectId) {
+  const res = await apiCall(`/api/v1/chat/threads?project_id=${encodeURIComponent(projectId)}`);
+  if (!res.ok) throw new Error("Failed to load chat threads");
+  return res.json();
+}
+
+export async function createChatThread(payload) {
+  const res = await apiCall("/api/v1/chat/threads", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create thread");
+  }
+  return res.json();
+}
+
+export async function getChatMessages(threadId) {
+  const res = await apiCall(`/api/v1/chat/threads/${threadId}/messages`);
+  if (!res.ok) throw new Error("Failed to load messages");
+  return res.json();
+}
+
+export async function postChatMessage(formData) {
+  const res = await apiCall("/api/v1/chat/messages", {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to send message");
+  }
+  return res.json();
+}
+
+export async function getApprovals(projectId) {
+  const res = await apiCall(`/api/v1/approvals?project_id=${encodeURIComponent(projectId)}`);
+  if (!res.ok) throw new Error("Failed to load approvals");
+  return res.json();
+}
+
+export async function getApproval(approvalId) {
+  const res = await apiCall(`/api/v1/approvals/${approvalId}`);
+  if (!res.ok) throw new Error("Failed to load approval");
+  return res.json();
+}
+
+export async function createApproval(payload) {
+  const res = await apiCall("/api/v1/approvals", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create approval");
+  }
+  return res.json();
+}
+
+export async function approveApproval(approvalId, payload = {}) {
+  const res = await apiCall(`/api/v1/approvals/${approvalId}/approve`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to approve");
+  }
+  return res.json();
+}
+
+export async function rejectApproval(approvalId, payload = {}) {
+  const res = await apiCall(`/api/v1/approvals/${approvalId}/reject`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to reject");
+  }
+  return res.json();
+}
+
 // ═══════════════════════════════════════════════════
 // RFQ
 // ═══════════════════════════════════════════════════
@@ -418,6 +506,195 @@ export async function rejectRFQVendor(rfqId, payload) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Failed to reject vendor");
+  }
+  return res.json();
+}
+export async function getFulfillmentTracking(rfqId) {
+  const res = await apiCall(`/api/v1/tracking/rfq/${rfqId}`);
+  if (!res.ok) throw new Error("Failed to load fulfillment context");
+  return res.json();
+}
+
+export async function createPurchaseOrder(rfqId, payload) {
+  const res = await apiCall(`/api/v1/tracking/rfq/${rfqId}/purchase-order`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create purchase order");
+  }
+  return res.json();
+}
+
+export async function confirmPurchaseOrder(poId, payload) {
+  const res = await apiCall(`/api/v1/tracking/purchase-orders/${poId}/confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to confirm purchase order");
+  }
+  return res.json();
+}
+
+export async function createShipment(poId, payload) {
+  const res = await apiCall(`/api/v1/tracking/purchase-orders/${poId}/shipments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create shipment");
+  }
+  return res.json();
+}
+
+export async function addShipmentEvent(shipmentId, payload) {
+  const res = await apiCall(`/api/v1/tracking/shipments/${shipmentId}/events`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to add shipment event");
+  }
+  return res.json();
+}
+
+export async function addCarrierMilestone(shipmentId, payload) {
+  const res = await apiCall(`/api/v1/tracking/shipments/${shipmentId}/milestones`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to add carrier milestone");
+  }
+  return res.json();
+}
+
+export async function addCustomsEvent(shipmentId, payload) {
+  const res = await apiCall(`/api/v1/tracking/shipments/${shipmentId}/customs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to add customs event");
+  }
+  return res.json();
+}
+
+export async function confirmGoodsReceipt(poId, payload) {
+  const res = await apiCall(`/api/v1/tracking/purchase-orders/${poId}/receipts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to confirm goods receipt");
+  }
+  return res.json();
+}
+
+export async function createInvoice(poId, payload) {
+  const res = await apiCall(`/api/v1/tracking/purchase-orders/${poId}/invoices`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create invoice");
+  }
+  return res.json();
+}
+
+export async function updatePaymentState(invoiceId, payload) {
+  const res = await apiCall(`/api/v1/tracking/invoices/${invoiceId}/payment`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to update payment state");
+  }
+  return res.json();
+}
+export async function getSpendAnalytics(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.projectId) params.set("project_id", filters.projectId);
+  if (filters.startDate) params.set("start_date", filters.startDate);
+  if (filters.endDate) params.set("end_date", filters.endDate);
+
+  const res = await apiCall(`/api/v1/analytics/spend?${params.toString()}`);
+  if (!res.ok) throw new Error("Failed to load spend analytics");
+  return res.json();
+}
+
+export async function getVendorAnalytics(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.projectId) params.set("project_id", filters.projectId);
+  if (filters.startDate) params.set("start_date", filters.startDate);
+  if (filters.endDate) params.set("end_date", filters.endDate);
+
+  const res = await apiCall(`/api/v1/analytics/vendors?${params.toString()}`);
+  if (!res.ok) throw new Error("Failed to load vendor analytics");
+  return res.json();
+}
+
+export async function getCategoryAnalytics(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.projectId) params.set("project_id", filters.projectId);
+  if (filters.startDate) params.set("start_date", filters.startDate);
+  if (filters.endDate) params.set("end_date", filters.endDate);
+
+  const res = await apiCall(`/api/v1/analytics/categories?${params.toString()}`);
+  if (!res.ok) throw new Error("Failed to load category analytics");
+  return res.json();
+}
+
+export async function getTrendAnalytics(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.projectId) params.set("project_id", filters.projectId);
+  if (filters.startDate) params.set("start_date", filters.startDate);
+  if (filters.endDate) params.set("end_date", filters.endDate);
+
+  const res = await apiCall(`/api/v1/analytics/trends?${params.toString()}`);
+  if (!res.ok) throw new Error("Failed to load trend analytics");
+  return res.json();
+}
+
+export async function getSavingsAnalytics(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.projectId) params.set("project_id", filters.projectId);
+  if (filters.startDate) params.set("start_date", filters.startDate);
+  if (filters.endDate) params.set("end_date", filters.endDate);
+
+  const res = await apiCall(`/api/v1/analytics/savings?${params.toString()}`);
+  if (!res.ok) throw new Error("Failed to load savings analytics");
+  return res.json();
+}
+
+export async function scheduleReport(payload) {
+  const res = await apiCall("/api/v1/reports/schedule", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to schedule report");
   }
   return res.json();
 }

@@ -21,6 +21,20 @@ import {
   rejectRFQVendor,
   sendRFQ,
 } from "../lib/api";
+import ProjectChatDrawer from "../components/ProjectChatDrawer.jsx";
+import OrderCenterTimeline from "../components/OrderCenterTimeline.jsx";
+import {
+  getFulfillmentTracking,
+  createPurchaseOrder,
+  confirmPurchaseOrder,
+  createShipment,
+  addShipmentEvent,
+  addCarrierMilestone,
+  addCustomsEvent,
+  confirmGoodsReceipt,
+  createInvoice,
+  updatePaymentState,
+} from "../lib/api";
 
 const STATUS_STYLES = {
   draft: "bg-white/[0.06] text-white/60",
@@ -58,7 +72,10 @@ const TABS = [
 
 const fmt = (n, d = 2) => {
   if (n == null || Number.isNaN(Number(n))) return "—";
-  return Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  return Number(n).toLocaleString("en-US", {
+    minimumFractionDigits: d,
+    maximumFractionDigits: d,
+  });
 };
 
 function Stat({ label, value, hint }) {
@@ -95,44 +112,86 @@ export default function ProjectDetail() {
   const [rfqQuotes, setRfqQuotes] = useState(null);
   const [rfqComparison, setRfqComparison] = useState(null);
   const [comparisonSortBy, setComparisonSortBy] = useState("total_cost");
-  const [comparisonFilters, setComparisonFilters] = useState({ minVendorScore: "", maxCost: "", maxLeadTime: "", maxMoq: "",maxRisk: "",});                 
+  const [comparisonFilters, setComparisonFilters] = useState({
+    minVendorScore: "",
+    maxCost: "",
+    maxLeadTime: "",
+    maxMoq: "",
+    maxRisk: "",
+  });
   const [comparisonLoading, setComparisonLoading] = useState(false);
-   
+  const [showChatDrawer, setShowChatDrawer] = useState(false);
+  const [chatCounts, setChatCounts] = useState({
+    unread_messages: 0,
+    pending_approvals: 0,
+  });
+
+  // ── 8.2 Fulfillment state ──────────────────────────────────────────────────
+  const [fulfillmentContext, setFulfillmentContext] = useState(null);
+  const [fulfillmentLoading, setFulfillmentLoading] = useState(false);
+  const [poNumber, setPoNumber] = useState("");
+  const [carrierName, setCarrierName] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [etaValue, setEtaValue] = useState("");
+
+  // ── 8.3 Load fulfillment when order/tracking tab is active ─────────────────
   useEffect(() => {
-  if (activeTab !== "comparison") return;
-  if (!project?.current_rfq_id) return;
+    if (!project?.current_rfq_id) return;
 
-  const loadComparison = async () => {
-    setComparisonLoading(true);
-    try {
-      const filters = {
-        sort_by: comparisonSortBy,
-        min_vendor_score: comparisonFilters.minVendorScore,
-        max_cost: comparisonFilters.maxCost,
-        max_lead_time: comparisonFilters.maxLeadTime,
-        max_moq: comparisonFilters.maxMoq,
-        max_risk: comparisonFilters.maxRisk,
-      };
-      const [quotes, comparison] = await Promise.all([
-        getRFQQuotes(project.current_rfq_id),
-        getRFQComparison(project.current_rfq_id, filters),
-      ]);
-      setRfqQuotes(quotes);
-      setRfqComparison(comparison);
-    } catch (err) {
-      setError(err.message || "Failed to load RFQ comparison");
-    } finally {
-      setComparisonLoading(false);
+    const loadFulfillment = async () => {
+      setFulfillmentLoading(true);
+      try {
+        const data = await getFulfillmentTracking(project.current_rfq_id);
+        setFulfillmentContext(data);
+      } catch (err) {
+        setError(err.message || "Failed to load fulfillment context");
+      } finally {
+        setFulfillmentLoading(false);
+      }
+    };
+
+    if (activeTab === "order" || activeTab === "tracking") {
+      loadFulfillment();
     }
-  };
+  }, [activeTab, project?.current_rfq_id]);
 
-  loadComparison();
-}, [
-  activeTab,
-  project?.current_rfq_id,
-  comparisonSortBy,
-  comparisonFilters, // ✅ ADD THIS
-]);
+  // ── Comparison tab loader ──────────────────────────────────────────────────
+  useEffect(() => {
+    if (activeTab !== "comparison") return;
+    if (!project?.current_rfq_id) return;
+
+    const loadComparison = async () => {
+      setComparisonLoading(true);
+      try {
+        const filters = {
+          sort_by: comparisonSortBy,
+          min_vendor_score: comparisonFilters.minVendorScore,
+          max_cost: comparisonFilters.maxCost,
+          max_lead_time: comparisonFilters.maxLeadTime,
+          max_moq: comparisonFilters.maxMoq,
+          max_risk: comparisonFilters.maxRisk,
+        };
+        const [quotes, comparison] = await Promise.all([
+          getRFQQuotes(project.current_rfq_id),
+          getRFQComparison(project.current_rfq_id, filters),
+        ]);
+        setRfqQuotes(quotes);
+        setRfqComparison(comparison);
+      } catch (err) {
+        setError(err.message || "Failed to load RFQ comparison");
+      } finally {
+        setComparisonLoading(false);
+      }
+    };
+
+    loadComparison();
+  }, [
+    activeTab,
+    project?.current_rfq_id,
+    comparisonSortBy,
+    comparisonFilters,
+  ]);
+
   useEffect(() => {
     if (authLoading) return;
     loadProject();
@@ -142,6 +201,11 @@ export default function ProjectDetail() {
     if (!project) return;
     loadOperationalData(project.current_rfq_id);
   }, [project?.current_rfq_id]);
+
+  useEffect(() => {
+    if (!project?.project_id || !showChatDrawer) return;
+    // drawer loads its own data; reserved for badge updates
+  }, [project?.project_id, showChatDrawer]);
 
   const loadProject = async () => {
     setLoading(true);
@@ -227,14 +291,23 @@ export default function ProjectDetail() {
     }
   };
 
-  const cardClass = "rounded-2xl border border-white/[0.06] bg-[#0d1117] overflow-hidden";
+  const cardClass =
+    "rounded-2xl border border-white/[0.06] bg-[#0d1117] overflow-hidden";
 
-  const stage = (project?.workflow_stage || project?.status || "draft").toLowerCase();
+  const stage = (
+    project?.workflow_stage ||
+    project?.status ||
+    "draft"
+  ).toLowerCase();
   const report = project?.analyzer_report || {};
   const strategy = project?.strategy || {};
   const s1 = report.section_1_executive_summary || {};
   const s2 = report.section_2_component_breakdown || [];
-  const currency = s1.currency || strategy.currency || (project?.metadata || {}).currency || "USD";
+  const currency =
+    s1.currency ||
+    strategy.currency ||
+    (project?.metadata || {}).currency ||
+    "USD";
 
   const groupedComponents = useMemo(() => {
     const groups = {};
@@ -258,56 +331,126 @@ export default function ProjectDetail() {
     return (
       <div className="min-h-screen bg-[#010409] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 text-sm mb-4">{error || "Project not found"}</p>
-          <Link to="/dashboard" className="text-sky-400 hover:text-sky-300 text-sm">← Back to Dashboard</Link>
+          <p className="text-red-400 text-sm mb-4">
+            {error || "Project not found"}
+          </p>
+          <Link
+            to="/dashboard"
+            className="text-sky-400 hover:text-sky-300 text-sm"
+          >
+            ← Back to Dashboard
+          </Link>
         </div>
       </div>
     );
   }
 
-  const nextAction = project.next_action || project?.metadata?.next_action || "Review project";
+  const nextAction =
+    project.next_action ||
+    project?.metadata?.next_action ||
+    "Review project";
 
   const renderTab = () => {
+    // ── Overview ──────────────────────────────────────────────────────────────
     if (activeTab === "overview") {
       return (
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <Stat label="Workflow stage" value={(project.workflow_stage || project.status || "draft").replace(/_/g, " ")} hint={nextAction} />
-            <Stat label="Visibility" value={(project.visibility_level || project.visibility || "private").replace(/_/g, " ")} hint="Access control for the workspace" />
-            <Stat label="RFQ status" value={(project.rfq_status || "none").replace(/_/g, " ")} hint={project.current_rfq_id ? "RFQ linked" : "No RFQ yet"} />
-            <Stat label="Tracking" value={(project.tracking_stage || "init").replace(/_/g, " ")} hint={project.current_shipment_id ? "Shipment linked" : "No shipment yet"} />
+            <Stat
+              label="Workflow stage"
+              value={(
+                project.workflow_stage ||
+                project.status ||
+                "draft"
+              ).replace(/_/g, " ")}
+              hint={nextAction}
+            />
+            <Stat
+              label="Visibility"
+              value={(
+                project.visibility_level ||
+                project.visibility ||
+                "private"
+              ).replace(/_/g, " ")}
+              hint="Access control for the workspace"
+            />
+            <Stat
+              label="RFQ status"
+              value={(project.rfq_status || "none").replace(/_/g, " ")}
+              hint={project.current_rfq_id ? "RFQ linked" : "No RFQ yet"}
+            />
+            <Stat
+              label="Tracking"
+              value={(project.tracking_stage || "init").replace(/_/g, " ")}
+              hint={
+                project.current_shipment_id
+                  ? "Shipment linked"
+                  : "No shipment yet"
+              }
+            />
           </div>
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
             <div className={`${cardClass} xl:col-span-2`}>
               <div className="border-b border-white/[0.06] px-5 py-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Project summary</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                  Project summary
+                </h3>
               </div>
               <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Stat label="Estimated cost" value={`${currency} ${fmt(project.cost || project.average_cost || 0)}`} />
-                <Stat label="Savings" value={project.savings_percent != null ? `${fmt(project.savings_percent)}%` : "—"} />
-                <Stat label="Lead time" value={project.lead_time != null ? `${fmt(project.lead_time)} days` : "—"} />
-                <Stat label="Recommended region" value={project.recommended_location || "—"} />
+                <Stat
+                  label="Estimated cost"
+                  value={`${currency} ${fmt(
+                    project.cost || project.average_cost || 0
+                  )}`}
+                />
+                <Stat
+                  label="Savings"
+                  value={
+                    project.savings_percent != null
+                      ? `${fmt(project.savings_percent)}%`
+                      : "—"
+                  }
+                />
+                <Stat
+                  label="Lead time"
+                  value={
+                    project.lead_time != null
+                      ? `${fmt(project.lead_time)} days`
+                      : "—"
+                  }
+                />
+                <Stat
+                  label="Recommended region"
+                  value={project.recommended_location || "—"}
+                />
               </div>
               <div className="px-5 pb-5">
-                <p className="text-sm text-white/55">{project.decision_summary || "No decision summary available yet."}</p>
+                <p className="text-sm text-white/55">
+                  {project.decision_summary ||
+                    "No decision summary available yet."}
+                </p>
               </div>
             </div>
 
             <div className={cardClass}>
               <div className="border-b border-white/[0.06] px-5 py-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Next action</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                  Next action
+                </h3>
               </div>
               <div className="p-5">
                 <p className="text-white text-lg font-semibold">{nextAction}</p>
                 <p className="mt-2 text-sm text-white/35">
-                  {project.workflow_stage === "rfq_pending" || project.workflow_stage === "rfq_sent"
+                  {project.workflow_stage === "rfq_pending" ||
+                  project.workflow_stage === "rfq_sent"
                     ? "Send RFQs and collect vendor responses."
                     : project.workflow_stage === "quote_compare"
-                      ? "Compare quotes and short-list vendors."
-                      : project.workflow_stage === "in_production" || project.workflow_stage === "shipped"
-                        ? "Track the current shipment and production milestones."
-                        : "Review the project and continue the procurement flow."}
+                    ? "Compare quotes and short-list vendors."
+                    : project.workflow_stage === "in_production" ||
+                      project.workflow_stage === "shipped"
+                    ? "Track the current shipment and production milestones."
+                    : "Review the project and continue the procurement flow."}
                 </p>
                 {project.workflow_stage === "project_hydrated" && (
                   <button
@@ -327,23 +470,49 @@ export default function ProjectDetail() {
       );
     }
 
+    // ── Strategy ──────────────────────────────────────────────────────────────
     if (activeTab === "strategy") {
       const recommended = strategy.recommended_strategy || {};
       const partDecisions = strategy.part_level_decisions || [];
       return (
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <Stat label="Best location" value={recommended.location || project.recommended_location || "—"} />
-            <Stat label="Global optimization" value={strategy.global_optimization?.best_strategy_name || "—"} />
-            <Stat label="Confidence" value={strategy.system_confidence != null ? `${fmt(strategy.system_confidence * 100, 1)}%` : "—"} />
+            <Stat
+              label="Best location"
+              value={
+                recommended.location ||
+                project.recommended_location ||
+                "—"
+              }
+            />
+            <Stat
+              label="Global optimization"
+              value={
+                strategy.global_optimization?.best_strategy_name || "—"
+              }
+            />
+            <Stat
+              label="Confidence"
+              value={
+                strategy.system_confidence != null
+                  ? `${fmt(strategy.system_confidence * 100, 1)}%`
+                  : "—"
+              }
+            />
           </div>
 
           <div className={cardClass}>
             <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Strategy summary</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                Strategy summary
+              </h3>
             </div>
             <div className="p-5">
-              <p className="text-white/70">{strategy.decision_summary || project.decision_summary || "No strategy summary yet."}</p>
+              <p className="text-white/70">
+                {strategy.decision_summary ||
+                  project.decision_summary ||
+                  "No strategy summary yet."}
+              </p>
               {recommended.reasons?.length > 0 && (
                 <ul className="mt-4 space-y-2 text-sm text-white/45">
                   {recommended.reasons.map((reason, idx) => (
@@ -356,20 +525,36 @@ export default function ProjectDetail() {
 
           <div className={cardClass}>
             <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Per-part decisions</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                Per-part decisions
+              </h3>
             </div>
             <div className="divide-y divide-white/[0.05]">
               {partDecisions.length === 0 ? (
-                <div className="p-5 text-sm text-white/35">No part-level decisions available.</div>
+                <div className="p-5 text-sm text-white/35">
+                  No part-level decisions available.
+                </div>
               ) : (
                 partDecisions.map((item, idx) => (
                   <div key={idx} className="p-5">
                     <div className="flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-white font-medium">{item.part_name || item.description || item.item_id || "Part"}</p>
-                        <p className="text-xs text-white/35 mt-1">{item.category || "unknown"} · {item.best_region || "—"}</p>
+                        <p className="text-white font-medium">
+                          {item.part_name ||
+                            item.description ||
+                            item.item_id ||
+                            "Part"}
+                        </p>
+                        <p className="text-xs text-white/35 mt-1">
+                          {item.category || "unknown"} ·{" "}
+                          {item.best_region || "—"}
+                        </p>
                       </div>
-                      <p className="text-sm text-white/70">{item.best_cost != null ? `${currency} ${fmt(item.best_cost)}` : "—"}</p>
+                      <p className="text-sm text-white/70">
+                        {item.best_cost != null
+                          ? `${currency} ${fmt(item.best_cost)}`
+                          : "—"}
+                      </p>
                     </div>
                   </div>
                 ))
@@ -380,46 +565,73 @@ export default function ProjectDetail() {
       );
     }
 
+    // ── Vendor match ──────────────────────────────────────────────────────────
     if (activeTab === "vendor-match") {
       return (
         <div className="space-y-6">
           <div className={cardClass}>
             <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Vendor match state</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                Vendor match state
+              </h3>
             </div>
             <div className="p-5">
               <p className="text-white/70">
-                The backend currently stores the canonical project record and RFQ state. Vendor shortlist scoring can be attached here next.
+                The backend currently stores the canonical project record and
+                RFQ state. Vendor shortlist scoring can be attached here next.
               </p>
               <p className="mt-3 text-sm text-white/40">
-                Recommended region: {project.recommended_location || "—"}
+                Recommended region:{" "}
+                {project.recommended_location || "—"}
               </p>
               <p className="text-sm text-white/40">
-                Workflow stage: {(project.workflow_stage || project.status || "draft").replace(/_/g, " ")}
+                Workflow stage:{" "}
+                {(
+                  project.workflow_stage ||
+                  project.status ||
+                  "draft"
+                ).replace(/_/g, " ")}
               </p>
             </div>
           </div>
 
           <div className={cardClass}>
             <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Matching signals</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                Matching signals
+              </h3>
             </div>
             <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Stat label="Category summary" value={Object.keys((project.categories || {})).length || 0} hint="From canonical BOM analysis" />
-              <Stat label="Current vendor match" value={project.current_vendor_match_id || "—"} hint="Will populate after vendor ranking" />
+              <Stat
+                label="Category summary"
+                value={
+                  Object.keys(project.categories || {}).length || 0
+                }
+                hint="From canonical BOM analysis"
+              />
+              <Stat
+                label="Current vendor match"
+                value={project.current_vendor_match_id || "—"}
+                hint="Will populate after vendor ranking"
+              />
             </div>
           </div>
         </div>
       );
     }
 
+    // ── RFQ ───────────────────────────────────────────────────────────────────
     if (activeTab === "rfq") {
       return (
         <div className="space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-semibold text-white">RFQ workspace</h3>
-              <p className="text-sm text-white/35">Create or inspect the sourcing request from this project.</p>
+              <h3 className="text-lg font-semibold text-white">
+                RFQ workspace
+              </h3>
+              <p className="text-sm text-white/35">
+                Create or inspect the sourcing request from this project.
+              </p>
             </div>
             <button
               onClick={handleRequestQuote}
@@ -432,33 +644,61 @@ export default function ProjectDetail() {
 
           <div className={cardClass}>
             <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-3">
-              <Stat label="RFQ status" value={(project.rfq_status || "none").replace(/_/g, " ")} />
-              <Stat label="Current RFQ" value={project.current_rfq_id || "—"} />
-              <Stat label="Drawing files" value={drawingFile ? drawingFile.name : "No drawing selected"} />
+              <Stat
+                label="RFQ status"
+                value={(project.rfq_status || "none").replace(/_/g, " ")}
+              />
+              <Stat
+                label="Current RFQ"
+                value={project.current_rfq_id || "—"}
+              />
+              <Stat
+                label="Drawing files"
+                value={
+                  drawingFile ? drawingFile.name : "No drawing selected"
+                }
+              />
             </div>
           </div>
 
           {rfqData ? (
             <div className={cardClass}>
               <div className="border-b border-white/[0.06] px-5 py-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">RFQ summary</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                  RFQ summary
+                </h3>
               </div>
               <div className="p-5 space-y-4">
-                <p className="text-sm text-white/45">RFQ ID: {rfqData.id}</p>
-                <p className="text-sm text-white/45">Status: {rfqData.status}</p>
-                <p className="text-sm text-white/45">Currency: {rfqData.currency || "USD"}</p>
-                <p className="text-sm text-white/45">Final cost: {rfqData.total_final_cost ? `${currency} ${fmt(rfqData.total_final_cost)}` : "—"}</p>
+                <p className="text-sm text-white/45">
+                  RFQ ID: {rfqData.id}
+                </p>
+                <p className="text-sm text-white/45">
+                  Status: {rfqData.status}
+                </p>
+                <p className="text-sm text-white/45">
+                  Currency: {rfqData.currency || "USD"}
+                </p>
+                <p className="text-sm text-white/45">
+                  Final cost:{" "}
+                  {rfqData.total_final_cost
+                    ? `${currency} ${fmt(rfqData.total_final_cost)}`
+                    : "—"}
+                </p>
               </div>
             </div>
           ) : (
             <div className={cardClass}>
-              <div className="p-5 text-sm text-white/35">No RFQ loaded yet.</div>
+              <div className="p-5 text-sm text-white/35">
+                No RFQ loaded yet.
+              </div>
             </div>
           )}
 
           <div className={cardClass}>
             <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Drawings</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                Drawings
+              </h3>
             </div>
             <div className="p-5 space-y-3">
               <input
@@ -468,7 +708,11 @@ export default function ProjectDetail() {
               />
               <button
                 onClick={handleUploadDrawing}
-                disabled={!drawingFile || drawingUploading || !project.current_rfq_id}
+                disabled={
+                  !drawingFile ||
+                  drawingUploading ||
+                  !project.current_rfq_id
+                }
                 className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
               >
                 {drawingUploading ? "Uploading..." : "Upload drawing"}
@@ -478,96 +722,102 @@ export default function ProjectDetail() {
         </div>
       );
     }
-if (activeTab === "comparison") {
-  return (
-    <div className="space-y-6">
-      {!project?.current_rfq_id ? (
-        <div className={cardClass}>
-          <div className="p-5 text-sm text-white/35">
-            No RFQ is attached to this project yet. Create and send an RFQ first.
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={async () => {
-  await sendRFQ(project.current_rfq_id, {
-    vendor_response_deadline_days: 7,
-  });
 
-  // Force reload comparison
-  setComparisonLoading(true);
-  try {
-    const filters = {
-      sort_by: comparisonSortBy,
-      min_vendor_score: comparisonFilters.minVendorScore,
-      max_cost: comparisonFilters.maxCost,
-      max_lead_time: comparisonFilters.maxLeadTime,
-      max_moq: comparisonFilters.maxMoq,
-      max_risk: comparisonFilters.maxRisk,
-    };
-
-    const [quotes, comparison] = await Promise.all([
-      getRFQQuotes(project.current_rfq_id),
-      getRFQComparison(project.current_rfq_id, filters),
-    ]);
-
-    setRfqQuotes(quotes);
-    setRfqComparison(comparison);
-  } catch (err) {
-    setError(err.message || "Failed to refresh RFQ");
-  } finally {
-    setComparisonLoading(false);
-  }
-}}
-              className="rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-400"
-            >
-              Send / refresh RFQ
-            </button>
-
-            <span className="text-xs text-white/35">
-              Quotes loaded: {rfqQuotes?.quote_history?.length || 0}
-            </span>
-          </div>
-
-          {comparisonLoading ? (
-            <div className="text-sm text-white/35">
-              Loading quote comparison...
+    // ── Comparison ────────────────────────────────────────────────────────────
+    if (activeTab === "comparison") {
+      return (
+        <div className="space-y-6">
+          {!project?.current_rfq_id ? (
+            <div className={cardClass}>
+              <div className="p-5 text-sm text-white/35">
+                No RFQ is attached to this project yet. Create and send an
+                RFQ first.
+              </div>
             </div>
           ) : (
-            <RFQComparisonMatrix
-              comparison={rfqComparison}
-              sortBy={comparisonSortBy}
-              setSortBy={setComparisonSortBy}
-              filters={comparisonFilters}
-              setFilters={setComparisonFilters}
-              selectedVendorId={project.current_quote_id}
-              onSelectVendor={async (payload) => {
-                await selectRFQVendor(project.current_rfq_id, payload);
-                await loadProject();
-              }}
-              onRejectVendor={async (payload) => {
-                await rejectRFQVendor(project.current_rfq_id, payload);
-                await loadProject();
-              }}
-            />
-          )}
-        </>
-      )}
-    </div>
-  );
-}
+            <>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  onClick={async () => {
+                    await sendRFQ(project.current_rfq_id, {
+                      vendor_response_deadline_days: 7,
+                    });
 
+                    setComparisonLoading(true);
+                    try {
+                      const filters = {
+                        sort_by: comparisonSortBy,
+                        min_vendor_score: comparisonFilters.minVendorScore,
+                        max_cost: comparisonFilters.maxCost,
+                        max_lead_time: comparisonFilters.maxLeadTime,
+                        max_moq: comparisonFilters.maxMoq,
+                        max_risk: comparisonFilters.maxRisk,
+                      };
+                      const [quotes, comparison] = await Promise.all([
+                        getRFQQuotes(project.current_rfq_id),
+                        getRFQComparison(project.current_rfq_id, filters),
+                      ]);
+                      setRfqQuotes(quotes);
+                      setRfqComparison(comparison);
+                    } catch (err) {
+                      setError(err.message || "Failed to refresh RFQ");
+                    } finally {
+                      setComparisonLoading(false);
+                    }
+                  }}
+                  className="rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-400"
+                >
+                  Send / refresh RFQ
+                </button>
+
+                <span className="text-xs text-white/35">
+                  Quotes loaded:{" "}
+                  {rfqQuotes?.quote_history?.length || 0}
+                </span>
+              </div>
+
+              {comparisonLoading ? (
+                <div className="text-sm text-white/35">
+                  Loading quote comparison...
+                </div>
+              ) : (
+                <RFQComparisonMatrix
+                  comparison={rfqComparison}
+                  sortBy={comparisonSortBy}
+                  setSortBy={setComparisonSortBy}
+                  filters={comparisonFilters}
+                  setFilters={setComparisonFilters}
+                  selectedVendorId={project.current_quote_id}
+                  onSelectVendor={async (payload) => {
+                    await selectRFQVendor(project.current_rfq_id, payload);
+                    await loadProject();
+                  }}
+                  onRejectVendor={async (payload) => {
+                    await rejectRFQVendor(project.current_rfq_id, payload);
+                    await loadProject();
+                  }}
+                />
+              )}
+            </>
+          )}
+        </div>
+      );
+    }
+
+    // ── Chat ──────────────────────────────────────────────────────────────────
     if (activeTab === "chat") {
       return (
         <div className="space-y-6">
           <div className={cardClass}>
             <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Negotiation thread</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                Negotiation thread
+              </h3>
             </div>
             <div className="p-5 text-sm text-white/40">
-              Chat and threaded negotiation history are not yet backed by a dedicated message model. This tab should connect to a future thread service.
+              Chat and threaded negotiation history are not yet backed by a
+              dedicated message model. This tab should connect to a future
+              thread service.
             </div>
           </div>
 
@@ -576,105 +826,137 @@ if (activeTab === "comparison") {
       );
     }
 
+    // ── Order (8.4) ───────────────────────────────────────────────────────────
     if (activeTab === "order") {
       return (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <Stat label="PO" value={project.current_po_id || "—"} />
-            <Stat label="Shipment" value={project.current_shipment_id || "—"} />
-            <Stat label="Invoice" value={project.current_invoice_id || "—"} />
-            <Stat label="Delivery" value={(project.workflow_stage || "draft").replace(/_/g, " ")} />
-          </div>
-
-          <div className={cardClass}>
-            <div className="p-5 text-sm text-white/40">
-              Purchase order placement should attach the PO record, vendor acceptance, and shipment booking to this project.
+          {fulfillmentLoading ? (
+            <div className="text-sm text-white/35">
+              Loading order center...
             </div>
-          </div>
+          ) : (
+            <OrderCenterTimeline
+              context={fulfillmentContext}
+              onRefresh={async () => {
+                const data = await getFulfillmentTracking(
+                  project.current_rfq_id
+                );
+                setFulfillmentContext(data);
+              }}
+            />
+          )}
         </div>
       );
     }
 
+    // ── Tracking (8.5) ────────────────────────────────────────────────────────
     if (activeTab === "tracking") {
       return (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <Stat label="Production stage" value={(project.tracking_stage || "init").replace(/_/g, " ")} />
-            <Stat label="Current RFQ" value={project.current_rfq_id || "—"} />
-            <Stat label="Current shipment" value={project.current_shipment_id || "—"} />
-          </div>
-
-          <div className={cardClass}>
-            <div className="border-b border-white/[0.06] px-5 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Tracking timeline</h3>
+          {fulfillmentLoading ? (
+            <div className="text-sm text-white/35">
+              Loading tracking timeline...
             </div>
-            <div className="p-5">
-              {trackingData.length === 0 ? (
-                <p className="text-sm text-white/35">No tracking entries yet.</p>
-              ) : (
-                <div className="space-y-3">
-                  {trackingData.map((item, idx) => (
-                    <div key={`${item.rfq_id}-${item.stage}-${idx}`} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-sm text-white">{item.stage}</p>
-                        <p className="text-xs text-white/35">{item.progress_percent}%</p>
-                      </div>
-                      <p className="mt-1 text-xs text-white/40">{item.status_message || "No note"}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          ) : (
+            <OrderCenterTimeline
+              context={fulfillmentContext}
+              onRefresh={async () => {
+                const data = await getFulfillmentTracking(
+                  project.current_rfq_id
+                );
+                setFulfillmentContext(data);
+              }}
+            />
+          )}
         </div>
       );
     }
 
+    // ── Analytics ─────────────────────────────────────────────────────────────
     if (activeTab === "analytics") {
       return (
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <Stat label="Cost" value={`${currency} ${fmt(project.cost || project.average_cost || 0)}`} />
-            <Stat label="Savings" value={project.savings_percent != null ? `${fmt(project.savings_percent)}%` : "—"} />
-            <Stat label="Lead time" value={project.lead_time != null ? `${fmt(project.lead_time)} days` : "—"} />
+            <Stat
+              label="Cost"
+              value={`${currency} ${fmt(
+                project.cost || project.average_cost || 0
+              )}`}
+            />
+            <Stat
+              label="Savings"
+              value={
+                project.savings_percent != null
+                  ? `${fmt(project.savings_percent)}%`
+                  : "—"
+              }
+            />
+            <Stat
+              label="Lead time"
+              value={
+                project.lead_time != null
+                  ? `${fmt(project.lead_time)} days`
+                  : "—"
+              }
+            />
             <Stat label="Total parts" value={project.total_parts || 0} />
           </div>
 
-          <ProjectEventTimeline events={events} title="Learning / event log" />
+          <ProjectEventTimeline
+            events={events}
+            title="Learning / event log"
+          />
         </div>
       );
     }
 
+    // ── History ───────────────────────────────────────────────────────────────
     if (activeTab === "history") {
       return (
         <div className="space-y-6">
-          {!historyLoading && snapshots.length === 0 && strategyRuns.length === 0 && (
-            <div className="text-center">
-              <button
-                onClick={loadHistory}
-                className="rounded-xl bg-sky-500/10 border border-sky-500/20 px-5 py-2.5 text-sm font-semibold text-sky-400 hover:bg-sky-500/20"
-              >
-                Load version history
-              </button>
+          {!historyLoading &&
+            snapshots.length === 0 &&
+            strategyRuns.length === 0 && (
+              <div className="text-center">
+                <button
+                  onClick={loadHistory}
+                  className="rounded-xl bg-sky-500/10 border border-sky-500/20 px-5 py-2.5 text-sm font-semibold text-sky-400 hover:bg-sky-500/20"
+                >
+                  Load version history
+                </button>
+              </div>
+            )}
+
+          {historyLoading && (
+            <div className="text-sm text-white/35">
+              Loading version history...
             </div>
           )}
-
-          {historyLoading && <div className="text-sm text-white/35">Loading version history...</div>}
 
           {snapshots.length > 0 && (
             <div className={cardClass}>
               <div className="border-b border-white/[0.06] px-5 py-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Report versions</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                  Report versions
+                </h3>
               </div>
               <div className="divide-y divide-white/[0.05]">
                 {snapshots.map((snap) => (
                   <div key={snap.id} className="p-5">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-sm text-white">Version {snap.version}</p>
-                        <p className="text-xs text-white/35">{snap.total_parts} parts · {snap.priority} priority</p>
+                        <p className="text-sm text-white">
+                          Version {snap.version}
+                        </p>
+                        <p className="text-xs text-white/35">
+                          {snap.total_parts} parts · {snap.priority} priority
+                        </p>
                       </div>
-                      <p className="text-xs text-white/35">{snap.created_at ? new Date(snap.created_at).toLocaleString() : "—"}</p>
+                      <p className="text-xs text-white/35">
+                        {snap.created_at
+                          ? new Date(snap.created_at).toLocaleString()
+                          : "—"}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -685,17 +967,28 @@ if (activeTab === "comparison") {
           {strategyRuns.length > 0 && (
             <div className={cardClass}>
               <div className="border-b border-white/[0.06] px-5 py-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Strategy runs</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">
+                  Strategy runs
+                </h3>
               </div>
               <div className="divide-y divide-white/[0.05]">
                 {strategyRuns.map((run) => (
                   <div key={run.id} className="p-5">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-sm text-white">Run v{run.version}</p>
-                        <p className="text-xs text-white/35">{run.recommended_location || "—"} · {run.total_parts} parts</p>
+                        <p className="text-sm text-white">
+                          Run v{run.version}
+                        </p>
+                        <p className="text-xs text-white/35">
+                          {run.recommended_location || "—"} ·{" "}
+                          {run.total_parts} parts
+                        </p>
                       </div>
-                      <p className="text-xs text-white/35">{run.created_at ? new Date(run.created_at).toLocaleString() : "—"}</p>
+                      <p className="text-xs text-white/35">
+                        {run.created_at
+                          ? new Date(run.created_at).toLocaleString()
+                          : "—"}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -711,117 +1004,157 @@ if (activeTab === "comparison") {
     return <div className="text-sm text-white/35">Tab not found.</div>;
   };
 
- return (
-  <div className="min-h-screen bg-[#010409]">
-    <section className="border-b border-white/[0.06]">
-      <Container className="py-8">
-        <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
-          <Link to="/dashboard" className="hover:text-white/60 transition-colors">Control tower</Link>
-          <span>/</span>
-          <span className="text-white/60">{project.name || "Project"}</span>
-        </div>
-
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-white">{project.name || project.file_name || "Untitled BOM"}</h1>
-              <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[stage] || STATUS_STYLES.draft}`}>
-                {stage.replace(/_/g, " ")}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-4 text-xs text-white/40">
-              <span>{project.total_parts} parts</span>
-              {project.file_name && <span>{project.file_name}</span>}
-              {project.created_at && (
-                <span>{new Date(project.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
-              )}
-              <span className="font-mono text-white/25">{project.project_id?.slice(0, 12)}</span>
-            </div>
+  return (
+    <div className="min-h-screen bg-[#010409]">
+      <section className="border-b border-white/[0.06]">
+        <Container className="py-8">
+          <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
+            <Link
+              to="/dashboard"
+              className="hover:text-white/60 transition-colors"
+            >
+              Control tower
+            </Link>
+            <span>/</span>
+            <span className="text-white/60">
+              {project.name || "Project"}
+            </span>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {project.workflow_stage === "project_hydrated" && !rfqSuccess && (
-              <button
-                onClick={handleRequestQuote}
-                disabled={rfqLoading}
-                className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-2xl font-bold text-white">
+                  {project.name ||
+                    project.file_name ||
+                    "Untitled BOM"}
+                </h1>
+                <span
+                  className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${
+                    STATUS_STYLES[stage] || STATUS_STYLES.draft
+                  }`}
+                >
+                  {stage.replace(/_/g, " ")}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-4 text-xs text-white/40">
+                <span>{project.total_parts} parts</span>
+                {project.file_name && <span>{project.file_name}</span>}
+                {project.created_at && (
+                  <span>
+                    {new Date(project.created_at).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    )}
+                  </span>
+                )}
+                <span className="font-mono text-white/25">
+                  {project.project_id?.slice(0, 12)}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {project.workflow_stage === "project_hydrated" &&
+                !rfqSuccess && (
+                  <button
+                    onClick={handleRequestQuote}
+                    disabled={rfqLoading}
+                    className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
+                  >
+                    {rfqLoading ? "Creating RFQ..." : "Create RFQ"}
+                  </button>
+                )}
+
+              <Link
+                to="/bom-analyzer"
+                className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
               >
-                {rfqLoading ? "Creating RFQ..." : "Create RFQ"}
-              </button>
-            )}
+                New Analysis
+              </Link>
 
-            <Link
-              to="/bom-analyzer"
-              className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
-            >
-              New Analysis
-            </Link>
-
-            {/* ✅ 13.1 Vendor Discovery Button (UNCHANGED, CORRECT) */}
-            <Link
-              to={`/project/${id}/vendors`}
-              className="px-4 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 text-sky-400 text-sm font-semibold transition-all"
-            >
-              Discover Vendors
-            </Link>
-          </div>
-        </div>
-      </Container>
-    </section>
-
-    <section className="border-b border-white/[0.06]">
-      <Container className="py-4">
-        <div className="flex gap-2 overflow-x-auto">
-          {[
-            ...TABS,
-            { id: "vendors", label: "Vendors" } // ✅ 13.2 Add Vendors tab
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
-                activeTab === tab.id
-                  ? "bg-sky-500/15 text-sky-400 border border-sky-500/20"
-                  : "bg-white/[0.03] text-white/45 border border-white/[0.06] hover:bg-white/[0.05]"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </Container>
-    </section>
-
-    <Container className="py-8">
-
-      {/* ✅ EXISTING TAB RENDER */}
-      {renderTab()}
-
-      {/* ✅ 13.3 Vendor Tab Body (NEW — NON-DESTRUCTIVE) */}
-      {activeTab === "vendors" && (
-        <div className={cardClass}>
-          <div className="p-6">
-            <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">
-              Vendor discovery
-            </h3>
-
-            <p className="text-white/60 text-sm leading-relaxed">
-              Open the ranked shortlist, vendor profile drawer, match reasons, and filters for geography, certifications, MOQ, lead time, and price.
-            </p>
-
-            <div className="mt-5">
+              {/* ✅ 13.1 Vendor Discovery Button */}
               <Link
                 to={`/project/${id}/vendors`}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-400 transition-all"
+                className="px-4 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 text-sky-400 text-sm font-semibold transition-all"
               >
-                Open vendor discovery
+                Discover Vendors
               </Link>
+
+              {/* ✅ Collaboration Button */}
+              <button
+                onClick={() => setShowChatDrawer(true)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 text-sky-400 text-sm font-semibold transition-all"
+              >
+                Collaboration
+                {chatCounts.unread_messages ||
+                chatCounts.pending_approvals ? (
+                  <span className="ml-1 inline-flex items-center justify-center rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                    {(chatCounts.unread_messages || 0) +
+                      (chatCounts.pending_approvals || 0)}
+                  </span>
+                ) : null}
+              </button>
             </div>
           </div>
-        </div>
-      )}
+        </Container>
+      </section>
 
-    </Container>
-  </div>
- );
+      <section className="border-b border-white/[0.06]">
+        <Container className="py-4">
+          <div className="flex gap-2 overflow-x-auto">
+            {[
+              ...TABS,
+              { id: "vendors", label: "Vendors" }, // ✅ 13.2 Vendors tab
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
+                  activeTab === tab.id
+                    ? "bg-sky-500/15 text-sky-400 border border-sky-500/20"
+                    : "bg-white/[0.03] text-white/45 border border-white/[0.06] hover:bg-white/[0.05]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <Container className="py-8">
+        {/* ✅ Existing tab render */}
+        {renderTab()}
+
+        {/* ✅ 13.3 Vendor Tab Body */}
+        {activeTab === "vendors" && (
+          <div className={cardClass}>
+            <div className="p-6">
+              <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">
+                Vendor discovery
+              </h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                Open the ranked shortlist, vendor profile drawer, match
+                reasons, and filters for geography, certifications, MOQ,
+                lead time, and price.
+              </p>
+              <div className="mt-5">
+                <Link
+                  to={`/project/${id}/vendors`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-400 transition-all"
+                >
+                  Open vendor discovery
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </Container>
+    </div>
+  );
 }

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { useAuth } from "../context/AuthContext";
-import { getProjectMetrics, listProjects } from "../lib/api";
+import { getProjectMetrics, getSpendAnalytics, listProjects } from "../lib/api";
 
 const STATUS_CONFIG = {
   draft: { bg: "rgba(255,255,255,0.04)", text: "rgba(255,255,255,0.55)" },
@@ -25,9 +25,12 @@ const STATUS_CONFIG = {
   error: { bg: "rgba(239,68,68,0.08)", text: "#ef4444" },
 };
 
-function fmt(n) {
+function fmt(n, digits = 2) {
   if (n == null || Number.isNaN(Number(n))) return "—";
-  return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return Number(n).toLocaleString("en-US", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
 }
 
 function Card({ title, value, hint, accent = false }) {
@@ -44,6 +47,7 @@ export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
+  const [spendAnalytics, setSpendAnalytics] = useState(null);
   const [projects, setProjects] = useState([]);
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,27 +56,29 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
-  useEffect(() => {
-    if (authLoading) return;
-    loadDashboard();
-  }, [authLoading, user]);
-
   const loadDashboard = async () => {
     setLoading(true);
     setError(null);
     try {
-      const [projectData, metricData] = await Promise.all([
+      const [projectData, metricData, spendData] = await Promise.all([
         listProjects(),
         getProjectMetrics(),
+        getSpendAnalytics(),
       ]);
       setProjects(projectData || []);
       setMetrics(metricData || null);
+      setSpendAnalytics(spendData || null);
     } catch (err) {
-      setError(err.message || "Failed to load dashboard");
+      setError(err?.message || "Failed to load dashboard");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (authLoading) return;
+    loadDashboard();
+  }, [authLoading, user]);
 
   const visibleProjects = useMemo(() => {
     return [...projects]
@@ -92,9 +98,9 @@ export default function Dashboard() {
           case "oldest":
             return new Date(a.created_at || 0) - new Date(b.created_at || 0);
           case "cost_high":
-            return (b.cost || 0) - (a.cost || 0);
+            return (Number(b.cost) || 0) - (Number(a.cost) || 0);
           case "cost_low":
-            return (a.cost || 0) - (b.cost || 0);
+            return (Number(a.cost) || 0) - (Number(b.cost) || 0);
           case "name":
             return (a.name || "").localeCompare(b.name || "");
           default:
@@ -116,7 +122,9 @@ export default function Dashboard() {
     total_spend: projects.reduce((s, p) => s + (Number(p.cost) || 0), 0),
     average_savings_percent:
       projects.filter((p) => Number(p.savings_percent) > 0).length > 0
-        ? projects.filter((p) => Number(p.savings_percent) > 0).reduce((s, p) => s + Number(p.savings_percent || 0), 0) /
+        ? projects
+            .filter((p) => Number(p.savings_percent) > 0)
+            .reduce((s, p) => s + Number(p.savings_percent || 0), 0) /
           projects.filter((p) => Number(p.savings_percent) > 0).length
         : 0,
     pending_approval_items: [],
@@ -137,20 +145,20 @@ export default function Dashboard() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-white">Control Tower</h1>
-              <p className="text-white/35 mt-2">
+              <p className="mt-2 text-white/35">
                 {user?.full_name ? `Welcome back, ${user.full_name}` : "Operational overview for BOM journeys"}
               </p>
             </div>
 
             <Link
               to="/bom-analyzer"
-              className="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-400 transition-all"
+              className="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-sky-400"
             >
               New Analysis
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5 mt-6">
+          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
             <Card title="Pending approvals" value={m.pending_approvals || 0} hint="Quotes / PO / selection tasks" accent />
             <Card title="Active RFQs" value={m.active_rfqs || 0} hint="Open sourcing requests" />
             <Card title="Delayed shipments" value={m.delayed_shipments || 0} hint="Tracking needs attention" />
@@ -158,9 +166,27 @@ export default function Dashboard() {
             <Card title="Total spend" value={fmt(m.total_spend || 0)} hint={`Avg savings ${fmt(m.average_savings_percent || 0)}%`} />
           </div>
 
+          <div className="mt-6 rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55">Retention engine</h2>
+              <Link to="/analytics" className="text-xs text-sky-400 hover:text-sky-300">
+                Open analytics
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+              <Card title="Committed spend" value={fmt(spendAnalytics?.totals?.committed_spend || 0)} />
+              <Card title="Paid spend" value={fmt(spendAnalytics?.totals?.paid_spend || 0)} />
+              <Card title="Savings realized" value={fmt(spendAnalytics?.totals?.savings_realized || 0)} />
+              <Card
+                title="Vendor on-time rate"
+                value={spendAnalytics?.vendor_on_time_rate != null ? `${fmt(spendAnalytics.vendor_on_time_rate * 100, 1)}%` : "—"}
+              />
+            </div>
+          </div>
+
           {m.next_actions?.length > 0 && (
             <div className="mt-6 rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
-              <div className="flex items-center justify-between gap-4 mb-4">
+              <div className="mb-4 flex items-center justify-between gap-4">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55">Next actions</h2>
                 <span className="text-xs text-white/30">{m.next_actions.length} queued</span>
               </div>
@@ -169,11 +195,13 @@ export default function Dashboard() {
                   <button
                     key={item.project_id}
                     onClick={() => navigate(`/project/${item.project_id}/workspace`)}
-                    className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-left hover:bg-white/[0.05] transition-all"
+                    className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-left transition-all hover:bg-white/[0.05]"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm font-medium text-white">{item.name || "Untitled project"}</p>
-                      <span className="text-[10px] uppercase tracking-wider text-white/35">{item.workflow_stage || item.status}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-white/35">
+                        {item.workflow_stage || item.status}
+                      </span>
                     </div>
                     <p className="mt-2 text-xs text-sky-400">{item.action}</p>
                     <p className="mt-1 text-xs text-white/35">{item.reason}</p>
@@ -186,15 +214,9 @@ export default function Dashboard() {
       </section>
 
       <Container className="py-8">
-        {loading && (
-          <div className="text-sm text-white/35">Loading projects...</div>
-        )}
+        {loading && <div className="text-sm text-white/35">Loading projects...</div>}
 
-        {error && (
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5 text-red-300">
-            {error}
-          </div>
-        )}
+        {error && <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5 text-red-300">{error}</div>}
 
         {!loading && !error && (
           <>
@@ -212,7 +234,9 @@ export default function Dashboard() {
               >
                 <option value="all">All stages</option>
                 {uniqueStages.map((stage) => (
-                  <option key={stage} value={stage}>{stage.replace(/_/g, " ")}</option>
+                  <option key={stage} value={stage}>
+                    {stage.replace(/_/g, " ")}
+                  </option>
                 ))}
               </select>
               <select
@@ -236,7 +260,7 @@ export default function Dashboard() {
 
             <div className="grid gap-6 xl:grid-cols-3">
               <div className="xl:col-span-2">
-                <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] overflow-hidden">
+                <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0d1117]">
                   <div className="border-b border-white/[0.06] px-5 py-4">
                     <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55">Projects</h2>
                   </div>
@@ -252,12 +276,14 @@ export default function Dashboard() {
                           <button
                             key={project.project_id}
                             onClick={() => navigate(`/project/${project.project_id}/workspace`)}
-                            className="w-full text-left p-5 hover:bg-white/[0.03] transition-all"
+                            className="w-full p-5 text-left transition-all hover:bg-white/[0.03]"
                           >
                             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                               <div>
                                 <div className="flex items-center gap-3">
-                                  <h3 className="text-base font-medium text-white">{project.name || project.file_name || "Untitled BOM"}</h3>
+                                  <h3 className="text-base font-medium text-white">
+                                    {project.name || project.file_name || "Untitled BOM"}
+                                  </h3>
                                   <span
                                     className="rounded-lg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
                                     style={{ background: style.bg, color: style.text }}
@@ -277,7 +303,9 @@ export default function Dashboard() {
                                 </div>
                                 <div>
                                   <p className="text-[10px] uppercase tracking-wider text-white/25">Savings</p>
-                                  <p className="text-sm text-white">{project.savings_percent != null ? `${fmt(project.savings_percent)}%` : "—"}</p>
+                                  <p className="text-sm text-white">
+                                    {project.savings_percent != null ? `${fmt(project.savings_percent)}%` : "—"}
+                                  </p>
                                 </div>
                                 <div>
                                   <p className="text-[10px] uppercase tracking-wider text-white/25">Lead time</p>
@@ -295,7 +323,7 @@ export default function Dashboard() {
 
               <div className="space-y-6">
                 <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55 mb-4">Pending approvals</h2>
+                  <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Pending approvals</h2>
                   <div className="space-y-3">
                     {(m.pending_approval_items || []).length === 0 ? (
                       <p className="text-sm text-white/35">No approval blockers.</p>
@@ -304,10 +332,10 @@ export default function Dashboard() {
                         <button
                           key={item.project_id}
                           onClick={() => navigate(`/project/${item.project_id}/workspace`)}
-                          className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-left hover:bg-white/[0.05] transition-all"
+                          className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-left transition-all hover:bg-white/[0.05]"
                         >
                           <p className="text-sm text-white">{item.name || "Untitled project"}</p>
-                          <p className="text-xs text-white/35 mt-1">{item.action}</p>
+                          <p className="mt-1 text-xs text-white/35">{item.action}</p>
                         </button>
                       ))
                     )}
@@ -315,7 +343,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55 mb-4">Delayed shipments</h2>
+                  <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Delayed shipments</h2>
                   <div className="space-y-3">
                     {(m.delayed_shipment_items || []).length === 0 ? (
                       <p className="text-sm text-white/35">No shipment delays.</p>
@@ -324,10 +352,10 @@ export default function Dashboard() {
                         <button
                           key={item.project_id}
                           onClick={() => navigate(`/project/${item.project_id}/workspace`)}
-                          className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-left hover:bg-white/[0.05] transition-all"
+                          className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-left transition-all hover:bg-white/[0.05]"
                         >
                           <p className="text-sm text-white">{item.name || "Untitled project"}</p>
-                          <p className="text-xs text-white/35 mt-1">{item.reason}</p>
+                          <p className="mt-1 text-xs text-white/35">{item.reason}</p>
                         </button>
                       ))
                     )}
@@ -335,7 +363,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55 mb-4">Spend alerts</h2>
+                  <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Spend alerts</h2>
                   <div className="space-y-3">
                     {(m.spend_alert_items || []).length === 0 ? (
                       <p className="text-sm text-white/35">No spend alerts.</p>
@@ -344,10 +372,10 @@ export default function Dashboard() {
                         <button
                           key={item.project_id}
                           onClick={() => navigate(`/project/${item.project_id}/workspace`)}
-                          className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-left hover:bg-white/[0.05] transition-all"
+                          className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-left transition-all hover:bg-white/[0.05]"
                         >
                           <p className="text-sm text-white">{item.name || "Untitled project"}</p>
-                          <p className="text-xs text-white/35 mt-1">{item.reason}</p>
+                          <p className="mt-1 text-xs text-white/35">{item.reason}</p>
                         </button>
                       ))
                     )}
