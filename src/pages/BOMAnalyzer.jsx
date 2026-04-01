@@ -3,6 +3,7 @@ import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { uploadBOM, unlockBOM } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 /* ── Constants ──────────────────────────────────────────── */
   const navigate = useNavigate();
