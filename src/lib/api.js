@@ -192,6 +192,52 @@ export async function getProject(projectId) {
   return res.json();
 }
 
+export async function getVendorMatch(projectId, filters = {}) {
+  const params = new URLSearchParams();
+  params.set("project_id", projectId);
+
+  if (filters.regions) params.set("regions", filters.regions);
+  if (filters.certifications) params.set("certifications", filters.certifications);
+  if (filters.max_moq !== undefined && filters.max_moq !== null && filters.max_moq !== "") params.set("max_moq", String(filters.max_moq));
+  if (filters.max_lead_time !== undefined && filters.max_lead_time !== null && filters.max_lead_time !== "") params.set("max_lead_time", String(filters.max_lead_time));
+  if (filters.max_price !== undefined && filters.max_price !== null && filters.max_price !== "") params.set("max_price", String(filters.max_price));
+  if (filters.search) params.set("search", filters.search);
+  if (filters.limit) params.set("limit", String(filters.limit));
+
+  const res = await apiCall(`/api/v1/vendors/match?${params.toString()}`);
+  if (!res.ok) throw new Error("Failed to load vendor shortlist");
+  return res.json();
+}
+
+export async function getVendor(vendorId) {
+  const res = await apiCall(`/api/v1/vendors/${vendorId}`);
+  if (!res.ok) throw new Error("Failed to load vendor");
+  return res.json();
+}
+
+export async function getVendorScorecard(vendorId, projectId = null) {
+  const params = new URLSearchParams();
+  if (projectId) params.set("project_id", projectId);
+
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  const res = await apiCall(`/api/v1/vendors/${vendorId}/scorecard${suffix}`);
+  if (!res.ok) throw new Error("Failed to load vendor scorecard");
+  return res.json();
+}
+
+export async function submitVendorFeedback(vendorId, payload) {
+  const res = await apiCall(`/api/v1/vendors/${vendorId}/feedback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Vendor feedback failed");
+  }
+  return res.json();
+}
+
 // ═══════════════════════════════════════════════════
 // RFQ
 // ═══════════════════════════════════════════════════

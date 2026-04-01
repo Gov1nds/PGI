@@ -25,7 +25,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ProjectWorkspace from "./pages/ProjectWorkspace.jsx";
-
+import VendorDiscovery from "./pages/VendorDiscovery.jsx";
 export default function App() {
   return (
     <>
@@ -53,7 +53,7 @@ export default function App() {
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-
+          <Route path="/project/:id/vendors" element={<ProtectedRoute><VendorDiscovery /></ProtectedRoute>} />
           {/* Protected */}
           <Route
             path="/dashboard"
@@ -72,7 +72,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
+        <Route
+           path="/project/:id/vendors"
+             element={
+         <ProtectedRoute>
+           <VendorPage />
+          </ProtectedRoute>
+           }
+               />
           <Route
             path="/project/:id/workspace"
             element={

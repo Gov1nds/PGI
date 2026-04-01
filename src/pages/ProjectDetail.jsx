@@ -609,78 +609,117 @@ export default function ProjectDetail() {
     return <div className="text-sm text-white/35">Tab not found.</div>;
   };
 
-  return (
-    <div className="min-h-screen bg-[#010409]">
-      <section className="border-b border-white/[0.06]">
-        <Container className="py-8">
-          <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
-            <Link to="/dashboard" className="hover:text-white/60 transition-colors">Control tower</Link>
-            <span>/</span>
-            <span className="text-white/60">{project.name || "Project"}</span>
+ return (
+  <div className="min-h-screen bg-[#010409]">
+    <section className="border-b border-white/[0.06]">
+      <Container className="py-8">
+        <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
+          <Link to="/dashboard" className="hover:text-white/60 transition-colors">Control tower</Link>
+          <span>/</span>
+          <span className="text-white/60">{project.name || "Project"}</span>
+        </div>
+
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-2xl font-bold text-white">{project.name || project.file_name || "Untitled BOM"}</h1>
+              <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[stage] || STATUS_STYLES.draft}`}>
+                {stage.replace(/_/g, " ")}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-4 text-xs text-white/40">
+              <span>{project.total_parts} parts</span>
+              {project.file_name && <span>{project.file_name}</span>}
+              {project.created_at && (
+                <span>{new Date(project.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+              )}
+              <span className="font-mono text-white/25">{project.project_id?.slice(0, 12)}</span>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold text-white">{project.name || project.file_name || "Untitled BOM"}</h1>
-                <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[stage] || STATUS_STYLES.draft}`}>
-                  {stage.replace(/_/g, " ")}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-4 text-xs text-white/40">
-                <span>{project.total_parts} parts</span>
-                {project.file_name && <span>{project.file_name}</span>}
-                {project.created_at && (
-                  <span>{new Date(project.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
-                )}
-                <span className="font-mono text-white/25">{project.project_id?.slice(0, 12)}</span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {project.workflow_stage === "project_hydrated" && !rfqSuccess && (
-                <button
-                  onClick={handleRequestQuote}
-                  disabled={rfqLoading}
-                  className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
-                >
-                  {rfqLoading ? "Creating RFQ..." : "Create RFQ"}
-                </button>
-              )}
-              <Link
-                to="/bom-analyzer"
-                className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+          <div className="flex flex-wrap gap-2">
+            {project.workflow_stage === "project_hydrated" && !rfqSuccess && (
+              <button
+                onClick={handleRequestQuote}
+                disabled={rfqLoading}
+                className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
               >
-                New Analysis
+                {rfqLoading ? "Creating RFQ..." : "Create RFQ"}
+              </button>
+            )}
+
+            <Link
+              to="/bom-analyzer"
+              className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+            >
+              New Analysis
+            </Link>
+
+            {/* ✅ 13.1 Vendor Discovery Button (UNCHANGED, CORRECT) */}
+            <Link
+              to={`/project/${id}/vendors`}
+              className="px-4 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 text-sky-400 text-sm font-semibold transition-all"
+            >
+              Discover Vendors
+            </Link>
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    <section className="border-b border-white/[0.06]">
+      <Container className="py-4">
+        <div className="flex gap-2 overflow-x-auto">
+          {[
+            ...TABS,
+            { id: "vendors", label: "Vendors" } // ✅ 13.2 Add Vendors tab
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
+                activeTab === tab.id
+                  ? "bg-sky-500/15 text-sky-400 border border-sky-500/20"
+                  : "bg-white/[0.03] text-white/45 border border-white/[0.06] hover:bg-white/[0.05]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <Container className="py-8">
+
+      {/* ✅ EXISTING TAB RENDER */}
+      {renderTab()}
+
+      {/* ✅ 13.3 Vendor Tab Body (NEW — NON-DESTRUCTIVE) */}
+      {activeTab === "vendors" && (
+        <div className={cardClass}>
+          <div className="p-6">
+            <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">
+              Vendor discovery
+            </h3>
+
+            <p className="text-white/60 text-sm leading-relaxed">
+              Open the ranked shortlist, vendor profile drawer, match reasons, and filters for geography, certifications, MOQ, lead time, and price.
+            </p>
+
+            <div className="mt-5">
+              <Link
+                to={`/project/${id}/vendors`}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-400 transition-all"
+              >
+                Open vendor discovery
               </Link>
             </div>
           </div>
-        </Container>
-      </section>
+        </div>
+      )}
 
-      <section className="border-b border-white/[0.06]">
-        <Container className="py-4">
-          <div className="flex gap-2 overflow-x-auto">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
-                  activeTab === tab.id
-                    ? "bg-sky-500/15 text-sky-400 border border-sky-500/20"
-                    : "bg-white/[0.03] text-white/45 border border-white/[0.06] hover:bg-white/[0.05]"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <Container className="py-8">
-        {renderTab()}
-      </Container>
-    </div>
-  );
+    </Container>
+  </div>
+ );
 }
