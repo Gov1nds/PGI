@@ -56,12 +56,12 @@ code, .font-mono {
 }
 
 ::selection {
-  background: rgba(14,99,185,0.14);
-  color: rgb(var(--ink));
+  background: rgba(205,30,30,0.28);
+  color: #fff;
 }
 
 :focus-visible {
-  outline: 2px solid rgba(14,99,185,0.55);
+  outline: 2px solid rgba(205,30,30,0.55);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -73,10 +73,81 @@ code, .font-mono {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: rgb(var(--bg)); }
 ::-webkit-scrollbar-thumb {
-  background: rgba(14,99,185,0.22);
+  background: rgba(205,30,30,0.30);
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(14,99,185,0.38); }
+::-webkit-scrollbar-thumb:hover { background: rgba(205,30,30,0.50); }
+
+/* =========================================================
+   NAVBAR — dark theme overrides
+   Targets common navbar wrapper patterns used in the project
+   ========================================================= */
+
+header,
+nav,
+.navbar,
+.nav-wrapper,
+.nav-bar,
+[class*="navbar"],
+[class*="nav-bar"],
+[class*="Navbar"],
+[class*="Header"],
+[class*="header"] {
+  background: rgb(var(--bg)) !important;
+  background-color: rgb(var(--bg)) !important;
+  border-bottom: 1px solid rgb(var(--border)) !important;
+  color: rgb(var(--ink)) !important;
+}
+
+/* Nav text links */
+.nav-link,
+nav a,
+header a {
+  color: rgb(var(--ink-2)) !important;
+}
+
+.nav-link:hover,
+nav a:hover,
+header a:hover {
+  color: rgb(var(--ink)) !important;
+}
+
+/* Active underline accent in red */
+.nav-link::after {
+  background: linear-gradient(90deg, rgb(var(--brand)), rgba(205,30,30,0.5)) !important;
+}
+
+/* Primary / CTA button inside navbar */
+header [class*="btn-primary"],
+header [class*="primary"],
+nav [class*="btn-primary"],
+nav [class*="primary"] {
+  background: rgb(var(--brand)) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 12px rgba(205,30,30,0.28) !important;
+}
+
+header [class*="btn-primary"]:hover,
+nav [class*="btn-primary"]:hover {
+  background: rgba(225,40,40,0.90) !important;
+}
+
+/* Dropdown / mega menus */
+[class*="dropdown"],
+[class*="mega-menu"],
+[class*="submenu"] {
+  background: rgb(var(--bg-raised)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+  color: rgb(var(--ink-2)) !important;
+}
+
+/* Hamburger / mobile toggle lines */
+[class*="hamburger"] span,
+[class*="burger"] span,
+[class*="menu-toggle"] span {
+  background: rgb(var(--ink)) !important;
+}
 
 /* =========================================================
    HOME ROOT
@@ -1197,4 +1268,59 @@ html { scroll-behavior: smooth; }
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* =========================================================
+   TAILWIND UTILITY OVERRIDE — Navbar dark bg fix
+   Overrides any bg-white / bg-gray-* Tailwind classes on
+   sticky/fixed header/nav elements
+   ========================================================= */
+
+/* Sticky / fixed top bar — catch-all */
+.sticky.top-0,
+.fixed.top-0,
+[class*="sticky"][class*="top"],
+[class*="fixed"][class*="top"] {
+  background-color: rgb(10, 10, 10) !important;
+  border-bottom: 1px solid rgb(32, 32, 32) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Explicit Tailwind white/light bg overrides on header/nav */
+header.bg-white,
+header[class*="bg-gray"],
+header[class*="bg-slate"],
+header[class*="bg-zinc"],
+nav.bg-white,
+nav[class*="bg-gray"],
+nav[class*="bg-slate"],
+nav[class*="bg-zinc"] {
+  background-color: rgb(10, 10, 10) !important;
+  border-bottom-color: rgb(32, 32, 32) !important;
+}
+
+/* Nav links text color */
+.sticky.top-0 a,
+.fixed.top-0 a,
+header a,
+nav a {
+  color: rgb(168, 168, 168) !important;
+}
+
+.sticky.top-0 a:hover,
+.fixed.top-0 a:hover,
+header a:hover,
+nav a:hover {
+  color: rgb(242, 242, 242) !important;
+}
+
+/* Primary CTA button in navbar stays red */
+.sticky.top-0 [class*="primary"],
+.fixed.top-0 [class*="primary"],
+header [class*="btn-primary"],
+header [class*="Analyze"],
+header [class*="analyze"] {
+  background-color: rgb(205, 30, 30) !important;
+  color: #fff !important;
+  border-color: transparent !important;
 }
