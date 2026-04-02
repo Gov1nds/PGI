@@ -161,7 +161,7 @@ export default function Navbar() {
       </Container>
 
       {/* Mobile fullscreen menu */}
-      <div className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-40 transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+      <div className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-[70] transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
         <div className="absolute inset-0 bg-[rgba(8,8,12,0.95)] backdrop-blur-xl" />
         <div className="relative h-full overflow-y-auto">
           <Container className="py-8">

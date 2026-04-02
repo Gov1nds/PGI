@@ -1,5 +1,4 @@
 import Container from "../components/Container.jsx";
-import SectionHeading from "../components/SectionHeading.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { services } from "../content/siteData.js";
 import { RevealSection } from "../components/RevealSection.jsx";

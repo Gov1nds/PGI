@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import Container from "../components/Container.jsx";
-import SectionHeading from "../components/SectionHeading.jsx";
 import { Link } from "react-router-dom";
-import { PrimaryButton, SecondaryButton } from "../components/Buttons.jsx";
+import { PrimaryButton } from "../components/Buttons.jsx";
 import {
   services,
   outdoorWorks,

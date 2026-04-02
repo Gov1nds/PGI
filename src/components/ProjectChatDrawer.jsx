@@ -161,7 +161,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
     }
   };
 
-  const createApproval = async () => {
+  const handleCreateApproval = async () => {
     if (!approvalTitle.trim()) return;
     setCreatingApproval(true);
     try {
@@ -380,9 +380,9 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                   className="w-full rounded-xl border border-white/[0.06] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                 />
                 <button
-                  onClick={createApproval}
+                  onClick={handleCreateApproval}
                   disabled={creatingApproval || !approvalTitle.trim()}
-                  className="w-full rounded-xl bg-violet-600 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                  className="w-full rounded-xl bg-orange-600 px-3 py-2 text-sm font-semibold text-white hover:bg-orange-500 disabled:opacity-50"
                 >
                   {creatingApproval ? "Creating..." : "Create approval"}
                 </button>

@@ -1,6 +1,4 @@
 import Container from "../components/Container.jsx";
-import SectionHeading from "../components/SectionHeading.jsx";
-import ImageCard from "../components/ImageCard.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { outdoorWorks } from "../content/siteData.js";
 import { RevealSection } from "../components/RevealSection.jsx";

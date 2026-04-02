@@ -80,35 +80,27 @@ code, .font-mono {
 
 /* =========================================================
    NAVBAR — dark theme overrides
-   Targets common navbar wrapper patterns used in the project
+   Targets the project's actual navbar elements only
    ========================================================= */
 
-header,
-nav,
+header.sticky,
 .navbar,
 .nav-wrapper,
-.nav-bar,
-[class*="navbar"],
-[class*="nav-bar"],
-[class*="Navbar"],
-[class*="Header"],
-[class*="header"] {
+.nav-bar {
   background: rgb(var(--bg)) !important;
   background-color: rgb(var(--bg)) !important;
   border-bottom: 1px solid rgb(var(--border)) !important;
   color: rgb(var(--ink)) !important;
 }
 
-/* Nav text links */
-.nav-link,
-nav a,
-header a {
+/* Nav text links — scoped to header only */
+header .nav-link,
+header > nav a {
   color: rgb(var(--ink-2)) !important;
 }
 
-.nav-link:hover,
-nav a:hover,
-header a:hover {
+header .nav-link:hover,
+header > nav a:hover {
   color: rgb(var(--ink)) !important;
 }
 
@@ -118,34 +110,31 @@ header a:hover {
 }
 
 /* Primary / CTA button inside navbar */
-header [class*="btn-primary"],
-header [class*="primary"],
-nav [class*="btn-primary"],
-nav [class*="primary"] {
+header .btn-primary,
+header > nav .btn-primary {
   background: rgb(var(--brand)) !important;
   color: #fff !important;
   border-color: transparent !important;
   box-shadow: 0 2px 12px rgba(249,115,22,0.28) !important;
 }
 
-header [class*="btn-primary"]:hover,
-nav [class*="btn-primary"]:hover {
+header .btn-primary:hover {
   background: rgba(251,146,60,0.90) !important;
 }
 
-/* Dropdown / mega menus */
-[class*="dropdown"],
-[class*="mega-menu"],
-[class*="submenu"] {
+/* Dropdown / mega menus — scoped to header */
+header [class*="dropdown"],
+header [class*="mega-menu"],
+header [class*="submenu"] {
   background: rgb(var(--bg-raised)) !important;
   border: 1px solid rgb(var(--border)) !important;
   color: rgb(var(--ink-2)) !important;
 }
 
-/* Hamburger / mobile toggle lines */
-[class*="hamburger"] span,
-[class*="burger"] span,
-[class*="menu-toggle"] span {
+/* Hamburger / mobile toggle lines — scoped to header */
+header [class*="hamburger"] span,
+header [class*="burger"] span,
+header [class*="menu-toggle"] span {
   background: rgb(var(--ink)) !important;
 }
 
@@ -659,6 +648,14 @@ nav [class*="btn-primary"]:hover {
 .reveal-section.revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Fallback: if JS hasn't revealed after 3s, force visible */
+@keyframes revealFallback {
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal-section:not(.revealed) {
+  animation: revealFallback 0s 3s forwards;
 }
 
 /* =========================================================
@@ -1276,11 +1273,9 @@ html { scroll-behavior: smooth; }
    sticky/fixed header/nav elements
    ========================================================= */
 
-/* Sticky / fixed top bar — catch-all */
-.sticky.top-0,
-.fixed.top-0,
-[class*="sticky"][class*="top"],
-[class*="fixed"][class*="top"] {
+/* Sticky / fixed header — scoped to header element */
+header.sticky.top-0,
+header.fixed.top-0 {
   background-color: rgb(8, 8, 12) !important;
   border-bottom: 1px solid rgb(38, 38, 48) !important;
   backdrop-filter: blur(12px) !important;
@@ -1299,27 +1294,20 @@ nav[class*="bg-zinc"] {
   border-bottom-color: rgb(38, 38, 48) !important;
 }
 
-/* Nav links text color */
-.sticky.top-0 a,
-.fixed.top-0 a,
-header a,
-nav a {
+/* Nav links text color — scoped to header */
+header.sticky.top-0 a,
+header.fixed.top-0 a {
   color: rgb(190, 190, 200) !important;
 }
 
-.sticky.top-0 a:hover,
-.fixed.top-0 a:hover,
-header a:hover,
-nav a:hover {
+header.sticky.top-0 a:hover,
+header.fixed.top-0 a:hover {
   color: rgb(248, 248, 248) !important;
 }
 
-/* Primary CTA button in navbar stays red */
-.sticky.top-0 [class*="primary"],
-.fixed.top-0 [class*="primary"],
-header [class*="btn-primary"],
-header [class*="Analyze"],
-header [class*="analyze"] {
+/* Primary CTA button in navbar stays orange */
+header .btn-primary,
+header [class*="btn-primary"] {
   background-color: rgb(249, 115, 22) !important;
   color: #fff !important;
   border-color: transparent !important;

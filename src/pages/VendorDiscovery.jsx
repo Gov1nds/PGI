@@ -267,7 +267,7 @@ export default function VendorDiscovery() {
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <input
                   value={limit}
-                  onChange={(e) => setLimit(Number(e.target.value))}
+                  onChange={(e) => { const v = Number(e.target.value); setLimit(Number.isNaN(v) ? 20 : Math.max(1, Math.min(50, v))); }}
                   type="number"
                   min={1}
                   max={50}

@@ -89,9 +89,9 @@ export default function Footer() {
         <div className="mt-12 flex flex-col gap-3 border-t border-white/[0.06] pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
           <div>© {new Date().getFullYear()} {site.name}. All rights reserved.</div>
           <div className="flex gap-5">
-            <a href="#" className="hover:text-white/80 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white/80 transition-colors">Terms</a>
-            <a href="#" className="hover:text-white/80 transition-colors">Cookie preferences</a>
+            <Link to="/contact" className="hover:text-white/80 transition-colors">Privacy</Link>
+            <Link to="/contact" className="hover:text-white/80 transition-colors">Terms</Link>
+            <button onClick={() => { /* Cookie preferences — future implementation */ }} className="hover:text-white/80 transition-colors cursor-pointer">Cookie preferences</button>
           </div>
         </div>
       </Container>

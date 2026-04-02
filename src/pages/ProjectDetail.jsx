@@ -248,10 +248,12 @@ export default function ProjectDetail() {
     if (rfqLoading) return;
     setRfqLoading(true);
     try {
-      await createRFQ(id);
+      const rfqResult = await createRFQ(id);
       setRfqSuccess(true);
       await loadProject();
-      await loadOperationalData(project?.current_rfq_id || id);
+      // Use the freshly returned RFQ id, not the stale project state
+      const freshRfqId = rfqResult?.rfq_id || rfqResult?.id || id;
+      await loadOperationalData(freshRfqId);
       setActiveTab("rfq");
     } catch (err) {
       setError(err.message || "Failed to create RFQ");

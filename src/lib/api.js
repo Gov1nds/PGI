@@ -6,7 +6,15 @@ function getSessionToken() {
   let session = localStorage.getItem("pgi_session");
 
   if (!session) {
-    session = crypto.randomUUID();
+    // Fallback for browsers without crypto.randomUUID
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      session = crypto.randomUUID();
+    } else {
+      session = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+      });
+    }
     localStorage.setItem("pgi_session", session);
   }
 
@@ -202,7 +210,7 @@ export async function getVendorMatch(projectId, filters = {}) {
   if (filters.max_lead_time !== undefined && filters.max_lead_time !== null && filters.max_lead_time !== "") params.set("max_lead_time", String(filters.max_lead_time));
   if (filters.max_price !== undefined && filters.max_price !== null && filters.max_price !== "") params.set("max_price", String(filters.max_price));
   if (filters.search) params.set("search", filters.search);
-  if (filters.limit) params.set("limit", String(filters.limit));
+  if (filters.limit !== undefined && filters.limit !== null && filters.limit !== "") params.set("limit", String(filters.limit));
 
   const res = await apiCall(`/api/v1/vendors/match?${params.toString()}`);
   if (!res.ok) throw new Error("Failed to load vendor shortlist");

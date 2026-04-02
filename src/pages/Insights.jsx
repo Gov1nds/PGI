@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import Container from "../components/Container.jsx";
-import SectionHeading from "../components/SectionHeading.jsx";
 import { insights } from "../content/siteData.js";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { RevealSection } from "../components/RevealSection.jsx";
