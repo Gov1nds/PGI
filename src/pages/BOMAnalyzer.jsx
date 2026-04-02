@@ -350,7 +350,7 @@ export default function BOMAnalyzer() {
   const S5_CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", machined: "Machined Parts", custom_mechanical: "Custom Manufacturing", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
   const S5_CAT_ICONS = { standard: "◈", electrical: "⚡", electronics: "◉", fastener: "⊕", machined: "⚙", custom_mechanical: "🔧", sheet_metal: "◆", raw_material: "◇", unknown: "?" };
   const S5_CAT_ACCENT = {
-    standard: { bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.15)", text: "#34d399", dot: "#34d399" },
+    standard: { bg: "rgba(249,115,22,0.08)", border: "rgba(249,115,22,0.15)", text: "#34d399", dot: "#34d399" },
     electrical: { bg: "rgba(56,189,248,0.08)", border: "rgba(56,189,248,0.15)", text: "#38bdf8", dot: "#38bdf8" },
     electronics: { bg: "rgba(96,165,250,0.08)", border: "rgba(96,165,250,0.15)", text: "#60a5fa", dot: "#60a5fa" },
     fastener: { bg: "rgba(34,211,238,0.08)", border: "rgba(34,211,238,0.15)", text: "#22d3ee", dot: "#22d3ee" },
@@ -1248,15 +1248,15 @@ export default function BOMAnalyzer() {
 
         /* ── Root ────────────────────────────────────── */
         .bom-root {
-          --bg: #050a0e;
-          --surface: #0a1019;
-          --surface-2: #0f1720;
-          --surface-3: #141d29;
+          --bg: #06060a;
+          --surface: #0a0a12;
+          --surface-2: #10101a;
+          --surface-3: #16161e;
           --border: rgba(255,255,255,0.06);
           --border-2: rgba(255,255,255,0.09);
-          --accent: #34d399;
-          --accent-dim: rgba(52,211,153,0.12);
-          --accent-glow: rgba(52,211,153,0.06);
+          --accent: #f97316;
+          --accent-dim: rgba(249,115,22,0.12);
+          --accent-glow: rgba(249,115,22,0.06);
           --text: rgba(255,255,255,0.92);
           --text-2: rgba(255,255,255,0.55);
           --text-3: rgba(255,255,255,0.30);
@@ -1282,7 +1282,7 @@ export default function BOMAnalyzer() {
         .bom-text-danger { color: var(--danger) !important; }
 
         .bom-badge-danger  { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.18); }
-        .bom-badge-success { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.18); }
+        .bom-badge-success { background: rgba(249,115,22,0.1); color: #34d399; border: 1px solid rgba(249,115,22,0.18); }
         .bom-badge-warn    { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.18); }
 
         /* ── Hero ────────────────────────────────────── */
@@ -1298,7 +1298,7 @@ export default function BOMAnalyzer() {
           transform: translateX(-50%);
           width: 700px;
           height: 500px;
-          background: radial-gradient(ellipse, rgba(52,211,153,0.06) 0%, transparent 70%);
+          background: radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 70%);
           pointer-events: none;
         }
         .bom-hero-grid {
@@ -1323,7 +1323,7 @@ export default function BOMAnalyzer() {
           padding: 5px 14px;
           border-radius: 100px;
           background: var(--accent-dim);
-          border: 1px solid rgba(52,211,153,0.18);
+          border: 1px solid rgba(249,115,22,0.18);
           margin-bottom: 24px;
           font-size: 11px;
           font-weight: 600;
@@ -1488,12 +1488,12 @@ export default function BOMAnalyzer() {
         .bom-step.done .bom-step-circle {
           background: var(--accent);
           color: white;
-          box-shadow: 0 0 20px rgba(52,211,153,0.25);
+          box-shadow: 0 0 20px rgba(249,115,22,0.25);
         }
         .bom-step.active .bom-step-circle {
           background: var(--accent);
           color: white;
-          box-shadow: 0 0 24px rgba(52,211,153,0.3);
+          box-shadow: 0 0 24px rgba(249,115,22,0.3);
           transform: scale(1.08);
         }
         .bom-step.future .bom-step-circle {
@@ -1523,7 +1523,7 @@ export default function BOMAnalyzer() {
           border-radius: 1px;
         }
         .bom-step-line.done {
-          background: linear-gradient(90deg, var(--accent), rgba(52,211,153,0.3));
+          background: linear-gradient(90deg, var(--accent), rgba(249,115,22,0.3));
         }
 
         /* ── Dropzone ────────────────────────────────── */
@@ -1550,8 +1550,8 @@ export default function BOMAnalyzer() {
           transform: scale(1.01);
         }
         .bom-dropzone.has-file {
-          border-color: rgba(52,211,153,0.35);
-          background: rgba(52,211,153,0.03);
+          border-color: rgba(249,115,22,0.35);
+          background: rgba(249,115,22,0.03);
         }
         .bom-dropzone-input {
           position: absolute;
@@ -1628,8 +1628,8 @@ export default function BOMAnalyzer() {
         }
         .bom-select:focus {
           outline: none;
-          border-color: rgba(52,211,153,0.4);
-          box-shadow: 0 0 0 3px rgba(52,211,153,0.08);
+          border-color: rgba(249,115,22,0.4);
+          box-shadow: 0 0 0 3px rgba(249,115,22,0.08);
         }
         .bom-select:disabled { opacity: 0.35; cursor: not-allowed; }
         .bom-select option { background: var(--surface-2); }
@@ -1639,8 +1639,8 @@ export default function BOMAnalyzer() {
           align-items: center;
           gap: 8px;
           padding: 12px 16px;
-          background: rgba(52,211,153,0.05);
-          border: 1px solid rgba(52,211,153,0.15);
+          background: rgba(249,115,22,0.05);
+          border: 1px solid rgba(249,115,22,0.15);
           border-radius: var(--radius-xs);
           color: var(--accent);
           font-size: 13px;
@@ -1670,8 +1670,8 @@ export default function BOMAnalyzer() {
           align-items: center;
           padding: 8px 16px;
           border-radius: var(--radius-xs);
-          background: rgba(52,211,153,0.1);
-          border: 1px solid rgba(52,211,153,0.18);
+          background: rgba(249,115,22,0.1);
+          border: 1px solid rgba(249,115,22,0.18);
           color: var(--accent);
           font-size: 12px;
           font-weight: 600;
@@ -1680,7 +1680,7 @@ export default function BOMAnalyzer() {
           font-family: var(--font);
           transition: all 0.2s;
         }
-        .bom-accent-btn:hover { background: rgba(52,211,153,0.16); }
+        .bom-accent-btn:hover { background: rgba(249,115,22,0.16); }
 
         /* ── Processing ──────────────────────────────── */
         .bom-processing {
@@ -1697,14 +1697,14 @@ export default function BOMAnalyzer() {
           position: absolute;
           inset: 0;
           border-radius: 50%;
-          border: 2.5px solid rgba(52,211,153,0.1);
+          border: 2.5px solid rgba(249,115,22,0.1);
           border-top-color: var(--accent);
           animation: bom-spin 1s linear infinite;
         }
         .bom-spinner-ring-2 {
           inset: 6px;
           border-top-color: transparent;
-          border-right-color: rgba(52,211,153,0.4);
+          border-right-color: rgba(249,115,22,0.4);
           animation-duration: 1.6s;
           animation-direction: reverse;
         }
@@ -1757,7 +1757,7 @@ export default function BOMAnalyzer() {
           margin: 0 auto 16px;
           border-radius: 50%;
           background: var(--accent-dim);
-          border: 1px solid rgba(52,211,153,0.2);
+          border: 1px solid rgba(249,115,22,0.2);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1991,7 +1991,7 @@ export default function BOMAnalyzer() {
         }
         .bom-region-bar {
           height: 100%;
-          background: linear-gradient(90deg, var(--accent), rgba(52,211,153,0.5));
+          background: linear-gradient(90deg, var(--accent), rgba(249,115,22,0.5));
           border-radius: 100px;
           transition: width 1s cubic-bezier(0.16,1,0.3,1);
         }
@@ -2019,8 +2019,8 @@ export default function BOMAnalyzer() {
         .bom-cta-bg {
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(56,189,248,0.06), rgba(167,139,250,0.06));
-          border: 1px solid rgba(52,211,153,0.12);
+          background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(56,189,248,0.06), rgba(167,139,250,0.06));
+          border: 1px solid rgba(249,115,22,0.12);
           border-radius: var(--radius);
         }
         .bom-cta-content {
@@ -2053,19 +2053,19 @@ export default function BOMAnalyzer() {
           background: var(--accent);
           border: none;
           border-radius: var(--radius-sm);
-          color: #050a0e;
+          color: #06060a;
           font-family: var(--font);
           font-size: 14px;
           font-weight: 700;
           cursor: pointer;
           text-decoration: none;
           transition: all 0.25s;
-          box-shadow: 0 4px 24px rgba(52,211,153,0.25);
+          box-shadow: 0 4px 24px rgba(249,115,22,0.25);
         }
         .bom-cta-btn:hover {
-          background: #4ade80;
+          background: #fb923c;
           transform: translateY(-1px);
-          box-shadow: 0 6px 32px rgba(52,211,153,0.35);
+          box-shadow: 0 6px 32px rgba(249,115,22,0.35);
         }
         .bom-cta-link {
           font-size: 13px;
@@ -2111,7 +2111,7 @@ export default function BOMAnalyzer() {
         .bom-tab.active {
           background: var(--accent);
           color: white;
-          box-shadow: 0 2px 12px rgba(52,211,153,0.2);
+          box-shadow: 0 2px 12px rgba(249,115,22,0.2);
         }
         .bom-tab-content { display: flex; flex-direction: column; gap: 20px; }
 
@@ -2342,7 +2342,7 @@ export default function BOMAnalyzer() {
           border-radius: var(--radius-xs);
           background: var(--accent);
           border: none;
-          color: #050a0e;
+          color: #06060a;
           font-family: var(--font);
           font-size: 12px;
           font-weight: 700;
@@ -2350,7 +2350,7 @@ export default function BOMAnalyzer() {
           text-decoration: none;
           transition: all 0.2s;
         }
-        .bom-rfq-btn:hover { background: #4ade80; transform: translateY(-1px); }
+        .bom-rfq-btn:hover { background: #fb923c; transform: translateY(-1px); }
         .bom-rfq-btn-secondary {
           background: rgba(167,139,250,0.1);
           border: 1px solid rgba(167,139,250,0.2);
@@ -2377,7 +2377,7 @@ export default function BOMAnalyzer() {
           text-transform: uppercase;
           letter-spacing: 0.04em;
         }
-        .bom-strat-type.high { background: rgba(52,211,153,0.1); color: var(--accent); }
+        .bom-strat-type.high { background: rgba(249,115,22,0.1); color: var(--accent); }
         .bom-strat-type.med { background: rgba(56,189,248,0.1); color: var(--info); }
         .bom-strat-type.low { background: rgba(255,255,255,0.04); color: var(--text-2); }
         .bom-strat-item { color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }

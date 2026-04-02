@@ -38,7 +38,7 @@ import {
 
 const STATUS_STYLES = {
   draft: "bg-white/[0.06] text-white/60",
-  guest_preview: "bg-sky-500/15 text-sky-400",
+  guest_preview: "bg-orange-500/15 text-orange-400",
   project_hydrated: "bg-blue-500/15 text-blue-400",
   strategy: "bg-violet-500/15 text-violet-400",
   vendor_match: "bg-cyan-500/15 text-cyan-400",
@@ -292,7 +292,7 @@ export default function ProjectDetail() {
   };
 
   const cardClass =
-    "rounded-2xl border border-white/[0.06] bg-[#0d1117] overflow-hidden";
+    "rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden";
 
   const stage = (
     project?.workflow_stage ||
@@ -321,7 +321,7 @@ export default function ProjectDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
+      <div className="min-h-screen bg-[#06060a] flex items-center justify-center">
         <div className="text-white/40 text-sm">Loading project...</div>
       </div>
     );
@@ -329,14 +329,14 @@ export default function ProjectDetail() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-[#010409] flex items-center justify-center">
+      <div className="min-h-screen bg-[#06060a] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 text-sm mb-4">
             {error || "Project not found"}
           </p>
           <Link
             to="/dashboard"
-            className="text-sky-400 hover:text-sky-300 text-sm"
+            className="text-orange-400 hover:text-orange-300 text-sm"
           >
             ← Back to Dashboard
           </Link>
@@ -765,7 +765,7 @@ export default function ProjectDetail() {
                       setComparisonLoading(false);
                     }
                   }}
-                  className="rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-400"
+                  className="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400"
                 >
                   Send / refresh RFQ
                 </button>
@@ -920,7 +920,7 @@ export default function ProjectDetail() {
               <div className="text-center">
                 <button
                   onClick={loadHistory}
-                  className="rounded-xl bg-sky-500/10 border border-sky-500/20 px-5 py-2.5 text-sm font-semibold text-sky-400 hover:bg-sky-500/20"
+                  className="rounded-xl bg-orange-500/10 border border-orange-500/20 px-5 py-2.5 text-sm font-semibold text-orange-400 hover:bg-orange-500/20"
                 >
                   Load version history
                 </button>
@@ -1005,7 +1005,7 @@ export default function ProjectDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#010409]">
+    <div className="min-h-screen bg-[#06060a]">
       <section className="border-b border-white/[0.06]">
         <Container className="py-8">
           <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
@@ -1080,7 +1080,7 @@ export default function ProjectDetail() {
               {/* ✅ 13.1 Vendor Discovery Button */}
               <Link
                 to={`/project/${id}/vendors`}
-                className="px-4 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 text-sky-400 text-sm font-semibold transition-all"
+                className="px-4 py-2.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 text-orange-400 text-sm font-semibold transition-all"
               >
                 Discover Vendors
               </Link>
@@ -1088,7 +1088,7 @@ export default function ProjectDetail() {
               {/* ✅ Collaboration Button */}
               <button
                 onClick={() => setShowChatDrawer(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 text-sky-400 text-sm font-semibold transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 text-orange-400 text-sm font-semibold transition-all"
               >
                 Collaboration
                 {chatCounts.unread_messages ||
@@ -1116,7 +1116,7 @@ export default function ProjectDetail() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
                   activeTab === tab.id
-                    ? "bg-sky-500/15 text-sky-400 border border-sky-500/20"
+                    ? "bg-orange-500/15 text-orange-400 border border-orange-500/20"
                     : "bg-white/[0.03] text-white/45 border border-white/[0.06] hover:bg-white/[0.05]"
                 }`}
               >
@@ -1146,7 +1146,7 @@ export default function ProjectDetail() {
               <div className="mt-5">
                 <Link
                   to={`/project/${id}/vendors`}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-400 transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500 text-white text-sm font-semibold hover:bg-orange-400 transition-all"
                 >
                   Open vendor discovery
                 </Link>

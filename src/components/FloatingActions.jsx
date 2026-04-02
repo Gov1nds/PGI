@@ -180,7 +180,7 @@ export default function FloatingActions() {
 
         .fab-label-bom {
           background: rgba(2,132,199,0.15);
-          color: #38bdf8;
+          color: #f97316;
           border: 1px solid rgba(56,189,248,0.15);
           box-shadow: 0 4px 12px rgba(2,132,199,0.1);
         }

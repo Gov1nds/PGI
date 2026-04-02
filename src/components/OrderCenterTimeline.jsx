@@ -17,7 +17,7 @@ function Badge({ children, tone = "neutral" }) {
   const tones = {
     neutral: "bg-white/[0.05] text-white/50 border-white/[0.06]",
     green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    blue: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+    blue: "bg-orange-500/10 text-orange-400 border-orange-500/20",
     amber: "bg-amber-500/10 text-amber-400 border-amber-500/20",
     red: "bg-red-500/10 text-red-400 border-red-500/20",
     violet: "bg-violet-500/10 text-violet-400 border-violet-500/20",
@@ -31,7 +31,7 @@ function Badge({ children, tone = "neutral" }) {
 
 function Card({ title, children, tone = "neutral" }) {
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
       <div className="border-b border-white/[0.06] px-5 py-4 flex items-center justify-between">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">{title}</h3>
         {tone ? <Badge tone={tone}>{tone}</Badge> : null}
@@ -44,7 +44,7 @@ function Card({ title, children, tone = "neutral" }) {
 export default function OrderCenterTimeline({ context, onRefresh }) {
   if (!context) {
     return (
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5 text-sm text-white/35">
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5 text-sm text-white/35">
         No fulfillment data yet.
       </div>
     );
@@ -93,7 +93,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
             context.timeline.map((item, idx) => (
               <div key={`${item.type || item.stage}-${item.id || idx}`} className="flex gap-3">
                 <div className="flex flex-col items-center">
-                  <div className="h-3 w-3 rounded-full bg-sky-400 mt-1" />
+                  <div className="h-3 w-3 rounded-full bg-orange-400 mt-1" />
                   {idx < context.timeline.length - 1 && <div className="w-px flex-1 bg-white/[0.08] mt-1" />}
                 </div>
 

@@ -56,7 +56,7 @@ export default function InsightDetail() {
         <Container>
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-5">
-              <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25">
+              <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-orange-500/15 text-orange-300 ring-1 ring-orange-500/25">
                 {insight.category}
               </span>
               <span className="text-xs text-white/50">{insight.readTime}</span>
@@ -66,7 +66,7 @@ export default function InsightDetail() {
             </h1>
             <p className="mt-6 text-lg text-white/80">{insight.excerpt}</p>
             <div className="mt-6 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-sky-500/10 ring-1 ring-sky-500/20 flex items-center justify-center text-xs font-bold text-sky-400">P</div>
+              <div className="w-8 h-8 rounded-full bg-orange-500/10 ring-1 ring-orange-500/20 flex items-center justify-center text-xs font-bold text-orange-400">P</div>
               <div>
                 <p className="text-sm font-semibold text-white">{insight.author}</p>
                 <p className="text-xs text-white/50">Manufacturing Insights</p>
@@ -99,7 +99,7 @@ export default function InsightDetail() {
 
       <section className="border-t border-white/[0.04] py-16 md:py-20">
         <Container>
-          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 to-cyan-500/5 p-8 md:p-12 ring-1 ring-sky-500/15 text-center">
+          <div className="rounded-2xl bg-gradient-to-r from-orange-500/10 to-amber-500/5 p-8 md:p-12 ring-1 ring-orange-500/15 text-center">
             <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3">
               Ready to optimize your manufacturing?
             </h2>
@@ -114,7 +114,7 @@ export default function InsightDetail() {
       <section className="border-t border-white/[0.04] py-16 md:py-20">
         <Container>
           <div className="text-center mb-10">
-            <div className="text-xs font-semibold uppercase tracking-[0.15em] text-sky-400 mb-2">More Insights</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.15em] text-orange-400 mb-2">More Insights</div>
             <h2 className="text-2xl font-semibold text-white">Related Articles</h2>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
@@ -122,15 +122,15 @@ export default function InsightDetail() {
               <Link
                 key={idx}
                 to={`/insights/${i.slug}`}
-                className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 flex flex-col"
+                className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-orange-500/20 flex flex-col"
               >
                 <div className="relative overflow-hidden aspect-video">
                   <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                 </div>
                 <div className="p-5 flex-1 flex flex-col">
-                  <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors">{i.title}</h3>
+                  <h3 className="text-[15px] font-semibold text-white group-hover:text-orange-400 transition-colors">{i.title}</h3>
                   <p className="mt-2 text-sm text-white/75 flex-1">{i.excerpt}</p>
-                  <div className="mt-4 text-sky-400 text-sm font-medium">Read →</div>
+                  <div className="mt-4 text-orange-400 text-sm font-medium">Read →</div>
                 </div>
               </Link>
             ))}

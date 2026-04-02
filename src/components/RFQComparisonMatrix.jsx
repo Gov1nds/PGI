@@ -11,7 +11,7 @@ function Pill({ children, tone = "neutral" }) {
     good: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
     warn: "bg-amber-500/10 text-amber-400 border-amber-500/20",
     bad: "bg-red-500/10 text-red-400 border-red-500/20",
-    info: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+    info: "bg-orange-500/10 text-orange-400 border-orange-500/20",
   };
   return (
     <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-medium ${styles[tone] || styles.neutral}`}>
@@ -73,12 +73,12 @@ export default function RFQComparisonMatrix({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5">
         <div className="grid grid-cols-1 gap-3 xl:grid-cols-6">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="rounded-xl border border-white/[0.06] bg-[#010409] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
           >
             <option value="total_cost">Sort: total cost</option>
             <option value="lead_time">Sort: lead time</option>
@@ -92,7 +92,7 @@ export default function RFQComparisonMatrix({
             placeholder="Min vendor score"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.06] bg-[#010409] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxCost || ""}
@@ -100,7 +100,7 @@ export default function RFQComparisonMatrix({
             placeholder="Max total cost"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.06] bg-[#010409] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxLeadTime || ""}
@@ -108,7 +108,7 @@ export default function RFQComparisonMatrix({
             placeholder="Max lead time"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.06] bg-[#010409] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxMoq || ""}
@@ -116,7 +116,7 @@ export default function RFQComparisonMatrix({
             placeholder="Max MOQ"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.06] bg-[#010409] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxRisk || ""}
@@ -124,12 +124,12 @@ export default function RFQComparisonMatrix({
             placeholder="Max risk"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.06] bg-[#010409] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
           />
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] overflow-hidden">
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
         <div className="border-b border-white/[0.06] px-5 py-4 flex items-center justify-between">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Vendor matrix</h3>
           <p className="text-xs text-white/30">{rows.length} BOM lines · {filteredVendors.length} vendors shown</p>
@@ -139,12 +139,12 @@ export default function RFQComparisonMatrix({
           <table className="min-w-full border-collapse">
             <thead>
               <tr className="border-b border-white/[0.06]">
-                <th className="sticky left-0 bg-[#0d1117] z-10 text-left px-4 py-3 text-xs uppercase tracking-wider text-white/30 min-w-[280px]">
+                <th className="sticky left-0 bg-white/[0.025] z-10 text-left px-4 py-3 text-xs uppercase tracking-wider text-white/30 min-w-[280px]">
                   BOM line
                 </th>
                 {filteredVendors.map((vendor) => (
                   <th key={vendor.vendor_id} className="px-4 py-3 text-left align-top min-w-[240px]">
-                    <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-sky-500/30 bg-sky-500/10" : "border-white/[0.06] bg-white/[0.03]"}`}>
+                    <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-orange-500/30 bg-orange-500/10" : "border-white/[0.06] bg-white/[0.03]"}`}>
                       <div className="flex items-center justify-between gap-2">
                         <div>
                           <p className="text-sm font-semibold text-white">{vendor.vendor_name}</p>
@@ -181,7 +181,7 @@ export default function RFQComparisonMatrix({
             <tbody>
               {rows.map((row) => (
                 <tr key={row.rfq_item_id} className="border-b border-white/[0.04]">
-                  <td className="sticky left-0 bg-[#0d1117] z-10 px-4 py-4 align-top">
+                  <td className="sticky left-0 bg-white/[0.025] z-10 px-4 py-4 align-top">
                     <div className="space-y-1">
                       <p className="text-sm font-medium text-white">{row.part_name}</p>
                       <p className="text-xs text-white/35">
@@ -199,7 +199,7 @@ export default function RFQComparisonMatrix({
                     return (
                       <td key={`${row.rfq_item_id}-${vendor.vendor_id}`} className="px-4 py-4 align-top">
                         {has ? (
-                          <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-sky-500/30 bg-sky-500/5" : "border-white/[0.06] bg-white/[0.03]"}`}>
+                          <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-orange-500/30 bg-orange-500/5" : "border-white/[0.06] bg-white/[0.03]"}`}>
                             <div className="flex items-center justify-between gap-2">
                               <Pill tone={cell.availability_status === "available" ? "good" : cell.availability_status === "unknown" ? "neutral" : "warn"}>
                                 {cell.availability_status}
@@ -241,15 +241,15 @@ export default function RFQComparisonMatrix({
 
       {comparison?.summary_json && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5">
             <p className="text-xs uppercase tracking-wider text-white/25">Best total cost vendor</p>
             <p className="mt-2 text-lg font-semibold text-white">{comparison.summary_json.best_total_cost_vendor_id || "—"}</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5">
             <p className="text-xs uppercase tracking-wider text-white/25">Best total cost</p>
             <p className="mt-2 text-lg font-semibold text-white">{fmt(comparison.summary_json.best_total_cost)}</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.06] bg-[#0d1117] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5">
             <p className="text-xs uppercase tracking-wider text-white/25">Vendors shown</p>
             <p className="mt-2 text-lg font-semibold text-white">{filteredVendors.length}</p>
           </div>

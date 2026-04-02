@@ -8,7 +8,7 @@ export default function ImageCard({ title, desc, image, to, tag }) {
     <Wrapper
       {...wrapperProps}
       className={`group block overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.06] transition-all duration-300 hover:bg-white/[0.06] ${
-        to ? "hover:ring-sky-500/30 hover:shadow-lg hover:shadow-sky-500/5" : ""
+        to ? "hover:ring-orange-500/30 hover:shadow-lg hover:shadow-orange-500/5" : ""
       }`}
     >
       <div className="relative aspect-[16/10] overflow-hidden">
@@ -23,7 +23,7 @@ export default function ImageCard({ title, desc, image, to, tag }) {
       <div className="p-5">
         <div className="text-[15px] font-semibold text-white">{title}</div>
         <p className="mt-2 text-sm leading-relaxed text-white/85">{desc}</p>
-        {to && <div className="mt-4 text-sm font-semibold text-sky-400 group-hover:text-sky-300 transition-colors">Read more →</div>}
+        {to && <div className="mt-4 text-sm font-semibold text-orange-400 group-hover:text-orange-300 transition-colors">Read more →</div>}
       </div>
     </Wrapper>
   );

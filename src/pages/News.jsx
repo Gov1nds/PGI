@@ -11,10 +11,10 @@ export default function News() {
       <section className="border-b border-white/[0.04] bg-gradient-to-b from-[rgb(10,15,26)] to-[rgb(13,18,30)] py-16 md:py-20">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-sky-400 mb-4">
-              <span className="w-6 h-px bg-sky-500/50" />
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-orange-400 mb-4">
+              <span className="w-6 h-px bg-orange-500/50" />
               Network Updates
-              <span className="w-6 h-px bg-sky-500/50" />
+              <span className="w-6 h-px bg-orange-500/50" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white">
               Manufacturing Network Updates
@@ -33,7 +33,7 @@ export default function News() {
             <Link
               key={idx}
               to={`/news/${n.slug}`}
-              className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] flex flex-col h-full"
+              className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-orange-500/20 hover:bg-white/[0.04] flex flex-col h-full"
             >
               <div className="relative overflow-hidden aspect-video">
                 <img
@@ -43,7 +43,7 @@ export default function News() {
                   loading="lazy"
                 />
                 <div className="absolute top-3 left-3">
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25 backdrop-blur-sm">
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-orange-500/15 text-orange-300 ring-1 ring-orange-500/25 backdrop-blur-sm">
                     {n.category}
                   </span>
                 </div>
@@ -52,12 +52,12 @@ export default function News() {
                 </div>
               </div>
               <div className="p-5 flex-1 flex flex-col">
-                <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">
+                <h3 className="text-[15px] font-semibold text-white group-hover:text-orange-400 transition-colors leading-snug">
                   {n.title}
                 </h3>
                 <p className="mt-3 text-sm text-white/75 flex-1 leading-relaxed">{n.excerpt}</p>
                 <div className="mt-5 pt-4 border-t border-white/[0.06]">
-                  <span className="text-sm text-sky-400 group-hover:text-sky-300 transition-colors font-medium">Read update →</span>
+                  <span className="text-sm text-orange-400 group-hover:text-orange-300 transition-colors font-medium">Read update →</span>
                 </div>
               </div>
             </Link>
@@ -89,7 +89,7 @@ export default function News() {
 
         {/* CTA */}
         <RevealSection className="mt-14">
-          <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 to-cyan-500/5 p-10 text-center ring-1 ring-sky-500/15">
+          <div className="rounded-2xl bg-gradient-to-r from-orange-500/10 to-amber-500/5 p-10 text-center ring-1 ring-orange-500/15">
             <h2 className="text-2xl font-semibold text-white">Stay updated</h2>
             <p className="mt-3 text-white/75 text-sm">Get notifications about new manufacturing partnerships and capability expansions</p>
             <div className="mt-6">
