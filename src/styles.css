@@ -3,37 +3,37 @@
 @tailwind utilities;
 
 /* =========================================================
-   DESIGN TOKENS — Light theme (Cursor-inspired)
+   DESIGN TOKENS — Dark premium theme (image-2 inspired)
    ========================================================= */
 
 :root {
-  /* Surfaces */
-  --bg: 250 249 246;          /* warm near-white */
-  --bg-alt: 255 255 255;      /* pure white */
-  --bg-raised: 245 244 240;   /* slightly deeper warm */
+  /* Surfaces — near-black charcoal */
+  --bg: 10 10 10;             /* page base: near-black */
+  --bg-alt: 16 16 16;         /* slightly lifted dark */
+  --bg-raised: 22 22 22;      /* card / raised surfaces */
 
   /* Text */
-  --ink: 14 14 14;            /* near black */
-  --ink-2: 60 60 60;          /* secondary text */
-  --ink-3: 120 120 118;       /* muted */
+  --ink: 242 242 242;         /* near-white */
+  --ink-2: 168 168 168;       /* secondary text */
+  --ink-3: 90 90 90;          /* muted / placeholder */
 
-  /* Brand — sky / steel blue */
-  --brand: 14 99 185;         /* main blue */
-  --brand-light: 239 246 255; /* tint bg */
-  --brand-border: 191 219 254;/* border */
+  /* Brand — crimson red accent */
+  --brand: 205 30 30;         /* primary red */
+  --brand-light: 30 10 10;    /* red tint surface */
+  --brand-border: 90 20 20;   /* red-tinted border */
 
   /* Accents */
-  --accent-green: 22 163 74;
-  --accent-amber: 180 83 9;
+  --accent-green: 74 222 128;
+  --accent-amber: 251 191 36;
 
   /* Borders */
-  --border: 226 225 220;
-  --border-strong: 200 198 192;
+  --border: 32 32 32;
+  --border-strong: 48 48 48;
 
-  /* Shadow recipe */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.05);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+  /* Shadow recipe — deeper for dark theme */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.65), 0 6px 16px rgba(0,0,0,0.45);
 }
 
 /* =========================================================
@@ -103,9 +103,9 @@ code, .font-mono {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 55% at 50% -8%, rgba(14,99,185,0.07) 0%, transparent 62%),
-    radial-gradient(ellipse 45% 35% at 85% 30%, rgba(56,189,248,0.05) 0%, transparent 55%),
-    radial-gradient(ellipse 38% 28% at 15% 35%, rgba(99,102,241,0.04) 0%, transparent 52%);
+    radial-gradient(ellipse 80% 55% at 50% -8%, rgba(205,30,30,0.10) 0%, transparent 62%),
+    radial-gradient(ellipse 45% 35% at 85% 30%, rgba(205,30,30,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 38% 28% at 15% 35%, rgba(120,0,0,0.06) 0%, transparent 52%);
   pointer-events: none;
   z-index: 0;
 }
@@ -116,8 +116,8 @@ code, .font-mono {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(14,99,185,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14,99,185,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(205,30,30,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(205,30,30,0.05) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
@@ -194,19 +194,19 @@ code, .font-mono {
   gap: 7px;
   padding: 11px 22px;
   border-radius: 10px;
-  background: rgb(var(--ink));
+  background: rgb(var(--brand));
   color: #fff;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 18px rgba(205,30,30,0.30);
 }
 
 .hero-cta-primary:hover {
-  background: rgba(14,14,14,0.82);
+  background: rgba(225,40,40,0.92);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 28px rgba(205,30,30,0.42);
 }
 
 .hero-cta-ghost {
@@ -398,7 +398,7 @@ code, .font-mono {
   justify-content: center;
   padding: 10px 18px;
   border-radius: 9px;
-  background: rgb(var(--ink));
+  background: rgb(var(--brand));
   color: #fff;
   font-size: 13px;
   font-weight: 600;
@@ -407,7 +407,7 @@ code, .font-mono {
 }
 
 .hero-card-btn-primary:hover {
-  background: rgba(14,14,14,0.84);
+  background: rgba(225,40,40,0.90);
 }
 
 .hero-card-btn-ghost {
@@ -986,8 +986,8 @@ code, .font-mono {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  background: rgba(255,255,255,0.92);
-  color: rgb(var(--brand));
+  background: rgba(205,30,30,0.85);
+  color: #fff;
   backdrop-filter: blur(8px);
 }
 
