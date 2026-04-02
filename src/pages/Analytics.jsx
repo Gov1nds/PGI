@@ -32,15 +32,15 @@ const fmt = (n, d = 2) => {
 
 function Card({ title, value, hint }) {
   return (
-    <div className="group rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-5 transition-all duration-300 hover:border-orange-500/20">
-      <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-white/40">{title}</p>
-      <p className="mt-2 text-2xl font-bold text-white tracking-tight">{value}</p>
-      {hint && <p className="mt-2 text-[11px] text-white/30">{hint}</p>}
+    <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
+      <p className="text-xs uppercase tracking-wider text-white/35">{title}</p>
+      <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
+      {hint && <p className="mt-2 text-xs text-white/35">{hint}</p>}
     </div>
   );
 }
 
-const COLORS = ["#f97316", "#fb923c", "#34d399", "#fbbf24", "#f472b6", "#60a5fa", "#fb7185", "#22d3ee"];
+const COLORS = ["#f97316", "#a78bfa", "#34d399", "#fbbf24", "#f472b6", "#60a5fa", "#fb7185", "#22d3ee"];
 
 export default function Analytics() {
   const { user } = useAuth();
@@ -134,9 +134,9 @@ export default function Analytics() {
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <input value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="Project ID filter" className="rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
-            <input value={startDate} onChange={(e) => setStartDate(e.target.value)} placeholder="Start date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
-            <input value={endDate} onChange={(e) => setEndDate(e.target.value)} placeholder="End date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
+            <input value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="Project ID filter" className="rounded-xl border border-white/[0.06] bg-[#0a0a12] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
+            <input value={startDate} onChange={(e) => setStartDate(e.target.value)} placeholder="Start date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.06] bg-[#0a0a12] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
+            <input value={endDate} onChange={(e) => setEndDate(e.target.value)} placeholder="End date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.06] bg-[#0a0a12] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
           </div>
         </Container>
       </section>
@@ -147,7 +147,7 @@ export default function Analytics() {
         ) : (
           <>
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-5">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Spend by vendor</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -162,7 +162,7 @@ export default function Analytics() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-5">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Spend by category</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -177,7 +177,7 @@ export default function Analytics() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-5">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Spend by region</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -194,7 +194,7 @@ export default function Analytics() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-5">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Lead-time and spend trend</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -214,7 +214,7 @@ export default function Analytics() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-5">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Vendor on-time rate</h2>
                 <div className="space-y-3">
                   {(vendors?.vendors || []).slice(0, 10).map((v) => (
@@ -231,7 +231,7 @@ export default function Analytics() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-5">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Savings realized</h2>
                 <div className="space-y-3">
                   {(savings?.savings || []).slice(0, 12).map((s) => (

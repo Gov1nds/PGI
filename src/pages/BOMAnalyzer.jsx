@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { uploadBOM, unlockBOM } from "../lib/api";
@@ -350,7 +350,7 @@ export default function BOMAnalyzer() {
   const S5_CAT_LABELS = { standard: "Standard / Catalog", electrical: "Electrical", electronics: "Electronics", fastener: "Fasteners", machined: "Machined Parts", custom_mechanical: "Custom Manufacturing", sheet_metal: "Sheet Metal", raw_material: "Raw Material", unknown: "Needs Review" };
   const S5_CAT_ICONS = { standard: "◈", electrical: "⚡", electronics: "◉", fastener: "⊕", machined: "⚙", custom_mechanical: "🔧", sheet_metal: "◆", raw_material: "◇", unknown: "?" };
   const S5_CAT_ACCENT = {
-    standard: { bg: "rgba(249,115,22,0.08)", border: "rgba(249,115,22,0.15)", text: "#34d399", dot: "#34d399" },
+    standard: { bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.15)", text: "#34d399", dot: "#34d399" },
     electrical: { bg: "rgba(56,189,248,0.08)", border: "rgba(56,189,248,0.15)", text: "#38bdf8", dot: "#38bdf8" },
     electronics: { bg: "rgba(96,165,250,0.08)", border: "rgba(96,165,250,0.15)", text: "#60a5fa", dot: "#60a5fa" },
     fastener: { bg: "rgba(34,211,238,0.08)", border: "rgba(34,211,238,0.15)", text: "#22d3ee", dot: "#22d3ee" },
@@ -1282,7 +1282,7 @@ export default function BOMAnalyzer() {
         .bom-text-danger { color: var(--danger) !important; }
 
         .bom-badge-danger  { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.18); }
-        .bom-badge-success { background: rgba(249,115,22,0.1); color: #34d399; border: 1px solid rgba(249,115,22,0.18); }
+        .bom-badge-success { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.18); }
         .bom-badge-warn    { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.18); }
 
         /* ── Hero ────────────────────────────────────── */

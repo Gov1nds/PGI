@@ -31,7 +31,7 @@ function Badge({ children, tone = "neutral" }) {
 
 function Card({ title, children, tone = "neutral" }) {
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
       <div className="border-b border-white/[0.06] px-5 py-4 flex items-center justify-between">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">{title}</h3>
         {tone ? <Badge tone={tone}>{tone}</Badge> : null}
@@ -44,7 +44,7 @@ function Card({ title, children, tone = "neutral" }) {
 export default function OrderCenterTimeline({ context, onRefresh }) {
   if (!context) {
     return (
-      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5 text-sm text-white/35">
+      <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5 text-sm text-white/35">
         No fulfillment data yet.
       </div>
     );

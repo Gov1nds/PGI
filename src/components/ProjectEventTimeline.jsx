@@ -22,7 +22,7 @@ function labelForEvent(event) {
 
 export default function ProjectEventTimeline({ events = [], title = "Event timeline", emptyText = "No events yet." }) {
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
       <div className="px-5 py-4 border-b border-white/[0.06]">
         <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider">{title}</h3>
       </div>

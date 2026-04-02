@@ -18,7 +18,7 @@ function ScoreBar({ label, value }) {
         <span className="text-xs text-white/70">{pct}%</span>
       </div>
       <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
-        <div className="h-full rounded-full bg-orange-500 transition-all duration-700" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full bg-orange-500" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -221,7 +221,7 @@ export default function VendorDiscovery() {
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_380px]">
           <div className="space-y-6">
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5">
+            <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5">
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3 xl:grid-cols-6">
                 <input
                   value={search}
@@ -285,7 +285,7 @@ export default function VendorDiscovery() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
+            <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
               <div className="border-b border-white/[0.06] px-5 py-4 flex items-center justify-between">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55">Shortlist</h2>
                 <span className="text-xs text-white/30">Ranked by score</span>
@@ -345,7 +345,7 @@ export default function VendorDiscovery() {
           </div>
 
           <aside className="space-y-6">
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
+            <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
               <div className="border-b border-white/[0.06] px-5 py-4">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55">Vendor profile</h2>
               </div>
@@ -399,7 +399,7 @@ export default function VendorDiscovery() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
+            <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
               <div className="border-b border-white/[0.06] px-5 py-4">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55">Match scorecard</h2>
               </div>
@@ -448,7 +448,7 @@ export default function VendorDiscovery() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden">
+            <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
               <div className="border-b border-white/[0.06] px-5 py-4">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-white/55">Feedback</h2>
               </div>

@@ -292,7 +292,7 @@ export default function ProjectDetail() {
   };
 
   const cardClass =
-    "rounded-2xl border border-white/[0.06] bg-white/[0.025] overflow-hidden";
+    "rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden";
 
   const stage = (
     project?.workflow_stage ||
