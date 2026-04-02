@@ -11,109 +11,168 @@ import { RevealSection } from "../components/RevealSection.jsx";
 const Home = () => {
   return (
     <div>
-      {/* ========== HERO SECTION — Animated BG + BOM CTA ========== */}
+      {/* ========== HERO SECTION — AI Sourcing Marketplace / Control Tower ========== */}
       <section className="bg-hero min-h-[92vh] flex items-center relative">
         <Container className="py-16 sm:py-24 lg:py-28">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-
-            {/* LEFT — Headlines & Stats */}
-            <div>
+          <div className="grid items-center gap-12 lg:grid-cols-[1.06fr_0.94fr]">
+            {/* LEFT — Product message */}
+            <div className="max-w-2xl">
               <div className="hero-anim-1">
-                <span className="inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-4 py-1.5 text-xs font-semibold text-sky-400 ring-1 ring-sky-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                  Manufacturing Intelligence Platform
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-semibold text-white/[0.78] backdrop-blur-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-sky-300 shadow-[0_0_0_6px_rgba(125,211,252,0.12)]" />
+                  AI sourcing marketplace · procurement control tower
                 </span>
               </div>
 
-              <h1 className="mt-6 text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-white leading-[1.1] hero-anim-2">
-                Global Manufacturing Network
-                <span className="block mt-2 bg-gradient-to-r from-sky-400 via-cyan-300 to-sky-500 bg-clip-text text-transparent">
-                  + Intelligent BOM Optimization
+              <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-[3.9rem] lg:leading-[1.02] hero-anim-2">
+                Upload a BOM or describe a requirement.
+                <span className="mt-2 block bg-gradient-to-r from-white via-sky-200 to-indigo-300 bg-clip-text text-transparent">
+                  Get suppliers, quotes, and cost insight instantly.
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/85 hero-anim-3">
-                Reduce sourcing costs up to 40%. Get instant manufacturing strategy, cost estimation, and supplier recommendations from a network of 300+ verified partners.
+              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/[0.72] hero-anim-3">
+                Intake structured demand, match qualified suppliers, launch RFQs, compare quotes side by side, execute purchase decisions, track fulfillment, and record spend in one operational surface.
               </p>
 
-              {/* Stats row */}
-              <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 hero-anim-4">
+              <div className="mt-8 flex flex-wrap gap-2.5 hero-anim-4">
+                {[
+                  "Intake",
+                  "Match",
+                  "RFQ",
+                  "Compare quotes",
+                  "Execute",
+                  "Track",
+                  "Analyze",
+                ].map((step) => (
+                  <span
+                    key={step}
+                    className="rounded-full border border-white/[0.08] bg-white/[0.035] px-3.5 py-2 text-[12px] font-medium text-white/[0.72] backdrop-blur-sm"
+                  >
+                    {step}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3 hero-anim-4">
                 {[
                   { val: 12200, suffix: "+", label: "Components" },
-                  { val: 300, suffix: "+", label: "Partners" },
-                  { val: 92, suffix: "%", label: "Reliability" },
-                  { val: 9, suffix: "+ yrs", label: "Experience" },
+                  { val: 300, suffix: "+", label: "Suppliers" },
+                  { val: 92, suffix: "%", label: "Match accuracy" },
                 ].map((s, i) => (
-                  <div key={i} className="rounded-xl bg-white/[0.03] p-3.5 ring-1 ring-white/[0.06] text-center">
-                    <div className="text-lg font-bold text-white">
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 shadow-[0_14px_40px_rgba(0,0,0,0.18)] backdrop-blur-sm"
+                  >
+                    <div className="text-xl font-semibold text-white">
                       <CountUp value={s.val} suffix={s.suffix} />
                     </div>
-                    <div className="text-[11px] text-white/70 mt-0.5">{s.label}</div>
+                    <div className="mt-1 text-[11px] uppercase tracking-[0.18em] text-white/[0.55]">
+                      {s.label}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* RIGHT — BOM Analyzer Hero Card */}
+            {/* RIGHT — action surface */}
             <div className="hero-anim-5">
               <div className="relative">
-                {/* Glow backdrop */}
-                <div className="absolute -inset-4 rounded-3xl bg-sky-500/5 blur-2xl" />
+                <div className="absolute -inset-8 rounded-[2.25rem] bg-sky-500/10 blur-3xl" />
+                <div className="absolute -right-10 top-8 h-36 w-36 rounded-full bg-indigo-500/15 blur-3xl" />
+                <div className="absolute left-4 bottom-0 h-24 w-24 rounded-full bg-violet-500/10 blur-3xl" />
 
-                <div className="relative rounded-2xl bg-[rgba(16,22,38,0.8)] backdrop-blur-xl p-7 sm:p-8 ring-1 ring-sky-500/15 bom-glow">
-                  {/* Header */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-sky-500/15 ring-1 ring-sky-500/30 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">Analyze Your BOM Instantly</h3>
-                      <p className="text-xs text-white/70">Free manufacturing intelligence</p>
-                    </div>
-                  </div>
-
-                  {/* Features */}
-                  <div className="space-y-3 mb-7">
-                    {[
-                      { text: "Part classification & material analysis" },
-                      { text: "Cost estimation across regions" },
-                      { text: "Global sourcing strategy" },
-                      { text: "Lead time & logistics estimate" },
-                    ].map((f, i) => (
-                      <div key={i} className="flex items-center gap-3 text-sm text-white/60">
-                        <span className="text-base">{f.icon}</span>
-                        <span>{f.text}</span>
+                <div className="relative overflow-hidden rounded-[1.9rem] border border-white/10 bg-[rgba(16,22,38,0.86)] shadow-[0_24px_90px_rgba(0,0,0,0.48)] backdrop-blur-xl">
+                  <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-5 sm:px-7">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/10 ring-1 ring-sky-400/20">
+                        <svg className="h-5 w-5 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.9}
+                            d="M12 16.5v-9m0 0 3.5 3.5M12 7.5 8.5 11M4 19.5h16"
+                          />
+                        </svg>
                       </div>
-                    ))}
+                      <div>
+                        <h3 className="text-base font-semibold text-white">Sourcing workspace</h3>
+                        <p className="text-xs text-white/[0.55]">Upload BOM · describe requirement · start matching</p>
+                      </div>
+                    </div>
+                    <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-300">
+                      Live workflow
+                    </span>
                   </div>
 
-                  {/* CTA Buttons */}
-                  <div className="space-y-2.5">
-                    <Link
-                      to="/bom-analyzer"
-                      className="flex items-center justify-center gap-2 w-full rounded-xl btn-primary px-5 py-3.5 text-sm font-semibold text-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                      </svg>
-                      Upload BOM & Analyze
-                    </Link>
-                    <Link
-                      to="/bom-analyzer"
-                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/60 ring-1 ring-white/[0.08] hover:bg-white/[0.08] hover:text-white/80 transition-all duration-300"
-                    >
-                      Try with Demo Data
-                    </Link>
-                  </div>
+                  <div className="px-6 py-6 sm:px-7">
+                    <div className="rounded-[1.35rem] border border-dashed border-white/[0.12] bg-white/[0.025] p-5 sm:p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04]">
+                          <svg className="h-5 w-5 text-white/[0.76]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.8}
+                              d="M12 16V4m0 0-4 4m4-4 4 4M4 20h16"
+                            />
+                          </svg>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-white/[0.92]">
+                            Drop a BOM, paste part numbers, or type a procurement request
+                          </p>
+                          <p className="mt-1 text-sm leading-relaxed text-white/[0.58]">
+                            Normalize demand, identify sourcing gaps, and generate the next action automatically.
+                          </p>
+                        </div>
+                      </div>
 
-                  {/* Trust line */}
-                  <div className="mt-5 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-[11px] text-white/50">
-                    <svg className="w-3.5 h-3.5 text-emerald-500/60" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    No sign-up required • Instant results • 100% free
+                      <div className="mt-5 rounded-2xl border border-white/10 bg-[rgba(8,12,22,0.72)] p-4 ring-1 ring-white/[0.04]">
+                        <div className="text-[11px] uppercase tracking-[0.2em] text-white/45">Example requirement</div>
+                        <div className="mt-2 text-sm leading-relaxed text-white/88">
+                          1,000 units · SMT resistors · ISO-certified suppliers · 4-week lead time · target cost under budget
+                        </div>
+                      </div>
+
+                      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                        <Link
+                          to="/bom-analyzer"
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl btn-primary px-5 py-3.5 text-sm font-semibold text-white transition-all duration-300"
+                        >
+                          Upload BOM & analyze
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 12h14m-7-7 7 7-7 7"
+                            />
+                          </svg>
+                        </Link>
+                        <Link
+                          to="/capabilities"
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3.5 text-sm font-medium text-white/[0.82] transition-all duration-300 hover:bg-white/[0.07] hover:text-white"
+                        >
+                          Explore workflow
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                      {[
+                        "Supplier matching",
+                        "RFQ automation",
+                        "Quote comparison",
+                      ].map((item) => (
+                        <div
+                          key={item}
+                          className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-3.5 py-3 text-center text-[12px] font-medium text-white/[0.66]"
+                        >
+                          {item}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -123,6 +182,7 @@ const Home = () => {
       </section>
 
       {/* ========== TRUSTED BY / PROCESS ========== */}
+
       <RevealSection>
         <section className="border-b border-white/[0.04] py-20 bg-gradient-to-b from-[rgb(10,15,26)] to-[rgb(13,18,30)]">
           <Container>
@@ -135,14 +195,16 @@ const Home = () => {
               {processSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="group rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300 relative"
+                  className="group rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.06] hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300 relative overflow-hidden"
                 >
-                  <div className="text-2xl font-bold text-sky-500/20 mb-3 font-mono">{step.number}</div>
-                  <h3 className="text-sm font-semibold text-white mb-2">{step.title}</h3>
-                  <p className="text-xs text-white/75 leading-relaxed">{step.desc}</p>
-                  {idx < processSteps.length - 1 && (
-                    <div className="hidden lg:block absolute top-1/2 -right-2 w-4 text-white/10">→</div>
-                  )}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-sky-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="relative">
+                    <div className="w-10 h-10 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-semibold mb-4 ring-1 ring-sky-500/20">
+                      {idx + 1}
+                    </div>
+                    <h3 className="text-[15px] font-semibold text-white">{step.title}</h3>
+                    <p className="mt-2 text-sm text-white/70 leading-relaxed">{step.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -150,28 +212,33 @@ const Home = () => {
         </section>
       </RevealSection>
 
-      {/* ========== SERVICES SECTION ========== */}
+      {/* ========== SERVICES ========== */}
       <RevealSection>
-        <section className="border-b border-white/[0.04] py-20">
+        <section className="border-b border-white/[0.04] py-20 bg-gradient-to-b from-transparent to-white/[0.01]">
           <Container>
             <SectionHeading
-              eyebrow="Services"
-              title="Complete manufacturing coordination"
-              desc="End-to-end production management from engineering review to global delivery."
+              eyebrow="Solutions"
+              title="Full-Spectrum Manufacturing Services"
+              desc="From concept to production — we cover every stage of the manufacturing lifecycle with precision and scalability."
             />
-            <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+            <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {services.map((s, idx) => (
-                <div
-                  key={idx}
-                  className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden hover:ring-sky-500/20 hover:bg-white/[0.04] transition-all duration-300"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                <div key={idx} className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04]">
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <img
+                      src={s.image}
+                      alt={s.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-[rgb(10,15,26)] via-transparent to-transparent opacity-50" />
                   </div>
                   <div className="p-5">
-                    <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors">{s.title}</h3>
-                    <p className="mt-2 text-sm text-white/75 leading-relaxed">{s.desc}</p>
+                    <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors">
+                      {s.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-white/[0.75] leading-relaxed">{s.desc}</p>
                   </div>
                 </div>
               ))}
@@ -194,12 +261,7 @@ const Home = () => {
             />
             <div className="mt-14 grid gap-5 sm:grid-cols-2">
               {outdoorWorks.map((c, idx) => (
-                <ImageCard
-                  key={idx}
-                  title={c.title}
-                  desc={c.desc}
-                  image={c.image}
-                />
+                <ImageCard key={idx} title={c.title} desc={c.desc} image={c.image} />
               ))}
             </div>
             <div className="mt-10 text-center">
@@ -220,10 +282,13 @@ const Home = () => {
             />
             <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {differentiators.map((d, idx) => (
-                <div key={idx} className="rounded-xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/15 transition-all duration-300">
+                <div
+                  key={idx}
+                  className="rounded-xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06] hover:ring-sky-500/15 transition-all duration-300"
+                >
                   <div className="text-2xl mb-3">{d.icon}</div>
                   <h3 className="text-sm font-semibold text-white">{d.title}</h3>
-                  <p className="mt-2 text-sm text-white/75 leading-relaxed">{d.desc}</p>
+                  <p className="mt-2 text-sm text-white/[0.75] leading-relaxed">{d.desc}</p>
                 </div>
               ))}
             </div>
@@ -235,10 +300,7 @@ const Home = () => {
       <RevealSection>
         <section className="border-b border-white/[0.04] py-20 bg-gradient-to-b from-sky-500/[0.02] to-transparent">
           <Container>
-            <SectionHeading
-              eyebrow="Results"
-              title="What our partners say"
-            />
+            <SectionHeading eyebrow="Results" title="What our partners say" />
             <div className="mt-14 grid gap-5 md:grid-cols-3">
               {testimonials.map((t, idx) => (
                 <div key={idx} className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06]">
@@ -248,7 +310,7 @@ const Home = () => {
                   <p className="text-sm text-white/60 leading-relaxed italic">"{t.quote}"</p>
                   <div className="mt-5 pt-4 border-t border-white/[0.06]">
                     <div className="text-sm font-semibold text-white">{t.person}</div>
-                    <div className="text-xs text-white/70">{t.company}</div>
+                    <div className="text-xs text-white/[0.70]">{t.company}</div>
                   </div>
                 </div>
               ))}
@@ -275,7 +337,12 @@ const Home = () => {
                   className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] flex flex-col"
                 >
                   <div className="relative overflow-hidden aspect-video">
-                    <img src={i.image} alt={i.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <img
+                      src={i.image}
+                      alt={i.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                     <div className="absolute top-3 left-3">
                       <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25 backdrop-blur-sm">
                         {i.category}
@@ -283,8 +350,10 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">{i.title}</h3>
-                    <p className="mt-2 text-sm text-white/75 flex-1">{i.excerpt}</p>
+                    <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">
+                      {i.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-white/[0.75] flex-1">{i.excerpt}</p>
                     <div className="mt-4 flex items-center justify-between text-xs text-white/50">
                       <span>{i.readTime}</span>
                       <span className="text-sky-400 font-medium group-hover:text-sky-300 transition-colors">Read →</span>
@@ -319,20 +388,29 @@ const Home = () => {
                   className="group rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.06] overflow-hidden transition-all duration-300 hover:ring-sky-500/20 hover:bg-white/[0.04] flex flex-col"
                 >
                   <div className="relative overflow-hidden aspect-video">
-                    <img src={n.image} alt={n.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <img
+                      src={n.image}
+                      alt={n.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                     <div className="absolute top-3 left-3">
                       <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/25 backdrop-blur-sm">
                         {n.category}
                       </span>
                     </div>
-                    <div className="absolute bottom-3 right-3 text-[10px] text-white/80 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md">
+                    <div className="absolute bottom-3 right-3 text-[10px] text-white/[0.80] bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md">
                       {n.date}
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">{n.title}</h3>
-                    <p className="mt-2 text-sm text-white/75 flex-1">{n.excerpt}</p>
-                    <div className="mt-4 text-sky-400 text-sm font-medium group-hover:text-sky-300 transition-colors">Read update →</div>
+                    <h3 className="text-[15px] font-semibold text-white group-hover:text-sky-400 transition-colors leading-snug">
+                      {n.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-white/[0.75] flex-1">{n.excerpt}</p>
+                    <div className="mt-4 text-sky-400 text-sm font-medium group-hover:text-sky-300 transition-colors">
+                      Read update →
+                    </div>
                   </div>
                 </Link>
               ))}
@@ -356,21 +434,63 @@ const Home = () => {
                 <span className="w-6 h-px bg-sky-500/50" />
               </div>
               <h2 className="mt-2 text-3xl font-semibold text-white">Manufacturing Specialties</h2>
-              <p className="mt-3 text-white/75 max-w-xl mx-auto text-sm">Comprehensive capabilities across multiple disciplines</p>
+              <p className="mt-3 text-white/[0.75] max-w-xl mx-auto text-sm">
+                Comprehensive capabilities across multiple disciplines
+              </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { category: "Materials", items: ["Aluminum & Alloys", "Stainless Steel", "Titanium", "Brass & Copper", "Engineering Plastics", "Carbon Fiber"] },
-                { category: "Mechanical", items: ["CNC Machining", "Sheet Metal", "Injection Molding", "Die Casting", "Precision Turning", "Custom Fabrication"] },
-                { category: "Electronics", items: ["PCB Design Support", "Component Sourcing", "SMT Assembly", "Through-Hole Assembly", "PCBA Testing", "Conformal Coating"] },
-                { category: "Finishing", items: ["Anodizing", "Powder Coating", "Plating", "Wire Harnesses", "Box Assembly", "Final Testing"] }
+                {
+                  category: "Materials",
+                  items: [
+                    "Aluminum & Alloys",
+                    "Stainless Steel",
+                    "Titanium",
+                    "Brass & Copper",
+                    "Engineering Plastics",
+                    "Carbon Fiber",
+                  ],
+                },
+                {
+                  category: "Mechanical",
+                  items: [
+                    "CNC Machining",
+                    "Sheet Metal",
+                    "Injection Molding",
+                    "Die Casting",
+                    "Precision Turning",
+                    "Custom Fabrication",
+                  ],
+                },
+                {
+                  category: "Electronics",
+                  items: [
+                    "PCB Design Support",
+                    "Component Sourcing",
+                    "SMT Assembly",
+                    "Through-Hole Assembly",
+                    "PCBA Testing",
+                    "Conformal Coating",
+                  ],
+                },
+                {
+                  category: "Finishing",
+                  items: [
+                    "Anodizing",
+                    "Powder Coating",
+                    "Plating",
+                    "Wire Harnesses",
+                    "Box Assembly",
+                    "Final Testing",
+                  ],
+                },
               ].map((spec, idx) => (
                 <div key={idx} className="rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.06]">
                   <h3 className="text-sm font-semibold text-sky-400 mb-4">{spec.category}</h3>
                   <ul className="space-y-2">
                     {spec.items.map((item, i) => (
-                      <li key={i} className="text-sm text-white/75 flex items-center gap-2.5">
+                      <li key={i} className="text-sm text-white/[0.75] flex items-center gap-2.5">
                         <span className="w-1 h-1 rounded-full bg-sky-500/30 shrink-0" />
                         {item}
                       </li>
@@ -397,7 +517,7 @@ const Home = () => {
                 <h2 className="text-3xl md:text-4xl font-bold text-white">
                   Ready to optimize your production?
                 </h2>
-                <p className="mt-4 text-white/80 max-w-2xl mx-auto leading-relaxed">
+                <p className="mt-4 text-white/[0.80] max-w-2xl mx-auto leading-relaxed">
                   Upload your BOM for instant analysis, or share your CAD files for a comprehensive engineering review. Our team responds within 24 hours.
                 </p>
                 <div className="mt-8 flex gap-3 justify-center flex-wrap">
