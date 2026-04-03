@@ -243,32 +243,34 @@ export default function UniversalIntakeBox({
   return (
     <section className={cn("w-full", className)}>
       <div
-        className="rounded-[28px] border border-slate-200/70 bg-white/90 shadow-[0_20px_70px_rgba(15,23,42,0.08)] backdrop-blur-sm"
+        className="rounded-[28px] border border-white/[0.06] bg-[#0a0a12] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm"
         onDrop={onDropFile}
         onDragOver={(e) => e.preventDefault()}
       >
-        <div className="border-b border-slate-200/70 px-5 py-4">
-          <div className="flex items-center justify-between gap-4">
+        <div className="border-b border-white/[0.06] px-6 py-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">Source top products from global suppliers</h2>
-              <p className="text-sm text-slate-500">Describe an item, component, material, part number, BOM, or speak it aloud.</p>
+              <h2 className="text-lg font-semibold text-white">Source top products from global suppliers</h2>
+              <p className="text-sm text-white/40">
+                Describe an item, component, material, part number, BOM, or speak it aloud.
+              </p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
-              <span className="rounded-full bg-slate-100 px-3 py-1">Unified intake</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1">AI parse</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1">RFQ ready</span>
+            <div className="hidden sm:flex items-center gap-2 text-xs text-white/35">
+              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">Unified intake</span>
+              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">AI parse</span>
+              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">RFQ ready</span>
             </div>
           </div>
         </div>
 
-        <div className="p-5">
+        <div className="p-6">
           <div className="grid gap-4 lg:grid-cols-[1fr_auto]">
-            <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
+            <div className="rounded-[24px] border border-white/[0.06] bg-[#06060a] p-5">
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Describe anything about product sourcing"
-                className="min-h-[150px] w-full resize-none bg-transparent text-[15px] leading-6 text-slate-900 outline-none placeholder:text-slate-400"
+                className="min-h-[150px] w-full resize-none rounded-2xl border border-transparent bg-transparent text-[15px] leading-6 text-white outline-none placeholder:text-white/30"
               />
               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
                 {mode !== "voice" ? (
@@ -278,25 +280,26 @@ export default function UniversalIntakeBox({
                     className={cn(
                       "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 transition",
                       isListening
-                        ? "border-rose-300 bg-rose-50 text-rose-700"
-                        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                        ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
+                        : "border-white/[0.08] bg-white/[0.03] text-white/70 hover:bg-white/[0.06]"
                     )}
                   >
                     <Mic className="h-4 w-4" />
                     {isListening ? "Listening..." : "Voice input"}
                   </button>
                 ) : null}
+
                 {isListening ? (
                   <button
                     type="button"
                     onClick={stopVoiceCapture}
-                    className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-100"
+                    className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]"
                   >
                     Stop voice
                   </button>
                 ) : null}
 
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-100">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]">
                   <Upload className="h-4 w-4" />
                   Upload file
                   <input
@@ -307,7 +310,7 @@ export default function UniversalIntakeBox({
                   />
                 </label>
 
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-100">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]">
                   <FileText className="h-4 w-4" />
                   Audio
                   <input
@@ -318,35 +321,23 @@ export default function UniversalIntakeBox({
                   />
                 </label>
 
-                {file ? <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-emerald-700">{file.name}</span> : null}
-                {audioFile ? <span className="rounded-full bg-indigo-50 px-3 py-1.5 text-indigo-700">{audioFile.name}</span> : null}
-                {sessionToken ? <span className="rounded-full bg-slate-100 px-3 py-1.5 text-slate-600">Session linked</span> : null}
+                {file ? <span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-emerald-300">{file.name}</span> : null}
+                {audioFile ? <span className="rounded-full bg-indigo-500/10 px-3 py-1.5 text-indigo-300">{audioFile.name}</span> : null}
+                {sessionToken ? <span className="rounded-full bg-white/[0.04] px-3 py-1.5 text-white/55">Session linked</span> : null}
               </div>
             </div>
 
-            <div className="flex flex-col justify-between gap-3">
-              <button
-                type="button"
-                onClick={runSubmit}
-                disabled={isSubmitting || (!text.trim() && !file && !audioFile && !voiceTranscript.trim())}
-                className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-slate-900 px-5 py-4 text-white shadow-lg transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
-                  <span className="text-sm font-medium">Analyze & continue</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={runParse}
-                disabled={isParsing || (!text.trim() && !file && !audioFile && !voiceTranscript.trim())}
-                className="inline-flex items-center justify-center gap-2 rounded-[20px] border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isParsing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ScanSearch className="h-4 w-4" />}
-                Parse only
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={runSubmit}
+              disabled={isSubmitting || (!text.trim() && !file && !audioFile && !voiceTranscript.trim())}
+              className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-orange-500 px-5 py-4 text-white shadow-[0_16px_45px_rgba(249,115,22,0.28)] transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <div className="flex flex-col items-center gap-2">
+                {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
+                <span className="text-sm font-medium">Analyze & continue</span>
+              </div>
+            </button>
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -358,8 +349,8 @@ export default function UniversalIntakeBox({
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition",
                   mode === opt.key
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                    ? "border-orange-500/30 bg-orange-500 text-white shadow-[0_12px_25px_rgba(249,115,22,0.18)]"
+                    : "border-white/[0.08] bg-white/[0.03] text-white/70 hover:bg-white/[0.06]"
                 )}
               >
                 {opt.label}
@@ -376,8 +367,8 @@ export default function UniversalIntakeBox({
                 className={cn(
                   "rounded-full px-4 py-2 text-sm transition",
                   intent === opt.key
-                    ? "bg-indigo-600 text-white"
-                    : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                    ? "bg-indigo-500 text-white shadow-[0_12px_25px_rgba(99,102,241,0.18)]"
+                    : "bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/15"
                 )}
               >
                 {opt.label}
@@ -390,18 +381,18 @@ export default function UniversalIntakeBox({
               value={deliveryLocation}
               onChange={(e) => setDeliveryLocation(e.target.value)}
               placeholder="Delivery location"
-              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500/30"
             />
             <input
               value={targetCurrency}
               onChange={(e) => setTargetCurrency(e.target.value)}
               placeholder="Currency"
-              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500/30"
             />
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none focus:border-orange-500/30"
             >
               <option value="cost">Cost priority</option>
               <option value="speed">Speed priority</option>
@@ -409,44 +400,44 @@ export default function UniversalIntakeBox({
           </div>
 
           {error ? (
-            <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            <div className="mt-4 rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
               {error}
             </div>
           ) : null}
 
           {parseResult ? (
-            <div className="mt-6 rounded-[24px] border border-slate-200 bg-white p-4">
+            <div className="mt-6 rounded-[24px] border border-white/[0.06] bg-[#06060a] p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900">Normalized intake preview</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-sm font-semibold text-white">Normalized intake preview</h3>
+                  <p className="text-xs text-white/45">
                     {parseResult?.parsed_summary?.line_count || 0} item(s) detected • Confidence {Math.round((parseResult?.confidence_score || 0) * 100)}%
                   </p>
                 </div>
-                <div className="flex gap-2 text-xs text-slate-500">
-                  <span className="rounded-full bg-slate-100 px-3 py-1">{parseResult?.input_type}</span>
-                  <span className="rounded-full bg-slate-100 px-3 py-1">{parseResult?.intent}</span>
+                <div className="flex gap-2 text-xs text-white/45">
+                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">{parseResult?.input_type}</span>
+                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">{parseResult?.intent}</span>
                 </div>
               </div>
 
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {(parseResult?.normalized_items || []).map((item, idx) => (
-                  <div key={`${item.item_name}-${idx}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div key={`${item.item_name}-${idx}`} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="text-sm font-medium text-slate-900">{item.item_name || item.raw_text}</div>
-                        <div className="text-xs text-slate-500">{item.category} • {item.material || "material missing"}</div>
+                        <div className="text-sm font-medium text-white">{item.item_name || item.raw_text}</div>
+                        <div className="text-xs text-white/45">{item.category} • {item.material || "material missing"}</div>
                       </div>
-                      <div className="rounded-full bg-white px-3 py-1 text-xs text-slate-600">
+                      <div className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-xs text-white/65">
                         {Math.round((item.confidence || 0) * 100)}%
                       </div>
                     </div>
-                    <div className="mt-3 text-xs text-slate-600">
+                    <div className="mt-3 text-xs text-white/55">
                       Qty: {item.quantity} {item.unit || ""}
                       {item.process ? <span> • Process: {item.process}</span> : null}
                     </div>
                     {item.warnings?.length ? (
-                      <ul className="mt-3 list-disc space-y-1 pl-4 text-xs text-amber-700">
+                      <ul className="mt-3 list-disc space-y-1 pl-4 text-xs text-amber-300">
                         {item.warnings.map((w, i) => <li key={i}>{w}</li>)}
                       </ul>
                     ) : null}
@@ -458,14 +449,14 @@ export default function UniversalIntakeBox({
                 <button
                   type="button"
                   onClick={runNormalize}
-                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm text-white/75 hover:bg-white/[0.06]"
                 >
                   Re-normalize
                 </button>
                 <button
                   type="button"
                   onClick={runSubmit}
-                  className="rounded-full bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800"
+                  className="rounded-full bg-orange-500 px-4 py-2 text-sm text-white hover:bg-orange-400"
                 >
                   Open workspace
                 </button>
@@ -475,12 +466,12 @@ export default function UniversalIntakeBox({
 
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {helperCards.map((card) => (
-              <div key={card.title} className="rounded-2xl border border-slate-200 bg-white p-4">
-                <div className="flex items-center gap-2 text-slate-900">
-                  <span className="rounded-full bg-slate-100 p-2">{card.icon}</span>
+              <div key={card.title} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                <div className="flex items-center gap-2 text-white">
+                  <span className="rounded-full bg-white/[0.06] p-2">{card.icon}</span>
                   <div className="text-sm font-medium">{card.title}</div>
                 </div>
-                <p className="mt-3 text-sm text-slate-500">{card.desc}</p>
+                <p className="mt-3 text-sm text-white/45">{card.desc}</p>
               </div>
             ))}
           </div>
