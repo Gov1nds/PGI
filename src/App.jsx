@@ -87,7 +87,7 @@ export default function App() {
           <Route
             path="/project/:id"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowGuest>
                 <ProjectDetail />
               </ProtectedRoute>
             }

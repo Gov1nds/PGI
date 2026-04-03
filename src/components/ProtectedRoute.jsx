@@ -2,11 +2,12 @@
  * ProtectedRoute — waits for auth hydration before rendering or redirecting.
  * FIXES the auth hydration race that caused false logouts on page refresh.
  */
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth();
+export default function ProtectedRoute({ children, allowGuest = false, requiredCapability = null, redirectTo = "/login", fallbackTo = "/dashboard" }) {
+  const { user, loading, canAccessCapability } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -20,7 +21,14 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    if (allowGuest) {
+      return children;
+    }
+    return <Navigate to={redirectTo} replace state={{ from: location }} />;
+  }
+
+  if (requiredCapability && !canAccessCapability(requiredCapability)) {
+    return <Navigate to={fallbackTo} replace state={{ from: location, reason: "insufficient-capability" }} />;
   }
 
   return children;

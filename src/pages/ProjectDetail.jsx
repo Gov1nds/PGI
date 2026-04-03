@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import { useAuth } from "../context/AuthContext";
 import {
   createRFQ,
   getProject,
+  getGuestSessionToken,
   getProjectEvents,
   getProjectSnapshots,
   getRFQ,
@@ -28,6 +29,11 @@ import {
   updatePaymentState,
   getVendorMatch,
 } from "../lib/api";
+import {
+  saveGuestWorkspace,
+  loadGuestWorkspace,
+  clearGuestWorkspace,
+} from "../lib/workspaceState";
 import ProjectEventTimeline from "../components/ProjectEventTimeline.jsx";
 import RFQComparisonMatrix from "../components/RFQComparisonMatrix.jsx";
 import ProjectChatDrawer from "../components/ProjectChatDrawer.jsx";
@@ -159,6 +165,7 @@ export default function ProjectDetail() {
   const { id } = useParams();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [project, setProject] = useState(null);
   const [events, setEvents] = useState([]);
@@ -193,6 +200,10 @@ export default function ProjectDetail() {
 
   const [fulfillmentContext, setFulfillmentContext] = useState(null);
   const [fulfillmentLoading, setFulfillmentLoading] = useState(false);
+  const guestSessionToken = useMemo(() => {
+    const params = new URLSearchParams(location.search || "");
+    return params.get("session_token") || getGuestSessionToken() || "";
+  }, [location.search]);
 
   const [vendorFilters, setVendorFilters] = useState({
     search: "",
@@ -278,19 +289,24 @@ export default function ProjectDetail() {
     resolveFirstId(safeArray(fulfillmentContext?.invoices)[0], ["id", "invoice_id"]) ||
     project?.current_invoice_id ||
     null;
+  const projectAccess = project?.access || project?.project_access || project?.viewer_access || {};
+  const canVendorMatch = projectAccess.can_vendor_match !== false;
+  const canChat = projectAccess.can_chat !== false;
+  const canTrack = projectAccess.can_track !== false;
+  const canOrder = projectAccess.can_order !== false;
 
   const loadProject = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getProject(id);
+      const data = await getProject(id, guestSessionToken || null);
       setProject(data);
     } catch (err) {
       setError(err.message || "Project not found");
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, guestSessionToken]);
 
   const loadOperationalData = useCallback(
     async (rfqId) => {
@@ -1006,10 +1022,10 @@ export default function ProjectDetail() {
                 title="Vendor matching"
                 action={
                   <Link
-                    to={`/project/${id}/vendors`}
+                    to={canVendorMatch ? `/project/${id}/vendors` : `/login`}
                     className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
                   >
-                    Open dedicated vendor discovery
+                    {canVendorMatch ? "Open dedicated vendor discovery" : "Sign in to continue"}
                   </Link>
                 }
               >
@@ -1355,7 +1371,7 @@ export default function ProjectDetail() {
                       Open collaboration drawer
                     </button>
                     <Link
-                      to={`/project/${id}/vendors`}
+                      to={canVendorMatch ? `/project/${id}/vendors` : `/login`}
                       className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
                     >
                       Continue with vendor discovery

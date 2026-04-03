@@ -2,7 +2,7 @@
  * PGI HUB — Centralized API Client
  */
 
-function getSessionToken() {
+export function getSessionToken() {
   if (typeof window === "undefined") return "";
 
   let session =
@@ -28,6 +28,17 @@ function getSessionToken() {
   }
 
   return session;
+}
+
+export function getGuestSessionToken() {
+  if (typeof window === "undefined") return "";
+  return (
+    localStorage.getItem("guest_session_token") ||
+    localStorage.getItem("pgi_guest_session_token") ||
+    localStorage.getItem("pgi_session") ||
+    localStorage.getItem("session_token") ||
+    ""
+  );
 }
 
 function getStoredAccessToken() {
@@ -198,8 +209,11 @@ export async function listProjects() {
   return res.json();
 }
 
-export async function getProject(projectId) {
-  const res = await apiCall(`/api/v1/projects/${projectId}`);
+export async function getProject(projectId, sessionToken = null) {
+  const params = new URLSearchParams();
+  if (sessionToken) params.set("session_token", sessionToken);
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  const res = await apiCall(`/api/v1/projects/${projectId}${suffix}`);
 
   if (!res.ok) {
     throw new Error("Project not found");

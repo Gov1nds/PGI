@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
-import { uploadBOM, unlockBOM } from "../lib/api";
+import { uploadBOM, unlockBOM, getGuestSessionToken, getSessionToken } from "../lib/api";
+import {
+  saveGuestWorkspace,
+  loadGuestWorkspace,
+  clearGuestWorkspace,
+} from "../lib/workspaceState";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -109,6 +114,13 @@ const riskBg = (level) => {
   if (level === "HIGH") return "bom-badge-danger";
   if (level === "LOW") return "bom-badge-success";
   return "bom-badge-warn";
+};
+
+const appendSessionTokenToRoute = (route, token) => {
+  if (!route || !token) return route;
+  if (route.includes("session_token=")) return route;
+  const separator = route.includes("?") ? "&" : "?";
+  return `${route}${separator}session_token=${encodeURIComponent(token)}`;
 };
 
 /* ── Stagger animation hook ──────────────────────────────── */
@@ -237,6 +249,30 @@ export default function BOMAnalyzer() {
   const [projectId, setProjectId] = useState(null);
   const [sessionToken, setSessionToken] = useState(null);
 
+  useEffect(() => {
+    const cachedSession = getGuestSessionToken();
+    if (cachedSession && !sessionToken) {
+      setSessionToken(cachedSession);
+    }
+
+    if (!projectId) return;
+    const cached = loadGuestWorkspace(projectId);
+    if (!cached) return;
+
+    if (cached.bom_id) setBomId(cached.bom_id);
+    if (cached.project_id) setProjectId(cached.project_id);
+    if (cached.session_token) setSessionToken(cached.session_token);
+    if (cached.analysis_status) setAnalysisStatus(cached.analysis_status);
+    if (cached.report_visibility_level)
+      setReportVisibilityLevel(cached.report_visibility_level);
+    if (cached.unlock_status) setUnlockStatus(cached.unlock_status);
+    if (cached.workspace_route) setWorkspaceRoute(cached.workspace_route);
+    if (cached.preview_data) setPreviewData(cached.preview_data);
+    if (cached.report) setReport(cached.report);
+    if (cached.strategy) setStrategy(cached.strategy);
+    if (cached.project_id) setStep(cached.unlock_status === "unlocked" ? 6 : 4);
+  }, [projectId, sessionToken]);
+
   const [expandedItem, setExpandedItem] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -247,8 +283,10 @@ export default function BOMAnalyzer() {
 
     const nextSessionToken =
       res?.intake_session?.session_token ||
+      res?.analysis_lifecycle?.session_token ||
       res?.session_token ||
       sessionToken ||
+      getGuestSessionToken() ||
       null;
 
     if (nextSessionToken) {
@@ -280,8 +318,8 @@ export default function BOMAnalyzer() {
       setUnlockStatus(res.unlock_status);
     }
 
-    if (res?.workspace_route) {
-      setWorkspaceRoute(res.workspace_route);
+    if (res?.workspace_route || res?.analysis_lifecycle?.workspace_route) {
+      setWorkspaceRoute(res.workspace_route || res.analysis_lifecycle?.workspace_route);
     }
 
     if (res?.preview || res?.parsed_summary || res?.normalized_items) {
@@ -290,12 +328,20 @@ export default function BOMAnalyzer() {
   };
 
   const handleUniversalSubmitted = (res) => {
-    const route =
+    const token =
+      res?.session_token ||
+      res?.analysis_lifecycle?.session_token ||
+      sessionToken ||
+      getGuestSessionToken() ||
+      getSessionToken();
+    const routeBase =
       res?.workspace_route ||
+      res?.analysis_lifecycle?.workspace_route ||
       (res?.project_id ? `/project/${res.project_id}` : null);
 
-    if (route) {
-      navigate(route, { replace: true });
+    if (routeBase) {
+      const nextRoute = token ? `${routeBase}${routeBase.includes("?") ? "&" : "?"}session_token=${encodeURIComponent(token)}` : routeBase;
+      navigate(nextRoute, { replace: true });
     }
   };
   /* ── File handler ────────────────────────────────────── */
@@ -335,12 +381,12 @@ export default function BOMAnalyzer() {
       setProgress("Building report...");
       const preview = data.preview || {};
       const nextProjectId = data.project_id || preview.project_id || data.bom_id;
-      const nextWorkspaceRoute = data.workspace_route || preview.workspace_route || `/project/${nextProjectId}`;
+      const nextWorkspaceRoute = data.workspace_route || preview.workspace_route || data.analysis_lifecycle?.workspace_route || preview.analysis_lifecycle?.workspace_route || `/project/${nextProjectId}`;
 
       setBomId(data.bom_id || preview.guest_bom_id || null);
       setGuestBomId(data.guest_bom_id || preview.guest_bom_id || data.bom_id || null);
       setProjectId(nextProjectId);
-      setSessionToken(data.session_token || preview.session_token || null);
+      setSessionToken(data.session_token || preview.session_token || data.analysis_lifecycle?.session_token || preview.analysis_lifecycle?.session_token || null);
       setAnalysisStatus(data.analysis_status || preview.analysis_status || (preview.is_preview ? "guest_preview" : "authenticated_unlocked"));
       setReportVisibilityLevel(data.report_visibility_level || preview.report_visibility_level || (preview.is_preview ? "preview" : "full"));
       setUnlockStatus(data.unlock_status || preview.unlock_status || (preview.is_preview ? "locked" : "unlocked"));
@@ -357,7 +403,9 @@ export default function BOMAnalyzer() {
         setPreviewData(null);
         setIsProcessing(false);
         setStep(6);
-        navigate(nextWorkspaceRoute, { replace: true });
+        const nextToken = data.session_token || preview.session_token || data.analysis_lifecycle?.session_token || preview.analysis_lifecycle?.session_token || sessionToken || getGuestSessionToken();
+      const nextRoute = nextToken ? `${nextWorkspaceRoute}${nextWorkspaceRoute.includes("?") ? "&" : "?"}session_token=${encodeURIComponent(nextToken)}` : nextWorkspaceRoute;
+      navigate(nextRoute, { replace: true });
       }
     } catch (err) {
       setError(err.message || "Analysis failed");
@@ -373,7 +421,7 @@ export default function BOMAnalyzer() {
       const data = await unlockBOM(bomId, sessionToken);
 
       const nextProjectId = data.project_id || projectId || bomId;
-      const nextWorkspaceRoute = data.workspace_route || `/project/${nextProjectId}`;
+      const nextWorkspaceRoute = data.workspace_route || data.analysis_lifecycle?.workspace_route || `/project/${nextProjectId}`;
 
       setReport(data.full_report?.analyzer || data.full_report || {});
       setStrategy(data.strategy || {});
@@ -385,7 +433,9 @@ export default function BOMAnalyzer() {
       setWorkspaceRoute(nextWorkspaceRoute);
       setStep(6);
 
-      navigate(nextWorkspaceRoute, { replace: true });
+      const nextToken = data.session_token || data.analysis_lifecycle?.session_token || sessionToken || getGuestSessionToken();
+      const nextRoute = nextToken ? `${nextWorkspaceRoute}${nextWorkspaceRoute.includes("?") ? "&" : "?"}session_token=${encodeURIComponent(nextToken)}` : nextWorkspaceRoute;
+      navigate(nextRoute, { replace: true });
     } catch (err) {
       setError(err.message || "Unlock failed — please login first");
     }
