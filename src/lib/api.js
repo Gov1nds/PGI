@@ -3,10 +3,16 @@
  */
 
 function getSessionToken() {
-  let session = localStorage.getItem("pgi_session");
+  if (typeof window === "undefined") return "";
+
+  let session =
+    localStorage.getItem("guest_session_token") ||
+    localStorage.getItem("pgi_guest_session_token") ||
+    localStorage.getItem("pgi_session") ||
+    localStorage.getItem("session_token") ||
+    "";
 
   if (!session) {
-    // Fallback for browsers without crypto.randomUUID
     if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
       session = crypto.randomUUID();
     } else {
@@ -15,25 +21,41 @@ function getSessionToken() {
         return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
       });
     }
+
+    localStorage.setItem("guest_session_token", session);
+    localStorage.setItem("pgi_guest_session_token", session);
     localStorage.setItem("pgi_session", session);
   }
 
   return session;
 }
 
+function getStoredAccessToken() {
+  if (typeof window === "undefined") return "";
+  return (
+    localStorage.getItem("access_token") ||
+    localStorage.getItem("pgi_token") ||
+    localStorage.getItem("token") ||
+    localStorage.getItem("auth_token") ||
+    localStorage.getItem("authToken") ||
+    ""
+  );
+}
+
+function persistAccessToken(token) {
+  if (typeof window === "undefined" || !token) return;
+  localStorage.setItem("access_token", token);
+  localStorage.setItem("pgi_token", token);
+}
+
 const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_BASE ||
   "https://platform-api-production-d66b.up.railway.app";
 
-/**
- * Base fetch wrapper
- * FIXED: No longer destroys session on transient 401.
- * Only clears auth on confirmed, non-retryable 401 from auth-sensitive endpoints.
- */
 export async function apiCall(path, options = {}) {
   const cleanPath = path.trim();
-
-  const token = localStorage.getItem("pgi_token");
+  const token = getStoredAccessToken();
   const headers = { ...options.headers };
 
   if (token) {
@@ -47,44 +69,36 @@ export async function apiCall(path, options = {}) {
       headers,
     });
   } catch (networkErr) {
-    // Network failure — do NOT clear auth, just throw
     throw new Error("Network error — please check your connection");
   }
 
   if (res.status === 401) {
-    // Verify the token is truly invalid by hitting /auth/me
-    // before destroying the session
     try {
       const verify = await fetch(`${API_BASE}/api/v1/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (verify.status === 401) {
-        // Confirmed: token is invalid
         localStorage.removeItem("pgi_token");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("pgi_user");
         window.dispatchEvent(new Event("pgi_auth_expired"));
         throw new Error("Session expired — please log in again");
       }
     } catch (verifyErr) {
-      // /auth/me itself failed (network) — don't destroy session
       if (verifyErr.message === "Session expired — please log in again") throw verifyErr;
     }
-    // If verify passed or errored out, return the original 401 response
-    // so the caller can decide what to do
   }
 
   return res;
 }
 
-// ═══════════════════════════════════════════════════
-// BOM
-// ═══════════════════════════════════════════════════
-
 export async function uploadBOM(
   file,
   deliveryLocation,
   targetCurrency,
-  priority = "cost"
+  priority = "cost",
+  sessionToken = null
 ) {
   const fd = new FormData();
 
@@ -92,7 +106,7 @@ export async function uploadBOM(
   fd.append("delivery_location", deliveryLocation);
   fd.append("target_currency", targetCurrency);
   fd.append("priority", priority);
-  fd.append("session_token", getSessionToken());
+  fd.append("session_token", sessionToken || getSessionToken());
 
   const res = await apiCall("/api/v1/bom/upload", {
     method: "POST",
@@ -125,10 +139,6 @@ export async function unlockBOM(bomId, sessionToken) {
   return res.json();
 }
 
-// ═══════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════
-
 export async function loginUser(email, password) {
   const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
     method: "POST",
@@ -146,8 +156,7 @@ export async function loginUser(email, password) {
   }
 
   const data = await res.json();
-
-  localStorage.setItem("pgi_token", data.access_token);
+  persistAccessToken(data.access_token);
 
   return data;
 }
@@ -170,8 +179,7 @@ export async function registerUser(email, password, fullName) {
   }
 
   const data = await res.json();
-
-  localStorage.setItem("pgi_token", data.access_token);
+  persistAccessToken(data.access_token);
 
   return data;
 }

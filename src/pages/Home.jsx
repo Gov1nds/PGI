@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Container from "../components/Container.jsx";
 import SectionHeading from "../components/SectionHeading.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PrimaryButton, SecondaryButton } from "../components/Buttons.jsx";
 import {
   services,
@@ -14,9 +14,7 @@ import {
 } from "../content/siteData.js";
 import CountUp from "../components/CountUp.jsx";
 import { RevealSection } from "../components/RevealSection.jsx";
-import UniversalIntakeBox from "../components/UniversalIntakeBox";
 
-<UniversalIntakeBox className="mt-6" />
 /* ─── Marquee strip helper ─────────────────────────────── */
 const Marquee = ({ children, speed = 40 }) => (
   <div className="marquee-outer" aria-hidden>
@@ -38,25 +36,113 @@ const WORKFLOW_TABS = [
   "Analyze",
 ];
 
+const QUICK_ACTIONS = [
+  {
+    label: "Find suppliers",
+    draftText: "Find suppliers for my BOM with lead time, MOQ, and compliance filtering.",
+  },
+  {
+    label: "Deep search suppliers",
+    draftText: "Deep search suppliers for critical components, alternate parts, and regional sourcing.",
+  },
+  {
+    label: "Research product",
+    draftText: "Research the best manufacturing strategy for this part and identify supplier categories.",
+  },
+  {
+    label: "Help center",
+    draftText: "I need help understanding BOM upload, supplier matching, RFQ, comparison, and tracking.",
+  },
+];
+
 /* ─── Hero search input ─────────────────────────────────── */
 const HeroInput = () => {
   const [value, setValue] = useState("");
+  const navigate = useNavigate();
+
+  const submit = (draft = value) => {
+    const next = draft.trim();
+    if (!next) {
+      navigate("/bom-analyzer");
+      return;
+    }
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("pgi_intake_draft", next);
+    }
+
+    navigate("/bom-analyzer", {
+      state: {
+        draftText: next,
+        source: "home-hero",
+      },
+    });
+  };
+
   return (
-    <div className="hero-input-box">
-      <textarea
-        className="hero-input-textarea"
-        placeholder="Describe your sourcing requirement — e.g. 1,000 SMT resistors, ISO-certified, 4-week lead time..."
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        rows={3}
-      />
-      <div className="hero-input-footer">
-        <span className="hero-input-hint">Press Enter or click → to start sourcing</span>
-        <Link to="/bom-analyzer" className="hero-input-send">
+    <div className="relative overflow-hidden rounded-[28px] border border-white/15 bg-white/10 p-4 shadow-[0_24px_70px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))]" />
+      <div className="relative">
+        <textarea
+          className="min-h-[110px] w-full resize-none rounded-[20px] border border-white/10 bg-[rgba(255,255,255,0.06)] px-4 py-4 pr-12 text-[15px] leading-6 text-white outline-none placeholder:text-white/40 focus:border-sky-400/30"
+          placeholder="Describe anything about product sourcing"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+              e.preventDefault();
+              submit();
+            }
+          }}
+          aria-label="Describe your sourcing requirement"
+        />
+
+        <button
+          type="button"
+          onClick={() => submit()}
+          className="absolute bottom-4 right-4 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/15 text-white shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition hover:bg-white/20"
+          aria-label="Send to BOM analyzer"
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M5 12h14m-7-7 7 7-7 7" />
           </svg>
-        </Link>
+        </button>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {QUICK_ACTIONS.map((chip) => (
+            <button
+              key={chip.label}
+              type="button"
+              onClick={() =>
+                navigate("/bom-analyzer", {
+                  state: {
+                    draftText: chip.draftText,
+                    source: "home-quick-action",
+                  },
+                })
+              }
+              className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs text-white/80 transition hover:bg-white/15"
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={() => submit()}
+            className="inline-flex items-center justify-center rounded-2xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_45px_rgba(14,165,233,0.25)] transition hover:bg-sky-400"
+          >
+            Upload BOM & Analyze
+          </button>
+          <Link
+            to="/bom-analyzer?demo=1"
+            className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-medium text-white/85 transition hover:bg-white/15"
+          >
+            Try with Demo Data
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -70,89 +156,97 @@ const Home = () => {
 
   return (
     <div className="home-root">
+      <section className="relative overflow-hidden border-b border-white/8 bg-[#09071a] text-white">
+        <div
+          className="absolute inset-0 opacity-45"
+          style={{
+            backgroundImage:
+              "linear-gradient(180deg, rgba(21, 12, 51, 0.28) 0%, rgba(9, 7, 26, 0.96) 100%), url('/images/hero-bg.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.36),transparent_42%),radial-gradient(circle_at_20%_70%,rgba(236,72,153,0.18),transparent_25%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.18),transparent_22%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,26,0.18),rgba(7,8,26,0.8))]" />
 
-      {/* ════════════ HERO — SourceReady style ════════════ */}
-      <section className="hero-section">
-        <div className="hero-mesh" aria-hidden />
-
-        <Container className="hero-container">
-          {/* Brand name */}
-          <div className="hero-anim-1 hero-brand-name">PGI Hub</div>
-
-          {/* Badge */}
-          <div className="hero-anim-1" style={{ marginTop: "0.75rem" }}>
-            <span className="hero-badge">
-              <span className="hero-badge-dot" />
-              AI sourcing marketplace · procurement control tower
+        <Container className="relative z-10 mx-auto max-w-7xl py-16 lg:py-20">
+          <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white/85 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur-md">
+              <span className="h-2 w-2 rounded-full bg-orange-400" />
+              AI sourcing marketplace
             </span>
-          </div>
 
-          {/* Headline — smaller, clean white */}
-          <h1 className="hero-h1 hero-anim-2">
-            Upload a BOM or describe a requirement.
-            <br className="hidden sm:block" />
-            <span className="hero-h1-accent"> Get suppliers, quotes, and cost insight instantly.</span>
-          </h1>
+            <h1 className="mt-8 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-[72px] lg:leading-[0.95]">
+              <span className="drop-shadow-[0_6px_24px_rgba(0,0,0,0.45)]">Upload a BOM</span>{" "}
+              <span className="text-white/90">or describe</span>
+              <br className="hidden sm:block" />
+              <span className="text-white/95">your sourcing needs.</span>
+            </h1>
 
-          {/* Subtitle */}
-          <p className="hero-sub hero-anim-3">
-            Intake structured demand, match qualified suppliers, launch RFQs, compare quotes
-            side by side, execute purchase decisions, track fulfillment, and record spend in
-            one operational surface.
-          </p>
+            <p className="mt-6 max-w-4xl text-lg leading-8 text-white/78 sm:text-xl">
+              <span className="font-semibold text-white">Get suppliers, quotes, and cost insight</span>{" "}
+              <span className="text-orange-300">Instantly.</span>
+            </p>
 
-          {/* Search input — SourceReady style */}
-          <div className="hero-anim-4" style={{ width: "100%", maxWidth: 700 }}>
-            <HeroInput />
-          </div>
+            <div className="mt-10 w-full max-w-4xl">
+              <HeroInput />
+            </div>
 
-          {/* Quick action chips */}
-          <div className="hero-chips hero-anim-4">
-            {[
-              { icon: "🔍", label: "Find suppliers" },
-              { icon: "📋", label: "Upload BOM" },
-              { icon: "📨", label: "Launch RFQ" },
-              { icon: "📊", label: "Compare quotes" },
-            ].map((chip) => (
-              <Link key={chip.label} to="/bom-analyzer" className="hero-quick-chip">
-                <span>{chip.icon}</span>
-                {chip.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Tab strip */}
-          <div className="hero-tabs-wrap hero-anim-4">
-            <div className="hero-tabs">
-              {WORKFLOW_TABS.map((tab) => (
-                <button
-                  key={tab}
-                  className={`hero-tab ${activeTab === tab ? "hero-tab-active" : ""}`}
-                  onClick={() => setActiveTab(tab)}
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+              {[
+                "Find suppliers",
+                "Deep search suppliers",
+                "Research product",
+                "Help center",
+              ].map((label) => (
+                <span
+                  key={label}
+                  className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white/75 backdrop-blur-md"
                 >
-                  {tab}
-                </button>
+                  {label}
+                </span>
               ))}
             </div>
-          </div>
 
-          {/* Stats strip */}
-          <div className="hero-stats hero-anim-5">
-            {[
-              { val: 12200, suffix: "+", label: "Components" },
-              { val: 300, suffix: "+", label: "Suppliers" },
-              { val: 92, suffix: "%", label: "Match accuracy" },
-            ].map((s, i) => (
-              <div key={i} className="hero-stat">
-                <div className="hero-stat-val">
-                  <CountUp value={s.val} suffix={s.suffix} />
-                </div>
-                <div className="hero-stat-label">{s.label}</div>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/bom-analyzer"
+                className="inline-flex items-center justify-center rounded-2xl bg-cyan-500 px-6 py-3.5 text-sm font-semibold text-white shadow-[0_18px_45px_rgba(34,211,238,0.25)] transition hover:bg-cyan-400"
+              >
+                Upload BOM & Analyze
+              </Link>
+              <Link
+                to="/bom-analyzer?demo=1"
+                className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-6 py-3.5 text-sm font-medium text-white/85 transition hover:bg-white/15"
+              >
+                Try with Demo Data
+              </Link>
+            </div>
+
+            <div className="mt-14 w-full max-w-4xl rounded-full border border-white/10 bg-black/20 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+              <div className="grid grid-cols-2 gap-2 overflow-hidden rounded-full sm:grid-cols-7">
+                {WORKFLOW_TABS.map((tab) => (
+                  <button
+                    key={tab}
+                    className={`rounded-full px-3 py-3 text-sm font-medium transition ${
+                      activeTab === tab
+                        ? "bg-orange-400 text-white shadow-[0_14px_30px_rgba(251,146,60,0.35)]"
+                        : "text-white/70 hover:bg-white/8 hover:text-white"
+                    }`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </Container>
       </section>
+
+      {/* keep the rest of your current Home.jsx exactly as it is now, starting from
+          the existing “How It Works” section onward */}
 
       {/* ════════════ HOW IT WORKS — Cursor-style clean ════════════ */}
       <RevealSection>

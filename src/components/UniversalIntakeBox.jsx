@@ -1,5 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Mic, Upload, Search, Sparkles, Boxes, BadgeHelp, ArrowUp, Loader2, FileText, ScanSearch } from "lucide-react";
+import {
+  Mic,
+  Upload,
+  Search,
+  Sparkles,
+  Boxes,
+  BadgeHelp,
+  ArrowUp,
+  Loader2,
+  FileText,
+  ScanSearch,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { normalizeIntake, parseIntake, submitIntake } from "../lib/intakeApi";
 
@@ -26,15 +37,26 @@ function cn(...parts) {
   return parts.filter(Boolean).join(" ");
 }
 
+function persistGuestSessionToken(token) {
+  if (typeof window === "undefined" || !token) return;
+  localStorage.setItem("guest_session_token", token);
+  localStorage.setItem("pgi_guest_session_token", token);
+  localStorage.setItem("pgi_session", token);
+}
+
 export default function UniversalIntakeBox({
   className = "",
   onParsed,
   onSubmitted,
+  initialText = "",
+  initialMode = "auto",
+  initialIntent = "source",
+  initialSessionToken = "",
 }) {
   const navigate = useNavigate();
-  const [text, setText] = useState("");
-  const [mode, setMode] = useState("auto");
-  const [intent, setIntent] = useState("source");
+  const [text, setText] = useState(initialText);
+  const [mode, setMode] = useState(initialMode);
+  const [intent, setIntent] = useState(initialIntent);
   const [deliveryLocation, setDeliveryLocation] = useState("India");
   const [targetCurrency, setTargetCurrency] = useState("USD");
   const [priority, setPriority] = useState("cost");
@@ -47,11 +69,30 @@ export default function UniversalIntakeBox({
   const [parseResult, setParseResult] = useState(null);
   const [error, setError] = useState("");
   const [sessionToken, setSessionToken] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("guest_session_token") || localStorage.getItem("pgi_guest_session_token") || "";
+    if (typeof window === "undefined") return initialSessionToken || "";
+    return (
+      initialSessionToken ||
+      localStorage.getItem("guest_session_token") ||
+      localStorage.getItem("pgi_guest_session_token") ||
+      localStorage.getItem("pgi_session") ||
+      ""
+    );
   });
 
   const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof initialText === "string" && initialText.trim()) {
+      setText(initialText);
+    }
+  }, [initialText]);
+
+  useEffect(() => {
+    if (typeof initialSessionToken === "string" && initialSessionToken.trim()) {
+      setSessionToken(initialSessionToken);
+      persistGuestSessionToken(initialSessionToken);
+    }
+  }, [initialSessionToken]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -103,11 +144,28 @@ export default function UniversalIntakeBox({
       desc: "Sheet, bar, rod, resin, metal, polymer.",
     },
     {
+      icon: <ScanSearch className="h-4 w-4" />,
+      title: "BOM",
+      desc: "Structured line-item analysis and normalization.",
+    },
+    {
       icon: <BadgeHelp className="h-4 w-4" />,
       title: "Voice",
       desc: "Speak your sourcing requirement.",
     },
   ];
+
+  async function applyResult(res) {
+    setParseResult(res);
+
+    const nextSessionToken = res?.intake_session?.session_token || res?.session_token || "";
+    if (nextSessionToken) {
+      setSessionToken(nextSessionToken);
+      persistGuestSessionToken(nextSessionToken);
+    }
+
+    onParsed?.(res);
+  }
 
   async function runParse() {
     setError("");
@@ -130,14 +188,8 @@ export default function UniversalIntakeBox({
         source_file: file,
         audio_file: audioFile,
       });
-      setParseResult(res);
-      if (res?.intake_session?.session_token) {
-        setSessionToken(res.intake_session.session_token);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("guest_session_token", res.intake_session.session_token);
-        }
-      }
-      onParsed?.(res);
+
+      await applyResult(res);
     } catch (err) {
       setError(err.message || "Failed to parse intake");
     } finally {
@@ -166,8 +218,8 @@ export default function UniversalIntakeBox({
         source_file: file,
         audio_file: audioFile,
       });
-      setParseResult(res);
-      onParsed?.(res);
+
+      await applyResult(res);
     } catch (err) {
       setError(err.message || "Failed to normalize intake");
     } finally {
@@ -197,13 +249,10 @@ export default function UniversalIntakeBox({
         source_file: file,
         audio_file: audioFile,
       });
-      if (res?.intake_session?.session_token) {
-        setSessionToken(res.intake_session.session_token);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("guest_session_token", res.intake_session.session_token);
-        }
-      }
+
+      await applyResult(res);
       onSubmitted?.(res);
+
       if (res?.workspace_route) {
         navigate(res.workspace_route);
       }
@@ -250,15 +299,23 @@ export default function UniversalIntakeBox({
         <div className="border-b border-white/[0.06] px-6 py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">Source top products from global suppliers</h2>
+              <h2 className="text-lg font-semibold text-white">
+                Source top products from global suppliers
+              </h2>
               <p className="text-sm text-white/40">
                 Describe an item, component, material, part number, BOM, or speak it aloud.
               </p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-xs text-white/35">
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">Unified intake</span>
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">AI parse</span>
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">RFQ ready</span>
+            <div className="hidden items-center gap-2 text-xs text-white/35 sm:flex">
+              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">
+                Unified intake
+              </span>
+              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">
+                AI parse
+              </span>
+              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">
+                RFQ ready
+              </span>
             </div>
           </div>
         </div>
@@ -321,9 +378,21 @@ export default function UniversalIntakeBox({
                   />
                 </label>
 
-                {file ? <span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-emerald-300">{file.name}</span> : null}
-                {audioFile ? <span className="rounded-full bg-indigo-500/10 px-3 py-1.5 text-indigo-300">{audioFile.name}</span> : null}
-                {sessionToken ? <span className="rounded-full bg-white/[0.04] px-3 py-1.5 text-white/55">Session linked</span> : null}
+                {file ? (
+                  <span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-emerald-300">
+                    {file.name}
+                  </span>
+                ) : null}
+                {audioFile ? (
+                  <span className="rounded-full bg-indigo-500/10 px-3 py-1.5 text-indigo-300">
+                    {audioFile.name}
+                  </span>
+                ) : null}
+                {sessionToken ? (
+                  <span className="rounded-full bg-white/[0.04] px-3 py-1.5 text-white/55">
+                    Session linked
+                  </span>
+                ) : null}
               </div>
             </div>
 
@@ -411,22 +480,34 @@ export default function UniversalIntakeBox({
                 <div>
                   <h3 className="text-sm font-semibold text-white">Normalized intake preview</h3>
                   <p className="text-xs text-white/45">
-                    {parseResult?.parsed_summary?.line_count || 0} item(s) detected • Confidence {Math.round((parseResult?.confidence_score || 0) * 100)}%
+                    {parseResult?.parsed_summary?.line_count || 0} item(s) detected • Confidence{" "}
+                    {Math.round((parseResult?.confidence_score || 0) * 100)}%
                   </p>
                 </div>
                 <div className="flex gap-2 text-xs text-white/45">
-                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">{parseResult?.input_type}</span>
-                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">{parseResult?.intent}</span>
+                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">
+                    {parseResult?.input_type}
+                  </span>
+                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">
+                    {parseResult?.intent}
+                  </span>
                 </div>
               </div>
 
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {(parseResult?.normalized_items || []).map((item, idx) => (
-                  <div key={`${item.item_name}-${idx}`} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <div
+                    key={`${item.item_name || item.raw_text || "item"}-${idx}`}
+                    className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4"
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="text-sm font-medium text-white">{item.item_name || item.raw_text}</div>
-                        <div className="text-xs text-white/45">{item.category} • {item.material || "material missing"}</div>
+                        <div className="text-sm font-medium text-white">
+                          {item.item_name || item.raw_text}
+                        </div>
+                        <div className="text-xs text-white/45">
+                          {item.category} • {item.material || "material missing"}
+                        </div>
                       </div>
                       <div className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-xs text-white/65">
                         {Math.round((item.confidence || 0) * 100)}%
@@ -438,7 +519,9 @@ export default function UniversalIntakeBox({
                     </div>
                     {item.warnings?.length ? (
                       <ul className="mt-3 list-disc space-y-1 pl-4 text-xs text-amber-300">
-                        {item.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                        {item.warnings.map((w, i) => (
+                          <li key={i}>{w}</li>
+                        ))}
                       </ul>
                     ) : null}
                   </div>
@@ -464,7 +547,7 @@ export default function UniversalIntakeBox({
             </div>
           ) : null}
 
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
             {helperCards.map((card) => (
               <div key={card.title} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                 <div className="flex items-center gap-2 text-white">

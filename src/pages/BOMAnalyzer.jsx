@@ -4,7 +4,8 @@ import { PrimaryButton } from "../components/Buttons.jsx";
 import { uploadBOM, unlockBOM } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
+import UniversalIntakeBox from "../components/UniversalIntakeBox.jsx";
 
 
 const CURRENCIES = ["USD", "EUR", "INR", "CNY", "JPY", "GBP", "KRW", "MXN", "THB", "VND"];
@@ -190,6 +191,31 @@ export default function BOMAnalyzer() {
   const [unlockStatus, setUnlockStatus] = useState("locked");
   const [guestBomId, setGuestBomId] = useState(null);
   const [workspaceRoute, setWorkspaceRoute] = useState(null);
+  const location = useLocation();
+  const [draftText, setDraftText] = useState("");
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const demoMode = query.get("demo") === "1";
+
+    const incomingDraft =
+      location.state?.draftText ||
+      localStorage.getItem("pgi_intake_draft") ||
+      "";
+
+    if (demoMode) {
+      const demoDraft =
+        "Demo BOM: 1,000 SMT resistors, ISO-certified supplier, 4-week lead time, preferred delivery in India. Need quotes, alternates, and RFQ-ready sourcing options.";
+      setDraftText(demoDraft);
+      localStorage.setItem("pgi_intake_draft", demoDraft);
+      return;
+    }
+
+    if (incomingDraft) {
+      setDraftText(incomingDraft);
+      localStorage.setItem("pgi_intake_draft", incomingDraft);
+    }
+  }, [location.search, location.state]);
 
   // existing state...
   /* ── State ─────────────────────────────────────────── */
@@ -216,7 +242,62 @@ export default function BOMAnalyzer() {
 
   const states_list = country ? Object.keys(LOCATION_DATA[country] || {}) : [];
   const cities_list = country && stateRegion ? (LOCATION_DATA[country]?.[stateRegion] || []) : [];
+  const handleUniversalParsed = (res) => {
+    if (!res) return;
 
+    const nextSessionToken =
+      res?.intake_session?.session_token ||
+      res?.session_token ||
+      sessionToken ||
+      null;
+
+    if (nextSessionToken) {
+      setSessionToken(nextSessionToken);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("guest_session_token", nextSessionToken);
+        localStorage.setItem("pgi_guest_session_token", nextSessionToken);
+        localStorage.setItem("pgi_session", nextSessionToken);
+      }
+    }
+
+    if (res?.bom_id || res?.intake_session?.bom_id) {
+      setBomId(res?.bom_id || res?.intake_session?.bom_id);
+    }
+
+    if (res?.project_id) {
+      setProjectId(res.project_id);
+    }
+
+    if (res?.analysis_status) {
+      setAnalysisStatus(res.analysis_status);
+    }
+
+    if (res?.report_visibility_level) {
+      setReportVisibilityLevel(res.report_visibility_level);
+    }
+
+    if (res?.unlock_status) {
+      setUnlockStatus(res.unlock_status);
+    }
+
+    if (res?.workspace_route) {
+      setWorkspaceRoute(res.workspace_route);
+    }
+
+    if (res?.preview || res?.parsed_summary || res?.normalized_items) {
+      setPreviewData(res.preview || res);
+    }
+  };
+
+  const handleUniversalSubmitted = (res) => {
+    const route =
+      res?.workspace_route ||
+      (res?.project_id ? `/project/${res.project_id}` : null);
+
+    if (route) {
+      navigate(route, { replace: true });
+    }
+  };
   /* ── File handler ────────────────────────────────────── */
   const handleFile = (e) => {
     const f = e.target.files?.[0] || e.dataTransfer?.files?.[0];
@@ -561,6 +642,14 @@ export default function BOMAnalyzer() {
       </section>
 
       <Container className="bom-body">
+        <UniversalIntakeBox
+          className="mb-8"
+          initialText={draftText}
+          initialIntent="source"
+          initialMode="auto"
+          onParsed={handleUniversalParsed}
+          onSubmitted={handleUniversalSubmitted}
+        />
         {/* ── Error toast ──────────────────────────────── */}
         {error && (
           <div className="bom-error">

@@ -1,9 +1,10 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE || "";
 
 function getStoredToken() {
   if (typeof window === "undefined") return "";
   return (
     localStorage.getItem("access_token") ||
+    localStorage.getItem("pgi_token") ||
     localStorage.getItem("token") ||
     localStorage.getItem("auth_token") ||
     localStorage.getItem("authToken") ||
@@ -16,9 +17,17 @@ function getGuestSessionToken() {
   return (
     localStorage.getItem("guest_session_token") ||
     localStorage.getItem("pgi_guest_session_token") ||
+    localStorage.getItem("pgi_session") ||
     localStorage.getItem("session_token") ||
     ""
   );
+}
+
+function persistGuestSessionToken(token) {
+  if (typeof window === "undefined" || !token) return;
+  localStorage.setItem("guest_session_token", token);
+  localStorage.setItem("pgi_guest_session_token", token);
+  localStorage.setItem("pgi_session", token);
 }
 
 function buildHeaders(extra = {}, token = getStoredToken()) {
@@ -35,7 +44,6 @@ async function request(path, options = {}) {
     body,
     headers = {},
     token = getStoredToken(),
-    responseType = "json",
   } = options;
 
   const res = await fetch(`${API_BASE}${path}`, {
@@ -63,15 +71,17 @@ async function request(path, options = {}) {
 
 function appendFormValue(form, key, value) {
   if (value === undefined || value === null || value === "") return;
+
   if (value instanceof File || value instanceof Blob) {
     form.append(key, value);
     return;
   }
+
   form.append(key, typeof value === "object" ? JSON.stringify(value) : String(value));
 }
 
 function buildIntakeForm({
-  raw_input_text,
+  raw_input_text = "",
   input_type = "auto",
   intent = "auto",
   delivery_location = "India",
@@ -86,6 +96,7 @@ function buildIntakeForm({
   audio_file = null,
 }) {
   const form = new FormData();
+
   appendFormValue(form, "raw_input_text", raw_input_text);
   appendFormValue(form, "input_type", input_type);
   appendFormValue(form, "intent", intent);
@@ -97,36 +108,56 @@ function buildIntakeForm({
   appendFormValue(form, "source_channel", source_channel);
   appendFormValue(form, "metadata_json", metadata);
   appendFormValue(form, "async_finalize", async_finalize);
+
   if (source_file) form.append("source_file", source_file);
   if (audio_file) form.append("audio_file", audio_file);
+
   return form;
 }
 
 export async function parseIntake(payload = {}) {
   const form = buildIntakeForm(payload);
-  return request("/api/v1/intake/parse", {
+  const res = await request("/api/v1/intake/parse", {
     method: "POST",
     body: form,
     token: payload.token || getStoredToken(),
   });
+
+  if (res?.intake_session?.session_token) {
+    persistGuestSessionToken(res.intake_session.session_token);
+  }
+
+  return res;
 }
 
 export async function normalizeIntake(payload = {}) {
   const form = buildIntakeForm(payload);
-  return request("/api/v1/intake/normalize", {
+  const res = await request("/api/v1/intake/normalize", {
     method: "POST",
     body: form,
     token: payload.token || getStoredToken(),
   });
+
+  if (res?.intake_session?.session_token) {
+    persistGuestSessionToken(res.intake_session.session_token);
+  }
+
+  return res;
 }
 
 export async function submitIntake(payload = {}) {
   const form = buildIntakeForm(payload);
-  return request("/api/v1/intake/submit", {
+  const res = await request("/api/v1/intake/submit", {
     method: "POST",
     body: form,
     token: payload.token || getStoredToken(),
   });
+
+  if (res?.intake_session?.session_token) {
+    persistGuestSessionToken(res.intake_session.session_token);
+  }
+
+  return res;
 }
 
 export async function getIntakeSession(sessionId, token = getStoredToken()) {
@@ -136,13 +167,21 @@ export async function getIntakeSession(sessionId, token = getStoredToken()) {
   });
 }
 
-export async function listIntakeSessions({ limit = 20, offset = 0, session_token = getGuestSessionToken(), token = getStoredToken() } = {}) {
+export async function listIntakeSessions({
+  limit = 20,
+  offset = 0,
+  session_token = getGuestSessionToken(),
+  token = getStoredToken(),
+} = {}) {
   const qs = new URLSearchParams();
   qs.set("limit", String(limit));
   qs.set("offset", String(offset));
   if (session_token) qs.set("session_token", session_token);
+
   return request(`/api/v1/intake/sessions?${qs.toString()}`, {
     method: "GET",
     token,
   });
 }
+
+export { getGuestSessionToken, persistGuestSessionToken, getStoredToken };
