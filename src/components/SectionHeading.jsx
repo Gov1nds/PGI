@@ -2,8 +2,8 @@ export default function SectionHeading({ eyebrow, title, desc, center = false })
   return (
     <div className={`max-w-2xl ${center ? 'mx-auto text-center' : ''}`}>
       {eyebrow && (
-        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-orange-400 mb-3">
-          <span className="w-6 h-px bg-orange-500/50" />
+        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-violet-400 mb-3">
+          <span className="w-6 h-px bg-violet-500/50" />
           {eyebrow}
         </div>
       )}

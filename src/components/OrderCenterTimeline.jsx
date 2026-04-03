@@ -15,10 +15,10 @@ function fmtDate(value) {
 
 function Badge({ children, tone = "neutral" }) {
   const tones = {
-    neutral: "bg-white/[0.05] text-white/50 border-white/[0.06]",
+    neutral: "bg-white/[0.05] text-white/50 border-white/[0.08]",
     green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    blue: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    blue: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+    amber: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
     red: "bg-red-500/10 text-red-400 border-red-500/20",
     violet: "bg-violet-500/10 text-violet-400 border-violet-500/20",
   };
@@ -31,8 +31,8 @@ function Badge({ children, tone = "neutral" }) {
 
 function Card({ title, children, tone = "neutral" }) {
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
-      <div className="border-b border-white/[0.06] px-5 py-4 flex items-center justify-between">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden">
+      <div className="border-b border-white/[0.08] px-5 py-4 flex items-center justify-between">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">{title}</h3>
         {tone ? <Badge tone={tone}>{tone}</Badge> : null}
       </div>
@@ -44,7 +44,7 @@ function Card({ title, children, tone = "neutral" }) {
 export default function OrderCenterTimeline({ context, onRefresh }) {
   if (!context) {
     return (
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5 text-sm text-white/35">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#111827] p-5 text-sm text-white/35">
         No fulfillment data yet.
       </div>
     );
@@ -93,7 +93,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
             context.timeline.map((item, idx) => (
               <div key={`${item.type || item.stage}-${item.id || idx}`} className="flex gap-3">
                 <div className="flex flex-col items-center">
-                  <div className="h-3 w-3 rounded-full bg-orange-400 mt-1" />
+                  <div className="h-3 w-3 rounded-full bg-violet-400 mt-1" />
                   {idx < context.timeline.length - 1 && <div className="w-px flex-1 bg-white/[0.08] mt-1" />}
                 </div>
 
@@ -111,7 +111,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
                     {item.label || item.status_message || item.event_type || item.milestone_name || item.invoice_number || item.receipt_number || ""}
                   </p>
 
-                  <div className="mt-2 rounded-xl border border-white/[0.05] bg-white/[0.02] p-3 text-xs text-white/55">
+                  <div className="mt-2 rounded-xl border border-white/[0.05] bg-white/[0.04] p-3 text-xs text-white/55">
                     <pre className="whitespace-pre-wrap break-words">
                       {JSON.stringify(item, null, 2)}
                     </pre>
@@ -130,7 +130,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
           ) : (
             <div className="space-y-3">
               {context.carrier_milestones.map((m) => (
-                <div key={m.id} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+                <div key={m.id} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-white">{m.milestone_name}</p>
                     <Badge tone={m.milestone_status === "completed" ? "green" : "amber"}>{m.milestone_status}</Badge>
@@ -149,7 +149,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
           ) : (
             <div className="space-y-3">
               {context.shipment_events.map((e) => (
-                <div key={e.id} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+                <div key={e.id} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-white">{e.event_type}</p>
                     <Badge tone="blue">{e.event_status}</Badge>
@@ -168,7 +168,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
           ) : (
             <div className="space-y-3">
               {invoices.map((inv) => (
-                <div key={inv.id} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+                <div key={inv.id} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-white">{inv.invoice_number}</p>
                     <Badge tone={inv.invoice_status === "paid" ? "green" : "amber"}>{inv.invoice_status}</Badge>
@@ -186,7 +186,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
             </div>
           )}
 
-          <div className="mt-4 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+          <div className="mt-4 rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
             <p className="text-xs uppercase tracking-wider text-white/25 mb-2">Goods receipt</p>
             {(receipts || []).length === 0 ? (
               <p className="text-sm text-white/35">No goods receipt recorded.</p>
@@ -205,7 +205,7 @@ export default function OrderCenterTimeline({ context, onRefresh }) {
         <div className="flex justify-end">
           <button
             onClick={onRefresh}
-            className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+            className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
           >
             Refresh fulfillment context
           </button>

@@ -7,7 +7,7 @@ export default function About() {
   return (
     <div>
       {/* HERO */}
-      <section className="border-b border-white/[0.04] bg-gradient-to-b from-[rgb(10,15,26)] to-[rgb(13,18,30)]">
+      <section className="border-b border-white/[0.08] bg-gradient-to-b from-[rgb(10,14,28)] to-[rgb(12,18,34)]">
         <Container className="py-16 md:py-20">
           <div className="grid gap-12 md:grid-cols-2 md:items-center">
             <div>
@@ -21,11 +21,11 @@ export default function About() {
               </div>
               <div className="mt-6 flex flex-wrap gap-2">
                 {["Engineering Review", "Material Procurement", "Supplier Network Coordination", "Mechanical & Machined Components", "Electronic Assemblies (PCBA)", "Global Delivery Logistics"].map((t) => (
-                  <span key={t} className="rounded-full bg-white/[0.04] px-3 py-1 text-[11px] font-medium text-white/70 ring-1 ring-white/[0.06]">{t}</span>
+                  <span key={t} className="rounded-full bg-white/[0.04] px-3 py-1 text-[11px] font-medium text-white/70 ring-1 ring-white/[0.08]">{t}</span>
                 ))}
               </div>
             </div>
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.06]">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-white/[0.05] ring-1 ring-white/[0.08]">
               <img src="/images/about-hero.jpg" alt="PGI Manufacturing Network" className="h-full w-full object-cover" />
             </div>
           </div>
@@ -42,8 +42,8 @@ export default function About() {
                 { label: "Our Mission", text: "Our mission is to simplify global manufacturing by providing a structured network that connects engineering teams with reliable production facilities. Through disciplined sourcing, technical review, and quality verification." },
                 { label: "Our Vision", text: "PGI aims to build a globally trusted manufacturing network that bridges engineering innovation with dependable production. Our goal is to create a supply ecosystem where companies can access precision manufacturing quickly and at scale." }
               ].map((item, i) => (
-                <div key={i} className="rounded-xl bg-white/[0.02] p-6 ring-1 ring-white/[0.06]">
-                  <div className="text-xs font-semibold uppercase tracking-[0.12em] text-orange-400 mb-3">{item.label}</div>
+                <div key={i} className="rounded-xl bg-white/[0.04] p-6 ring-1 ring-white/[0.08]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.12em] text-violet-400 mb-3">{item.label}</div>
                   <p className="text-sm leading-relaxed text-white/80">{item.text}</p>
                 </div>
               ))}
@@ -51,8 +51,8 @@ export default function About() {
 
             {/* OPERATIONS */}
             <div className="mt-12 grid gap-5 md:grid-cols-2">
-              <div className="rounded-xl bg-white/[0.02] p-7 ring-1 ring-white/[0.06]">
-                <div className="text-xs font-semibold uppercase tracking-[0.12em] text-orange-400 mb-2">Operational Process</div>
+              <div className="rounded-xl bg-white/[0.04] p-7 ring-1 ring-white/[0.08]">
+                <div className="text-xs font-semibold uppercase tracking-[0.12em] text-violet-400 mb-2">Operational Process</div>
                 <div className="text-lg font-semibold text-white">How PGI executes manufacturing projects</div>
                 <p className="mt-3 text-sm leading-relaxed text-white/80">Each project follows a structured engineering workflow designed for technical accuracy and consistent quality.</p>
                 <ul className="mt-6 space-y-4 text-sm text-white/75">
@@ -71,16 +71,16 @@ export default function About() {
                 </ul>
               </div>
 
-              <div className="rounded-xl bg-white/[0.02] p-7 ring-1 ring-white/[0.06]">
-                <div className="text-xs font-semibold uppercase tracking-[0.12em] text-orange-400 mb-2">The PGI Manufacturing Network</div>
+              <div className="rounded-xl bg-white/[0.04] p-7 ring-1 ring-white/[0.08]">
+                <div className="text-xs font-semibold uppercase tracking-[0.12em] text-violet-400 mb-2">The PGI Manufacturing Network</div>
                 <div className="text-lg font-semibold text-white">Coordinated supply ecosystem</div>
                 <p className="mt-3 text-sm leading-relaxed text-white/80">PGI operates through a carefully structured network of manufacturing partners and suppliers.</p>
                 <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
                   {["Raw Material Sourcing", "Electronic Component Procurement", "Precision Machining Partners", "PCB Assembly Facilities", "Central Engineering Oversight", "Logistics & Export Coordination"].map((x) => (
-                    <div key={x} className="rounded-lg bg-white/[0.03] p-3 text-sm text-white/75 ring-1 ring-white/[0.04]">{x}</div>
+                    <div key={x} className="rounded-lg bg-white/[0.05] p-3 text-sm text-white/75 ring-1 ring-white/[0.06]">{x}</div>
                   ))}
                 </div>
-                <div className="mt-5 rounded-lg bg-white/[0.03] p-4 ring-1 ring-white/[0.04]">
+                <div className="mt-5 rounded-lg bg-white/[0.05] p-4 ring-1 ring-white/[0.06]">
                   <div className="text-sm font-semibold text-white">Continuous Improvement</div>
                   <p className="mt-1.5 text-sm text-white/80">PGI continuously studies advancements in electronics manufacturing, automation, and precision machining to strengthen our production network.</p>
                 </div>
@@ -88,20 +88,20 @@ export default function About() {
             </div>
 
             {/* INDUSTRIES */}
-            <div className="mt-12 rounded-xl bg-white/[0.02] p-7 ring-1 ring-white/[0.06]">
+            <div className="mt-12 rounded-xl bg-white/[0.04] p-7 ring-1 ring-white/[0.08]">
               <div className="grid gap-8 md:grid-cols-3 md:items-start">
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-[0.12em] text-orange-400 mb-2">Industries Served</div>
+                  <div className="text-xs font-semibold uppercase tracking-[0.12em] text-violet-400 mb-2">Industries Served</div>
                   <div className="text-lg font-semibold text-white">Built for complex hardware</div>
                   <p className="mt-3 text-sm leading-relaxed text-white/80">PGI supports companies developing sophisticated mechanical, electronic, and electromechanical products.</p>
                 </div>
                 <div className="md:col-span-2 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
                   {["Industrial Machinery", "Robotics & Automation", "Energy Systems", "Electronics Equipment", "Automotive Components", "Technology Hardware"].map((x) => (
-                    <div key={x} className="rounded-lg bg-white/[0.03] p-3.5 text-sm text-white/75 ring-1 ring-white/[0.04]">{x}</div>
+                    <div key={x} className="rounded-lg bg-white/[0.05] p-3.5 text-sm text-white/75 ring-1 ring-white/[0.06]">{x}</div>
                   ))}
                 </div>
               </div>
-              <div className="mt-8 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/[0.06]">
+              <div className="mt-8 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/[0.08]">
                 <div className="text-sm text-white/80">
                   Need support for your next manufacturing project?
                 </div>

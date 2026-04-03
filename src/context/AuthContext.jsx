@@ -122,16 +122,3 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-const login = async (email, password) => {
-    const data = await loginUser(email, password);
-    setToken(data.access_token);
-    setUser(data.user);
-    return data; // data.merged_project_id will be available if guest session was merged
-  };
-
-  const register = async (email, password, fullName) => {
-    const data = await registerUser(email, password, fullName);
-    setToken(data.access_token);
-    setUser(data.user);
-    return data; // data.merged_project_id will be available if guest session was merged
-  };

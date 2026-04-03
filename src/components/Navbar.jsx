@@ -12,7 +12,7 @@ function NavItem({ to, label, onClick }) {
       onClick={onClick}
       className={({ isActive }) =>
         `nav-link text-[13px] font-medium transition-colors duration-200 ${
-          isActive ? "text-orange-400 active" : "text-white/60 hover:text-white"
+          isActive ? "text-violet-400 active" : "text-white/60 hover:text-white"
         }`
       }
     >
@@ -57,8 +57,8 @@ export default function Navbar() {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[rgba(8,8,12,0.85)] backdrop-blur-xl border-b border-white/[0.06] shadow-lg shadow-black/20"
-          : "bg-transparent border-b border-white/[0.04]"
+          ? "bg-[rgba(8,12,24,0.85)] backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20"
+          : "bg-transparent border-b border-white/[0.08]"
       }`}
     >
       <Container className="flex h-16 items-center justify-between">
@@ -76,7 +76,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-3">
           <Link
             to="/bom-analyzer"
-            className="rounded-lg bg-orange-500/10 px-4 py-2 text-[13px] font-semibold text-orange-400 ring-1 ring-orange-500/20 transition-all duration-300 hover:bg-orange-500/20 hover:ring-orange-500/40 hover:shadow-lg hover:shadow-orange-500/10"
+            className="rounded-lg bg-violet-500/10 px-4 py-2 text-[13px] font-semibold text-violet-400 ring-1 ring-violet-500/20 transition-all duration-300 hover:bg-violet-500/20 hover:ring-violet-500/40 hover:shadow-lg hover:shadow-violet-500/10"
           >
             Analyze BOM
           </Link>
@@ -86,9 +86,9 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all"
               >
-                <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center text-[10px] font-bold text-orange-400">
+                <div className="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center text-[10px] font-bold text-violet-400">
                   {(user.full_name || user.email || "U")[0].toUpperCase()}
                 </div>
                 <span className="text-white/70 text-xs font-medium max-w-[100px] truncate">
@@ -100,8 +100,8 @@ export default function Navbar() {
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#16161e] border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
-                  <div className="px-4 py-3 border-b border-white/[0.06]">
+                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#121a2a] border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-white/[0.08]">
                     <p className="text-white text-xs font-medium truncate">{user.full_name || "User"}</p>
                     <p className="text-white/40 text-[11px] truncate">{user.email}</p>
                   </div>
@@ -135,7 +135,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3 lg:hidden">
           {user ? (
             <Link to="/dashboard"
-              className="rounded-lg bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-400 ring-1 ring-orange-500/20">
+              className="rounded-lg bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-400 ring-1 ring-violet-500/20">
               Projects
             </Link>
           ) : (
@@ -162,7 +162,7 @@ export default function Navbar() {
 
       {/* Mobile fullscreen menu */}
       <div className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-[70] transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-[rgba(8,8,12,0.95)] backdrop-blur-xl" />
+        <div className="absolute inset-0 bg-[rgba(8,12,24,0.95)] backdrop-blur-xl" />
         <div className="relative h-full overflow-y-auto">
           <Container className="py-8">
             <div className="flex flex-col gap-1">
@@ -170,7 +170,7 @@ export default function Navbar() {
                 <NavLink key={l.to} to={l.to} onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
-                      isActive ? "text-orange-400 bg-orange-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
+                      isActive ? "text-violet-400 bg-violet-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
                     }`
                   }
                   style={{ animationDelay: `${idx * 40}ms` }}
@@ -178,7 +178,7 @@ export default function Navbar() {
                   {({ isActive }) => (
                     <>
                       <span>{l.label}</span>
-                      <svg className={`w-4 h-4 ${isActive ? "text-orange-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-4 h-4 ${isActive ? "text-violet-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </>
@@ -190,13 +190,13 @@ export default function Navbar() {
                 <NavLink to="/dashboard" onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
-                      isActive ? "text-orange-400 bg-orange-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
+                      isActive ? "text-violet-400 bg-violet-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
                     }`
                   }>
                   {({ isActive }) => (
                     <>
                       <span>My Projects</span>
-                      <svg className={`w-4 h-4 ${isActive ? "text-orange-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-4 h-4 ${isActive ? "text-violet-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </>
@@ -206,7 +206,7 @@ export default function Navbar() {
             </div>
 
             {/* Mobile bottom actions */}
-            <div className="mt-8 pt-6 border-t border-white/[0.06] space-y-3">
+            <div className="mt-8 pt-6 border-t border-white/[0.08] space-y-3">
               <Link to="/bom-analyzer" onClick={() => setOpen(false)}
                 className="flex items-center justify-center gap-2 rounded-xl btn-primary px-5 py-3.5 text-sm font-semibold text-white w-full">
                 Analyze Your BOM

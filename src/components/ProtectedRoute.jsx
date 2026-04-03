@@ -12,7 +12,7 @@ export default function ProtectedRoute({ children }) {
     return (
       <div className="min-h-screen bg-[#06060a] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-10 h-10 mx-auto rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin" />
+          <div className="w-10 h-10 mx-auto rounded-full border-2 border-violet-500/20 border-t-violet-500 animate-spin" />
           <p className="text-white/40 text-sm mt-4">Loading...</p>
         </div>
       </div>

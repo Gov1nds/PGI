@@ -292,11 +292,11 @@ export default function UniversalIntakeBox({
   return (
     <section className={cn("w-full", className)}>
       <div
-        className="rounded-[28px] border border-white/[0.06] bg-[#0a0a12] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm"
+        className="rounded-[28px] border border-white/[0.08] bg-[#111827] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm"
         onDrop={onDropFile}
         onDragOver={(e) => e.preventDefault()}
       >
-        <div className="border-b border-white/[0.06] px-6 py-5">
+        <div className="border-b border-white/[0.08] px-6 py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-white">
@@ -307,13 +307,13 @@ export default function UniversalIntakeBox({
               </p>
             </div>
             <div className="hidden items-center gap-2 text-xs text-white/35 sm:flex">
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">
+              <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1">
                 Unified intake
               </span>
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">
+              <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1">
                 AI parse
               </span>
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.04] px-3 py-1">
+              <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1">
                 RFQ ready
               </span>
             </div>
@@ -322,7 +322,7 @@ export default function UniversalIntakeBox({
 
         <div className="p-6">
           <div className="grid gap-4 lg:grid-cols-[1fr_auto]">
-            <div className="rounded-[24px] border border-white/[0.06] bg-[#06060a] p-5">
+            <div className="rounded-[24px] border border-white/[0.08] bg-[#06060a] p-5">
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -338,7 +338,7 @@ export default function UniversalIntakeBox({
                       "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 transition",
                       isListening
                         ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
-                        : "border-white/[0.08] bg-white/[0.03] text-white/70 hover:bg-white/[0.06]"
+                        : "border-white/[0.08] bg-white/[0.05] text-white/70 hover:bg-white/[0.06]"
                     )}
                   >
                     <Mic className="h-4 w-4" />
@@ -350,13 +350,13 @@ export default function UniversalIntakeBox({
                   <button
                     type="button"
                     onClick={stopVoiceCapture}
-                    className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]"
+                    className="rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]"
                   >
                     Stop voice
                   </button>
                 ) : null}
 
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]">
                   <Upload className="h-4 w-4" />
                   Upload file
                   <input
@@ -367,7 +367,7 @@ export default function UniversalIntakeBox({
                   />
                 </label>
 
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1.5 text-white/70 hover:bg-white/[0.06]">
                   <FileText className="h-4 w-4" />
                   Audio
                   <input
@@ -400,7 +400,7 @@ export default function UniversalIntakeBox({
               type="button"
               onClick={runSubmit}
               disabled={isSubmitting || (!text.trim() && !file && !audioFile && !voiceTranscript.trim())}
-              className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-orange-500 px-5 py-4 text-white shadow-[0_16px_45px_rgba(249,115,22,0.28)] transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-violet-500 px-5 py-4 text-white shadow-[0_16px_45px_rgba(139,92,246,0.28)] transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <div className="flex flex-col items-center gap-2">
                 {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
@@ -418,8 +418,8 @@ export default function UniversalIntakeBox({
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition",
                   mode === opt.key
-                    ? "border-orange-500/30 bg-orange-500 text-white shadow-[0_12px_25px_rgba(249,115,22,0.18)]"
-                    : "border-white/[0.08] bg-white/[0.03] text-white/70 hover:bg-white/[0.06]"
+                    ? "border-violet-500/30 bg-violet-500 text-white shadow-[0_12px_25px_rgba(139,92,246,0.18)]"
+                    : "border-white/[0.08] bg-white/[0.05] text-white/70 hover:bg-white/[0.06]"
                 )}
               >
                 {opt.label}
@@ -450,18 +450,18 @@ export default function UniversalIntakeBox({
               value={deliveryLocation}
               onChange={(e) => setDeliveryLocation(e.target.value)}
               placeholder="Delivery location"
-              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-violet-500/30"
             />
             <input
               value={targetCurrency}
               onChange={(e) => setTargetCurrency(e.target.value)}
               placeholder="Currency"
-              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-violet-500/30"
             />
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none focus:border-orange-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none focus:border-violet-500/30"
             >
               <option value="cost">Cost priority</option>
               <option value="speed">Speed priority</option>
@@ -475,7 +475,7 @@ export default function UniversalIntakeBox({
           ) : null}
 
           {parseResult ? (
-            <div className="mt-6 rounded-[24px] border border-white/[0.06] bg-[#06060a] p-4">
+            <div className="mt-6 rounded-[24px] border border-white/[0.08] bg-[#06060a] p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-semibold text-white">Normalized intake preview</h3>
@@ -485,10 +485,10 @@ export default function UniversalIntakeBox({
                   </p>
                 </div>
                 <div className="flex gap-2 text-xs text-white/45">
-                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">
+                  <span className="rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1">
                     {parseResult?.input_type}
                   </span>
-                  <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1">
+                  <span className="rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1">
                     {parseResult?.intent}
                   </span>
                 </div>
@@ -498,7 +498,7 @@ export default function UniversalIntakeBox({
                 {(parseResult?.normalized_items || []).map((item, idx) => (
                   <div
                     key={`${item.item_name || item.raw_text || "item"}-${idx}`}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4"
+                    className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
@@ -509,7 +509,7 @@ export default function UniversalIntakeBox({
                           {item.category} • {item.material || "material missing"}
                         </div>
                       </div>
-                      <div className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-xs text-white/65">
+                      <div className="rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1 text-xs text-white/65">
                         {Math.round((item.confidence || 0) * 100)}%
                       </div>
                     </div>
@@ -518,7 +518,7 @@ export default function UniversalIntakeBox({
                       {item.process ? <span> • Process: {item.process}</span> : null}
                     </div>
                     {item.warnings?.length ? (
-                      <ul className="mt-3 list-disc space-y-1 pl-4 text-xs text-amber-300">
+                      <ul className="mt-3 list-disc space-y-1 pl-4 text-xs text-indigo-300">
                         {item.warnings.map((w, i) => (
                           <li key={i}>{w}</li>
                         ))}
@@ -532,14 +532,14 @@ export default function UniversalIntakeBox({
                 <button
                   type="button"
                   onClick={runNormalize}
-                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm text-white/75 hover:bg-white/[0.06]"
+                  className="rounded-full border border-white/[0.08] bg-white/[0.05] px-4 py-2 text-sm text-white/75 hover:bg-white/[0.06]"
                 >
                   Re-normalize
                 </button>
                 <button
                   type="button"
                   onClick={runSubmit}
-                  className="rounded-full bg-orange-500 px-4 py-2 text-sm text-white hover:bg-orange-400"
+                  className="rounded-full bg-violet-500 px-4 py-2 text-sm text-white hover:bg-violet-400"
                 >
                   Open workspace
                 </button>
@@ -549,7 +549,7 @@ export default function UniversalIntakeBox({
 
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
             {helperCards.map((card) => (
-              <div key={card.title} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+              <div key={card.title} className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                 <div className="flex items-center gap-2 text-white">
                   <span className="rounded-full bg-white/[0.06] p-2">{card.icon}</span>
                   <div className="text-sm font-medium">{card.title}</div>

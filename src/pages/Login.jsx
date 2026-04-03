@@ -27,7 +27,7 @@ export default function Login() {
     }
   };
 
-  const inputCls = "w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/30 transition-all";
+  const inputCls = "w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-500/30 transition-all";
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center">
@@ -36,8 +36,8 @@ export default function Login() {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-              <svg className="w-6 h-6 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
+              <svg className="w-6 h-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
             </div>
@@ -53,7 +53,7 @@ export default function Login() {
           )}
 
           {/* Form */}
-          <div className="rounded-2xl bg-white/[0.02] border border-white/[0.06] p-6">
+          <div className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-white/60 text-xs font-medium mb-1.5">Email</label>
@@ -71,7 +71,7 @@ export default function Login() {
               </div>
               <button
                 type="submit" disabled={loading}
-                className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-lg shadow-orange-600/20"
+                className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-lg shadow-violet-600/20"
               >
                 {loading ? "Signing in..." : "Sign In"}
               </button>
@@ -80,7 +80,7 @@ export default function Login() {
 
           <p className="text-center text-white/40 text-sm mt-6">
             Don't have an account?{" "}
-            <Link to="/register" className="text-orange-400 hover:text-orange-300 font-medium transition-colors">
+            <Link to="/register" className="text-violet-400 hover:text-violet-300 font-medium transition-colors">
               Create one
             </Link>
           </p>
@@ -89,17 +89,3 @@ export default function Login() {
     </div>
   );
 }
-const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await login(email, password);
-      // Redirect to merged project if one exists
-      if (data.merged_project_id) {
-        navigate(`/project/${data.merged_project_id}`);
-      } else {
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      setError(err.message);
-    }
-  };

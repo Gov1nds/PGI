@@ -185,4 +185,3 @@ export async function listIntakeSessions({
 }
 
 export { getGuestSessionToken, persistGuestSessionToken, getStoredToken };
-

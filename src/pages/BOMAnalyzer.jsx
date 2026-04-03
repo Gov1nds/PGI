@@ -254,7 +254,7 @@ export default function BOMAnalyzer() {
     if (nextSessionToken) {
       setSessionToken(nextSessionToken);
       if (typeof window !== "undefined") {
-        localStorage.setItem("pgi_session", nextSessionToken);
+        localStorage.setItem("guest_session_token", nextSessionToken);
         localStorage.setItem("pgi_guest_session_token", nextSessionToken);
         localStorage.setItem("pgi_session", nextSessionToken);
       }
@@ -437,7 +437,7 @@ export default function BOMAnalyzer() {
     fastener: { bg: "rgba(34,211,238,0.08)", border: "rgba(34,211,238,0.15)", text: "#22d3ee", dot: "#22d3ee" },
     machined: { bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.15)", text: "#f472b6", dot: "#f472b6" },
     custom_mechanical: { bg: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)", text: "#a78bfa", dot: "#a78bfa" },
-    sheet_metal: { bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.15)", text: "#fbbf24", dot: "#fbbf24" },
+    sheet_metal: { bg: "rgba(129,140,248,0.08)", border: "rgba(129,140,248,0.15)", text: "#818cf8", dot: "#818cf8" },
     raw_material: { bg: "rgba(192,132,252,0.08)", border: "rgba(192,132,252,0.15)", text: "#c084fc", dot: "#c084fc" },
     unknown: { bg: "rgba(255,255,255,0.03)", border: "rgba(255,255,255,0.06)", text: "rgba(255,255,255,0.4)", dot: "rgba(255,255,255,0.3)" },
   };
@@ -471,9 +471,9 @@ export default function BOMAnalyzer() {
   return (
     <div className="min-h-screen bg-[#06060a] text-white">
       <div className="flex min-h-screen">
-        <aside className="hidden xl:flex w-[260px] shrink-0 flex-col border-r border-white/[0.06] bg-[#0a0a12]">
-          <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.06]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-500/15 text-orange-400 font-bold">
+        <aside className="hidden xl:flex w-[260px] shrink-0 flex-col border-r border-white/[0.08] bg-[#111827]">
+          <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.08]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400 font-bold">
               P
             </div>
             <div>
@@ -492,7 +492,7 @@ export default function BOMAnalyzer() {
               </button>
               <button
                 onClick={() => navigate("/bom-analyzer")}
-                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm transition bg-orange-500/15 text-orange-300"
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm transition bg-violet-500/15 text-violet-300"
               >
                 <span className="h-2 w-2 rounded-full bg-current opacity-50" /> BOM Management
               </button>
@@ -535,8 +535,8 @@ export default function BOMAnalyzer() {
             </div>
           </div>
 
-          <div className="border-t border-white/[0.06] p-4">
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+          <div className="border-t border-white/[0.08] p-4">
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
               <p className="text-[10px] uppercase tracking-[0.14em] text-white/35">User</p>
               <p className="mt-1 text-sm font-medium">{user?.full_name || "Guest user"}</p>
               <p className="text-xs text-white/30">{user?.email || "Not signed in"}</p>
@@ -545,11 +545,11 @@ export default function BOMAnalyzer() {
         </aside>
 
         <main className="flex-1">
-          <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#0a0a12]/95 backdrop-blur-md">
+          <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#111827]/95 backdrop-blur-md">
             <Container className="py-4">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-500/15 text-orange-400 font-bold xl:hidden">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400 font-bold xl:hidden">
                     P
                   </div>
                   <div>
@@ -566,13 +566,13 @@ export default function BOMAnalyzer() {
                       value={file?.name || ""}
                       readOnly
                       placeholder="Search or select a BOM file"
-                      className="w-full rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-3 pl-11 text-sm text-white outline-none placeholder:text-white/25 focus:border-orange-500/30 transition"
+                      className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 pl-11 text-sm text-white outline-none placeholder:text-white/25 focus:border-violet-500/30 transition"
                     />
                     <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35">⌕</span>
                   </div>
                   <button
                     onClick={reset}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.04] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.08]"
+                    className="rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.08]"
                   >
                     Reset
                   </button>
@@ -581,7 +581,7 @@ export default function BOMAnalyzer() {
                 <div className="flex items-center justify-between gap-3 lg:justify-end">
                   <button
                     onClick={() => navigate("/dashboard")}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.07]"
+                    className="rounded-2xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.07]"
                   >
                     Dashboard
                   </button>
@@ -603,13 +603,13 @@ export default function BOMAnalyzer() {
                 </button>
                 <button
                   onClick={() => document.querySelector('input[type="file"]')?.click()}
-                  className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-white/70 hover:bg-white/[0.06] hover:text-white"
+                  className="rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-white/70 hover:bg-white/[0.06] hover:text-white"
                 >
                   Upload BOM (Excel/CSV)
                 </button>
                 <button
                   onClick={() => navigate("/dashboard")}
-                  className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-white/70 hover:bg-white/[0.06] hover:text-white"
+                  className="rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-white/70 hover:bg-white/[0.06] hover:text-white"
                 >
                   Dashboard
                 </button>
@@ -1088,7 +1088,7 @@ export default function BOMAnalyzer() {
                         {[
                           { label: "Manufacturing", value: bd.manufacturing, color: "#34d399" },
                           { label: "Logistics", value: bd.logistics, color: "#38bdf8" },
-                          { label: "Tariffs & Duties", value: bd.tariffs, color: "#fbbf24" },
+                          { label: "Tariffs & Duties", value: bd.tariffs, color: "#818cf8" },
                           { label: "NRE / Tooling", value: bd.nre, color: "#a78bfa" },
                           { label: "Material", value: bd.material, color: "#f87171" },
                         ].map((row, i) => {
@@ -1486,20 +1486,20 @@ export default function BOMAnalyzer() {
         /* ── Root ────────────────────────────────────── */
         .bom-root {
           --bg: #06060a;
-          --surface: #0a0a12;
-          --surface-2: #10101a;
-          --surface-3: #16161e;
+          --surface: #111827;
+          --surface-2: #172033;
+          --surface-3: #121a2a;
           --border: rgba(255,255,255,0.06);
           --border-2: rgba(255,255,255,0.09);
-          --accent: #f97316;
-          --accent-dim: rgba(249,115,22,0.12);
-          --accent-glow: rgba(249,115,22,0.06);
+          --accent: #8b5cf6;
+          --accent-dim: rgba(139,92,246,0.12);
+          --accent-glow: rgba(139,92,246,0.06);
           --text: rgba(255,255,255,0.92);
           --text-2: rgba(255,255,255,0.55);
           --text-3: rgba(255,255,255,0.30);
           --text-4: rgba(255,255,255,0.16);
           --danger: #f87171;
-          --warn: #fbbf24;
+          --warn: #818cf8;
           --info: #38bdf8;
           --radius: 14px;
           --radius-sm: 10px;
@@ -1520,7 +1520,7 @@ export default function BOMAnalyzer() {
 
         .bom-badge-danger  { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.18); }
         .bom-badge-success { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.18); }
-        .bom-badge-warn    { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.18); }
+        .bom-badge-warn    { background: rgba(129,140,248,0.1); color: #818cf8; border: 1px solid rgba(129,140,248,0.18); }
 
         /* ── Hero ────────────────────────────────────── */
         .bom-hero {
@@ -1535,7 +1535,7 @@ export default function BOMAnalyzer() {
           transform: translateX(-50%);
           width: 700px;
           height: 500px;
-          background: radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 70%);
+          background: radial-gradient(ellipse, rgba(139,92,246,0.06) 0%, transparent 70%);
           pointer-events: none;
         }
         .bom-hero-grid {
@@ -1560,7 +1560,7 @@ export default function BOMAnalyzer() {
           padding: 5px 14px;
           border-radius: 100px;
           background: var(--accent-dim);
-          border: 1px solid rgba(249,115,22,0.18);
+          border: 1px solid rgba(139,92,246,0.18);
           margin-bottom: 24px;
           font-size: 11px;
           font-weight: 600;
@@ -1725,12 +1725,12 @@ export default function BOMAnalyzer() {
         .bom-step.done .bom-step-circle {
           background: var(--accent);
           color: white;
-          box-shadow: 0 0 20px rgba(249,115,22,0.25);
+          box-shadow: 0 0 20px rgba(139,92,246,0.25);
         }
         .bom-step.active .bom-step-circle {
           background: var(--accent);
           color: white;
-          box-shadow: 0 0 24px rgba(249,115,22,0.3);
+          box-shadow: 0 0 24px rgba(139,92,246,0.3);
           transform: scale(1.08);
         }
         .bom-step.future .bom-step-circle {
@@ -1760,7 +1760,7 @@ export default function BOMAnalyzer() {
           border-radius: 1px;
         }
         .bom-step-line.done {
-          background: linear-gradient(90deg, var(--accent), rgba(249,115,22,0.3));
+          background: linear-gradient(90deg, var(--accent), rgba(139,92,246,0.3));
         }
 
         /* ── Dropzone ────────────────────────────────── */
@@ -1787,8 +1787,8 @@ export default function BOMAnalyzer() {
           transform: scale(1.01);
         }
         .bom-dropzone.has-file {
-          border-color: rgba(249,115,22,0.35);
-          background: rgba(249,115,22,0.03);
+          border-color: rgba(139,92,246,0.35);
+          background: rgba(139,92,246,0.03);
         }
         .bom-dropzone-input {
           position: absolute;
@@ -1865,8 +1865,8 @@ export default function BOMAnalyzer() {
         }
         .bom-select:focus {
           outline: none;
-          border-color: rgba(249,115,22,0.4);
-          box-shadow: 0 0 0 3px rgba(249,115,22,0.08);
+          border-color: rgba(139,92,246,0.4);
+          box-shadow: 0 0 0 3px rgba(139,92,246,0.08);
         }
         .bom-select:disabled { opacity: 0.35; cursor: not-allowed; }
         .bom-select option { background: var(--surface-2); }
@@ -1876,8 +1876,8 @@ export default function BOMAnalyzer() {
           align-items: center;
           gap: 8px;
           padding: 12px 16px;
-          background: rgba(249,115,22,0.05);
-          border: 1px solid rgba(249,115,22,0.15);
+          background: rgba(139,92,246,0.05);
+          border: 1px solid rgba(139,92,246,0.15);
           border-radius: var(--radius-xs);
           color: var(--accent);
           font-size: 13px;
@@ -1907,8 +1907,8 @@ export default function BOMAnalyzer() {
           align-items: center;
           padding: 8px 16px;
           border-radius: var(--radius-xs);
-          background: rgba(249,115,22,0.1);
-          border: 1px solid rgba(249,115,22,0.18);
+          background: rgba(139,92,246,0.1);
+          border: 1px solid rgba(139,92,246,0.18);
           color: var(--accent);
           font-size: 12px;
           font-weight: 600;
@@ -1917,7 +1917,7 @@ export default function BOMAnalyzer() {
           font-family: var(--font);
           transition: all 0.2s;
         }
-        .bom-accent-btn:hover { background: rgba(249,115,22,0.16); }
+        .bom-accent-btn:hover { background: rgba(139,92,246,0.16); }
 
         /* ── Processing ──────────────────────────────── */
         .bom-processing {
@@ -1934,14 +1934,14 @@ export default function BOMAnalyzer() {
           position: absolute;
           inset: 0;
           border-radius: 50%;
-          border: 2.5px solid rgba(249,115,22,0.1);
+          border: 2.5px solid rgba(139,92,246,0.1);
           border-top-color: var(--accent);
           animation: bom-spin 1s linear infinite;
         }
         .bom-spinner-ring-2 {
           inset: 6px;
           border-top-color: transparent;
-          border-right-color: rgba(249,115,22,0.4);
+          border-right-color: rgba(139,92,246,0.4);
           animation-duration: 1.6s;
           animation-direction: reverse;
         }
@@ -1994,7 +1994,7 @@ export default function BOMAnalyzer() {
           margin: 0 auto 16px;
           border-radius: 50%;
           background: var(--accent-dim);
-          border: 1px solid rgba(249,115,22,0.2);
+          border: 1px solid rgba(139,92,246,0.2);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -2228,7 +2228,7 @@ export default function BOMAnalyzer() {
         }
         .bom-region-bar {
           height: 100%;
-          background: linear-gradient(90deg, var(--accent), rgba(249,115,22,0.5));
+          background: linear-gradient(90deg, var(--accent), rgba(139,92,246,0.5));
           border-radius: 100px;
           transition: width 1s cubic-bezier(0.16,1,0.3,1);
         }
@@ -2256,8 +2256,8 @@ export default function BOMAnalyzer() {
         .bom-cta-bg {
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(56,189,248,0.06), rgba(167,139,250,0.06));
-          border: 1px solid rgba(249,115,22,0.12);
+          background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(56,189,248,0.06), rgba(167,139,250,0.06));
+          border: 1px solid rgba(139,92,246,0.12);
           border-radius: var(--radius);
         }
         .bom-cta-content {
@@ -2297,12 +2297,12 @@ export default function BOMAnalyzer() {
           cursor: pointer;
           text-decoration: none;
           transition: all 0.25s;
-          box-shadow: 0 4px 24px rgba(249,115,22,0.25);
+          box-shadow: 0 4px 24px rgba(139,92,246,0.25);
         }
         .bom-cta-btn:hover {
-          background: #fb923c;
+          background: #a78bfa;
           transform: translateY(-1px);
-          box-shadow: 0 6px 32px rgba(249,115,22,0.35);
+          box-shadow: 0 6px 32px rgba(139,92,246,0.35);
         }
         .bom-cta-link {
           font-size: 13px;
@@ -2348,7 +2348,7 @@ export default function BOMAnalyzer() {
         .bom-tab.active {
           background: var(--accent);
           color: white;
-          box-shadow: 0 2px 12px rgba(249,115,22,0.2);
+          box-shadow: 0 2px 12px rgba(139,92,246,0.2);
         }
         .bom-tab-content { display: flex; flex-direction: column; gap: 20px; }
 
@@ -2587,7 +2587,7 @@ export default function BOMAnalyzer() {
           text-decoration: none;
           transition: all 0.2s;
         }
-        .bom-rfq-btn:hover { background: #fb923c; transform: translateY(-1px); }
+        .bom-rfq-btn:hover { background: #a78bfa; transform: translateY(-1px); }
         .bom-rfq-btn-secondary {
           background: rgba(167,139,250,0.1);
           border: 1px solid rgba(167,139,250,0.2);
@@ -2614,7 +2614,7 @@ export default function BOMAnalyzer() {
           text-transform: uppercase;
           letter-spacing: 0.04em;
         }
-        .bom-strat-type.high { background: rgba(249,115,22,0.1); color: var(--accent); }
+        .bom-strat-type.high { background: rgba(139,92,246,0.1); color: var(--accent); }
         .bom-strat-type.med { background: rgba(56,189,248,0.1); color: var(--info); }
         .bom-strat-type.low { background: rgba(255,255,255,0.04); color: var(--text-2); }
         .bom-strat-item { color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
@@ -2662,7 +2662,7 @@ export default function BOMAnalyzer() {
           margin-bottom: 6px;
         }
         .bom-learn-row:last-child { margin-bottom: 0; }
-        .bom-learn-explore { background: rgba(251,191,36,0.03); }
+        .bom-learn-explore { background: rgba(129,140,248,0.03); }
         .bom-learn-item { color: var(--text-2); }
         .bom-learn-supplier { color: var(--text-3); }
         .bom-learn-gain { font-family: var(--mono); color: var(--warn); }

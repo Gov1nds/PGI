@@ -7,7 +7,7 @@ export default function ProjectWorkspace() {
 
   return (
     <div className="min-h-screen bg-[#06060a]">
-      <section className="border-b border-white/[0.06]">
+      <section className="border-b border-white/[0.08]">
         <Container className="py-8">
           <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
             <Link to="/dashboard" className="hover:text-white/60 transition-colors">
@@ -28,19 +28,19 @@ export default function ProjectWorkspace() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to={`/project/${id}/vendors`}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
               >
                 Vendor discovery
               </Link>
               <Link
                 to="/analytics"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
               >
                 Analytics
               </Link>
               <Link
                 to="/dashboard"
-                className="inline-flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400"
+                className="inline-flex items-center gap-2 rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
               >
                 Back to dashboard
               </Link>

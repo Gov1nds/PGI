@@ -35,18 +35,18 @@ import OrderCenterTimeline from "../components/OrderCenterTimeline.jsx";
 
 const STATUS_STYLES = {
   draft: "bg-white/[0.06] text-white/60",
-  guest_preview: "bg-orange-500/15 text-orange-400",
+  guest_preview: "bg-violet-500/15 text-violet-400",
   project_hydrated: "bg-blue-500/15 text-blue-400",
   strategy: "bg-violet-500/15 text-violet-400",
   vendor_match: "bg-cyan-500/15 text-cyan-400",
-  rfq_pending: "bg-amber-500/15 text-amber-400",
-  rfq_sent: "bg-amber-500/15 text-amber-400",
+  rfq_pending: "bg-indigo-500/15 text-indigo-400",
+  rfq_sent: "bg-indigo-500/15 text-indigo-400",
   quote_compare: "bg-violet-500/15 text-violet-400",
   negotiation: "bg-pink-500/15 text-pink-400",
   vendor_selected: "bg-emerald-500/15 text-emerald-400",
   po_issued: "bg-blue-500/15 text-blue-400",
   in_production: "bg-blue-500/15 text-blue-400",
-  qc_inspection: "bg-orange-500/15 text-orange-400",
+  qc_inspection: "bg-violet-500/15 text-violet-400",
   shipped: "bg-cyan-500/15 text-cyan-400",
   delivered: "bg-emerald-500/15 text-emerald-400",
   spend_recorded: "bg-emerald-500/15 text-emerald-400",
@@ -79,7 +79,7 @@ const safeArray = (value) => (Array.isArray(value) ? value : []);
 
 function Stat({ label, value, hint }) {
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
       <p className="text-[10px] uppercase tracking-wider text-white/25">{label}</p>
       <p className="mt-2 text-lg font-semibold text-white">{value}</p>
       {hint && <p className="mt-1 text-xs text-white/35">{hint}</p>}
@@ -89,8 +89,8 @@ function Stat({ label, value, hint }) {
 
 function Panel({ title, children, action }) {
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden">
-      <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-5 py-4">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">{title}</h3>
         {action}
       </div>
@@ -112,7 +112,7 @@ function Input(props) {
   return (
     <input
       {...props}
-      className={`w-full rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
+      className={`w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
     />
   );
 }
@@ -121,7 +121,7 @@ function Textarea(props) {
   return (
     <textarea
       {...props}
-      className={`w-full rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
+      className={`w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
     />
   );
 }
@@ -130,7 +130,7 @@ function Select(props) {
   return (
     <select
       {...props}
-      className={`w-full rounded-xl border border-white/[0.06] bg-[#06060a] px-4 py-3 text-sm text-white outline-none ${props.className || ""}`}
+      className={`w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none ${props.className || ""}`}
     />
   );
 }
@@ -442,7 +442,7 @@ export default function ProjectDetail() {
     }
   }, [activeTab, project?.current_rfq_id, loadFulfillment]);
 
-  const cardClass = "rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden";
+  const cardClass = "rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden";
 
   const stage = (
     project?.workflow_stage ||
@@ -803,7 +803,7 @@ export default function ProjectDetail() {
 
   return (
     <div className="min-h-screen bg-[#06060a]">
-      <section className="border-b border-white/[0.06]">
+      <section className="border-b border-white/[0.08]">
         <Container className="py-8">
           <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
             <Link to="/dashboard" className="hover:text-white/60 transition-colors">
@@ -835,7 +835,7 @@ export default function ProjectDetail() {
                   </span>
                 )}
                 {currentRfqId && (
-                  <span className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-medium text-amber-400">
+                  <span className="rounded-full bg-indigo-500/15 px-3 py-1 text-xs font-medium text-indigo-400">
                     RFQ active
                   </span>
                 )}
@@ -845,19 +845,19 @@ export default function ProjectDetail() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setShowChatDrawer(true)}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
               >
                 Open collaboration
               </button>
               <Link
                 to={`/project/${id}/vendors`}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
               >
                 Vendor discovery
               </Link>
               <Link
                 to="/analytics"
-                className="inline-flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400"
+                className="inline-flex items-center gap-2 rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
               >
                 Analytics
               </Link>
@@ -887,7 +887,7 @@ export default function ProjectDetail() {
               onClick={() => setActiveTab(tab.id)}
               className={`rounded-full px-4 py-2 text-sm transition ${
                 activeTab === tab.id
-                  ? "bg-orange-500 text-white"
+                  ? "bg-violet-500 text-white"
                   : "bg-white/[0.04] text-white/70 hover:bg-white/[0.08]"
               }`}
             >
@@ -904,7 +904,7 @@ export default function ProjectDetail() {
                 action={
                   <button
                     onClick={loadProject}
-                    className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
+                    className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
                   >
                     Refresh
                   </button>
@@ -913,15 +913,15 @@ export default function ProjectDetail() {
                 <div className="space-y-4 text-sm text-white/75">
                   <p>{s1.summary || s1.description || report.decision_summary || "No executive summary available yet."}</p>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Recommended location</p>
                       <p className="mt-2 text-white">{strategy.recommended_location || project?.recommended_location || s1.recommended_location || "—"}</p>
                     </div>
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Estimated cost</p>
                       <p className="mt-2 text-white">{fmt(strategy.total_cost || s1.total_cost || s1.average_cost || 0)}</p>
                     </div>
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Lead time</p>
                       <p className="mt-2 text-white">{fmt(strategy.lead_time_days || s1.lead_time_days || 0, 0)} days</p>
                     </div>
@@ -935,7 +935,7 @@ export default function ProjectDetail() {
                     <p className="text-sm text-white/35">No component breakdown available.</p>
                   ) : (
                     Object.entries(groupedComponents).map(([group, items]) => (
-                      <div key={group} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                      <div key={group} className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                         <div className="flex items-center justify-between gap-3">
                           <h4 className="text-sm font-semibold text-white capitalize">{group.replace(/_/g, " ")}</h4>
                           <span className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-white/50">{items.length} line(s)</span>
@@ -970,11 +970,11 @@ export default function ProjectDetail() {
               <Panel title="Strategy summary">
                 <div className="space-y-4 text-sm text-white/75">
                   <p>{strategy.decision_summary || report.decision_summary || "No strategy summary available."}</p>
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                     <p className="text-xs uppercase tracking-wider text-white/25">Recommended action</p>
                     <p className="mt-2 text-white">{strategy.recommended_action || strategy.action || "Review vendor shortlist and send RFQ."}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                     <p className="text-xs uppercase tracking-wider text-white/25">Priority</p>
                     <p className="mt-2 text-white">{project?.priority || "cost"}</p>
                   </div>
@@ -1007,7 +1007,7 @@ export default function ProjectDetail() {
                 action={
                   <Link
                     to={`/project/${id}/vendors`}
-                    className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
+                    className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
                   >
                     Open dedicated vendor discovery
                   </Link>
@@ -1052,13 +1052,13 @@ export default function ProjectDetail() {
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     onClick={() => loadVendorMatch()}
-                    className="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400"
+                    className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
                   >
                     Refresh shortlist
                   </button>
                   <button
                     onClick={() => loadVendorMatch(vendorFilters)}
-                    className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                    className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
                   >
                     Apply filters
                   </button>
@@ -1074,7 +1074,7 @@ export default function ProjectDetail() {
                   ) : (
                     <div className="space-y-3">
                       {vendorCandidates.map((vendor) => (
-                        <div key={vendor.vendor_id || vendor.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                        <div key={vendor.vendor_id || vendor.id} className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div>
                               <h4 className="text-sm font-semibold text-white">{vendor.vendor_name || vendor.name || "Vendor"}</h4>
@@ -1082,7 +1082,7 @@ export default function ProjectDetail() {
                                 {vendor.vendor_id || vendor.id} · {vendor.region || vendor.location || "—"}
                               </p>
                             </div>
-                            <span className="rounded-full bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-400">
+                            <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400">
                               Score {fmt(vendor.vendor_score || vendor.score || 0, 2)}
                             </span>
                           </div>
@@ -1111,15 +1111,15 @@ export default function ProjectDetail() {
 
                 <Panel title="Summary">
                   <div className="space-y-4 text-sm text-white/75">
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Matched vendors</p>
                       <p className="mt-2 text-white">{vendorCandidates.length}</p>
                     </div>
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Delivery region</p>
                       <p className="mt-2 text-white">{project?.recommended_location || project?.delivery_location || "—"}</p>
                     </div>
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Currency</p>
                       <p className="mt-2 text-white">{currency}</p>
                     </div>
@@ -1155,7 +1155,7 @@ export default function ProjectDetail() {
                       <button
                         onClick={handleRequestRFQ}
                         disabled={rfqLoading}
-                        className="w-full rounded-xl bg-orange-500 px-4 py-3 text-sm font-semibold text-white hover:bg-orange-400 disabled:opacity-60"
+                        className="w-full rounded-xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
                       >
                         {rfqLoading ? "Creating..." : currentRfqId ? "Refresh RFQ" : "Create RFQ"}
                       </button>
@@ -1166,20 +1166,20 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleSendRFQ}
                       disabled={!currentRfqId}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       Send RFQ
                     </button>
                     <button
                       onClick={() => loadOperationalData(currentRfqId)}
                       disabled={!currentRfqId}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       Refresh RFQ
                     </button>
                   </div>
 
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                     <div className="flex items-center justify-between gap-3">
                       <h4 className="text-sm font-semibold text-white">Current RFQ</h4>
                       {rfqSuccess && <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400">Created</span>}
@@ -1272,7 +1272,7 @@ export default function ProjectDetail() {
                   <button
                     onClick={loadComparison}
                     disabled={!currentRfqId || comparisonLoading}
-                    className="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400 disabled:opacity-60"
+                    className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
                   >
                     {comparisonLoading ? "Loading..." : "Reload comparison"}
                   </button>
@@ -1287,7 +1287,7 @@ export default function ProjectDetail() {
                       });
                       setComparisonSortBy("total_cost");
                     }}
-                    className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                    className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
                   >
                     Reset filters
                   </button>
@@ -1307,12 +1307,12 @@ export default function ProjectDetail() {
 
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                 <Panel title="RFQ quotes snapshot">
-                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.06] bg-[#06060a] p-4 text-xs text-white/70">
+                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.08] bg-[#06060a] p-4 text-xs text-white/70">
                     {JSON.stringify(rfqQuotes || {}, null, 2)}
                   </pre>
                 </Panel>
                 <Panel title="Comparison snapshot">
-                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.06] bg-[#06060a] p-4 text-xs text-white/70">
+                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.08] bg-[#06060a] p-4 text-xs text-white/70">
                     {JSON.stringify(rfqComparison || {}, null, 2)}
                   </pre>
                 </Panel>
@@ -1327,7 +1327,7 @@ export default function ProjectDetail() {
                 action={
                   <button
                     onClick={() => setShowChatDrawer(true)}
-                    className="rounded-xl bg-orange-500 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-400"
+                    className="rounded-xl bg-violet-500 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-400"
                   >
                     Open chat drawer
                   </button>
@@ -1338,11 +1338,11 @@ export default function ProjectDetail() {
                     Collaboration is now backed by a real thread and message model. Use the drawer to start vendor discussions, internal notes, and approval flows.
                   </p>
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Unread messages</p>
                       <p className="mt-2 text-white">{project?.chat_unread_count ?? 0}</p>
                     </div>
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <p className="text-xs uppercase tracking-wider text-white/25">Pending approvals</p>
                       <p className="mt-2 text-white">{project?.pending_approvals ?? 0}</p>
                     </div>
@@ -1350,13 +1350,13 @@ export default function ProjectDetail() {
                   <div className="flex flex-wrap gap-3">
                     <button
                       onClick={() => setShowChatDrawer(true)}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
                     >
                       Open collaboration drawer
                     </button>
                     <Link
                       to={`/project/${id}/vendors`}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
                     >
                       Continue with vendor discovery
                     </Link>
@@ -1367,7 +1367,7 @@ export default function ProjectDetail() {
               <Panel title="Thread summary">
                 <div className="space-y-3 text-sm text-white/70">
                   {(events || []).slice(0, 8).map((event, idx) => (
-                    <div key={`${event.id || idx}`} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-3">
+                    <div key={`${event.id || idx}`} className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-3">
                       <p className="text-white">{event.event_type || event.title || "Event"}</p>
                       <p className="mt-1 text-xs text-white/35">{event.created_at || event.updated_at || "—"}</p>
                     </div>
@@ -1409,21 +1409,21 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleCreatePO}
                       disabled={!currentRfqId || creatingPO}
-                      className="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400 disabled:opacity-60"
+                      className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
                     >
                       {creatingPO ? "Creating PO..." : "Create PO"}
                     </button>
                     <button
                       onClick={handleConfirmPO}
                       disabled={!currentPoId || confirmingPO}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       {confirmingPO ? "Confirming..." : "Confirm PO"}
                     </button>
                     <button
                       onClick={handleCreateShipment}
                       disabled={!currentPoId || creatingShipment}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       {creatingShipment ? "Creating shipment..." : "Create shipment"}
                     </button>
@@ -1452,21 +1452,21 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleAddShipmentEvent}
                       disabled={!currentShipmentId || addingShipmentEvent}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       {addingShipmentEvent ? "Adding..." : "Add shipment event"}
                     </button>
                     <button
                       onClick={handleAddMilestone}
                       disabled={!currentShipmentId || addingMilestone}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       {addingMilestone ? "Adding..." : "Add carrier milestone"}
                     </button>
                     <button
                       onClick={handleAddCustomsEvent}
                       disabled={!currentShipmentId || addingCustoms}
-                      className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       {addingCustoms ? "Adding..." : "Add customs event"}
                     </button>
@@ -1573,7 +1573,7 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleCreateInvoice}
                       disabled={!currentPoId || creatingInvoice}
-                      className="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400 disabled:opacity-60"
+                      className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
                     >
                       {creatingInvoice ? "Creating invoice..." : "Create invoice"}
                     </button>
@@ -1614,15 +1614,15 @@ export default function ProjectDetail() {
 
               <Panel title="Execution summary">
                 <div className="space-y-4 text-sm text-white/75">
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                     <p className="text-xs uppercase tracking-wider text-white/25">Current PO</p>
                     <p className="mt-2 text-white">{currentPoId || "—"}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                     <p className="text-xs uppercase tracking-wider text-white/25">Current shipment</p>
                     <p className="mt-2 text-white">{currentShipmentId || "—"}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                     <p className="text-xs uppercase tracking-wider text-white/25">Current invoice</p>
                     <p className="mt-2 text-white">{currentInvoiceId || "—"}</p>
                   </div>
@@ -1642,7 +1642,7 @@ export default function ProjectDetail() {
                   <p>Spend, trend, category, and supplier analytics are available in the main analytics surface.</p>
                   <Link
                     to="/analytics"
-                    className="inline-flex rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-400"
+                    className="inline-flex rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
                   >
                     Open analytics
                   </Link>
@@ -1672,7 +1672,7 @@ export default function ProjectDetail() {
                     <h4 className="text-sm font-semibold text-white mb-2">Snapshots</h4>
                     <div className="space-y-2">
                       {safeArray(snapshots).length ? snapshots.map((snap, idx) => (
-                        <div key={snap.id || idx} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-sm text-white/70">
+                        <div key={snap.id || idx} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3 text-sm text-white/70">
                           <p className="text-white">{snap.version || snap.snapshot_version || `Snapshot ${idx + 1}`}</p>
                           <p className="text-xs text-white/35">{snap.created_at || "—"}</p>
                         </div>
@@ -1686,7 +1686,7 @@ export default function ProjectDetail() {
                     <h4 className="text-sm font-semibold text-white mb-2">Strategy runs</h4>
                     <div className="space-y-2">
                       {safeArray(strategyRuns).length ? strategyRuns.map((run, idx) => (
-                        <div key={run.id || idx} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-sm text-white/70">
+                        <div key={run.id || idx} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3 text-sm text-white/70">
                           <p className="text-white">{run.strategy_name || run.label || `Run ${idx + 1}`}</p>
                           <p className="text-xs text-white/35">{run.created_at || "—"}</p>
                         </div>

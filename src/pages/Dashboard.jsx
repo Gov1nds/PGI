@@ -31,18 +31,18 @@ import {
 
 const STATUS_CONFIG = {
   draft: { bg: "rgba(255,255,255,0.04)", text: "rgba(255,255,255,0.55)" },
-  guest_preview: { bg: "rgba(249,115,22,0.08)", text: "#fb923c" },
+  guest_preview: { bg: "rgba(139,92,246,0.08)", text: "#a78bfa" },
   project_hydrated: { bg: "rgba(96,165,250,0.08)", text: "#60a5fa" },
   strategy: { bg: "rgba(167,139,250,0.08)", text: "#a78bfa" },
   vendor_match: { bg: "rgba(34,211,238,0.08)", text: "#22d3ee" },
-  rfq_pending: { bg: "rgba(251,191,36,0.08)", text: "#fbbf24" },
-  rfq_sent: { bg: "rgba(251,191,36,0.08)", text: "#fbbf24" },
+  rfq_pending: { bg: "rgba(129,140,248,0.08)", text: "#818cf8" },
+  rfq_sent: { bg: "rgba(129,140,248,0.08)", text: "#818cf8" },
   quote_compare: { bg: "rgba(167,139,250,0.08)", text: "#a78bfa" },
   negotiation: { bg: "rgba(244,114,182,0.08)", text: "#f472b6" },
   vendor_selected: { bg: "rgba(52,211,153,0.08)", text: "#34d399" },
   po_issued: { bg: "rgba(96,165,250,0.08)", text: "#60a5fa" },
   in_production: { bg: "rgba(96,165,250,0.08)", text: "#60a5fa" },
-  qc_inspection: { bg: "rgba(251,146,60,0.08)", text: "#fb923c" },
+  qc_inspection: { bg: "rgba(167,139,250,0.08)", text: "#a78bfa" },
   shipped: { bg: "rgba(34,211,238,0.08)", text: "#22d3ee" },
   delivered: { bg: "rgba(52,211,153,0.08)", text: "#34d399" },
   spend_recorded: { bg: "rgba(16,185,129,0.08)", text: "#10b981" },
@@ -50,8 +50,8 @@ const STATUS_CONFIG = {
   error: { bg: "rgba(239,68,68,0.08)", text: "#ef4444" },
 };
 
-const PIE_COLORS = ["#f59e0b", "#34d399", "#60a5fa", "#a78bfa", "#f472b6", "#22d3ee", "#fb7185", "#eab308"];
-const LINE_COLORS = ["#f59e0b", "#34d399", "#60a5fa", "#a78bfa"];
+const PIE_COLORS = ["#8b5cf6", "#a78bfa", "#60a5fa", "#818cf8", "#c084fc", "#38bdf8", "#34d399", "#f472b6"];
+const LINE_COLORS = ["#8b5cf6", "#a78bfa", "#60a5fa", "#818cf8"];
 
 function fmt(n, digits = 2) {
   if (n == null || Number.isNaN(Number(n))) return "—";
@@ -63,11 +63,11 @@ function fmt(n, digits = 2) {
 
 function Card({ title, value, hint, accent = false }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-5 transition-all duration-300 hover:border-orange-500/20 hover:shadow-lg hover:shadow-orange-500/[0.04]">
-      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-orange-500/[0.03] to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    <div className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111827] p-5 transition-all duration-300 hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/[0.04]">
+      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-violet-500/[0.03] to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="relative">
         <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-white/40">{title}</p>
-        <p className={`mt-2.5 text-2xl font-bold tracking-tight ${accent ? "text-orange-400" : "text-white"}`}>{value}</p>
+        <p className={`mt-2.5 text-2xl font-bold tracking-tight ${accent ? "text-violet-400" : "text-white"}`}>{value}</p>
         {hint && <p className="mt-2 text-[11px] text-white/35 leading-relaxed">{hint}</p>}
       </div>
     </div>
@@ -76,8 +76,8 @@ function Card({ title, value, hint, accent = false }) {
 
 function Panel({ title, subtitle, action, children, className = "" }) {
   return (
-    <div className={`rounded-2xl border border-white/[0.06] bg-[#0a0a12] overflow-hidden ${className}`}>
-      <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] px-5 py-4">
+    <div className={`rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden ${className}`}>
+      <div className="flex items-start justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
         <div>
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/45">{title}</h2>
           {subtitle ? <p className="mt-1 text-xs text-white/30">{subtitle}</p> : null}
@@ -412,9 +412,9 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#06060a] text-white">
       <div className="flex min-h-screen">
         {/* Left rail */}
-        <aside className="hidden xl:flex w-[260px] shrink-0 flex-col border-r border-white/[0.06] bg-[#0a0a12]">
-          <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.06]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-500/15 text-orange-400 font-bold">
+        <aside className="hidden xl:flex w-[260px] shrink-0 flex-col border-r border-white/[0.08] bg-[#111827]">
+          <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.08]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400 font-bold">
               P
             </div>
             <div>
@@ -431,7 +431,7 @@ export default function Dashboard() {
                   onClick={item.action}
                   className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm transition ${
                     idx === 0
-                      ? "bg-orange-500/15 text-orange-300"
+                      ? "bg-violet-500/15 text-violet-300"
                       : "text-white/55 hover:bg-white/[0.04] hover:text-white"
                   }`}
                 >
@@ -442,8 +442,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="border-t border-white/[0.06] p-4">
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+          <div className="border-t border-white/[0.08] p-4">
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
               <p className="text-[10px] uppercase tracking-[0.14em] text-white/35">User</p>
               <p className="mt-1 text-sm font-medium">{user?.full_name || "Guest user"}</p>
               <p className="text-xs text-white/30">{user?.email || "Not signed in"}</p>
@@ -454,11 +454,11 @@ export default function Dashboard() {
         {/* Main content */}
         <main className="flex-1">
           {/* Top bar */}
-          <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#0a0a12]/95 backdrop-blur-md">
+          <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#111827]/95 backdrop-blur-md">
             <Container className="py-4">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-500/15 text-orange-400 font-bold xl:hidden">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400 font-bold xl:hidden">
                     P
                   </div>
                   <div>
@@ -475,14 +475,14 @@ export default function Dashboard() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search projects, BOMs, vendors..."
-                      className="w-full rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-3 pl-11 text-sm text-white outline-none placeholder:text-white/25 focus:border-orange-500/30 transition"
+                      className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 pl-11 text-sm text-white outline-none placeholder:text-white/25 focus:border-violet-500/30 transition"
                     />
                     <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35">⌕</span>
                   </div>
 
                   <button
                     onClick={loadDashboard}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.04] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.08]"
+                    className="rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.08]"
                   >
                     Refresh
                   </button>
@@ -492,7 +492,7 @@ export default function Dashboard() {
                   <div className="relative">
                     <button
                       onClick={() => setNotificationsOpen((s) => !s)}
-                      className="relative rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.07]"
+                      className="relative rounded-2xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.07]"
                     >
                       Notifications
                       {notificationItems.length > 0 && (
@@ -503,7 +503,7 @@ export default function Dashboard() {
                     </button>
 
                     {notificationsOpen && (
-                      <div className="absolute right-0 mt-3 w-[320px] rounded-2xl border border-white/[0.06] bg-[#0a0a12] p-3 shadow-2xl shadow-black/40">
+                      <div className="absolute right-0 mt-3 w-[320px] rounded-2xl border border-white/[0.08] bg-[#111827] p-3 shadow-2xl shadow-black/40">
                         <div className="mb-3 flex items-center justify-between px-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/35">Notifications</p>
                           <button onClick={() => setNotificationsOpen(false)} className="text-xs text-white/30 hover:text-white/60">
@@ -517,10 +517,10 @@ export default function Dashboard() {
                             notificationItems.map((item, idx) => (
                               <div
                                 key={`${item.title || item.message || idx}`}
-                                className="rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 py-3"
+                                className="rounded-xl border border-white/[0.08] bg-white/[0.05] px-3 py-3"
                               >
                                 <div className="flex items-start gap-2">
-                                  <span className={`mt-1 h-2.5 w-2.5 rounded-full ${item.type === "error" ? "bg-red-400" : item.type === "warning" ? "bg-amber-400" : "bg-emerald-400"}`} />
+                                  <span className={`mt-1 h-2.5 w-2.5 rounded-full ${item.type === "error" ? "bg-red-400" : item.type === "warning" ? "bg-indigo-400" : "bg-emerald-400"}`} />
                                   <div className="min-w-0">
                                     <p className="text-sm font-medium text-white">{item.title || item.name || "Alert"}</p>
                                     <p className="mt-1 text-xs text-white/35">{item.message || item.reason || item.action || "Update available"}</p>
@@ -534,7 +534,7 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  <div className="h-10 w-10 overflow-hidden rounded-full border border-white/[0.06] bg-white/[0.04]">
+                  <div className="h-10 w-10 overflow-hidden rounded-full border border-white/[0.08] bg-white/[0.04]">
                     {user?.avatar_url ? (
                       <img src={user.avatar_url} alt={user.full_name || "User"} className="h-full w-full object-cover" />
                     ) : (
@@ -554,7 +554,7 @@ export default function Dashboard() {
                     className={`rounded-xl px-4 py-2.5 text-sm font-medium transition ${
                       action.primary
                         ? "bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/20"
-                        : "border border-white/[0.08] bg-white/[0.03] text-white/70 hover:bg-white/[0.06] hover:text-white"
+                        : "border border-white/[0.08] bg-white/[0.05] text-white/70 hover:bg-white/[0.06] hover:text-white"
                     }`}
                   >
                     {action.label}
@@ -567,7 +567,7 @@ export default function Dashboard() {
           <Container className="py-8">
             {loading && (
               <div className="flex items-center gap-3 text-sm text-white/35">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-orange-500/20 border-t-orange-500" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-violet-500/20 border-t-violet-500" />
                 Loading dashboard...
               </div>
             )}
@@ -600,7 +600,7 @@ export default function Dashboard() {
                         action={
                           <button
                             onClick={() => navigate("/bom-analyzer")}
-                            className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
+                            className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
                           >
                             Upload BOM
                           </button>
@@ -617,7 +617,7 @@ export default function Dashboard() {
                                 <button
                                   key={getProjectId(project)}
                                   onClick={() => navigate(`/project/${getProjectId(project)}/workspace`)}
-                                  className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-left transition hover:bg-white/[0.05] hover:border-orange-500/15"
+                                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] p-4 text-left transition hover:bg-white/[0.05] hover:border-violet-500/15"
                                 >
                                   <div className="flex items-start justify-between gap-3">
                                     <div>
@@ -635,7 +635,7 @@ export default function Dashboard() {
                                   </div>
                                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/[0.04]">
                                     <div
-                                      className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-400"
+                                      className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-400"
                                       style={{ width: `${Math.min(100, Math.max(20, Number(project.progress_percent || 35))) }%` }}
                                     />
                                   </div>
@@ -652,7 +652,7 @@ export default function Dashboard() {
                         action={
                           <button
                             onClick={goToWorkspace}
-                            className="rounded-xl border border-white/[0.06] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
+                            className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08]"
                           >
                             Open project
                           </button>
@@ -660,10 +660,10 @@ export default function Dashboard() {
                       >
                         <div className="space-y-3">
                           <div className="flex items-center justify-between gap-3">
-                            <div className="rounded-full bg-white/[0.03] px-3 py-1 text-xs text-white/45">
+                            <div className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-white/45">
                               {latestProject ? getProjectName(latestProject) : "All projects"}
                             </div>
-                            <div className="rounded-full bg-white/[0.03] px-3 py-1 text-xs text-white/45">
+                            <div className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-white/45">
                               {vendorSeries.length} vendors
                             </div>
                           </div>
@@ -673,7 +673,7 @@ export default function Dashboard() {
                           ) : (
                             <div className="space-y-2">
                               {vendorSeries.slice(0, 4).map((vendor, idx) => (
-                                <div key={`${vendor.label}-${idx}`} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+                                <div key={`${vendor.label}-${idx}`} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
                                   <div className="flex items-start justify-between gap-3">
                                     <div>
                                       <p className="text-sm font-medium text-white">{vendor.label}</p>
@@ -727,7 +727,7 @@ export default function Dashboard() {
                                 <XAxis dataKey="label" tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 11 }} />
                                 <YAxis tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 11 }} />
                                 <Tooltip />
-                                <Bar dataKey="value" radius={[8, 8, 0, 0]} fill="#f59e0b" />
+                                <Bar dataKey="value" radius={[8, 8, 0, 0]} fill="#8b5cf6" />
                               </BarChart>
                             </ResponsiveContainer>
                           </div>
@@ -759,8 +759,8 @@ export default function Dashboard() {
                         {quoteComparisonRows.length === 0 ? (
                           <p className="text-sm text-white/35">No comparison data yet.</p>
                         ) : (
-                          <div className="overflow-hidden rounded-2xl border border-white/[0.06]">
-                            <div className="grid grid-cols-5 bg-white/[0.03] px-4 py-3 text-[10px] uppercase tracking-wider text-white/35">
+                          <div className="overflow-hidden rounded-2xl border border-white/[0.08]">
+                            <div className="grid grid-cols-5 bg-white/[0.05] px-4 py-3 text-[10px] uppercase tracking-wider text-white/35">
                               <div className="col-span-2">Line item</div>
                               <div>Vendor 1</div>
                               <div>Vendor 2</div>
@@ -789,13 +789,13 @@ export default function Dashboard() {
                             <p className="text-sm text-white/35">No active RFQs yet.</p>
                           ) : (
                             activeRfqItems.map((item) => (
-                              <div key={item.id || item.name} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                              <div key={item.id || item.name} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-4">
                                 <div className="flex items-start justify-between gap-3">
                                   <div>
                                     <p className="text-sm font-medium text-white">{item.name || item.title || "Active RFQ"}</p>
                                     <p className="mt-1 text-xs text-white/35">Deadline {item.deadline || "—"}</p>
                                   </div>
-                                  <span className="rounded-lg bg-amber-500/10 px-2.5 py-1 text-[10px] text-amber-300">
+                                  <span className="rounded-lg bg-indigo-500/10 px-2.5 py-1 text-[10px] text-indigo-300">
                                     {item.status || "Open"}
                                   </span>
                                 </div>
@@ -817,7 +817,7 @@ export default function Dashboard() {
                         <div className="space-y-4">
                           {safeArray(m.order_items).length > 0 ? (
                             safeArray(m.order_items).slice(0, 4).map((order, idx) => (
-                              <div key={order.id || idx} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                              <div key={order.id || idx} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-4">
                                 <div className="flex items-center justify-between gap-3">
                                   <div>
                                     <p className="text-sm font-medium text-white">{order.po_number || order.name || `PO ${idx + 1}`}</p>
@@ -833,9 +833,9 @@ export default function Dashboard() {
                                   </button>
                                 </div>
                                 <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-white/60">
-                                  <div className="rounded-lg bg-white/[0.03] px-2 py-2">PO Sent</div>
-                                  <div className="rounded-lg bg-white/[0.03] px-2 py-2">In transit</div>
-                                  <div className="rounded-lg bg-white/[0.03] px-2 py-2">Delivered</div>
+                                  <div className="rounded-lg bg-white/[0.05] px-2 py-2">PO Sent</div>
+                                  <div className="rounded-lg bg-white/[0.05] px-2 py-2">In transit</div>
+                                  <div className="rounded-lg bg-white/[0.05] px-2 py-2">Delivered</div>
                                 </div>
                               </div>
                             ))
@@ -845,22 +845,22 @@ export default function Dashboard() {
                                 <p className="text-sm text-white/35">No shipment issues.</p>
                               ) : (
                                 safeArray(m.delayed_shipment_items).slice(0, 3).map((item) => (
-                                  <div key={item.project_id || item.id} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                                  <div key={item.project_id || item.id} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-4">
                                     <p className="text-sm font-medium text-white">{item.name || "Shipment"}</p>
                                     <p className="mt-1 text-xs text-white/35">{item.reason || "Tracking update required"}</p>
                                   </div>
                                 ))
                               )}
-                              <div className="rounded-2xl border border-white/[0.06] bg-[#06060a] p-4">
+                              <div className="rounded-2xl border border-white/[0.08] bg-[#06060a] p-4">
                                 <div className="flex items-center justify-between gap-3">
                                   <div>
                                     <p className="text-sm font-medium text-white">Carrier milestones</p>
                                     <p className="mt-1 text-xs text-white/35">Pickup · Customs · In transit · Delivered</p>
                                   </div>
-                                  <div className="rounded-xl bg-white/[0.03] px-3 py-2 text-xs text-white/50">Live</div>
+                                  <div className="rounded-xl bg-white/[0.05] px-3 py-2 text-xs text-white/50">Live</div>
                                 </div>
                                 <div className="mt-4 h-2 rounded-full bg-white/[0.04]">
-                                  <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-400" />
+                                  <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-violet-500 via-indigo-400 to-emerald-400" />
                                 </div>
                                 <p className="mt-3 text-xs text-white/35">Delivery confirmation triggers spend recording and analytics rollup.</p>
                               </div>
@@ -875,7 +875,7 @@ export default function Dashboard() {
                             <p className="text-sm text-white/35">No collaboration activity yet.</p>
                           ) : (
                             collaborationItems.slice(0, 4).map((item, idx) => (
-                              <div key={item.id || idx} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                              <div key={item.id || idx} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-4">
                                 <div className="flex items-start gap-3">
                                   <div className="mt-1 h-8 w-8 rounded-full bg-white/[0.07] flex items-center justify-center text-xs font-semibold text-white/70">
                                     {String(item.user_name || item.user || "A").charAt(0).toUpperCase()}
@@ -901,9 +901,9 @@ export default function Dashboard() {
                           <p className="text-sm text-white/35">No alerts.</p>
                         ) : (
                           notificationItems.map((item, idx) => (
-                            <div key={`${item.title || item.message || idx}`} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+                            <div key={`${item.title || item.message || idx}`} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
                               <div className="flex items-start gap-2">
-                                <span className={`mt-1 h-2.5 w-2.5 rounded-full ${item.type === "error" ? "bg-red-400" : item.type === "warning" ? "bg-amber-400" : "bg-emerald-400"}`} />
+                                <span className={`mt-1 h-2.5 w-2.5 rounded-full ${item.type === "error" ? "bg-red-400" : item.type === "warning" ? "bg-indigo-400" : "bg-emerald-400"}`} />
                                 <div className="min-w-0">
                                   <p className="text-sm font-medium text-white">{item.title || item.name || "Alert"}</p>
                                   <p className="mt-1 text-xs text-white/35">{item.message || item.reason || item.action || "Update available"}</p>
@@ -917,7 +917,7 @@ export default function Dashboard() {
 
                     <Panel title="Analytics & insights" subtitle="Retention and savings">
                       <div className="space-y-4">
-                        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                           <p className="text-[10px] uppercase tracking-[0.14em] text-white/30">Negotiated savings realized (MTD)</p>
                           <p className="mt-2 text-3xl font-bold text-emerald-400">
                             ${fmt(savingsRealized, 0)}
@@ -932,7 +932,7 @@ export default function Dashboard() {
                           <Card title="Paid spend" value={fmt(paidSpend)} />
                         </div>
 
-                        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-4">
                           <p className="text-[10px] uppercase tracking-[0.14em] text-white/30">AI prompt</p>
                           <p className="mt-2 text-sm text-white/80 leading-relaxed">
                             How much did we spend on capacitors this quarter?
@@ -941,7 +941,7 @@ export default function Dashboard() {
 
                         <Link
                           to="/analytics"
-                          className="inline-flex w-full items-center justify-center rounded-xl bg-orange-500 px-4 py-3 text-sm font-semibold text-white hover:bg-orange-400"
+                          className="inline-flex w-full items-center justify-center rounded-xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white hover:bg-violet-400"
                         >
                           Detailed live dashboards
                         </Link>
@@ -976,15 +976,15 @@ export default function Dashboard() {
                           <AreaChart data={monthlySpendSeries.length ? monthlySpendSeries : [{ label: "Jan", value: 0 }]}>
                             <defs>
                               <linearGradient id="dashboardArea" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.45} />
-                                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.02} />
+                                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.45} />
+                                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.02} />
                               </linearGradient>
                             </defs>
                             <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
                             <XAxis dataKey="label" tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 11 }} />
                             <YAxis tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 11 }} />
                             <Tooltip />
-                            <Area type="monotone" dataKey="value" stroke="#f59e0b" fill="url(#dashboardArea)" strokeWidth={2} />
+                            <Area type="monotone" dataKey="value" stroke="#8b5cf6" fill="url(#dashboardArea)" strokeWidth={2} />
                           </AreaChart>
                         </ResponsiveContainer>
                       </div>
@@ -1009,8 +1009,8 @@ export default function Dashboard() {
                 {/* Lower strip */}
                 <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
                   <Panel title="Quote comparison matrix" subtitle="Quick read of vendor pricing and timing">
-                    <div className="overflow-hidden rounded-2xl border border-white/[0.06]">
-                      <div className="grid grid-cols-5 bg-white/[0.03] px-4 py-3 text-[10px] uppercase tracking-wider text-white/35">
+                    <div className="overflow-hidden rounded-2xl border border-white/[0.08]">
+                      <div className="grid grid-cols-5 bg-white/[0.05] px-4 py-3 text-[10px] uppercase tracking-wider text-white/35">
                         <div className="col-span-2">Line item</div>
                         <div>Vendor 1</div>
                         <div>Vendor 2</div>
@@ -1043,14 +1043,14 @@ export default function Dashboard() {
                           <button
                             key={item.project_id || item.id || item.name}
                             onClick={() => navigate(`/project/${item.project_id}/workspace`)}
-                            className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-left hover:bg-white/[0.05]"
+                            className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] p-4 text-left hover:bg-white/[0.05]"
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
                                 <p className="text-sm font-medium text-white">{item.name || "Project"}</p>
                                 <p className="mt-1 text-xs text-white/35">{item.reason || item.action || "Action needed"}</p>
                               </div>
-                              <span className="rounded-lg bg-orange-500/10 px-2.5 py-1 text-[10px] text-orange-300">
+                              <span className="rounded-lg bg-violet-500/10 px-2.5 py-1 text-[10px] text-violet-300">
                                 {item.workflow_stage || item.status || "open"}
                               </span>
                             </div>
