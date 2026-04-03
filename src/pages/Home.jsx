@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Container from "../components/Container.jsx";
+import SectionHeading from "../components/SectionHeading.jsx";
 import { Link } from "react-router-dom";
-import { PrimaryButton } from "../components/Buttons.jsx";
+import { PrimaryButton, SecondaryButton } from "../components/Buttons.jsx";
 import {
   services,
   outdoorWorks,
@@ -13,7 +14,9 @@ import {
 } from "../content/siteData.js";
 import CountUp from "../components/CountUp.jsx";
 import { RevealSection } from "../components/RevealSection.jsx";
+import UniversalIntakeBox from "../components/UniversalIntakeBox";
 
+<UniversalIntakeBox className="mt-6" />
 /* ─── Marquee strip helper ─────────────────────────────── */
 const Marquee = ({ children, speed = 40 }) => (
   <div className="marquee-outer" aria-hidden>
@@ -35,86 +38,25 @@ const WORKFLOW_TABS = [
   "Analyze",
 ];
 
-/* ─── Sourcing workspace mock card (hero visual) ─────────── */
-const SourcingCard = ({ active }) => {
-  const steps = {
-    Intake: {
-      tag: "Demand normalised",
-      desc: "1,000 units · SMT resistors · ISO-certified · 4-week lead · budget target",
-      icon: "📋",
-    },
-    Match: {
-      tag: "92% match accuracy",
-      desc: "12 qualified suppliers found across 4 regions matching your specs.",
-      icon: "🔍",
-    },
-    RFQ: {
-      tag: "RFQ sent",
-      desc: "Automated RFQ dispatched to 8 suppliers. Awaiting responses.",
-      icon: "📨",
-    },
-    "Compare quotes": {
-      tag: "Side-by-side",
-      desc: "3 quotes received. Unit price Δ 18%. Lead time aligned. Rank: Supplier B.",
-      icon: "📊",
-    },
-    Execute: {
-      tag: "PO issued",
-      desc: "Purchase order #PO-2041 issued. Payment terms: Net-30.",
-      icon: "✅",
-    },
-    Track: {
-      tag: "Fulfillment live",
-      desc: "Order in production. ETA 22 days. 3 milestone alerts configured.",
-      icon: "📦",
-    },
-    Analyze: {
-      tag: "Spend recorded",
-      desc: "Saved 14% vs last quarter. Supplier scorecard updated.",
-      icon: "📈",
-    },
-  };
-  const s = steps[active] || steps["Intake"];
-
+/* ─── Hero search input ─────────────────────────────────── */
+const HeroInput = () => {
+  const [value, setValue] = useState("");
   return (
-    <div className="hero-card">
-      <div className="hero-card-header">
-        <div className="hero-card-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
-              d="M12 16.5v-9m0 0 3.5 3.5M12 7.5 8.5 11M4 19.5h16" />
+    <div className="hero-input-box">
+      <textarea
+        className="hero-input-textarea"
+        placeholder="Describe your sourcing requirement — e.g. 1,000 SMT resistors, ISO-certified, 4-week lead time..."
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        rows={3}
+      />
+      <div className="hero-input-footer">
+        <span className="hero-input-hint">Press Enter or click → to start sourcing</span>
+        <Link to="/bom-analyzer" className="hero-input-send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M5 12h14m-7-7 7 7-7 7" />
           </svg>
-        </div>
-        <span className="hero-card-title">Sourcing workspace</span>
-        <span className="hero-card-badge">Live</span>
-      </div>
-
-      <div className="hero-card-body">
-        <div className="hero-card-step-icon">{s.icon}</div>
-        <div className="hero-card-step-tag">{s.tag}</div>
-        <p className="hero-card-step-desc">{s.desc}</p>
-
-        <div className="hero-card-example">
-          <div className="hero-card-example-label">Active requirement</div>
-          <div className="hero-card-example-text">
-            1,000 units · SMT resistors · ISO-certified suppliers · 4-week lead time · target cost under budget
-          </div>
-        </div>
-
-        <div className="hero-card-actions">
-          <Link to="/bom-analyzer" className="hero-card-btn-primary">
-            Upload BOM & analyze →
-          </Link>
-          <Link to="/capabilities" className="hero-card-btn-ghost">
-            Explore workflow
-          </Link>
-        </div>
-      </div>
-
-      <div className="hero-card-chips">
-        {["Supplier matching", "RFQ automation", "Quote comparison"].map((c) => (
-          <span key={c} className="hero-card-chip">{c}</span>
-        ))}
+        </Link>
       </div>
     </div>
   );
@@ -131,26 +73,25 @@ const Home = () => {
 
       {/* ════════════ HERO — SourceReady style ════════════ */}
       <section className="hero-section">
-        {/* Subtle mesh background */}
         <div className="hero-mesh" aria-hidden />
 
         <Container className="hero-container">
+          {/* Brand name */}
+          <div className="hero-anim-1 hero-brand-name">PGI Hub</div>
+
           {/* Badge */}
-          <div className="hero-anim-1">
+          <div className="hero-anim-1" style={{ marginTop: "0.75rem" }}>
             <span className="hero-badge">
               <span className="hero-badge-dot" />
               AI sourcing marketplace · procurement control tower
             </span>
           </div>
 
-          {/* Headline */}
+          {/* Headline — smaller, clean white */}
           <h1 className="hero-h1 hero-anim-2">
-            Upload a BOM or describe
-            <br className="hidden sm:block" /> a requirement.
-            <span className="hero-h1-accent">
-              {" "}Get suppliers, quotes,
-              <br className="hidden sm:block" /> and cost insight instantly.
-            </span>
+            Upload a BOM or describe a requirement.
+            <br className="hidden sm:block" />
+            <span className="hero-h1-accent"> Get suppliers, quotes, and cost insight instantly.</span>
           </h1>
 
           {/* Subtitle */}
@@ -160,17 +101,24 @@ const Home = () => {
             one operational surface.
           </p>
 
-          {/* CTAs */}
-          <div className="hero-ctas hero-anim-4">
-            <Link to="/bom-analyzer" className="hero-cta-primary">
-              Upload BOM & analyze
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7 7 7-7 7" />
-              </svg>
-            </Link>
-            <Link to="/capabilities" className="hero-cta-ghost">
-              Explore workflow →
-            </Link>
+          {/* Search input — SourceReady style */}
+          <div className="hero-anim-4" style={{ width: "100%", maxWidth: 700 }}>
+            <HeroInput />
+          </div>
+
+          {/* Quick action chips */}
+          <div className="hero-chips hero-anim-4">
+            {[
+              { icon: "🔍", label: "Find suppliers" },
+              { icon: "📋", label: "Upload BOM" },
+              { icon: "📨", label: "Launch RFQ" },
+              { icon: "📊", label: "Compare quotes" },
+            ].map((chip) => (
+              <Link key={chip.label} to="/bom-analyzer" className="hero-quick-chip">
+                <span>{chip.icon}</span>
+                {chip.label}
+              </Link>
+            ))}
           </div>
 
           {/* Tab strip */}
@@ -186,11 +134,6 @@ const Home = () => {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* Product card mockup */}
-          <div className="hero-card-wrap hero-anim-5">
-            <SourcingCard active={activeTab} />
           </div>
 
           {/* Stats strip */}
