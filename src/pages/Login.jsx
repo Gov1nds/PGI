@@ -89,3 +89,17 @@ export default function Login() {
     </div>
   );
 }
+const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await login(email, password);
+      // Redirect to merged project if one exists
+      if (data.merged_project_id) {
+        navigate(`/project/${data.merged_project_id}`);
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };

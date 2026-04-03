@@ -254,7 +254,7 @@ export default function BOMAnalyzer() {
     if (nextSessionToken) {
       setSessionToken(nextSessionToken);
       if (typeof window !== "undefined") {
-        localStorage.setItem("guest_session_token", nextSessionToken);
+        localStorage.setItem("pgi_session", nextSessionToken);
         localStorage.setItem("pgi_guest_session_token", nextSessionToken);
         localStorage.setItem("pgi_session", nextSessionToken);
       }

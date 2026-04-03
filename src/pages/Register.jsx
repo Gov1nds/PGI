@@ -113,3 +113,16 @@ export default function Register() {
     </div>
   );
 }
+const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await register(email, password, fullName);
+      if (data.merged_project_id) {
+        navigate(`/project/${data.merged_project_id}`);
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };

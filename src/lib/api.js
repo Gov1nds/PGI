@@ -1,188 +1,86 @@
-/**
- * PGI HUB — Centralized API Client
- */
+// ═══════════════════════════════════════════════════
+// TOKEN MANAGEMENT — Canonical + backward compatible
+// ═══════════════════════════════════════════════════
 
-function getSessionToken() {
+const TOKEN_KEY = "pgi_token";
+const SESSION_KEY = "pgi_session";
+
+// ── Safe migration (NON-DESTRUCTIVE first load)
+(function migrateKeys() {
+  if (typeof window === "undefined") return;
+
+  const legacyTokenKeys = ["access_token", "token", "auth_token", "authToken"];
+  const legacySessionKeys = [
+    "guest_session_token",
+    "pgi_guest_session_token",
+    "session_token",
+    "pgi_session"
+  ];
+
+  // migrate tokens
+  for (const k of legacyTokenKeys) {
+    const v = localStorage.getItem(k);
+    if (v && !localStorage.getItem(TOKEN_KEY)) {
+      localStorage.setItem(TOKEN_KEY, v);
+    }
+  }
+
+  // migrate session
+  for (const k of legacySessionKeys) {
+    const v = localStorage.getItem(k);
+    if (v && !localStorage.getItem(SESSION_KEY)) {
+      localStorage.setItem(SESSION_KEY, v);
+    }
+  }
+
+  // ❗ DO NOT REMOVE OLD KEYS IMMEDIATELY
+  // Remove only after full rollout stability
+})();
+
+// ── Session token
+export function getSessionToken() {
   if (typeof window === "undefined") return "";
 
   let session =
+    localStorage.getItem(SESSION_KEY) ||
     localStorage.getItem("guest_session_token") ||
-    localStorage.getItem("pgi_guest_session_token") ||
-    localStorage.getItem("pgi_session") ||
-    localStorage.getItem("session_token") ||
     "";
 
   if (!session) {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-      session = crypto.randomUUID();
-    } else {
-      session = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    session =
+      crypto.randomUUID?.() ||
+      "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
         const r = (Math.random() * 16) | 0;
         return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
       });
-    }
 
-    localStorage.setItem("guest_session_token", session);
-    localStorage.setItem("pgi_guest_session_token", session);
-    localStorage.setItem("pgi_session", session);
+    localStorage.setItem(SESSION_KEY, session);
   }
 
   return session;
 }
 
-function getStoredAccessToken() {
+// ── Access token
+export function getStoredAccessToken() {
   if (typeof window === "undefined") return "";
+
   return (
-    localStorage.getItem("access_token") ||
-    localStorage.getItem("pgi_token") ||
-    localStorage.getItem("token") ||
-    localStorage.getItem("auth_token") ||
-    localStorage.getItem("authToken") ||
+    localStorage.getItem(TOKEN_KEY) ||
+    localStorage.getItem("access_token") || // fallback
     ""
   );
 }
 
-function persistAccessToken(token) {
+export function persistAccessToken(token) {
   if (typeof window === "undefined" || !token) return;
-  localStorage.setItem("access_token", token);
-  localStorage.setItem("pgi_token", token);
+  localStorage.setItem(TOKEN_KEY, token);
 }
 
+// ── API base (PRODUCTION SAFE)
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_BASE ||
   "https://platform-api-production-d66b.up.railway.app";
-
-export async function apiCall(path, options = {}) {
-  const cleanPath = path.trim();
-  const token = getStoredAccessToken();
-  const headers = { ...options.headers };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  let res;
-  try {
-    res = await fetch(`${API_BASE}${cleanPath}`, {
-      ...options,
-      headers,
-    });
-  } catch (networkErr) {
-    throw new Error("Network error — please check your connection");
-  }
-
-  if (res.status === 401) {
-    try {
-      const verify = await fetch(`${API_BASE}/api/v1/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (verify.status === 401) {
-        localStorage.removeItem("pgi_token");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("pgi_user");
-        window.dispatchEvent(new Event("pgi_auth_expired"));
-        throw new Error("Session expired — please log in again");
-      }
-    } catch (verifyErr) {
-      if (verifyErr.message === "Session expired — please log in again") throw verifyErr;
-    }
-  }
-
-  return res;
-}
-
-export async function uploadBOM(
-  file,
-  deliveryLocation,
-  targetCurrency,
-  priority = "cost",
-  sessionToken = null
-) {
-  const fd = new FormData();
-
-  fd.append("file", file);
-  fd.append("delivery_location", deliveryLocation);
-  fd.append("target_currency", targetCurrency);
-  fd.append("priority", priority);
-  fd.append("session_token", sessionToken || getSessionToken());
-
-  const res = await apiCall("/api/v1/bom/upload", {
-    method: "POST",
-    body: fd,
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Upload failed (${res.status})`);
-  }
-
-  return res.json();
-}
-
-export async function unlockBOM(bomId, sessionToken) {
-  const res = await apiCall("/api/v1/bom/unlock", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      bom_id: bomId,
-      session_token: sessionToken,
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || "Unlock failed");
-  }
-
-  return res.json();
-}
-
-export async function loginUser(email, password) {
-  const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email.trim(),
-      password: password,
-      session_token: getSessionToken(),
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || "Login failed");
-  }
-
-  const data = await res.json();
-  persistAccessToken(data.access_token);
-
-  return data;
-}
-
-export async function registerUser(email, password, fullName) {
-  const res = await fetch(`${API_BASE}/api/v1/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email.trim(),
-      password: password,
-      full_name: fullName.trim(),
-      session_token: getSessionToken(),
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || "Registration failed");
-  }
-
-  const data = await res.json();
-  persistAccessToken(data.access_token);
-
-  return data;
-}
 
 // ═══════════════════════════════════════════════════
 // PROJECTS
@@ -712,5 +610,40 @@ export async function scheduleReport(payload) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Failed to schedule report");
   }
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════════
+// INTAKE (unified)
+// ═══════════════════════════════════════════════════
+
+export async function submitIntake({
+  file = null,
+  rawText = "",
+  deliveryLocation = "India",
+  targetCurrency = "USD",
+  priority = "cost",
+  inputType = "auto",
+} = {}) {
+  const fd = new FormData();
+  if (file) fd.append("source_file", file);
+  if (rawText) fd.append("raw_input_text", rawText);
+  fd.append("delivery_location", deliveryLocation);
+  fd.append("target_currency", targetCurrency);
+  fd.append("priority", priority);
+  fd.append("input_type", inputType);
+  fd.append("session_token", getSessionToken());
+  fd.append("source_channel", "web");
+
+  const res = await apiCall("/api/v1/intake/submit", {
+    method: "POST",
+    body: fd,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Intake failed (${res.status})`);
+  }
+
   return res.json();
 }
