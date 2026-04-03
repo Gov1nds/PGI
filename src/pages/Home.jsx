@@ -39,18 +39,38 @@ const WORKFLOW_TABS = [
 const QUICK_ACTIONS = [
   {
     label: "Find suppliers",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+      </svg>
+    ),
     draftText: "Find suppliers for my BOM with lead time, MOQ, and compliance filtering.",
   },
   {
     label: "Deep search suppliers",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10" /><path d="M12 2v10l6.5-3" />
+      </svg>
+    ),
     draftText: "Deep search suppliers for critical components, alternate parts, and regional sourcing.",
   },
   {
     label: "Research product",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+      </svg>
+    ),
     draftText: "Research the best manufacturing strategy for this part and identify supplier categories.",
   },
   {
     label: "Help center",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" />
+      </svg>
+    ),
     draftText: "I need help understanding BOM upload, supplier matching, RFQ, comparison, and tracking.",
   },
 ];
@@ -80,11 +100,11 @@ const HeroInput = () => {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[28px] border border-white/15 bg-white/10 p-4 shadow-[0_24px_70px_rgba(0,0,0,0.28)] backdrop-blur-xl">
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))]" />
-      <div className="relative">
+    <div className="hero-input-shell">
+      <div className="hero-input-glow" />
+      <div className="hero-input-inner">
         <textarea
-          className="min-h-[110px] w-full resize-none rounded-[20px] border border-white/10 bg-[rgba(255,255,255,0.06)] px-4 py-4 pr-12 text-[15px] leading-6 text-white outline-none placeholder:text-white/40 focus:border-sky-400/30"
+          className="hero-textarea"
           placeholder="Describe anything about product sourcing"
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -100,49 +120,57 @@ const HeroInput = () => {
         <button
           type="button"
           onClick={() => submit()}
-          className="absolute bottom-4 right-4 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/15 text-white shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition hover:bg-white/20"
+          className="hero-send-btn"
           aria-label="Send to BOM analyzer"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M5 12h14m-7-7 7 7-7 7" />
           </svg>
         </button>
+      </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          {QUICK_ACTIONS.map((chip) => (
-            <button
-              key={chip.label}
-              type="button"
-              onClick={() =>
-                navigate("/bom-analyzer", {
-                  state: {
-                    draftText: chip.draftText,
-                    source: "home-quick-action",
-                  },
-                })
-              }
-              className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs text-white/80 transition hover:bg-white/15"
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+      {/* Quick action chips */}
+      <div className="hero-chips">
+        {QUICK_ACTIONS.map((chip) => (
           <button
+            key={chip.label}
             type="button"
-            onClick={() => submit()}
-            className="inline-flex items-center justify-center rounded-2xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_45px_rgba(14,165,233,0.25)] transition hover:bg-sky-400"
+            onClick={() =>
+              navigate("/bom-analyzer", {
+                state: {
+                  draftText: chip.draftText,
+                  source: "home-quick-action",
+                },
+              })
+            }
+            className="hero-chip"
           >
-            Upload BOM & Analyze
+            <span className="hero-chip-icon">{chip.icon}</span>
+            {chip.label}
           </button>
-          <Link
-            to="/bom-analyzer?demo=1"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-medium text-white/85 transition hover:bg-white/15"
-          >
-            Try with Demo Data
-          </Link>
-        </div>
+        ))}
+      </div>
+
+      {/* CTA buttons */}
+      <div className="hero-input-ctas">
+        <button
+          type="button"
+          onClick={() => submit()}
+          className="hero-cta-upload"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Upload BOM &amp; Analyze
+        </button>
+        <Link
+          to="/bom-analyzer?demo=1"
+          className="hero-cta-demo"
+        >
+          Try with Demo Data
+        </Link>
       </div>
     </div>
   );
@@ -156,99 +184,60 @@ const Home = () => {
 
   return (
     <div className="home-root">
-      <section className="relative overflow-hidden border-b border-white/8 bg-[#09071a] text-white">
-        <div
-          className="absolute inset-0 opacity-45"
-          style={{
-            backgroundImage:
-              "linear-gradient(180deg, rgba(21, 12, 51, 0.28) 0%, rgba(9, 7, 26, 0.96) 100%), url('/images/hero-bg.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.36),transparent_42%),radial-gradient(circle_at_20%_70%,rgba(236,72,153,0.18),transparent_25%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.18),transparent_22%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,26,0.18),rgba(7,8,26,0.8))]" />
 
-        <Container className="relative z-10 mx-auto max-w-7xl py-16 lg:py-20">
-          <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white/85 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur-md">
-              <span className="h-2 w-2 rounded-full bg-orange-400" />
-              AI sourcing marketplace
-            </span>
+      {/* ════════════ HERO ════════════ */}
+      <section className="hero-section">
+        {/* Background layers */}
+        <div className="hero-bg-base" aria-hidden />
+        <div className="hero-bg-map" aria-hidden />
+        <div className="hero-bg-circuit" aria-hidden />
+        <div className="hero-bg-gradient" aria-hidden />
+        <div className="hero-bg-glow" aria-hidden />
 
-            <h1 className="mt-8 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-[72px] lg:leading-[0.95]">
-              <span className="drop-shadow-[0_6px_24px_rgba(0,0,0,0.45)]">Upload a BOM</span>{" "}
-              <span className="text-white/90">or describe</span>
-              <br className="hidden sm:block" />
-              <span className="text-white/95">your sourcing needs.</span>
-            </h1>
+        <Container className="hero-container">
+          {/* Badge */}
+          <div className="hero-badge hero-anim-1">
+            <span className="hero-badge-dot" />
+            AI sourcing marketplace
+          </div>
 
-            <p className="mt-6 max-w-4xl text-lg leading-8 text-white/78 sm:text-xl">
-              <span className="font-semibold text-white">Get suppliers, quotes, and cost insight</span>{" "}
-              <span className="text-orange-300">Instantly.</span>
-            </p>
+          {/* Headline */}
+          <h1 className="hero-h1 hero-anim-2">
+            <span className="hero-h1-bold">Upload a BOM</span>{" "}
+            <span className="hero-h1-light">or describe</span>
+            <br />
+            <span className="hero-h1-light">your sourcing needs.</span>
+          </h1>
 
-            <div className="mt-10 w-full max-w-4xl">
-              <HeroInput />
-            </div>
+          {/* Subtitle */}
+          <p className="hero-sub hero-anim-3">
+            <span className="hero-sub-bold">Get suppliers, quotes, and cost insight</span>{" "}
+            <span className="hero-sub-accent">Instantly.</span>
+          </p>
 
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-              {[
-                "Find suppliers",
-                "Deep search suppliers",
-                "Research product",
-                "Help center",
-              ].map((label) => (
-                <span
-                  key={label}
-                  className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white/75 backdrop-blur-md"
+          {/* Input + CTAs */}
+          <div className="hero-input-wrap hero-anim-4">
+            <HeroInput />
+          </div>
+
+          {/* Workflow tabs */}
+          <div className="hero-workflow hero-anim-5">
+            <div className="hero-workflow-track">
+              {WORKFLOW_TABS.map((tab) => (
+                <button
+                  key={tab}
+                  className={`hero-workflow-tab ${activeTab === tab ? "hero-workflow-tab-active" : ""}`}
+                  onClick={() => setActiveTab(tab)}
                 >
-                  {label}
-                </span>
+                  {tab}
+                </button>
               ))}
-            </div>
-
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/bom-analyzer"
-                className="inline-flex items-center justify-center rounded-2xl bg-cyan-500 px-6 py-3.5 text-sm font-semibold text-white shadow-[0_18px_45px_rgba(34,211,238,0.25)] transition hover:bg-cyan-400"
-              >
-                Upload BOM & Analyze
-              </Link>
-              <Link
-                to="/bom-analyzer?demo=1"
-                className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-6 py-3.5 text-sm font-medium text-white/85 transition hover:bg-white/15"
-              >
-                Try with Demo Data
-              </Link>
-            </div>
-
-            <div className="mt-14 w-full max-w-4xl rounded-full border border-white/10 bg-black/20 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl">
-              <div className="grid grid-cols-2 gap-2 overflow-hidden rounded-full sm:grid-cols-7">
-                {WORKFLOW_TABS.map((tab) => (
-                  <button
-                    key={tab}
-                    className={`rounded-full px-3 py-3 text-sm font-medium transition ${
-                      activeTab === tab
-                        ? "bg-orange-400 text-white shadow-[0_14px_30px_rgba(251,146,60,0.35)]"
-                        : "text-white/70 hover:bg-white/8 hover:text-white"
-                    }`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* keep the rest of your current Home.jsx exactly as it is now, starting from
-          the existing “How It Works” section onward */}
-
-      {/* ════════════ HOW IT WORKS — Cursor-style clean ════════════ */}
+      {/* ════════════ HOW IT WORKS ════════════ */}
       <RevealSection>
         <section className="section-light">
           <Container>
@@ -270,7 +259,7 @@ const Home = () => {
         </section>
       </RevealSection>
 
-      {/* ════════════ SERVICES — Cursor alternating feature sections ════════════ */}
+      {/* ════════════ SERVICES ════════════ */}
       <RevealSection>
         <section className="section-alt">
           <Container>
@@ -368,7 +357,7 @@ const Home = () => {
         </section>
       </RevealSection>
 
-      {/* ════════════ TESTIMONIALS — Cursor marquee style ════════════ */}
+      {/* ════════════ TESTIMONIALS ════════════ */}
       <RevealSection>
         <section className="section-light section-overflow">
           <Container>
@@ -508,7 +497,7 @@ const Home = () => {
         </section>
       </RevealSection>
 
-      {/* ════════════ BOTTOM CTA — Cursor style ════════════ */}
+      {/* ════════════ BOTTOM CTA ════════════ */}
       <RevealSection>
         <section className="section-cta-final">
           <Container>
