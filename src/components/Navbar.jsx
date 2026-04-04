@@ -12,7 +12,7 @@ function NavItem({ to, label, onClick }) {
       onClick={onClick}
       className={({ isActive }) =>
         `nav-link text-[13px] font-medium transition-colors duration-200 ${
-          isActive ? "text-violet-400 active" : "text-white/60 hover:text-white"
+          isActive ? "text-blue-400 active" : "text-white/60 hover:text-white"
         }`
       }
     >
@@ -76,7 +76,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-3">
           <Link
             to="/bom-analyzer"
-            className="rounded-lg bg-violet-500/10 px-4 py-2 text-[13px] font-semibold text-violet-400 ring-1 ring-violet-500/20 transition-all duration-300 hover:bg-violet-500/20 hover:ring-violet-500/40 hover:shadow-lg hover:shadow-violet-500/10"
+            className="rounded-lg bg-blue-500/10 px-4 py-2 text-[13px] font-semibold text-blue-400 ring-1 ring-blue-500/20 transition-all duration-300 hover:bg-blue-500/20 hover:ring-blue-500/40 hover:shadow-lg hover:shadow-blue-500/10"
           >
             Analyze BOM
           </Link>
@@ -88,7 +88,7 @@ export default function Navbar() {
                 onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all"
               >
-                <div className="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center text-[10px] font-bold text-violet-400">
+                <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-400">
                   {(user.full_name || user.email || "U")[0].toUpperCase()}
                 </div>
                 <span className="text-white/70 text-xs font-medium max-w-[100px] truncate">
@@ -100,7 +100,7 @@ export default function Navbar() {
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#121a2a] border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#111a33] border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-white/[0.08]">
                     <p className="text-white text-xs font-medium truncate">{user.full_name || "User"}</p>
                     <p className="text-white/40 text-[11px] truncate">{user.email}</p>
@@ -135,7 +135,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3 lg:hidden">
           {user ? (
             <Link to="/dashboard"
-              className="rounded-lg bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-400 ring-1 ring-violet-500/20">
+              className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-400 ring-1 ring-blue-500/20">
               Projects
             </Link>
           ) : (
@@ -170,7 +170,7 @@ export default function Navbar() {
                 <NavLink key={l.to} to={l.to} onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
-                      isActive ? "text-violet-400 bg-violet-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
+                      isActive ? "text-blue-400 bg-blue-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
                     }`
                   }
                   style={{ animationDelay: `${idx * 40}ms` }}
@@ -178,7 +178,7 @@ export default function Navbar() {
                   {({ isActive }) => (
                     <>
                       <span>{l.label}</span>
-                      <svg className={`w-4 h-4 ${isActive ? "text-violet-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </>
@@ -190,13 +190,13 @@ export default function Navbar() {
                 <NavLink to="/dashboard" onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
-                      isActive ? "text-violet-400 bg-violet-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
+                      isActive ? "text-blue-400 bg-blue-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
                     }`
                   }>
                   {({ isActive }) => (
                     <>
                       <span>My Projects</span>
-                      <svg className={`w-4 h-4 ${isActive ? "text-violet-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </>

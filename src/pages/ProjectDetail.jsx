@@ -38,21 +38,23 @@ import ProjectEventTimeline from "../components/ProjectEventTimeline.jsx";
 import RFQComparisonMatrix from "../components/RFQComparisonMatrix.jsx";
 import ProjectChatDrawer from "../components/ProjectChatDrawer.jsx";
 import OrderCenterTimeline from "../components/OrderCenterTimeline.jsx";
+import ProjectWorkflowRail from "../components/ProjectWorkflowRail.jsx";
+import { getWorkflowSummary } from "../lib/workflowState";
 
 const STATUS_STYLES = {
   draft: "bg-white/[0.06] text-white/60",
-  guest_preview: "bg-violet-500/15 text-violet-400",
+  guest_preview: "bg-blue-500/15 text-blue-400",
   project_hydrated: "bg-blue-500/15 text-blue-400",
-  strategy: "bg-violet-500/15 text-violet-400",
+  strategy: "bg-blue-500/15 text-blue-400",
   vendor_match: "bg-cyan-500/15 text-cyan-400",
   rfq_pending: "bg-indigo-500/15 text-indigo-400",
   rfq_sent: "bg-indigo-500/15 text-indigo-400",
-  quote_compare: "bg-violet-500/15 text-violet-400",
+  quote_compare: "bg-blue-500/15 text-blue-400",
   negotiation: "bg-pink-500/15 text-pink-400",
   vendor_selected: "bg-emerald-500/15 text-emerald-400",
   po_issued: "bg-blue-500/15 text-blue-400",
   in_production: "bg-blue-500/15 text-blue-400",
-  qc_inspection: "bg-violet-500/15 text-violet-400",
+  qc_inspection: "bg-blue-500/15 text-blue-400",
   shipped: "bg-cyan-500/15 text-cyan-400",
   delivered: "bg-emerald-500/15 text-emerald-400",
   spend_recorded: "bg-emerald-500/15 text-emerald-400",
@@ -95,7 +97,7 @@ function Stat({ label, value, hint }) {
 
 function Panel({ title, children, action }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] overflow-hidden">
       <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">{title}</h3>
         {action}
@@ -118,7 +120,7 @@ function Input(props) {
   return (
     <input
       {...props}
-      className={`w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
+      className={`w-full rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
     />
   );
 }
@@ -127,7 +129,7 @@ function Textarea(props) {
   return (
     <textarea
       {...props}
-      className={`w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
+      className={`w-full rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25 ${props.className || ""}`}
     />
   );
 }
@@ -136,7 +138,7 @@ function Select(props) {
   return (
     <select
       {...props}
-      className={`w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none ${props.className || ""}`}
+      className={`w-full rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none ${props.className || ""}`}
     />
   );
 }
@@ -266,6 +268,8 @@ export default function ProjectDetail() {
   const [confirmingReceipt, setConfirmingReceipt] = useState(false);
   const [creatingInvoice, setCreatingInvoice] = useState(false);
   const [updatingPayment, setUpdatingPayment] = useState(false);
+
+  const requestedTab = new URLSearchParams(location.search).get("tab") || location.state?.activeTab || null;
 
   const currentRfqId =
     project?.current_rfq_id ||
@@ -458,7 +462,22 @@ export default function ProjectDetail() {
     }
   }, [activeTab, project?.current_rfq_id, loadFulfillment]);
 
-  const cardClass = "rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden";
+  useEffect(() => {
+    if (!requestedTab) return;
+    if (TABS.some((tab) => tab.id === requestedTab) && requestedTab !== activeTab) {
+      setActiveTab(requestedTab);
+    }
+  }, [requestedTab, activeTab]);
+
+  const workflowSummary = useMemo(() => getWorkflowSummary(project, { projectId: id }), [project, id]);
+  const goToWorkflowTab = useCallback((tab) => {
+    if (!tab || !TABS.some((item) => item.id === tab)) return;
+    navigate(`/project/${id}?tab=${encodeURIComponent(tab)}`, { replace: false });
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id, navigate]);
+
+  const cardClass = "rounded-2xl border border-white/[0.08] bg-[#0f1530] overflow-hidden";
 
   const stage = (
     project?.workflow_stage ||
@@ -799,7 +818,7 @@ export default function ProjectDetail() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-[#06060a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#050816] flex items-center justify-center">
         <div className="text-white/40 text-sm">Loading project workspace...</div>
       </div>
     );
@@ -807,7 +826,7 @@ export default function ProjectDetail() {
 
   if (error && !project) {
     return (
-      <div className="min-h-screen bg-[#06060a]">
+      <div className="min-h-screen bg-[#050816]">
         <Container className="py-10">
           <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6 text-red-300">
             {error}
@@ -818,7 +837,7 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#06060a]">
+    <div className="min-h-screen bg-[#050816]">
       <section className="border-b border-white/[0.08]">
         <Container className="py-8">
           <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
@@ -841,6 +860,13 @@ export default function ProjectDetail() {
               <p className="text-white/35 mt-2 max-w-3xl">
                 Full source-to-pay control tower: analysis, strategy, vendor matching, RFQ, comparison, negotiation, order execution, tracking, and analytics.
               </p>
+              <div className="mt-6">
+                <ProjectWorkflowRail
+                  project={project}
+                  onNavigateTab={goToWorkflowTab}
+                  onSignUpContinue={() => navigate("/register", { state: { returnTo: `${location.pathname}${location.search}` } })}
+                />
+              </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[stage] || STATUS_STYLES.draft}`}>
                   {stage.replace(/_/g, " ")}
@@ -873,7 +899,7 @@ export default function ProjectDetail() {
               </Link>
               <Link
                 to="/analytics"
-                className="inline-flex items-center gap-2 rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400"
               >
                 Analytics
               </Link>
@@ -903,7 +929,7 @@ export default function ProjectDetail() {
               onClick={() => setActiveTab(tab.id)}
               className={`rounded-full px-4 py-2 text-sm transition ${
                 activeTab === tab.id
-                  ? "bg-violet-500 text-white"
+                  ? "bg-blue-500 text-white"
                   : "bg-white/[0.04] text-white/70 hover:bg-white/[0.08]"
               }`}
             >
@@ -958,7 +984,7 @@ export default function ProjectDetail() {
                         </div>
                         <div className="mt-3 space-y-2">
                           {items.slice(0, 4).map((item, idx) => (
-                            <div key={`${group}-${idx}`} className="rounded-xl border border-white/[0.05] bg-[#06060a] p-3">
+                            <div key={`${group}-${idx}`} className="rounded-xl border border-white/[0.05] bg-[#050816] p-3">
                               <div className="flex items-start justify-between gap-3">
                                 <div>
                                   <p className="text-sm font-medium text-white">{item.description || item.item_name || item.name || "Unnamed line"}</p>
@@ -1068,7 +1094,7 @@ export default function ProjectDetail() {
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     onClick={() => loadVendorMatch()}
-                    className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
+                    className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400"
                   >
                     Refresh shortlist
                   </button>
@@ -1098,7 +1124,7 @@ export default function ProjectDetail() {
                                 {vendor.vendor_id || vendor.id} · {vendor.region || vendor.location || "—"}
                               </p>
                             </div>
-                            <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400">
+                            <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
                               Score {fmt(vendor.vendor_score || vendor.score || 0, 2)}
                             </span>
                           </div>
@@ -1171,7 +1197,7 @@ export default function ProjectDetail() {
                       <button
                         onClick={handleRequestRFQ}
                         disabled={rfqLoading}
-                        className="w-full rounded-xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
+                        className="w-full rounded-xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
                       >
                         {rfqLoading ? "Creating..." : currentRfqId ? "Refresh RFQ" : "Create RFQ"}
                       </button>
@@ -1288,7 +1314,7 @@ export default function ProjectDetail() {
                   <button
                     onClick={loadComparison}
                     disabled={!currentRfqId || comparisonLoading}
-                    className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
+                    className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
                   >
                     {comparisonLoading ? "Loading..." : "Reload comparison"}
                   </button>
@@ -1319,16 +1345,19 @@ export default function ProjectDetail() {
                 onSelectVendor={handleSelectVendor}
                 onRejectVendor={handleRejectVendor}
                 selectedVendorId={project?.current_vendor_id}
+                workflowSummary={workflowSummary}
+                onContinue={() => goToWorkflowTab("chat")}
+                onBackToVendor={() => goToWorkflowTab("vendor-match")}
               />
 
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                 <Panel title="RFQ quotes snapshot">
-                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.08] bg-[#06060a] p-4 text-xs text-white/70">
+                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.08] bg-[#050816] p-4 text-xs text-white/70">
                     {JSON.stringify(rfqQuotes || {}, null, 2)}
                   </pre>
                 </Panel>
                 <Panel title="Comparison snapshot">
-                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.08] bg-[#06060a] p-4 text-xs text-white/70">
+                  <pre className="max-h-[420px] overflow-auto rounded-2xl border border-white/[0.08] bg-[#050816] p-4 text-xs text-white/70">
                     {JSON.stringify(rfqComparison || {}, null, 2)}
                   </pre>
                 </Panel>
@@ -1343,7 +1372,7 @@ export default function ProjectDetail() {
                 action={
                   <button
                     onClick={() => setShowChatDrawer(true)}
-                    className="rounded-xl bg-violet-500 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-400"
+                    className="rounded-xl bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-400"
                   >
                     Open chat drawer
                   </button>
@@ -1425,7 +1454,7 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleCreatePO}
                       disabled={!currentRfqId || creatingPO}
-                      className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
+                      className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
                     >
                       {creatingPO ? "Creating PO..." : "Create PO"}
                     </button>
@@ -1589,7 +1618,7 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleCreateInvoice}
                       disabled={!currentPoId || creatingInvoice}
-                      className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-60"
+                      className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
                     >
                       {creatingInvoice ? "Creating invoice..." : "Create invoice"}
                     </button>
@@ -1648,7 +1677,7 @@ export default function ProjectDetail() {
           )}
 
           {activeTab === "tracking" && (
-            <OrderCenterTimeline context={fulfillmentContext} onRefresh={refreshFulfillment} />
+            <OrderCenterTimeline context={fulfillmentContext} project={project} canViewFulfillment={Boolean(project?.current_po_id || fulfillmentContext?.purchase_order || (fulfillmentContext?.shipments || []).length || (fulfillmentContext?.invoices || []).length || (fulfillmentContext?.goods_receipts || []).length)} onRefresh={refreshFulfillment} onNextAction={() => goToWorkflowTab("order")} />
           )}
 
           {activeTab === "analytics" && (
@@ -1658,7 +1687,7 @@ export default function ProjectDetail() {
                   <p>Spend, trend, category, and supplier analytics are available in the main analytics surface.</p>
                   <Link
                     to="/analytics"
-                    className="inline-flex rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
+                    className="inline-flex rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400"
                   >
                     Open analytics
                   </Link>

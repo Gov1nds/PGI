@@ -31,18 +31,18 @@ import {
 
 const STATUS_CONFIG = {
   draft: { bg: "rgba(255,255,255,0.04)", text: "rgba(255,255,255,0.55)" },
-  guest_preview: { bg: "rgba(139,92,246,0.08)", text: "#a78bfa" },
+  guest_preview: { bg: "rgba(45,97,224,0.08)", text: "#5485ff" },
   project_hydrated: { bg: "rgba(96,165,250,0.08)", text: "#60a5fa" },
-  strategy: { bg: "rgba(167,139,250,0.08)", text: "#a78bfa" },
+  strategy: { bg: "rgba(84,133,255,0.08)", text: "#5485ff" },
   vendor_match: { bg: "rgba(34,211,238,0.08)", text: "#22d3ee" },
   rfq_pending: { bg: "rgba(129,140,248,0.08)", text: "#818cf8" },
   rfq_sent: { bg: "rgba(129,140,248,0.08)", text: "#818cf8" },
-  quote_compare: { bg: "rgba(167,139,250,0.08)", text: "#a78bfa" },
+  quote_compare: { bg: "rgba(84,133,255,0.08)", text: "#5485ff" },
   negotiation: { bg: "rgba(244,114,182,0.08)", text: "#f472b6" },
   vendor_selected: { bg: "rgba(52,211,153,0.08)", text: "#34d399" },
   po_issued: { bg: "rgba(96,165,250,0.08)", text: "#60a5fa" },
   in_production: { bg: "rgba(96,165,250,0.08)", text: "#60a5fa" },
-  qc_inspection: { bg: "rgba(167,139,250,0.08)", text: "#a78bfa" },
+  qc_inspection: { bg: "rgba(84,133,255,0.08)", text: "#5485ff" },
   shipped: { bg: "rgba(34,211,238,0.08)", text: "#22d3ee" },
   delivered: { bg: "rgba(52,211,153,0.08)", text: "#34d399" },
   spend_recorded: { bg: "rgba(16,185,129,0.08)", text: "#10b981" },
@@ -51,8 +51,8 @@ const STATUS_CONFIG = {
 };
 
 const PIE_COLORS = [
-  "#8b5cf6",
-  "#a78bfa",
+  "#2d61e0",
+  "#5485ff",
   "#60a5fa",
   "#818cf8",
   "#c084fc",
@@ -60,7 +60,7 @@ const PIE_COLORS = [
   "#34d399",
   "#f472b6",
 ];
-const LINE_COLORS = ["#8b5cf6", "#a78bfa", "#60a5fa", "#818cf8"];
+const LINE_COLORS = ["#2d61e0", "#5485ff", "#60a5fa", "#818cf8"];
 
 function fmt(n, digits = 2) {
   if (n == null || Number.isNaN(Number(n))) return "—";
@@ -72,14 +72,14 @@ function fmt(n, digits = 2) {
 
 function Card({ title, value, hint, accent = false }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111827] p-5 transition-all duration-300 hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/[0.04]">
-      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-violet-500/[0.03] to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    <div className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5 transition-all duration-300 hover:border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/[0.04]">
+      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-500/[0.03] to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="relative">
         <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-white/40">
           {title}
         </p>
         <p
-          className={`mt-2.5 text-2xl font-bold tracking-tight ${accent ? "text-violet-400" : "text-white"}`}
+          className={`mt-2.5 text-2xl font-bold tracking-tight ${accent ? "text-blue-400" : "text-white"}`}
         >
           {value}
         </p>
@@ -96,7 +96,7 @@ function Card({ title, value, hint, accent = false }) {
 function Panel({ title, subtitle, action, children, className = "" }) {
   return (
     <div
-      className={`rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden ${className}`}
+      className={`rounded-2xl border border-white/[0.08] bg-[#0f1530] overflow-hidden ${className}`}
     >
       <div className="flex items-start justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
         <div>
@@ -532,12 +532,12 @@ export default function Dashboard() {
   const statusOf = (stage) => STATUS_CONFIG[stage] || STATUS_CONFIG.draft;
 
   return (
-    <div className="min-h-screen bg-[#06060a] text-white">
+    <div className="min-h-screen bg-[#050816] text-white">
       <div className="flex min-h-screen">
         {/* Left rail */}
-        <aside className="hidden xl:flex w-[260px] shrink-0 flex-col border-r border-white/[0.08] bg-[#111827]">
+        <aside className="hidden xl:flex w-[260px] shrink-0 flex-col border-r border-white/[0.08] bg-[#0f1530]">
           <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.08]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400 font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/15 text-blue-400 font-bold">
               P
             </div>
             <div>
@@ -554,7 +554,7 @@ export default function Dashboard() {
                   onClick={item.action}
                   className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm transition ${
                     idx === 0
-                      ? "bg-violet-500/15 text-violet-300"
+                      ? "bg-blue-500/15 text-blue-300"
                       : "text-white/55 hover:bg-white/[0.04] hover:text-white"
                   }`}
                 >
@@ -583,11 +583,11 @@ export default function Dashboard() {
         {/* Main content */}
         <main className="flex-1">
           {/* Top bar */}
-          <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#111827]/95 backdrop-blur-md">
+          <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#0f1530]/95 backdrop-blur-md">
             <Container className="py-4">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400 font-bold xl:hidden">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/15 text-blue-400 font-bold xl:hidden">
                     P
                   </div>
                   <div>
@@ -608,7 +608,7 @@ export default function Dashboard() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search projects, BOMs, vendors..."
-                      className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 pl-11 text-sm text-white outline-none placeholder:text-white/25 focus:border-violet-500/30 transition"
+                      className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 pl-11 text-sm text-white outline-none placeholder:text-white/25 focus:border-blue-500/30 transition"
                     />
                     <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35">
                       ⌕
@@ -638,7 +638,7 @@ export default function Dashboard() {
                     </button>
 
                     {notificationsOpen && (
-                      <div className="absolute right-0 mt-3 w-[320px] rounded-2xl border border-white/[0.08] bg-[#111827] p-3 shadow-2xl shadow-black/40">
+                      <div className="absolute right-0 mt-3 w-[320px] rounded-2xl border border-white/[0.08] bg-[#0f1530] p-3 shadow-2xl shadow-black/40">
                         <div className="mb-3 flex items-center justify-between px-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/35">
                             Notifications
@@ -724,7 +724,7 @@ export default function Dashboard() {
           <Container className="py-8">
             {loading && (
               <div className="flex items-center gap-3 text-sm text-white/35">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-violet-500/20 border-t-violet-500" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500/20 border-t-blue-500" />
                 Loading dashboard...
               </div>
             )}
@@ -800,7 +800,7 @@ export default function Dashboard() {
                                   "Proceed with the workflow"}
                               </p>
                             </div>
-                            <span className="rounded-lg bg-violet-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-violet-300">
+                            <span className="rounded-lg bg-blue-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-blue-300">
                               {item.action || item.workflow_stage || "open"}
                             </span>
                           </div>
@@ -848,7 +848,7 @@ export default function Dashboard() {
                                       `/project/${getProjectId(project)}/workspace`,
                                     )
                                   }
-                                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] p-4 text-left transition hover:bg-white/[0.05] hover:border-violet-500/15"
+                                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] p-4 text-left transition hover:bg-white/[0.05] hover:border-blue-500/15"
                                 >
                                   <div className="flex items-start justify-between gap-3">
                                     <div>
@@ -880,7 +880,7 @@ export default function Dashboard() {
                                   </div>
                                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/[0.04]">
                                     <div
-                                      className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-400"
+                                      className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-400"
                                       style={{
                                         width: `${Math.min(100, Math.max(20, Number(project.progress_percent || 35)))}%`,
                                       }}
@@ -1037,7 +1037,7 @@ export default function Dashboard() {
                                 <Bar
                                   dataKey="value"
                                   radius={[8, 8, 0, 0]}
-                                  fill="#8b5cf6"
+                                  fill="#2d61e0"
                                 />
                               </BarChart>
                             </ResponsiveContainer>
@@ -1277,7 +1277,7 @@ export default function Dashboard() {
                                     </div>
                                   ))
                               )}
-                              <div className="rounded-2xl border border-white/[0.08] bg-[#06060a] p-4">
+                              <div className="rounded-2xl border border-white/[0.08] bg-[#050816] p-4">
                                 <div className="flex items-center justify-between gap-3">
                                   <div>
                                     <p className="text-sm font-medium text-white">
@@ -1292,7 +1292,7 @@ export default function Dashboard() {
                                   </div>
                                 </div>
                                 <div className="mt-4 h-2 rounded-full bg-white/[0.04]">
-                                  <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-violet-500 via-indigo-400 to-emerald-400" />
+                                  <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400" />
                                 </div>
                                 <p className="mt-3 text-xs text-white/35">
                                   Delivery confirmation triggers spend recording
@@ -1415,7 +1415,7 @@ export default function Dashboard() {
 
                         <Link
                           to="/analytics"
-                          className="inline-flex w-full items-center justify-center rounded-xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white hover:bg-violet-400"
+                          className="inline-flex w-full items-center justify-center rounded-xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-400"
                         >
                           Detailed live dashboards
                         </Link>
@@ -1480,12 +1480,12 @@ export default function Dashboard() {
                               >
                                 <stop
                                   offset="5%"
-                                  stopColor="#8b5cf6"
+                                  stopColor="#2d61e0"
                                   stopOpacity={0.45}
                                 />
                                 <stop
                                   offset="95%"
-                                  stopColor="#8b5cf6"
+                                  stopColor="#2d61e0"
                                   stopOpacity={0.02}
                                 />
                               </linearGradient>
@@ -1511,7 +1511,7 @@ export default function Dashboard() {
                             <Area
                               type="monotone"
                               dataKey="value"
-                              stroke="#8b5cf6"
+                              stroke="#2d61e0"
                               fill="url(#dashboardArea)"
                               strokeWidth={2}
                             />
@@ -1663,7 +1663,7 @@ export default function Dashboard() {
                                     "Action needed"}
                                 </p>
                               </div>
-                              <span className="rounded-lg bg-violet-500/10 px-2.5 py-1 text-[10px] text-violet-300">
+                              <span className="rounded-lg bg-blue-500/10 px-2.5 py-1 text-[10px] text-blue-300">
                                 {item.workflow_stage || item.status || "open"}
                               </span>
                             </div>

@@ -23,11 +23,11 @@ export default function Contact() {
             <div className="mt-5 space-y-4 text-sm text-white/80">
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-white/50 mb-1">Email</div>
-                <a className="hover:text-violet-400 transition-colors" href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+                <a className="hover:text-blue-400 transition-colors" href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
               </div>
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-white/50 mb-1">Phone</div>
-                <a className="hover:text-violet-400 transition-colors" href={`tel:${site.contact.phone.replace(/\s+/g, "")}`}>{site.contact.phone}</a>
+                <a className="hover:text-blue-400 transition-colors" href={`tel:${site.contact.phone.replace(/\s+/g, "")}`}>{site.contact.phone}</a>
               </div>
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-white/50 mb-1">Headquarters</div>
@@ -35,11 +35,11 @@ export default function Contact() {
               </div>
             </div>
             <div className="mt-6 rounded-lg bg-white/[0.05] p-4 ring-1 ring-white/[0.06]">
-              <div className="text-xs text-violet-400 font-medium">Fast option</div>
+              <div className="text-xs text-blue-400 font-medium">Fast option</div>
               <p className="mt-2 text-sm text-white/75">Click below to email our engineering team directly with your specifications.</p>
               <a
                 href={`mailto:${site.contact.email}?subject=Manufacturing%20Enquiry%20-%20PGI&body=Hello%20PGI%20Engineering%2C%0A%0AProject%2FPart%20Name%3A%0AManufacturing%20Process%20(CNC%2C%20Sheet%20Metal%2C%20PCBA)%3A%0AMaterial%20Requirements%3A%0AEstimated%20Quantity%3A%0ATarget%20Timeline%3A%0A%0A*Please%20attach%20your%20CAD%20files%20(STEP%2FIGES)%20or%20BOM.*%0A%0ARegards%2C`}
-                className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-violet-500/10 px-4 py-2.5 text-sm font-semibold text-violet-400 ring-1 ring-violet-500/20 hover:bg-violet-500/20 transition-all"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-blue-500/10 px-4 py-2.5 text-sm font-semibold text-blue-400 ring-1 ring-blue-500/20 hover:bg-blue-500/20 transition-all"
               >
                 Email engineering
               </a>
@@ -62,10 +62,10 @@ export default function Contact() {
                 window.open(`https://wa.me/918921983250?text=${msg}`, "_blank");
               }}
             >
-              <input name="name" className="w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-violet-500/30 transition-all" placeholder="Name" required />
-              <input name="email" type="email" className="w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-violet-500/30 transition-all" placeholder="Email" />
-              <input name="phone" className="w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-violet-500/30 transition-all" placeholder="Phone (WhatsApp preferred)" required />
-              <textarea name="details" className="min-h-[130px] w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-violet-500/30 transition-all resize-none" placeholder="Describe your manufacturing requirements (e.g., CNC machining for 500 aluminum enclosures, or turnkey PCBA for 1000 units)" required />
+              <input name="name" className="w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-blue-500/30 transition-all" placeholder="Name" required />
+              <input name="email" type="email" className="w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-blue-500/30 transition-all" placeholder="Email" />
+              <input name="phone" className="w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-blue-500/30 transition-all" placeholder="Phone (WhatsApp preferred)" required />
+              <textarea name="details" className="min-h-[130px] w-full rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white ring-1 ring-white/[0.08] placeholder:text-white/50 focus:outline-none focus:ring-blue-500/30 transition-all resize-none" placeholder="Describe your manufacturing requirements (e.g., CNC machining for 500 aluminum enclosures, or turnkey PCBA for 1000 units)" required />
               <button type="submit" className="btn-primary inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-semibold text-white">
                 Contact engineering on WhatsApp
               </button>

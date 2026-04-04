@@ -11,7 +11,7 @@ function Pill({ children, tone = "neutral" }) {
     good: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
     warn: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
     bad: "bg-red-500/10 text-red-400 border-red-500/20",
-    info: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+    info: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   };
   return (
     <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-medium ${styles[tone] || styles.neutral}`}>
@@ -38,6 +38,9 @@ export default function RFQComparisonMatrix({
   onSelectVendor,
   onRejectVendor,
   selectedVendorId,
+  workflowSummary,
+  onContinue,
+  onBackToVendor,
 }) {
   const data = comparison?.comparison_json || comparison || {};
   const vendors = useMemo(() => {
@@ -69,16 +72,38 @@ export default function RFQComparisonMatrix({
     });
   }, [vendors, filters]);
 
-  const visibleVendorIds = filteredVendors.map((v) => String(v.vendor_id));
-
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/[0.08] bg-[#111827] p-5">
+      {workflowSummary && (
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5 text-sm text-white/75">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-white/25">Workflow stage</p>
+              <p className="mt-1 text-white">{workflowSummary.stageLabel}: {workflowSummary.description}</p>
+              <p className="mt-1 text-xs text-white/35">{workflowSummary.breadcrumbs?.join(" → ")}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {onBackToVendor && (
+                <button onClick={onBackToVendor} className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]">
+                  Back to vendor match
+                </button>
+              )}
+              {onContinue && (
+                <button onClick={onContinue} className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400">
+                  {workflowSummary.actionLabel || "Continue workflow"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
         <div className="grid grid-cols-1 gap-3 xl:grid-cols-6">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none"
           >
             <option value="total_cost">Sort: total cost</option>
             <option value="lead_time">Sort: lead time</option>
@@ -92,7 +117,7 @@ export default function RFQComparisonMatrix({
             placeholder="Min vendor score"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxCost || ""}
@@ -100,7 +125,7 @@ export default function RFQComparisonMatrix({
             placeholder="Max total cost"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxLeadTime || ""}
@@ -108,7 +133,7 @@ export default function RFQComparisonMatrix({
             placeholder="Max lead time"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxMoq || ""}
@@ -116,7 +141,7 @@ export default function RFQComparisonMatrix({
             placeholder="Max MOQ"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none"
           />
           <input
             value={filters.maxRisk || ""}
@@ -124,12 +149,12 @@ export default function RFQComparisonMatrix({
             placeholder="Max risk"
             type="number"
             step="0.01"
-            className="rounded-xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none"
+            className="rounded-xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none"
           />
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/[0.08] bg-[#111827] overflow-hidden">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] overflow-hidden">
         <div className="border-b border-white/[0.08] px-5 py-4 flex items-center justify-between">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">Vendor matrix</h3>
           <p className="text-xs text-white/30">{rows.length} BOM lines · {filteredVendors.length} vendors shown</p>
@@ -139,12 +164,12 @@ export default function RFQComparisonMatrix({
           <table className="min-w-full border-collapse">
             <thead>
               <tr className="border-b border-white/[0.08]">
-                <th className="sticky left-0 bg-[#111827] z-10 text-left px-4 py-3 text-xs uppercase tracking-wider text-white/30 min-w-[280px]">
+                <th className="sticky left-0 bg-[#0f1530] z-10 text-left px-4 py-3 text-xs uppercase tracking-wider text-white/30 min-w-[280px]">
                   BOM line
                 </th>
                 {filteredVendors.map((vendor) => (
                   <th key={vendor.vendor_id} className="px-4 py-3 text-left align-top min-w-[240px]">
-                    <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-violet-500/30 bg-violet-500/10" : "border-white/[0.08] bg-white/[0.05]"}`}>
+                    <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-blue-500/30 bg-blue-500/10" : "border-white/[0.08] bg-white/[0.05]"}`}>
                       <div className="flex items-center justify-between gap-2">
                         <div>
                           <p className="text-sm font-semibold text-white">{vendor.vendor_name}</p>
@@ -181,7 +206,7 @@ export default function RFQComparisonMatrix({
             <tbody>
               {rows.map((row) => (
                 <tr key={row.rfq_item_id} className="border-b border-white/[0.08]">
-                  <td className="sticky left-0 bg-[#111827] z-10 px-4 py-4 align-top">
+                  <td className="sticky left-0 bg-[#0f1530] z-10 px-4 py-4 align-top">
                     <div className="space-y-1">
                       <p className="text-sm font-medium text-white">{row.part_name}</p>
                       <p className="text-xs text-white/35">
@@ -199,7 +224,7 @@ export default function RFQComparisonMatrix({
                     return (
                       <td key={`${row.rfq_item_id}-${vendor.vendor_id}`} className="px-4 py-4 align-top">
                         {has ? (
-                          <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-violet-500/30 bg-violet-500/5" : "border-white/[0.08] bg-white/[0.05]"}`}>
+                          <div className={`rounded-xl border p-3 ${String(selectedVendorId) === String(vendor.vendor_id) ? "border-blue-500/30 bg-blue-500/5" : "border-white/[0.08] bg-white/[0.05]"}`}>
                             <div className="flex items-center justify-between gap-2">
                               <Pill tone={cell.availability_status === "available" ? "good" : cell.availability_status === "unknown" ? "neutral" : "warn"}>
                                 {cell.availability_status}
@@ -241,18 +266,26 @@ export default function RFQComparisonMatrix({
 
       {comparison?.summary_json && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-white/[0.08] bg-[#111827] p-5">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
             <p className="text-xs uppercase tracking-wider text-white/25">Best total cost vendor</p>
             <p className="mt-2 text-lg font-semibold text-white">{comparison.summary_json.best_total_cost_vendor_id || "—"}</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.08] bg-[#111827] p-5">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
             <p className="text-xs uppercase tracking-wider text-white/25">Best total cost</p>
             <p className="mt-2 text-lg font-semibold text-white">{fmt(comparison.summary_json.best_total_cost)}</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.08] bg-[#111827] p-5">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
             <p className="text-xs uppercase tracking-wider text-white/25">Vendors shown</p>
             <p className="mt-2 text-lg font-semibold text-white">{filteredVendors.length}</p>
           </div>
+        </div>
+      )}
+
+      {onContinue && (
+        <div className="flex justify-end">
+          <button onClick={onContinue} className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400">
+            Continue to negotiation
+          </button>
         </div>
       )}
     </div>

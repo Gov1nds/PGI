@@ -20,11 +20,11 @@ function fmtDate(value) {
 function Badge({ children, tone = "neutral" }) {
   const tones = {
     neutral: "bg-white/[0.05] text-white/50 border-white/[0.08]",
-    blue: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+    primary: "bg-blue-500/10 text-blue-400 border-blue-500/20",
     green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
     amber: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
     red: "bg-red-500/10 text-red-400 border-red-500/20",
-    violet: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   };
   return <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${tones[tone] || tones.neutral}`}>{children}</span>;
 }
@@ -194,7 +194,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
         onClick={onClose}
       />
 
-      <aside className="relative ml-auto h-full w-full max-w-[980px] border-l border-white/[0.08] bg-[#06060a] shadow-2xl shadow-black/40 flex flex-col">
+      <aside className="relative ml-auto h-full w-full max-w-[980px] border-l border-white/[0.08] bg-[#050816] shadow-2xl shadow-black/40 flex flex-col">
         <div className="flex items-center justify-between border-b border-white/[0.08] px-5 py-4">
           <div>
             <h2 className="text-base font-semibold text-white">Collaboration</h2>
@@ -211,7 +211,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
         </div>
 
         <div className="grid flex-1 grid-cols-1 xl:grid-cols-[300px_1fr] min-h-0">
-          <section className="border-r border-white/[0.08] bg-[#0b0f16] flex flex-col min-h-0">
+          <section className="border-r border-white/[0.08] bg-[#0c1226] flex flex-col min-h-0">
             <div className="p-4 border-b border-white/[0.08] space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-white/45">Threads</h3>
@@ -223,13 +223,13 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                   value={threadTitle}
                   onChange={(e) => setThreadTitle(e.target.value)}
                   placeholder="New thread title"
-                  className="w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
+                  className="w-full rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <select
                     value={threadType}
                     onChange={(e) => setThreadType(e.target.value)}
-                    className="rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none"
+                    className="rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none"
                   >
                     <option value="project">Project</option>
                     <option value="rfq">RFQ</option>
@@ -237,7 +237,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                     <option value="internal">Internal</option>
                     <option value="approval">Approval</option>
                   </select>
-                  <label className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white/70">
+                  <label className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white/70">
                     <input
                       type="checkbox"
                       checked={threadInternalOnly}
@@ -250,18 +250,18 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                   value={threadVendorId}
                   onChange={(e) => setThreadVendorId(e.target.value)}
                   placeholder="Vendor ID (optional)"
-                  className="w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
+                  className="w-full rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                 />
                 <input
                   value={threadRfqId}
                   onChange={(e) => setThreadRfqId(e.target.value)}
                   placeholder="RFQ ID (optional)"
-                  className="w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
+                  className="w-full rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                 />
                 <button
                   onClick={createThread}
                   disabled={threadsLoading || !threadTitle.trim()}
-                  className="w-full rounded-xl bg-violet-500 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-50"
+                  className="w-full rounded-xl bg-blue-500 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-50"
                 >
                   {threadsLoading ? "Creating..." : "Create thread"}
                 </button>
@@ -277,7 +277,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                     onClick={() => setActiveThreadId(thread.id)}
                     className={`w-full rounded-2xl border p-3 text-left transition-all ${
                       active
-                        ? "border-violet-500/30 bg-violet-500/10"
+                        ? "border-blue-500/30 bg-blue-500/10"
                         : "border-white/[0.08] bg-white/[0.05] hover:bg-white/[0.05]"
                     }`}
                   >
@@ -347,19 +347,19 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                   value={approvalTitle}
                   onChange={(e) => setApprovalTitle(e.target.value)}
                   placeholder="Approval title"
-                  className="w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
+                  className="w-full rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                 />
                 <textarea
                   value={approvalDescription}
                   onChange={(e) => setApprovalDescription(e.target.value)}
                   placeholder="Approval description"
-                  className="w-full min-h-20 rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
+                  className="w-full min-h-20 rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <select
                     value={approvalRole}
                     onChange={(e) => setApprovalRole(e.target.value)}
-                    className="rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none"
+                    className="rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none"
                   >
                     <option value="manager">Manager</option>
                     <option value="buyer">Buyer</option>
@@ -370,19 +370,19 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                     value={approvalDueAt}
                     onChange={(e) => setApprovalDueAt(e.target.value)}
                     placeholder="Due at (ISO)"
-                    className="rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
+                    className="rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                   />
                 </div>
                 <input
                   value={approvalVendorId}
                   onChange={(e) => setApprovalVendorId(e.target.value)}
                   placeholder="Vendor ID (optional)"
-                  className="w-full rounded-xl border border-white/[0.08] bg-[#06060a] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
+                  className="w-full rounded-xl border border-white/[0.08] bg-[#050816] px-3 py-2 text-sm text-white outline-none placeholder:text-white/25"
                 />
                 <button
                   onClick={handleCreateApproval}
                   disabled={creatingApproval || !approvalTitle.trim()}
-                  className="w-full rounded-xl bg-violet-600 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                  className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
                 >
                   {creatingApproval ? "Creating..." : "Create approval"}
                 </button>
@@ -407,7 +407,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                     </div>
                     <div className="flex gap-2">
                       <Badge tone="blue">{currentThread.unread_count || 0} unread</Badge>
-                      {currentThread.vendor_id && <Badge tone="violet">Vendor linked</Badge>}
+                      {currentThread.vendor_id && <Badge tone="blue">Vendor linked</Badge>}
                       {currentThread.rfq_batch_id && <Badge tone="amber">RFQ linked</Badge>}
                     </div>
                   </div>
@@ -426,7 +426,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                         key={message.id}
                         className={`max-w-[88%] rounded-2xl border p-4 ${
                           String(message.sender_user_id) === String(user?.id)
-                            ? "ml-auto border-violet-500/20 bg-violet-500/10"
+                            ? "ml-auto border-blue-500/20 bg-blue-500/10"
                             : "border-white/[0.08] bg-white/[0.05]"
                         }`}
                       >
@@ -441,7 +441,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                             <Badge tone={message.is_internal_only ? "amber" : "green"}>
                               {message.is_internal_only ? "internal" : "shared"}
                             </Badge>
-                            {message.message_type !== "message" && <Badge tone="violet">{message.message_type}</Badge>}
+                            {message.message_type !== "message" && <Badge tone="blue">{message.message_type}</Badge>}
                           </div>
                         </div>
 
@@ -453,7 +453,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                               <a
                                 key={att.id}
                                 href={att.file_url}
-                                className="block rounded-xl border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-violet-400 hover:bg-white/[0.06]"
+                                className="block rounded-xl border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-blue-400 hover:bg-white/[0.06]"
                                 target="_blank"
                                 rel="noreferrer"
                               >
@@ -479,13 +479,13 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                       value={messageBody}
                       onChange={(e) => setMessageBody(e.target.value)}
                       placeholder="Write a message, negotiation note, or approval comment..."
-                      className="min-h-24 rounded-2xl border border-white/[0.08] bg-[#0b0f16] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25"
+                      className="min-h-24 rounded-2xl border border-white/[0.08] bg-[#0c1226] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25"
                     />
                     <div className="space-y-3">
                       <select
                         value={messageType}
                         onChange={(e) => setMessageType(e.target.value)}
-                        className="w-full rounded-xl border border-white/[0.08] bg-[#0b0f16] px-4 py-3 text-sm text-white outline-none"
+                        className="w-full rounded-xl border border-white/[0.08] bg-[#0c1226] px-4 py-3 text-sm text-white outline-none"
                       >
                         <option value="message">Message</option>
                         <option value="note">Note</option>
@@ -493,7 +493,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                         <option value="system">System</option>
                       </select>
 
-                      <label className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#0b0f16] px-4 py-3 text-sm text-white/70">
+                      <label className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#0c1226] px-4 py-3 text-sm text-white/70">
                         <input
                           type="checkbox"
                           checked={messageInternalOnly}
@@ -519,7 +519,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                     <button
                       onClick={sendMessage}
                       disabled={sending || !messageBody.trim()}
-                      className="rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-50"
+                      className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-50"
                     >
                       {sending ? "Sending..." : "Send"}
                     </button>

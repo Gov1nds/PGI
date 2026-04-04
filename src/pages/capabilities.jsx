@@ -9,8 +9,8 @@ export default function Capabilities() {
       <section className="border-b border-white/[0.08] bg-gradient-to-b from-[rgb(10,14,28)] to-[rgb(12,18,34)] py-16 md:py-20">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-violet-400 mb-4">
-              <span className="w-6 h-px bg-violet-500/50" />Manufacturing Network<span className="w-6 h-px bg-violet-500/50" />
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-blue-400 mb-4">
+              <span className="w-6 h-px bg-blue-500/50" />Manufacturing Network<span className="w-6 h-px bg-blue-500/50" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white">Engineering-driven manufacturing coordination</h1>
             <p className="mt-5 text-white/80 leading-relaxed">PGI manages the complete manufacturing lifecycle for complex hardware products — from engineering review and material procurement to production coordination and quality verification.</p>
@@ -22,7 +22,7 @@ export default function Capabilities() {
         {/* CAPABILITY CARDS */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-16">
           {outdoorWorks.map((o, idx) => (
-            <div key={idx} className="group rounded-xl bg-white/[0.04] ring-1 ring-white/[0.08] hover:ring-violet-500/20 overflow-hidden transition-all duration-300 flex flex-col">
+            <div key={idx} className="group rounded-xl bg-white/[0.04] ring-1 ring-white/[0.08] hover:ring-blue-500/20 overflow-hidden transition-all duration-300 flex flex-col">
               <div className="relative overflow-hidden aspect-video">
                 <img src={o.image} alt={o.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
               </div>
@@ -39,7 +39,7 @@ export default function Capabilities() {
           <div className="rounded-xl bg-white/[0.04] p-7 md:p-10 ring-1 ring-white/[0.08] mb-16">
             <div className="grid gap-10 md:grid-cols-2">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.12em] text-violet-400 mb-2">Manufacturing Framework</div>
+                <div className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-400 mb-2">Manufacturing Framework</div>
                 <h2 className="text-2xl font-semibold text-white mb-5">Capabilities across the entire production lifecycle</h2>
                 <p className="text-sm text-white/75 leading-relaxed mb-6">PGI integrates engineering expertise with a carefully managed network of manufacturing partners, controlling procurement, technical review, and quality verification.</p>
                 <div className="space-y-4">
@@ -51,7 +51,7 @@ export default function Capabilities() {
                     { title: "Electromechanical Integration", desc: "Full product assembly combining enclosures, PCBs, and subsystems" },
                     { title: "Quality Verification & Inspection", desc: "CMM reports, functional testing, and material certification" }
                   ].map((cap, idx) => (
-                    <div key={idx} className="border-l-2 border-violet-500/30 pl-4">
+                    <div key={idx} className="border-l-2 border-blue-500/30 pl-4">
                       <h4 className="font-semibold text-white text-sm">{cap.title}</h4>
                       <p className="text-xs text-white/70 mt-1">{cap.desc}</p>
                     </div>
@@ -67,7 +67,7 @@ export default function Capabilities() {
                   { title: "Quality Assurance", desc: "Comprehensive inspection and documentation for compliance" },
                   { title: "Global Delivery", desc: "Export coordination and worldwide logistics management" }
                 ].map((b, idx) => (
-                  <div key={idx} className="rounded-lg bg-white/[0.05] hover:bg-white/[0.05] p-4 ring-1 ring-white/[0.06] hover:ring-violet-500/15 transition-all duration-300">
+                  <div key={idx} className="rounded-lg bg-white/[0.05] hover:bg-white/[0.05] p-4 ring-1 ring-white/[0.06] hover:ring-blue-500/15 transition-all duration-300">
                     <div className="font-semibold text-white text-sm">{b.title}</div>
                     <p className="text-xs text-white/75 mt-1.5 leading-relaxed">{b.desc}</p>
                   </div>
@@ -81,7 +81,7 @@ export default function Capabilities() {
         <RevealSection>
           <div className="mb-16">
             <div className="text-center mb-10">
-              <div className="text-xs font-semibold uppercase tracking-[0.15em] text-violet-400 mb-3">Network Details</div>
+              <div className="text-xs font-semibold uppercase tracking-[0.15em] text-blue-400 mb-3">Network Details</div>
               <h2 className="text-3xl font-semibold text-white">Our Manufacturing Ecosystem</h2>
             </div>
             <div className="grid md:grid-cols-2 gap-5">
@@ -96,7 +96,7 @@ export default function Capabilities() {
                   <ul className="space-y-2.5">
                     {sec.items.map((item, i) => (
                       <li key={i} className="text-sm text-white/80 flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-violet-500/30 shrink-0" />{item}
+                        <span className="w-1 h-1 rounded-full bg-blue-500/30 shrink-0" />{item}
                       </li>
                     ))}
                   </ul>
@@ -107,7 +107,7 @@ export default function Capabilities() {
         </RevealSection>
 
         {/* CTA */}
-        <div className="rounded-2xl bg-gradient-to-r from-violet-500/10 to-indigo-500/5 p-10 text-center ring-1 ring-violet-500/15">
+        <div className="rounded-2xl bg-gradient-to-r from-blue-500/10 to-indigo-500/5 p-10 text-center ring-1 ring-blue-500/15">
           <h2 className="text-2xl font-semibold text-white">Explore our full capabilities</h2>
           <p className="mt-3 text-white/75 text-sm">Let's discuss how we can support your manufacturing requirements</p>
           <div className="mt-6"><PrimaryButton to="/contact">Start a conversation</PrimaryButton></div>

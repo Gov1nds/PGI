@@ -1,12 +1,27 @@
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Container from "../components/Container.jsx";
 import ProjectDetail from "./ProjectDetail.jsx";
+import ProjectWorkflowRail from "../components/ProjectWorkflowRail.jsx";
+import { getProject } from "../lib/api";
 
 export default function ProjectWorkspace() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [project, setProject] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getProject(id)
+      .then((data) => {
+        if (!cancelled) setProject(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [id]);
 
   return (
-    <div className="min-h-screen bg-[#06060a]">
+    <div className="min-h-screen bg-[#050816]">
       <section className="border-b border-white/[0.08]">
         <Container className="py-8">
           <div className="flex items-center gap-2 text-sm text-white/30 mb-4">
@@ -27,7 +42,7 @@ export default function ProjectWorkspace() {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                to={`/project/${id}/vendors`}
+                to={`/project/${id}?tab=vendor-match`}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08]"
               >
                 Vendor discovery
@@ -40,11 +55,25 @@ export default function ProjectWorkspace() {
               </Link>
               <Link
                 to="/dashboard"
-                className="inline-flex items-center gap-2 rounded-xl bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-400"
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400"
               >
                 Back to dashboard
               </Link>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <ProjectWorkflowRail
+              project={project || { project_id: id, workflow_stage: "project_hydrated", status: "draft" }}
+              compact
+              onNavigateTab={(tab) => {
+                if (tab === "vendor-match") {
+                  navigate(`/project/${id}?tab=vendor-match`);
+                  return;
+                }
+                navigate(`/project/${id}?tab=${encodeURIComponent(tab)}`);
+              }}
+            />
           </div>
         </Container>
       </section>

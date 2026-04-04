@@ -292,7 +292,7 @@ export default function UniversalIntakeBox({
   return (
     <section className={cn("w-full", className)}>
       <div
-        className="rounded-[28px] border border-white/[0.08] bg-[#111827] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm"
+        className="rounded-[28px] border border-white/[0.08] bg-[#0f1530] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm"
         onDrop={onDropFile}
         onDragOver={(e) => e.preventDefault()}
       >
@@ -322,7 +322,7 @@ export default function UniversalIntakeBox({
 
         <div className="p-6">
           <div className="grid gap-4 lg:grid-cols-[1fr_auto]">
-            <div className="rounded-[24px] border border-white/[0.08] bg-[#06060a] p-5">
+            <div className="rounded-[24px] border border-white/[0.08] bg-[#050816] p-5">
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -400,7 +400,7 @@ export default function UniversalIntakeBox({
               type="button"
               onClick={runSubmit}
               disabled={isSubmitting || (!text.trim() && !file && !audioFile && !voiceTranscript.trim())}
-              className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-violet-500 px-5 py-4 text-white shadow-[0_16px_45px_rgba(139,92,246,0.28)] transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-blue-500 px-5 py-4 text-white shadow-[0_16px_45px_rgba(45,97,224,0.28)] transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <div className="flex flex-col items-center gap-2">
                 {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
@@ -418,7 +418,7 @@ export default function UniversalIntakeBox({
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition",
                   mode === opt.key
-                    ? "border-violet-500/30 bg-violet-500 text-white shadow-[0_12px_25px_rgba(139,92,246,0.18)]"
+                    ? "border-blue-500/30 bg-blue-500 text-white shadow-[0_12px_25px_rgba(45,97,224,0.18)]"
                     : "border-white/[0.08] bg-white/[0.05] text-white/70 hover:bg-white/[0.06]"
                 )}
               >
@@ -450,18 +450,18 @@ export default function UniversalIntakeBox({
               value={deliveryLocation}
               onChange={(e) => setDeliveryLocation(e.target.value)}
               placeholder="Delivery location"
-              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-violet-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-blue-500/30"
             />
             <input
               value={targetCurrency}
               onChange={(e) => setTargetCurrency(e.target.value)}
               placeholder="Currency"
-              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-violet-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-blue-500/30"
             />
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="rounded-2xl border border-white/[0.08] bg-[#06060a] px-4 py-3 text-sm text-white outline-none focus:border-violet-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none focus:border-blue-500/30"
             >
               <option value="cost">Cost priority</option>
               <option value="speed">Speed priority</option>
@@ -475,7 +475,7 @@ export default function UniversalIntakeBox({
           ) : null}
 
           {parseResult ? (
-            <div className="mt-6 rounded-[24px] border border-white/[0.08] bg-[#06060a] p-4">
+            <div className="mt-6 rounded-[24px] border border-white/[0.08] bg-[#050816] p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-semibold text-white">Normalized intake preview</h3>
@@ -539,7 +539,7 @@ export default function UniversalIntakeBox({
                 <button
                   type="button"
                   onClick={runSubmit}
-                  className="rounded-full bg-violet-500 px-4 py-2 text-sm text-white hover:bg-violet-400"
+                  className="rounded-full bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-400"
                 >
                   Open workspace
                 </button>
