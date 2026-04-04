@@ -1,3 +1,5 @@
+import { readGuestSessionToken, writeGuestSessionToken, clearGuestSessionToken } from "./guestSession";
+
 const GUEST_WORKSPACE_PREFIX = "pgi_guest_workspace:";
 
 function safeJSONParse(value, fallback = null) {
@@ -58,15 +60,15 @@ export function clearGuestWorkspace(projectId) {
 }
 
 export function getGuestSessionToken() {
-  try {
-    if (typeof window === "undefined") return null;
-    return (
-      window.localStorage.getItem("guest_session_token") ||
-      window.localStorage.getItem("pgi_guest_session_token") ||
-      window.localStorage.getItem("pgi_session") ||
-      null
-    );
-  } catch {
-    return null;
-  }
+  return readGuestSessionToken();
 }
+
+export function setGuestSessionToken(token) {
+  return writeGuestSessionToken(token);
+}
+
+export function clearGuestSessionState() {
+  clearGuestSessionToken();
+}
+
+export { readGuestSessionToken, writeGuestSessionToken };

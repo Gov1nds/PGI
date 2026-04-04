@@ -32,7 +32,7 @@ const fmt = (n, d = 2) => {
 
 function Card({ title, value, hint }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5">
       <p className="text-xs uppercase tracking-wider text-white/35">{title}</p>
       <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
       {hint && <p className="mt-2 text-xs text-white/35">{hint}</p>}
@@ -40,7 +40,7 @@ function Card({ title, value, hint }) {
   );
 }
 
-const COLORS = ["#2d61e0", "#5485ff", "#60a5fa", "#818cf8", "#c084fc", "#38bdf8", "#34d399", "#f472b6"];
+const COLORS = ["#ffffff", "#d4d4d8", "#a1a1aa", "#71717a", "#52525b", "#e4e4e7", "#b8b8bf", "#8a8a93"];
 
 export default function Analytics() {
   const { user } = useAuth();
@@ -118,7 +118,7 @@ export default function Analytics() {
               <Link to="/dashboard" className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm text-white hover:bg-white/[0.08]">
                 Dashboard
               </Link>
-              <button onClick={load} className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400">
+              <button onClick={load} className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90">
                 Refresh
               </button>
             </div>
@@ -134,9 +134,9 @@ export default function Analytics() {
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <input value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="Project ID filter" className="rounded-xl border border-white/[0.08] bg-[#0f1530] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
-            <input value={startDate} onChange={(e) => setStartDate(e.target.value)} placeholder="Start date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.08] bg-[#0f1530] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
-            <input value={endDate} onChange={(e) => setEndDate(e.target.value)} placeholder="End date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.08] bg-[#0f1530] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
+            <input value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="Project ID filter" className="rounded-xl border border-white/[0.08] bg-[#0f0f14] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
+            <input value={startDate} onChange={(e) => setStartDate(e.target.value)} placeholder="Start date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.08] bg-[#0f0f14] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
+            <input value={endDate} onChange={(e) => setEndDate(e.target.value)} placeholder="End date (YYYY-MM-DD)" className="rounded-xl border border-white/[0.08] bg-[#0f0f14] px-4 py-3 text-sm text-white outline-none placeholder:text-white/25" />
           </div>
         </Container>
       </section>
@@ -147,7 +147,7 @@ export default function Analytics() {
         ) : (
           <>
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Spend by vendor</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -156,13 +156,13 @@ export default function Analytics() {
                       <XAxis dataKey="name" tick={{ fill: "#fff", fontSize: 11 }} />
                       <YAxis tick={{ fill: "#fff", fontSize: 11 }} />
                       <Tooltip />
-                      <Bar dataKey="spend" fill="#2d61e0" />
+                      <Bar dataKey="spend" fill="rgba(255,255,255,0.5)" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Spend by category</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -171,13 +171,13 @@ export default function Analytics() {
                       <XAxis dataKey="name" tick={{ fill: "#fff", fontSize: 11 }} />
                       <YAxis tick={{ fill: "#fff", fontSize: 11 }} />
                       <Tooltip />
-                      <Bar dataKey="spend" fill="#5485ff" />
+                      <Bar dataKey="spend" fill="rgba(255,255,255,0.4)" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Spend by region</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -194,7 +194,7 @@ export default function Analytics() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Lead-time and spend trend</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -204,9 +204,9 @@ export default function Analytics() {
                       <YAxis tick={{ fill: "#fff", fontSize: 11 }} />
                       <Tooltip />
                       <Legend />
-                      <Line type="monotone" dataKey="committed" stroke="#2d61e0" />
+                      <Line type="monotone" dataKey="committed" stroke="rgba(255,255,255,0.5)" />
                       <Line type="monotone" dataKey="paid" stroke="#60a5fa" />
-                      <Line type="monotone" dataKey="savings" stroke="#2d61e0" />
+                      <Line type="monotone" dataKey="savings" stroke="rgba(255,255,255,0.5)" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -214,7 +214,7 @@ export default function Analytics() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Vendor on-time rate</h2>
                 <div className="space-y-3">
                   {(vendors?.vendors || []).slice(0, 10).map((v) => (
@@ -231,14 +231,14 @@ export default function Analytics() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5">
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/55">Savings realized</h2>
                 <div className="space-y-3">
                   {(savings?.savings || []).slice(0, 12).map((s) => (
                     <div key={s.id} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-sm text-white">{s.source_type} · {s.source_id}</p>
-                        <p className="text-sm text-blue-400">{fmt(s.realized_amount || 0)}</p>
+                        <p className="text-sm text-white/70">{fmt(s.realized_amount || 0)}</p>
                       </div>
                       <p className="mt-1 text-xs text-white/35">
                         Baseline {fmt(s.baseline_amount || 0)} · Actual {fmt(s.actual_amount || 0)} · {s.currency || "USD"}

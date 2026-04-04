@@ -8,13 +8,13 @@ export default function Insights() {
   return (
     <div>
       {/* HERO */}
-      <section className="border-b border-white/[0.08] bg-gradient-to-b from-[rgb(10,14,28)] to-[rgb(12,18,34)] py-16 md:py-20">
+      <section className="border-b border-white/[0.08] bg-gradient-to-b from-[#09090b] to-[#0f0f14] py-16 md:py-20">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-blue-400 mb-4">
-              <span className="w-6 h-px bg-blue-500/50" />
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-white/70 mb-4">
+              <span className="w-6 h-px bg-white/[0.04]0" />
               Engineering & Manufacturing Intelligence
-              <span className="w-6 h-px bg-blue-500/50" />
+              <span className="w-6 h-px bg-white/[0.04]0" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white">
               Industry Insights
@@ -33,7 +33,7 @@ export default function Insights() {
             <Link
               key={idx}
               to={`/insights/${i.slug}`}
-              className="group rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] overflow-hidden transition-all duration-300 hover:ring-blue-500/20 hover:bg-white/[0.04] flex flex-col h-full"
+              className="group rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] overflow-hidden transition-all duration-300 hover:ring-white/[0.1] hover:bg-white/[0.04] flex flex-col h-full"
             >
               <div className="relative overflow-hidden aspect-video">
                 <img
@@ -43,19 +43,19 @@ export default function Insights() {
                   loading="lazy"
                 />
                 <div className="absolute top-3 left-3">
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-300 ring-1 ring-blue-500/25 backdrop-blur-sm">
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-white/60 ring-1 ring-white/[0.12] backdrop-blur-sm">
                     {i.category}
                   </span>
                 </div>
               </div>
               <div className="p-5 flex-1 flex flex-col">
-                <h3 className="text-[15px] font-semibold text-white group-hover:text-blue-400 transition-colors leading-snug">
+                <h3 className="text-[15px] font-semibold text-white group-hover:text-white/70 transition-colors leading-snug">
                   {i.title}
                 </h3>
                 <p className="mt-3 text-sm text-white/75 flex-1 leading-relaxed">{i.excerpt}</p>
                 <div className="mt-5 pt-4 border-t border-white/[0.08] flex items-center justify-between">
                   <span className="text-xs text-white/50">{i.readTime}</span>
-                  <span className="text-sm text-blue-400 group-hover:text-blue-300 transition-colors font-medium">Read →</span>
+                  <span className="text-sm text-white/70 group-hover:text-white/60 transition-colors font-medium">Read →</span>
                 </div>
               </div>
             </Link>
@@ -80,7 +80,7 @@ export default function Insights() {
                     "Cost reduction techniques"
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-white/80">
-                      <span className="w-1 h-1 rounded-full bg-blue-500/40 shrink-0" />
+                      <span className="w-1 h-1 rounded-full bg-white/[0.2] shrink-0" />
                       {item}
                     </div>
                   ))}
@@ -93,7 +93,7 @@ export default function Insights() {
                   {["Manufacturing Strategy", "Supply Chain", "Industry Trends", "Quality Control", "Cost Optimization"].map((cat, i) => (
                     <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-white/[0.05] hover:bg-white/[0.06] transition-colors cursor-pointer">
                       <span className="text-sm text-white/80">{cat}</span>
-                      <span className="text-blue-400 text-sm">→</span>
+                      <span className="text-white/70 text-sm">→</span>
                     </div>
                   ))}
                 </div>
@@ -104,14 +104,14 @@ export default function Insights() {
 
         {/* CTA */}
         <RevealSection className="mt-14">
-          <div className="rounded-2xl bg-gradient-to-r from-blue-500/10 to-indigo-500/5 p-10 text-center ring-1 ring-blue-500/15">
+          <div className="rounded-2xl bg-gradient-to-r from-white/[0.03] to-white/[0.01] p-10 text-center ring-1 ring-white/[0.08]">
             <h2 className="text-2xl font-semibold text-white">Subscribe to insights</h2>
             <p className="mt-3 text-white/75 text-sm">Get manufacturing tips and industry updates directly to your inbox</p>
             <div className="mt-6 flex gap-2.5 justify-center max-w-md mx-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 rounded-lg bg-white/[0.06] px-4 py-2.5 text-sm text-white placeholder-white/30 ring-1 ring-white/[0.08] focus:ring-blue-500/30 focus:outline-none transition-all"
+                className="flex-1 rounded-lg bg-white/[0.06] px-4 py-2.5 text-sm text-white placeholder-white/30 ring-1 ring-white/[0.08] focus:ring-white/[0.15] focus:outline-none transition-all"
               />
               <PrimaryButton to="/contact">Subscribe</PrimaryButton>
             </div>

@@ -1,14 +1,13 @@
-export default function SectionHeading({ eyebrow, title, desc, center = false }) {
+export default function SectionHeading({ eyebrow, title, desc, center }) {
   return (
-    <div className={`max-w-2xl ${center ? 'mx-auto text-center' : ''}`}>
+    <div className={center ? "text-center" : ""}>
       {eyebrow && (
-        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-blue-400 mb-3">
-          <span className="w-6 h-px bg-blue-500/50" />
-          {eyebrow}
+        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-white/45 mb-4">
+          <span className="w-6 h-px bg-white/20" />{eyebrow}<span className="w-6 h-px bg-white/20" />
         </div>
       )}
-      <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl leading-[1.15]">{title}</h2>
-      {desc && <p className="mt-4 text-[15px] leading-relaxed text-white/85">{desc}</p>}
+      {title && <h2 className="text-3xl md:text-4xl font-bold text-white">{title}</h2>}
+      {desc && <p className="mt-4 text-white/55 leading-relaxed max-w-2xl">{desc}</p>}
     </div>
   );
 }

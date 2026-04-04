@@ -132,13 +132,13 @@ export default function FloatingActions() {
 
         /* ---- BOM Analyzer button ---- */
         .fab-bom {
-          background: linear-gradient(135deg, #2d61e0, #2d61e0);
+          background: rgba(255,255,255,0.95); color: #09090b;
           color: #fff;
-          box-shadow: 0 6px 20px rgba(45,97,224,0.25),
+          box-shadow: 0 6px 20px rgba(255,255,255,0.08),
                       inset 0 1px 0 rgba(255,255,255,0.1);
         }
         .fab-bom:hover {
-          box-shadow: 0 10px 28px rgba(45,97,224,0.35),
+          box-shadow: 0 10px 28px rgba(255,255,255,0.12),
                       inset 0 1px 0 rgba(255,255,255,0.15);
         }
 
@@ -179,10 +179,10 @@ export default function FloatingActions() {
         }
 
         .fab-label-bom {
-          background: rgba(45,97,224,0.12);
-          color: #2d61e0;
-          border: 1px solid rgba(45,97,224,0.18);
-          box-shadow: 0 4px 12px rgba(45,97,224,0.1);
+          background: rgba(255,255,255,0.06);
+          color: rgba(255,255,255,0.7);
+          border: 1px solid rgba(255,255,255,0.1);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .fab-label-contact {
           background: rgba(255,255,255,0.06);
@@ -210,7 +210,7 @@ export default function FloatingActions() {
 
         /* ========= FOCUS VISIBLE ========= */
         .fab-btn:focus-visible {
-          outline: 2px solid rgba(45,97,224,0.4);
+          outline: 2px solid rgba(255,255,255,0.2);
           outline-offset: 3px;
         }
 

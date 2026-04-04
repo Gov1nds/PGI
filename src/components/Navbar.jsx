@@ -11,8 +11,8 @@ function NavItem({ to, label, onClick }) {
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `nav-link text-[13px] font-medium transition-colors duration-200 ${
-          isActive ? "text-blue-400 active" : "text-white/60 hover:text-white"
+        `nav-link text-[13px] font-medium transition-all duration-300 ${
+          isActive ? "text-white active" : "text-white/45 hover:text-white/90"
         }`
       }
     >
@@ -39,7 +39,6 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  // Close user menu when clicking outside
   useEffect(() => {
     if (!userMenuOpen) return;
     const close = () => setUserMenuOpen(false);
@@ -55,17 +54,17 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-[rgba(8,12,24,0.85)] backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20"
-          : "bg-transparent border-b border-white/[0.08]"
+          ? "bg-[rgba(9,9,11,0.88)] backdrop-blur-2xl border-b border-white/[0.06] shadow-lg shadow-black/30"
+          : "bg-transparent border-b border-white/[0.04]"
       }`}
     >
       <Container className="flex h-16 items-center justify-between">
         <Logo />
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-5 lg:flex">
+        <nav className="hidden items-center gap-6 lg:flex">
           {navLinks.filter(l => l.label !== "Contact").map((l) => (
             <NavItem key={l.to} to={l.to} label={l.label} />
           ))}
@@ -76,55 +75,53 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-3">
           <Link
             to="/bom-analyzer"
-            className="rounded-lg bg-blue-500/10 px-4 py-2 text-[13px] font-semibold text-blue-400 ring-1 ring-blue-500/20 transition-all duration-300 hover:bg-blue-500/20 hover:ring-blue-500/40 hover:shadow-lg hover:shadow-blue-500/10"
+            className="rounded-lg bg-white/[0.06] px-4 py-2 text-[13px] font-semibold text-white/70 ring-1 ring-white/[0.08] transition-all duration-300 hover:bg-white/[0.1] hover:ring-white/[0.12] hover:text-white"
           >
             Analyze BOM
           </Link>
 
           {user ? (
-            /* ── Logged-in: user avatar menu ── */
             <div className="relative">
               <button
                 onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition-all duration-300"
               >
-                <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-400">
+                <div className="w-6 h-6 rounded-full bg-white/[0.1] flex items-center justify-center text-[10px] font-bold text-white/70">
                   {(user.full_name || user.email || "U")[0].toUpperCase()}
                 </div>
-                <span className="text-white/70 text-xs font-medium max-w-[100px] truncate">
+                <span className="text-white/60 text-xs font-medium max-w-[100px] truncate">
                   {user.full_name || user.email?.split("@")[0]}
                 </span>
-                <svg className={`w-3 h-3 text-white/30 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className={`w-3 h-3 text-white/25 transition-transform duration-300 ${userMenuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#111a33] border border-white/[0.08] shadow-xl shadow-black/40 overflow-hidden z-50">
-                  <div className="px-4 py-3 border-b border-white/[0.08]">
+                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#111115] border border-white/[0.08] shadow-xl shadow-black/50 overflow-hidden z-50 backdrop-blur-xl">
+                  <div className="px-4 py-3 border-b border-white/[0.06]">
                     <p className="text-white text-xs font-medium truncate">{user.full_name || "User"}</p>
-                    <p className="text-white/40 text-[11px] truncate">{user.email}</p>
+                    <p className="text-white/35 text-[11px] truncate">{user.email}</p>
                   </div>
                   <Link to="/dashboard" onClick={() => setUserMenuOpen(false)}
-                    className="block px-4 py-2.5 text-xs text-white/70 hover:text-white hover:bg-white/[0.04] transition-colors">
+                    className="block px-4 py-2.5 text-xs text-white/60 hover:text-white hover:bg-white/[0.04] transition-all duration-200">
                     My Projects
                   </Link>
                   <button onClick={handleLogout}
-                    className="w-full text-left px-4 py-2.5 text-xs text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.05] transition-colors">
+                    className="w-full text-left px-4 py-2.5 text-xs text-red-400/60 hover:text-red-400 hover:bg-red-500/[0.05] transition-all duration-200">
                     Sign Out
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            /* ── Guest: login / register buttons ── */
             <>
               <Link to="/login"
-                className="text-[13px] font-medium text-white/60 hover:text-white transition-colors">
+                className="text-[13px] font-medium text-white/50 hover:text-white transition-all duration-300">
                 Login
               </Link>
               <Link to="/register"
-                className="rounded-lg bg-white/[0.06] hover:bg-white/[0.1] px-4 py-2 text-[13px] font-medium text-white/80 border border-white/[0.08] transition-all">
+                className="rounded-lg bg-white px-4 py-2 text-[13px] font-semibold text-[#09090b] hover:bg-white/90 transition-all duration-300">
                 Sign Up
               </Link>
             </>
@@ -135,12 +132,12 @@ export default function Navbar() {
         <div className="flex items-center gap-3 lg:hidden">
           {user ? (
             <Link to="/dashboard"
-              className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-400 ring-1 ring-blue-500/20">
+              className="rounded-lg bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-white/70 ring-1 ring-white/[0.08]">
               Projects
             </Link>
           ) : (
             <Link to="/login"
-              className="rounded-lg bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-white/70 border border-white/[0.08]">
+              className="rounded-lg bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-white/60 border border-white/[0.06]">
               Login
             </Link>
           )}
@@ -148,21 +145,21 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="relative rounded-lg bg-white/5 p-2 ring-1 ring-white/10 transition-colors hover:bg-white/10"
+            className="relative rounded-lg bg-white/[0.04] p-2 ring-1 ring-white/[0.08] transition-all duration-300 hover:bg-white/[0.08]"
             aria-label={open ? "Close menu" : "Open menu"}
           >
             <div className="h-5 w-5 flex flex-col justify-center items-center">
-              <span className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${open ? "rotate-45 translate-y-[0.5px]" : "-translate-y-1"}`} />
-              <span className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${open ? "opacity-0 scale-0" : "opacity-100"}`} />
-              <span className={`block h-[1.5px] w-4 bg-white/80 transition-all duration-300 ${open ? "-rotate-45 -translate-y-[0.5px]" : "translate-y-1"}`} />
+              <span className={`block h-[1.5px] w-4 bg-white/70 transition-all duration-300 ${open ? "rotate-45 translate-y-[0.5px]" : "-translate-y-1"}`} />
+              <span className={`block h-[1.5px] w-4 bg-white/70 transition-all duration-300 ${open ? "opacity-0 scale-0" : "opacity-100"}`} />
+              <span className={`block h-[1.5px] w-4 bg-white/70 transition-all duration-300 ${open ? "-rotate-45 -translate-y-[0.5px]" : "translate-y-1"}`} />
             </div>
           </button>
         </div>
       </Container>
 
       {/* Mobile fullscreen menu */}
-      <div className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-[70] transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-[rgba(8,12,24,0.95)] backdrop-blur-xl" />
+      <div className={`lg:hidden fixed inset-x-0 top-16 bottom-0 z-[70] transition-all duration-400 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+        <div className="absolute inset-0 bg-[rgba(9,9,11,0.97)] backdrop-blur-2xl" />
         <div className="relative h-full overflow-y-auto">
           <Container className="py-8">
             <div className="flex flex-col gap-1">
@@ -170,7 +167,7 @@ export default function Navbar() {
                 <NavLink key={l.to} to={l.to} onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
-                      isActive ? "text-blue-400 bg-blue-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
+                      isActive ? "text-white bg-white/[0.06]" : "text-white/60 hover:text-white hover:bg-white/[0.04]"
                     }`
                   }
                   style={{ animationDelay: `${idx * 40}ms` }}
@@ -178,7 +175,7 @@ export default function Navbar() {
                   {({ isActive }) => (
                     <>
                       <span>{l.label}</span>
-                      <svg className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-4 h-4 ${isActive ? "text-white/60" : "text-white/15"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </>
@@ -190,13 +187,13 @@ export default function Navbar() {
                 <NavLink to="/dashboard" onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-200 ${
-                      isActive ? "text-blue-400 bg-blue-500/10" : "text-white/70 hover:text-white hover:bg-white/5"
+                      isActive ? "text-white bg-white/[0.06]" : "text-white/60 hover:text-white hover:bg-white/[0.04]"
                     }`
                   }>
                   {({ isActive }) => (
                     <>
                       <span>My Projects</span>
-                      <svg className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-white/20"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-4 h-4 ${isActive ? "text-white/60" : "text-white/15"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </>
@@ -205,26 +202,25 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile bottom actions */}
-            <div className="mt-8 pt-6 border-t border-white/[0.08] space-y-3">
+            <div className="mt-8 pt-6 border-t border-white/[0.06] space-y-3">
               <Link to="/bom-analyzer" onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-xl btn-primary px-5 py-3.5 text-sm font-semibold text-white w-full">
+                className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-semibold text-[#09090b] w-full transition-all duration-300 hover:bg-white/90">
                 Analyze Your BOM
               </Link>
 
               {user ? (
                 <button onClick={() => { handleLogout(); setOpen(false); }}
-                  className="w-full rounded-xl px-5 py-3 text-sm font-medium text-red-400/70 hover:text-red-400 bg-red-500/[0.05] border border-red-500/10 transition-all">
+                  className="w-full rounded-xl px-5 py-3 text-sm font-medium text-red-400/60 hover:text-red-400 bg-red-500/[0.04] border border-red-500/[0.08] transition-all duration-300">
                   Sign Out
                 </button>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   <Link to="/login" onClick={() => setOpen(false)}
-                    className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-white/70 bg-white/[0.04] border border-white/[0.08]">
+                    className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-white/60 bg-white/[0.04] border border-white/[0.06]">
                     Login
                   </Link>
                   <Link to="/register" onClick={() => setOpen(false)}
-                    className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-white bg-white/[0.08] border border-white/[0.1]">
+                    className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-[#09090b] bg-white border border-white/[0.1]">
                     Sign Up
                   </Link>
                 </div>

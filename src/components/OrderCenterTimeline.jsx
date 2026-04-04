@@ -17,10 +17,10 @@ function Badge({ children, tone = "neutral" }) {
   const tones = {
     neutral: "bg-white/[0.05] text-white/50 border-white/[0.08]",
     green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    blue: "bg-white/[0.06] text-white/70 border-white/[0.1]",
     amber: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
     red: "bg-red-500/10 text-red-400 border-red-500/20",
-    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    blue: "bg-white/[0.06] text-white/70 border-white/[0.1]",
   };
   return (
     <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${tones[tone] || tones.neutral}`}>
@@ -31,7 +31,7 @@ function Badge({ children, tone = "neutral" }) {
 
 function Card({ title, children, tone = "neutral" }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] overflow-hidden">
       <div className="border-b border-white/[0.08] px-5 py-4 flex items-center justify-between">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">{title}</h3>
         {tone ? <Badge tone={tone}>{tone}</Badge> : null}
@@ -52,7 +52,7 @@ export default function OrderCenterTimeline({ context, project, canViewFulfillme
 
   if (!canViewFulfillment) {
     return (
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-6 text-sm text-white/70 space-y-3">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-6 text-sm text-white/70 space-y-3">
         <p className="text-xs uppercase tracking-wider text-white/25">Fulfillment timeline</p>
         <p className="text-white">Tracking opens after a vendor is selected and the PO is issued.</p>
         <p className="text-white/35">Once the order exists, carrier milestones, customs status, goods receipt, invoices, and payment updates appear here.</p>
@@ -67,7 +67,7 @@ export default function OrderCenterTimeline({ context, project, canViewFulfillme
 
   if (!context || !hasFulfillmentData) {
     return (
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-6 text-sm text-white/70 space-y-3">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-6 text-sm text-white/70 space-y-3">
         <p className="text-xs uppercase tracking-wider text-white/25">Fulfillment timeline</p>
         <p className="text-white">No fulfillment data yet.</p>
         <p className="text-white/35">This section stays empty until the PO, shipment, receipt, and invoice lifecycle begins.</p>
@@ -88,7 +88,7 @@ export default function OrderCenterTimeline({ context, project, canViewFulfillme
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] p-5 text-sm text-white/75">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] p-5 text-sm text-white/75">
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-xs uppercase tracking-wider text-white/25">Fulfillment context</p>
@@ -136,7 +136,7 @@ export default function OrderCenterTimeline({ context, project, canViewFulfillme
             context.timeline.map((item, idx) => (
               <div key={`${item.type || item.stage}-${item.id || idx}`} className="flex gap-3">
                 <div className="flex flex-col items-center">
-                  <div className="h-3 w-3 rounded-full bg-blue-400 mt-1" />
+                  <div className="h-3 w-3 rounded-full bg-white/40 mt-1" />
                   {idx < context.timeline.length - 1 && <div className="w-px flex-1 bg-white/[0.08] mt-1" />}
                 </div>
 

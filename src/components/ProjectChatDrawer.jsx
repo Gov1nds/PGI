@@ -20,11 +20,11 @@ function fmtDate(value) {
 function Badge({ children, tone = "neutral" }) {
   const tones = {
     neutral: "bg-white/[0.05] text-white/50 border-white/[0.08]",
-    primary: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    primary: "bg-white/[0.06] text-white/70 border-white/[0.1]",
     green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
     amber: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
     red: "bg-red-500/10 text-red-400 border-red-500/20",
-    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    blue: "bg-white/[0.06] text-white/70 border-white/[0.1]",
   };
   return <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${tones[tone] || tones.neutral}`}>{children}</span>;
 }
@@ -261,7 +261,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                 <button
                   onClick={createThread}
                   disabled={threadsLoading || !threadTitle.trim()}
-                  className="w-full rounded-xl bg-blue-500 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-50"
+                  className="w-full rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#09090b] hover:bg-white/90 disabled:opacity-50"
                 >
                   {threadsLoading ? "Creating..." : "Create thread"}
                 </button>
@@ -277,7 +277,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                     onClick={() => setActiveThreadId(thread.id)}
                     className={`w-full rounded-2xl border p-3 text-left transition-all ${
                       active
-                        ? "border-blue-500/30 bg-blue-500/10"
+                        ? "border-white/[0.15] bg-white/[0.06]"
                         : "border-white/[0.08] bg-white/[0.05] hover:bg-white/[0.05]"
                     }`}
                   >
@@ -382,7 +382,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                 <button
                   onClick={handleCreateApproval}
                   disabled={creatingApproval || !approvalTitle.trim()}
-                  className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                  className="w-full rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#09090b] hover:bg-white/90 disabled:opacity-50"
                 >
                   {creatingApproval ? "Creating..." : "Create approval"}
                 </button>
@@ -426,7 +426,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                         key={message.id}
                         className={`max-w-[88%] rounded-2xl border p-4 ${
                           String(message.sender_user_id) === String(user?.id)
-                            ? "ml-auto border-blue-500/20 bg-blue-500/10"
+                            ? "ml-auto border-white/[0.1] bg-white/[0.06]"
                             : "border-white/[0.08] bg-white/[0.05]"
                         }`}
                       >
@@ -453,7 +453,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                               <a
                                 key={att.id}
                                 href={att.file_url}
-                                className="block rounded-xl border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-blue-400 hover:bg-white/[0.06]"
+                                className="block rounded-xl border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06]"
                                 target="_blank"
                                 rel="noreferrer"
                               >
@@ -519,7 +519,7 @@ export default function ProjectChatDrawer({ open, project, user, onClose }) {
                     <button
                       onClick={sendMessage}
                       disabled={sending || !messageBody.trim()}
-                      className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-50"
+                      className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90 disabled:opacity-50"
                     >
                       {sending ? "Sending..." : "Send"}
                     </button>

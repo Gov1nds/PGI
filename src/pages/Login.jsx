@@ -30,7 +30,7 @@ export default function Login() {
     }
   };
 
-  const inputCls = "w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/30 transition-all";
+  const inputCls = "w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white text-sm placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-white/[0.15] focus:border-white/[0.12] transition-all duration-300";
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center">
@@ -39,15 +39,15 @@ export default function Login() {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/[0.06] border border-white/[0.08] flex items-center justify-center">
+              <svg className="w-6 h-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-            <p className="text-white/50 text-sm mt-1">Sign in to your PGI HUB account</p>
+            <p className="text-white/40 text-sm mt-1">Sign in to your PGI HUB account</p>
             {(location.state?.returnTo || getPostAuthRoute("/dashboard") !== "/dashboard") && (
-              <div className="mt-4 rounded-xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-left text-sm text-violet-200">
+              <div className="mt-4 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-left text-sm text-white/60">
                 You will return to your analysis or workspace after sign in.
               </div>
             )}
@@ -55,23 +55,23 @@ export default function Login() {
 
           {/* Error */}
           {error && (
-            <div className="mb-5 p-3 bg-red-500/[0.08] border border-red-500/20 rounded-xl">
-              <p className="text-red-300 text-sm text-center">{error}</p>
+            <div className="mb-5 p-3 bg-red-500/[0.06] border border-red-500/15 rounded-xl">
+              <p className="text-red-300/80 text-sm text-center">{error}</p>
             </div>
           )}
 
           {/* Form */}
-          <div className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-6">
+          <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-6 backdrop-blur-sm">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-white/60 text-xs font-medium mb-1.5">Email</label>
+                <label className="block text-white/45 text-xs font-medium mb-1.5">Email</label>
                 <input
                   type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com" className={inputCls} autoFocus
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-xs font-medium mb-1.5">Password</label>
+                <label className="block text-white/45 text-xs font-medium mb-1.5">Password</label>
                 <input
                   type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••" className={inputCls}
@@ -79,16 +79,16 @@ export default function Login() {
               </div>
               <button
                 type="submit" disabled={loading}
-                className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-lg shadow-blue-600/20"
+                className="w-full py-3 rounded-xl bg-white hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed text-[#09090b] text-sm font-semibold transition-all duration-300 shadow-[0_4px_16px_rgba(255,255,255,0.06)]"
               >
                 {loading ? "Signing in..." : "Sign In"}
               </button>
             </form>
           </div>
 
-          <p className="text-center text-white/40 text-sm mt-6">
+          <p className="text-center text-white/35 text-sm mt-6">
             Don't have an account?{" "}
-            <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+            <Link to="/register" className="text-white/70 hover:text-white font-medium transition-colors duration-300">
               Create one
             </Link>
           </p>

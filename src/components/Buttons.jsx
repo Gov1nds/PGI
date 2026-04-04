@@ -10,8 +10,12 @@ export function PrimaryButton({
 }) {
   const baseStyle = `
     inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold
-    text-white btn-primary
-    disabled:opacity-50 disabled:cursor-not-allowed
+    text-[#09090b] bg-white hover:bg-white/90
+    shadow-[0_4px_16px_rgba(255,255,255,0.06)]
+    hover:shadow-[0_6px_24px_rgba(255,255,255,0.1)]
+    hover:-translate-y-[1px]
+    transition-all duration-300
+    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
     ${className}
   `.trim();
 
@@ -38,9 +42,11 @@ export function PrimaryButton({
 export function SecondaryButton({ to, children, className = "" }) {
   const baseStyle = `
     inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold
-    text-white/90 bg-white/5 backdrop-blur-sm
-    ring-1 ring-white/10
-    hover:bg-white/10 hover:ring-white/20 transition-all duration-300
+    text-white/70 bg-white/[0.04] backdrop-blur-sm
+    ring-1 ring-white/[0.08]
+    hover:bg-white/[0.08] hover:ring-white/[0.14] hover:text-white
+    hover:-translate-y-[1px]
+    transition-all duration-300
     ${className}
   `.trim();
 

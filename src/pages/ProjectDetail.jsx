@@ -43,18 +43,18 @@ import { getWorkflowSummary } from "../lib/workflowState";
 
 const STATUS_STYLES = {
   draft: "bg-white/[0.06] text-white/60",
-  guest_preview: "bg-blue-500/15 text-blue-400",
-  project_hydrated: "bg-blue-500/15 text-blue-400",
-  strategy: "bg-blue-500/15 text-blue-400",
+  guest_preview: "bg-white/[0.08] text-white/70",
+  project_hydrated: "bg-white/[0.08] text-white/70",
+  strategy: "bg-white/[0.08] text-white/70",
   vendor_match: "bg-cyan-500/15 text-cyan-400",
   rfq_pending: "bg-indigo-500/15 text-indigo-400",
   rfq_sent: "bg-indigo-500/15 text-indigo-400",
-  quote_compare: "bg-blue-500/15 text-blue-400",
+  quote_compare: "bg-white/[0.08] text-white/70",
   negotiation: "bg-pink-500/15 text-pink-400",
   vendor_selected: "bg-emerald-500/15 text-emerald-400",
-  po_issued: "bg-blue-500/15 text-blue-400",
-  in_production: "bg-blue-500/15 text-blue-400",
-  qc_inspection: "bg-blue-500/15 text-blue-400",
+  po_issued: "bg-white/[0.08] text-white/70",
+  in_production: "bg-white/[0.08] text-white/70",
+  qc_inspection: "bg-white/[0.08] text-white/70",
   shipped: "bg-cyan-500/15 text-cyan-400",
   delivered: "bg-emerald-500/15 text-emerald-400",
   spend_recorded: "bg-emerald-500/15 text-emerald-400",
@@ -97,7 +97,7 @@ function Stat({ label, value, hint }) {
 
 function Panel({ title, children, action }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#0f1530] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f14] overflow-hidden">
       <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-white/55">{title}</h3>
         {action}
@@ -477,7 +477,7 @@ export default function ProjectDetail() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id, navigate]);
 
-  const cardClass = "rounded-2xl border border-white/[0.08] bg-[#0f1530] overflow-hidden";
+  const cardClass = "rounded-2xl border border-white/[0.08] bg-[#0f0f14] overflow-hidden";
 
   const stage = (
     project?.workflow_stage ||
@@ -899,7 +899,7 @@ export default function ProjectDetail() {
               </Link>
               <Link
                 to="/analytics"
-                className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90"
               >
                 Analytics
               </Link>
@@ -929,7 +929,7 @@ export default function ProjectDetail() {
               onClick={() => setActiveTab(tab.id)}
               className={`rounded-full px-4 py-2 text-sm transition ${
                 activeTab === tab.id
-                  ? "bg-blue-500 text-white"
+                  ? "bg-white text-[#09090b]"
                   : "bg-white/[0.04] text-white/70 hover:bg-white/[0.08]"
               }`}
             >
@@ -1094,7 +1094,7 @@ export default function ProjectDetail() {
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     onClick={() => loadVendorMatch()}
-                    className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400"
+                    className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90"
                   >
                     Refresh shortlist
                   </button>
@@ -1124,7 +1124,7 @@ export default function ProjectDetail() {
                                 {vendor.vendor_id || vendor.id} · {vendor.region || vendor.location || "—"}
                               </p>
                             </div>
-                            <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+                            <span className="rounded-full bg-white/[0.06] px-3 py-1 text-xs font-medium text-white/70">
                               Score {fmt(vendor.vendor_score || vendor.score || 0, 2)}
                             </span>
                           </div>
@@ -1197,7 +1197,7 @@ export default function ProjectDetail() {
                       <button
                         onClick={handleRequestRFQ}
                         disabled={rfqLoading}
-                        className="w-full rounded-xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
+                        className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#09090b] hover:bg-white/90 disabled:opacity-60"
                       >
                         {rfqLoading ? "Creating..." : currentRfqId ? "Refresh RFQ" : "Create RFQ"}
                       </button>
@@ -1314,7 +1314,7 @@ export default function ProjectDetail() {
                   <button
                     onClick={loadComparison}
                     disabled={!currentRfqId || comparisonLoading}
-                    className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
+                    className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90 disabled:opacity-60"
                   >
                     {comparisonLoading ? "Loading..." : "Reload comparison"}
                   </button>
@@ -1372,7 +1372,7 @@ export default function ProjectDetail() {
                 action={
                   <button
                     onClick={() => setShowChatDrawer(true)}
-                    className="rounded-xl bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-400"
+                    className="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-[#09090b] hover:bg-white/90"
                   >
                     Open chat drawer
                   </button>
@@ -1454,7 +1454,7 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleCreatePO}
                       disabled={!currentRfqId || creatingPO}
-                      className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
+                      className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90 disabled:opacity-60"
                     >
                       {creatingPO ? "Creating PO..." : "Create PO"}
                     </button>
@@ -1618,7 +1618,7 @@ export default function ProjectDetail() {
                     <button
                       onClick={handleCreateInvoice}
                       disabled={!currentPoId || creatingInvoice}
-                      className="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400 disabled:opacity-60"
+                      className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90 disabled:opacity-60"
                     >
                       {creatingInvoice ? "Creating invoice..." : "Create invoice"}
                     </button>
@@ -1687,7 +1687,7 @@ export default function ProjectDetail() {
                   <p>Spend, trend, category, and supplier analytics are available in the main analytics surface.</p>
                   <Link
                     to="/analytics"
-                    className="inline-flex rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-400"
+                    className="inline-flex rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#09090b] hover:bg-white/90"
                   >
                     Open analytics
                   </Link>
@@ -1754,5 +1754,19 @@ export default function ProjectDetail() {
         onClose={() => setShowChatDrawer(false)}
       />
     </div>
+  );
+}
+
+function resolveSelectedVendorId(project) {
+  if (!project || typeof project !== "object") return null;
+  return (
+    project.current_vendor_id ||
+    project.selected_vendor_id ||
+    project.current_vendor?.id ||
+    project.current_vendor?.vendor_id ||
+    project.current_vendor_match?.vendor_id ||
+    project.current_vendor_match?.vendor?.id ||
+    project.current_vendor_match_id ||
+    null
   );
 }

@@ -5,7 +5,7 @@ import { RevealSection } from "../components/RevealSection.jsx";
 
 function Check({ on }) {
   return (
-    <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] ring-1 ${on ? "bg-blue-500/15 text-blue-300 ring-blue-500/25" : "bg-white/[0.05] text-white/20 ring-white/[0.08]"}`} aria-hidden="true">
+    <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] ring-1 ${on ? "bg-white/[0.08] text-white/60 ring-white/[0.12]" : "bg-white/[0.05] text-white/20 ring-white/[0.08]"}`} aria-hidden="true">
       {on ? "✓" : "–"}
     </span>
   );
@@ -14,11 +14,11 @@ function Check({ on }) {
 export default function Pricing() {
   return (
     <div>
-      <section className="border-b border-white/[0.08] bg-gradient-to-b from-[rgb(10,14,28)] to-[rgb(12,18,34)] py-16 md:py-20">
+      <section className="border-b border-white/[0.08] bg-gradient-to-b from-[#09090b] to-[#0f0f14] py-16 md:py-20">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-blue-400 mb-4">
-              <span className="w-6 h-px bg-blue-500/50" />Plans<span className="w-6 h-px bg-blue-500/50" />
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-white/70 mb-4">
+              <span className="w-6 h-px bg-white/[0.04]0" />Plans<span className="w-6 h-px bg-white/[0.04]0" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white">Membership Plans</h1>
             <p className="mt-5 text-white/80 leading-relaxed">Choose the level of manufacturing coordination you need. Upgrade anytime as project load increases.</p>
@@ -30,13 +30,13 @@ export default function Pricing() {
         {/* CARDS */}
         <div className="grid gap-5 lg:grid-cols-3 mb-16">
           {pricingPlans.map((p) => (
-            <div key={p.key} className={`relative overflow-hidden rounded-xl p-7 ring-1 transition-all duration-300 flex flex-col ${p.highlight ? "bg-gradient-to-br from-blue-500/10 to-blue-500/[0.02] ring-blue-500/25 shadow-lg shadow-blue-500/5" : "bg-white/[0.04] ring-white/[0.08] hover:ring-white/[0.12]"}`}>
+            <div key={p.key} className={`relative overflow-hidden rounded-xl p-7 ring-1 transition-all duration-300 flex flex-col ${p.highlight ? "bg-gradient-to-br from-white/[0.03] to-white/[0.01] ring-white/[0.12] shadow-lg shadow-white/[0.02]" : "bg-white/[0.04] ring-white/[0.08] hover:ring-white/[0.12]"}`}>
               {p.highlight && (
-                <div className="absolute right-4 top-4 rounded-full bg-blue-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-blue-500/25">POPULAR</div>
+                <div className="absolute right-4 top-4 rounded-full bg-white/[0.08] px-2.5 py-0.5 text-[10px] font-semibold text-white/60 ring-1 ring-white/[0.12]">POPULAR</div>
               )}
               <div>
                 <div className="text-xl font-semibold text-white">{p.name}</div>
-                <div className="mt-2 text-2xl font-bold text-blue-400">{p.price}</div>
+                <div className="mt-2 text-2xl font-bold text-white/70">{p.price}</div>
                 <div className="mt-1 text-[11px] text-white/70">{p.note}</div>
                 <div className="mt-3 text-sm text-white/80">{p.desc}</div>
               </div>
@@ -85,7 +85,7 @@ export default function Pricing() {
                     <tr className="border-b border-white/[0.08]">
                       <th className="text-left py-3 px-3 text-sm font-semibold text-white/60">Feature</th>
                       <th className="text-center py-3 px-3 text-sm font-semibold text-white/60">Prototype</th>
-                      <th className="text-center py-3 px-3 text-sm font-semibold text-blue-400">Production</th>
+                      <th className="text-center py-3 px-3 text-sm font-semibold text-white/70">Production</th>
                       <th className="text-center py-3 px-3 text-sm font-semibold text-white/60">Scale</th>
                     </tr>
                   </thead>
@@ -128,7 +128,7 @@ export default function Pricing() {
         </RevealSection>
 
         {/* CTA */}
-        <div className="rounded-2xl bg-gradient-to-r from-blue-500/10 to-indigo-500/5 p-10 text-center ring-1 ring-blue-500/15">
+        <div className="rounded-2xl bg-gradient-to-r from-white/[0.03] to-white/[0.01] p-10 text-center ring-1 ring-white/[0.08]">
           <h2 className="text-2xl font-semibold text-white">Ready to get started?</h2>
           <p className="mt-3 text-white/75 text-sm">Choose a plan and begin your manufacturing coordination journey</p>
           <div className="mt-6"><PrimaryButton to="/contact">Contact our sales team</PrimaryButton></div>

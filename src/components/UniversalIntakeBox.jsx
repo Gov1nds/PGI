@@ -12,7 +12,16 @@ import {
   ScanSearch,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { normalizeIntake, parseIntake, submitIntake } from "../lib/intakeApi";
+import {
+  normalizeIntake,
+  parseIntake,
+  submitIntake,
+  materializeIntakeSession,
+} from "../lib/intakeApi";
+import {
+  readGuestSessionToken,
+  writeGuestSessionToken,
+} from "../lib/guestSession";
 
 const MODE_OPTIONS = [
   { key: "auto", label: "Auto" },
@@ -38,10 +47,30 @@ function cn(...parts) {
 }
 
 function persistGuestSessionToken(token) {
-  if (typeof window === "undefined" || !token) return;
-  localStorage.setItem("guest_session_token", token);
-  localStorage.setItem("pgi_guest_session_token", token);
-  localStorage.setItem("pgi_session", token);
+  if (!token) return;
+  writeGuestSessionToken(token);
+}
+
+function inferPurchaseMode(text, mode, intent) {
+  const normalized = String(text || "").trim();
+  const lines = normalized
+    .split(/\n|,|;/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const wordCount = normalized ? normalized.split(/\s+/).filter(Boolean).length : 0;
+  const catalogLike =
+    ["item", "material", "component", "free_text", "auto"].includes(mode) &&
+    wordCount <= 18 &&
+    lines.length <= 2;
+  const projectLike =
+    ["bom"].includes(mode) ||
+    ["rfq", "compare"].includes(intent) ||
+    wordCount > 18 ||
+    lines.length > 2;
+
+  if (projectLike) return "guided_project";
+  if (catalogLike) return "quick_catalog";
+  return "auto";
 }
 
 export default function UniversalIntakeBox({
@@ -60,6 +89,8 @@ export default function UniversalIntakeBox({
   const [deliveryLocation, setDeliveryLocation] = useState("India");
   const [targetCurrency, setTargetCurrency] = useState("USD");
   const [priority, setPriority] = useState("cost");
+  const [purchaseMode, setPurchaseMode] = useState("auto");
+  const [quickResult, setQuickResult] = useState(null);
   const [file, setFile] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [voiceTranscript, setVoiceTranscript] = useState("");
@@ -70,13 +101,7 @@ export default function UniversalIntakeBox({
   const [error, setError] = useState("");
   const [sessionToken, setSessionToken] = useState(() => {
     if (typeof window === "undefined") return initialSessionToken || "";
-    return (
-      initialSessionToken ||
-      localStorage.getItem("guest_session_token") ||
-      localStorage.getItem("pgi_guest_session_token") ||
-      localStorage.getItem("pgi_session") ||
-      ""
-    );
+    return initialSessionToken || readGuestSessionToken() || "";
   });
 
   const recognitionRef = useRef(null);
@@ -127,6 +152,11 @@ export default function UniversalIntakeBox({
     return text;
   }, [file, audioFile, voiceTranscript, text]);
 
+  const effectivePurchaseMode = useMemo(
+    () => (purchaseMode === "auto" ? inferPurchaseMode(text, mode, intent) : purchaseMode),
+    [purchaseMode, text, mode, intent]
+  );
+
   const helperCards = [
     {
       icon: <Boxes className="h-4 w-4" />,
@@ -164,6 +194,8 @@ export default function UniversalIntakeBox({
       persistGuestSessionToken(nextSessionToken);
     }
 
+    setQuickResult(res?.recommended_flow === "quick_catalog" ? res : null);
+
     onParsed?.(res);
   }
 
@@ -178,12 +210,15 @@ export default function UniversalIntakeBox({
         delivery_location: deliveryLocation,
         target_currency: targetCurrency,
         priority,
+        purchase_mode: effectivePurchaseMode,
+        project_creation_mode: effectivePurchaseMode,
         session_token: sessionToken,
         voice_transcript: voiceTranscript,
         source_channel: audioFile ? "voice" : file ? "file" : "web",
         metadata: {
           ui_source: "universal_intake_box",
           user_input_preview: inputPreview,
+          quick_catalog_detected: effectivePurchaseMode === "quick_catalog",
         },
         source_file: file,
         audio_file: audioFile,
@@ -208,12 +243,15 @@ export default function UniversalIntakeBox({
         delivery_location: deliveryLocation,
         target_currency: targetCurrency,
         priority,
+        purchase_mode: effectivePurchaseMode,
+        project_creation_mode: effectivePurchaseMode,
         session_token: sessionToken,
         voice_transcript: voiceTranscript,
         source_channel: audioFile ? "voice" : file ? "file" : "web",
         metadata: {
           ui_source: "universal_intake_box",
           user_input_preview: inputPreview,
+          quick_catalog_detected: effectivePurchaseMode === "quick_catalog",
         },
         source_file: file,
         audio_file: audioFile,
@@ -231,25 +269,61 @@ export default function UniversalIntakeBox({
     setError("");
     setIsSubmitting(true);
     try {
-      const res = await submitIntake({
+      const payload = {
         raw_input_text: text,
         input_type: mode,
         intent,
         delivery_location: deliveryLocation,
         target_currency: targetCurrency,
         priority,
+        purchase_mode: effectivePurchaseMode,
+        project_creation_mode: effectivePurchaseMode,
         session_token: sessionToken,
         voice_transcript: voiceTranscript,
         source_channel: audioFile ? "voice" : file ? "file" : "web",
-        async_finalize: true,
+        async_finalize: effectivePurchaseMode !== "quick_catalog",
         metadata: {
           ui_source: "universal_intake_box",
           user_input_preview: inputPreview,
+          quick_catalog_detected: effectivePurchaseMode === "quick_catalog",
         },
         source_file: file,
         audio_file: audioFile,
-      });
+      };
 
+      const res =
+        effectivePurchaseMode === "quick_catalog"
+          ? await parseIntake(payload)
+          : await submitIntake(payload);
+
+      await applyResult(res);
+      onSubmitted?.(res);
+
+      if (effectivePurchaseMode !== "quick_catalog" && res?.workspace_route) {
+        navigate(res.workspace_route);
+      }
+    } catch (err) {
+      setError(err.message || "Failed to submit intake");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleMaterializeProject() {
+    const sessionId =
+      quickResult?.intake_session?.id ||
+      quickResult?.intake_session?.session_id ||
+      quickResult?.session_id ||
+      "";
+
+    if (!sessionId) return;
+
+    setIsSubmitting(true);
+    setError("");
+    try {
+      const res = await materializeIntakeSession(sessionId, {
+        session_token: sessionToken,
+      });
       await applyResult(res);
       onSubmitted?.(res);
 
@@ -257,7 +331,7 @@ export default function UniversalIntakeBox({
         navigate(res.workspace_route);
       }
     } catch (err) {
-      setError(err.message || "Failed to submit intake");
+      setError(err.message || "Failed to create project from quick request");
     } finally {
       setIsSubmitting(false);
     }
@@ -292,7 +366,7 @@ export default function UniversalIntakeBox({
   return (
     <section className={cn("w-full", className)}>
       <div
-        className="rounded-[28px] border border-white/[0.08] bg-[#0f1530] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm"
+        className="rounded-[28px] border border-white/[0.08] bg-[#0f0f14] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm"
         onDrop={onDropFile}
         onDragOver={(e) => e.preventDefault()}
       >
@@ -400,7 +474,7 @@ export default function UniversalIntakeBox({
               type="button"
               onClick={runSubmit}
               disabled={isSubmitting || (!text.trim() && !file && !audioFile && !voiceTranscript.trim())}
-              className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-blue-500 px-5 py-4 text-white shadow-[0_16px_45px_rgba(45,97,224,0.28)] transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-[150px] w-full items-center justify-center rounded-[24px] bg-white px-5 py-4 text-[#09090b] shadow-[0_16px_45px_rgba(255,255,255,0.06)] transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <div className="flex flex-col items-center gap-2">
                 {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
@@ -418,7 +492,7 @@ export default function UniversalIntakeBox({
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition",
                   mode === opt.key
-                    ? "border-blue-500/30 bg-blue-500 text-white shadow-[0_12px_25px_rgba(45,97,224,0.18)]"
+                    ? "border-white/[0.15] bg-white text-[#09090b] shadow-[0_12px_25px_rgba(255,255,255,0.04)]"
                     : "border-white/[0.08] bg-white/[0.05] text-white/70 hover:bg-white/[0.06]"
                 )}
               >
@@ -445,28 +519,56 @@ export default function UniversalIntakeBox({
             ))}
           </div>
 
+          <div className="mt-4 flex flex-wrap gap-2">
+            {[
+              ["auto", "Auto detect"],
+              ["quick_catalog", "Quick buy"],
+              ["guided_project", "Project workflow"],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setPurchaseMode(key)}
+                className={cn(
+                  "rounded-full px-4 py-2 text-sm transition",
+                  purchaseMode === key
+                    ? "bg-emerald-500 text-white shadow-[0_12px_25px_rgba(16,185,129,0.18)]"
+                    : "bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
           <div className="mt-4 grid gap-3 md:grid-cols-3">
             <input
               value={deliveryLocation}
               onChange={(e) => setDeliveryLocation(e.target.value)}
               placeholder="Delivery location"
-              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-blue-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/[0.15]"
             />
             <input
               value={targetCurrency}
               onChange={(e) => setTargetCurrency(e.target.value)}
               placeholder="Currency"
-              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-blue-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/[0.15]"
             />
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none focus:border-blue-500/30"
+              className="rounded-2xl border border-white/[0.08] bg-[#050816] px-4 py-3 text-sm text-white outline-none focus:border-white/[0.15]"
             >
               <option value="cost">Cost priority</option>
               <option value="speed">Speed priority</option>
             </select>
           </div>
+
+          {purchaseMode === "auto" ? (
+            <p className="mt-2 text-xs text-white/40">
+              Auto mode sends catalog-like 1–2 item requests to quick procurement and sends BOM or custom requests to project workflow.
+            </p>
+          ) : null}
 
           {error ? (
             <div className="mt-4 rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
@@ -493,6 +595,12 @@ export default function UniversalIntakeBox({
                   </span>
                 </div>
               </div>
+
+              {quickResult?.recommended_flow === "quick_catalog" ? (
+                <div className="mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                  Quick procurement mode detected. No project will be created unless you choose to materialize it.
+                </div>
+              ) : null}
 
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {(parseResult?.normalized_items || []).map((item, idx) => (
@@ -539,10 +647,19 @@ export default function UniversalIntakeBox({
                 <button
                   type="button"
                   onClick={runSubmit}
-                  className="rounded-full bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-400"
+                  className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#09090b] hover:bg-white/90"
                 >
                   Open workspace
                 </button>
+                {quickResult?.recommended_flow === "quick_catalog" ? (
+                  <button
+                    type="button"
+                    onClick={handleMaterializeProject}
+                    className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500/90"
+                  >
+                    Create project later
+                  </button>
+                ) : null}
               </div>
             </div>
           ) : null}

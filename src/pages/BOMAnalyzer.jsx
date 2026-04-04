@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import Container from "../components/Container.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import { uploadBOM, unlockBOM, getGuestSessionToken, getSessionToken } from "../lib/api";
+import { writeGuestSessionToken, readGuestSessionToken } from "../lib/guestSession";
 import {
   saveGuestWorkspace,
   loadGuestWorkspace,
@@ -290,7 +291,7 @@ export default function BOMAnalyzer() {
   const [sessionToken, setSessionToken] = useState(null);
 
   useEffect(() => {
-    const cachedSession = getGuestSessionToken();
+    const cachedSession = readGuestSessionToken() || getGuestSessionToken();
     if (cachedSession && !sessionToken) {
       setSessionToken(cachedSession);
     }
@@ -328,9 +329,10 @@ export default function BOMAnalyzer() {
   const handleUniversalParsed = (res) => {
     if (!res) return;
 
+    const lifecycle = res?.analysis_lifecycle || {};
     const nextSessionToken =
       res?.intake_session?.session_token ||
-      res?.analysis_lifecycle?.session_token ||
+      lifecycle?.session_token ||
       res?.session_token ||
       sessionToken ||
       getGuestSessionToken() ||
@@ -338,11 +340,7 @@ export default function BOMAnalyzer() {
 
     if (nextSessionToken) {
       setSessionToken(nextSessionToken);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("guest_session_token", nextSessionToken);
-        localStorage.setItem("pgi_guest_session_token", nextSessionToken);
-        localStorage.setItem("pgi_session", nextSessionToken);
-      }
+      writeGuestSessionToken(nextSessionToken);
     }
 
     if (res?.bom_id || res?.intake_session?.bom_id) {
@@ -365,8 +363,8 @@ export default function BOMAnalyzer() {
       setUnlockStatus(res.unlock_status);
     }
 
-    if (res?.workspace_route || res?.analysis_lifecycle?.workspace_route) {
-      setWorkspaceRoute(res.workspace_route || res.analysis_lifecycle?.workspace_route);
+    if (res?.workspace_route || lifecycle?.workspace_route) {
+      setWorkspaceRoute(res.workspace_route || lifecycle?.workspace_route);
     }
 
     if (res?.preview || res?.parsed_summary || res?.normalized_items) {
@@ -383,6 +381,10 @@ export default function BOMAnalyzer() {
       projectId: res?.project_id || projectId,
       bomId: res?.bom_id || bomId,
       sessionToken: nextSessionToken,
+      purchaseMode: res?.purchase_mode || lifecycle?.purchase_mode || "auto",
+      recommendedFlow: res?.recommended_flow || lifecycle?.recommended_flow || "guided_project",
+      itemCount: res?.item_count || lifecycle?.item_count || 0,
+      shouldCreateProject: res?.should_create_project ?? true,
       previewSnapshot: (res?.preview || res?.parsed_summary || res?.normalized_items) ? (res.preview || res) : previewData,
       step: res?.preview ? 4 : step,
       postAuthRoute: res?.workspace_route || workspaceRoute || (res?.project_id ? `/project/${res.project_id}` : null),
@@ -390,32 +392,55 @@ export default function BOMAnalyzer() {
   };
 
   const handleUniversalSubmitted = (res) => {
+    const lifecycle = res?.analysis_lifecycle || {};
+
     const token =
       res?.session_token ||
-      res?.analysis_lifecycle?.session_token ||
+      lifecycle?.session_token ||
       sessionToken ||
       getGuestSessionToken() ||
       getSessionToken();
+
+    const recommendedFlow =
+      res?.recommended_flow ||
+      lifecycle?.recommended_flow ||
+      "guided_project";
+
     const routeBase =
       res?.workspace_route ||
-      res?.analysis_lifecycle?.workspace_route ||
-      (res?.project_id ? `/project/${res.project_id}` : null) ||
-      getPostAuthRoute(`/project/${projectId || bomId}`);
+      lifecycle?.workspace_route ||
+      (recommendedFlow === "guided_project" && res?.project_id ? `/project/${res.project_id}` : null);
 
     saveGuestWorkflowState({
       workspaceRoute: routeBase,
       postAuthRoute: routeBase,
-      projectId: res?.project_id || projectId,
-      bomId: res?.bom_id || bomId,
+      projectId: recommendedFlow === "guided_project" ? (res?.project_id || projectId) : null,
+      bomId: recommendedFlow === "guided_project" ? (res?.bom_id || bomId) : null,
       sessionToken: res?.session_token || sessionToken,
+      purchaseMode: res?.purchase_mode || lifecycle?.purchase_mode || "auto",
+      recommendedFlow,
+      itemCount: res?.item_count || lifecycle?.item_count || 0,
+      shouldCreateProject: res?.should_create_project ?? true,
       previewSnapshot: previewData || res?.preview || res || null,
     });
+
+    if (!routeBase && recommendedFlow === "quick_catalog") {
+      setPreviewData(res?.preview || res);
+      setReport(res?.strategy || {});
+      setStrategy(res?.strategy || {});
+      setAnalysisStatus(res?.analysis_status || "catalog_ready");
+      setReportVisibilityLevel("preview");
+      setUnlockStatus("locked");
+      setStep(4);
+      return;
+    }
 
     if (routeBase) {
       const nextRoute = token ? `${routeBase}${routeBase.includes("?") ? "&" : "?"}session_token=${encodeURIComponent(token)}` : routeBase;
       navigate(nextRoute, { replace: true });
     }
   };
+
   /* ── File handler ────────────────────────────────────── */
   const handleFile = (e) => {
     const f = e.target.files?.[0] || e.dataTransfer?.files?.[0];
