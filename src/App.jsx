@@ -38,7 +38,6 @@ export default function App() {
       </a>
 
       <Navbar />
-      <ConsultPopup delayMs={10000} />
       <ScrollToTop />
 
       <main id="content" className="min-h-[70vh]">
@@ -119,7 +118,6 @@ export default function App() {
       </main>
 
       <Footer />
-      <FloatingActions />
     </>
   );
 }
