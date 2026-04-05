@@ -1,9 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
-import FloatingActions from "./components/FloatingActions.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
-import ConsultPopup from "./components/ConsultPopup.jsx";
 
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
