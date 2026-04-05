@@ -201,15 +201,35 @@ function Shimmer({ w = "100%", h = 12 }) {
 export default function BOMAnalyzer() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [analysisStatus, setAnalysisStatus] = useState("guest_preview");
   const [reportVisibilityLevel, setReportVisibilityLevel] = useState("preview");
   const [unlockStatus, setUnlockStatus] = useState("locked");
   const [guestBomId, setGuestBomId] = useState(null);
   const [workspaceRoute, setWorkspaceRoute] = useState(null);
-  const location = useLocation();
   const [draftText, setDraftText] = useState("");
-  // F-1: Intake mode chooser — "bom" for full project, "quick" for item search
   const [intakeMode, setIntakeMode] = useState("bom");
+
+  const [step, setStep] = useState(1);
+  const [file, setFile] = useState(null);
+  const [country, setCountry] = useState("");
+  const [stateRegion, setStateRegion] = useState("");
+  const [city, setCity] = useState("");
+  const [currency, setCurrency] = useState("USD");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [progress, setProgress] = useState("");
+  const [error, setError] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  const [report, setReport] = useState(null);
+  const [strategy, setStrategy] = useState(null);
+  const [previewData, setPreviewData] = useState(null);
+  const [bomId, setBomId] = useState(null);
+  const [projectId, setProjectId] = useState(null);
+  const [sessionToken, setSessionToken] = useState(null);
+  const [expandedItem, setExpandedItem] = useState(null);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -238,9 +258,7 @@ export default function BOMAnalyzer() {
     const saved = readGuestWorkflowState();
     if (!saved) return;
 
-    if (saved.draftText && !draftText) {
-      setDraftText(saved.draftText);
-    }
+    if (saved.draftText && !draftText) setDraftText(saved.draftText);
     if (saved.analysisStatus) setAnalysisStatus(saved.analysisStatus);
     if (saved.reportVisibilityLevel) setReportVisibilityLevel(saved.reportVisibilityLevel);
     if (saved.unlockStatus) setUnlockStatus(saved.unlockStatus);
@@ -264,34 +282,16 @@ export default function BOMAnalyzer() {
       projectId,
       bomId,
       sessionToken,
-      previewSnapshot: previewData ? {
-        ...previewData,
-        previewOnly: true,
-      } : null,
+      previewSnapshot: previewData
+        ? {
+            ...previewData,
+            previewOnly: true,
+          }
+        : null,
       step,
       postAuthRoute: workspaceRoute || (projectId ? `/project/${projectId}` : null),
     });
   }, [draftText, analysisStatus, reportVisibilityLevel, unlockStatus, guestBomId, workspaceRoute, projectId, bomId, sessionToken, previewData, step]);
-
-  // existing state...
-  /* ── State ─────────────────────────────────────────── */
-  const [step, setStep] = useState(1);
-  const [file, setFile] = useState(null);
-  const [country, setCountry] = useState("");
-  const [stateRegion, setStateRegion] = useState("");
-  const [city, setCity] = useState("");
-  const [currency, setCurrency] = useState("USD");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState("");
-  const [error, setError] = useState(null);
-  const [dragOver, setDragOver] = useState(false);
-
-  const [report, setReport] = useState(null);
-  const [strategy, setStrategy] = useState(null);
-  const [previewData, setPreviewData] = useState(null);
-  const [bomId, setBomId] = useState(null);
-  const [projectId, setProjectId] = useState(null);
-  const [sessionToken, setSessionToken] = useState(null);
 
   useEffect(() => {
     const cachedSession = readGuestSessionToken() || getGuestSessionToken();
@@ -307,8 +307,7 @@ export default function BOMAnalyzer() {
     if (cached.project_id) setProjectId(cached.project_id);
     if (cached.session_token) setSessionToken(cached.session_token);
     if (cached.analysis_status) setAnalysisStatus(cached.analysis_status);
-    if (cached.report_visibility_level)
-      setReportVisibilityLevel(cached.report_visibility_level);
+    if (cached.report_visibility_level) setReportVisibilityLevel(cached.report_visibility_level);
     if (cached.unlock_status) setUnlockStatus(cached.unlock_status);
     if (cached.workspace_route) setWorkspaceRoute(cached.workspace_route);
     if (cached.preview_data) setPreviewData(cached.preview_data);
@@ -323,9 +322,6 @@ export default function BOMAnalyzer() {
     if (bomId) return `/project/${bomId}`;
     return getPostAuthRoute("/dashboard");
   }, [workspaceRoute, projectId, bomId]);
-
-  const [expandedItem, setExpandedItem] = useState(null);
-  const [activeTab, setActiveTab] = useState("overview");
 
   const states_list = country ? Object.keys(LOCATION_DATA[country] || {}) : [];
   const cities_list = country && stateRegion ? (LOCATION_DATA[country]?.[stateRegion] || []) : [];

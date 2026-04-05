@@ -16,7 +16,6 @@ import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
-// New pages
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -72,7 +71,6 @@ export default function App() {
             }
           />
 
-          {/* Protected */}
           <Route
             path="/dashboard"
             element={
@@ -109,7 +107,6 @@ export default function App() {
             }
           />
 
-          {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 

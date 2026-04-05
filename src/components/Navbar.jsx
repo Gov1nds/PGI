@@ -219,10 +219,12 @@ export default function Navbar() {
                     className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-white/60 bg-white/[0.04] border border-white/[0.06]">
                     Login
                   </Link>
-                  <Link to="/register" onClick={() => setOpen(false)}
-                    className="flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-[#09090b] bg-white border border-white/[0.1]">
-                    Sign Up
-                  </Link>
+                  <Link
+  to="/register"
+  className="nav-cta rounded-lg bg-white px-4 py-2 text-[13px] font-semibold text-[#09090b] hover:bg-white/90 transition-all duration-300"
+>
+  Sign Up
+</Link>
                 </div>
               )}
             </div>
