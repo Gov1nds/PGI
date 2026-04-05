@@ -145,10 +145,8 @@ function syncGuestSessionToken(token) {
   try {
     writeCanonicalGuestSessionToken(token);
   } catch {
-    // keep backward compatibility even if the canonical helper fails
-    window.localStorage.setItem("guest_session_token", token);
+    // Fallback: write canonical key directly
     window.localStorage.setItem("pgi_guest_session_token", token);
-    window.localStorage.setItem("pgi_session", token);
   }
   return token;
 }
@@ -239,15 +237,32 @@ export function normalizeWorkflowStage(project = {}) {
       "draft"
   );
 
+  // ── Guest preview (earliest — always check first) ──────────────────────
   if (safeString(project.analysis_status).includes("guest")) return "guest_preview";
   if (safeString(project.report_visibility_level) === "preview") return "guest_preview";
   if (safeString(project.unlock_status) === "locked") return "guest_preview";
+
+  // ── From here: check latest stages first, working backward ─────────────
+
+  if (
+    safeString(project.status).includes("complete") ||
+    safeString(project.workflow_stage).includes("complete")
+  ) {
+    return "completed";
+  }
 
   if (
     project.current_invoice_id ||
     safeString(project.payment_state).includes("paid")
   ) {
     return "spend_recorded";
+  }
+
+  if (
+    safeString(project.status).includes("deliver") ||
+    safeString(project.workflow_stage).includes("deliver")
+  ) {
+    return "delivered";
   }
 
   if (
@@ -260,11 +275,34 @@ export function normalizeWorkflowStage(project = {}) {
   }
 
   if (
+    safeString(project.workflow_stage).includes("production") ||
+    safeString(project.status).includes("production")
+  ) {
+    return "in_production";
+  }
+
+  if (
     project.current_po_id ||
     safeString(project.tracking_stage).includes("po") ||
     safeString(project.workflow_stage).includes("order")
   ) {
     return "po_issued";
+  }
+
+  // vendor_selected MUST be checked before vendor_match
+  if (
+    project.current_vendor_id ||
+    project.selected_vendor_id ||
+    safeString(project.workflow_stage).includes("selected")
+  ) {
+    return "vendor_selected";
+  }
+
+  if (
+    safeString(project.workflow_stage).includes("negoti") ||
+    safeString(project.status).includes("negoti")
+  ) {
+    return "negotiation";
   }
 
   if (
@@ -290,47 +328,11 @@ export function normalizeWorkflowStage(project = {}) {
   }
 
   if (
-    project.current_vendor_id ||
-    project.selected_vendor_id ||
-    safeString(project.workflow_stage).includes("selected")
-  ) {
-    return "vendor_selected";
-  }
-
-  if (
-    safeString(project.workflow_stage).includes("negoti") ||
-    safeString(project.status).includes("negoti")
-  ) {
-    return "negotiation";
-  }
-
-  if (
     safeString(project.workflow_stage).includes("strategy") ||
     safeString(project.status).includes("strategy") ||
     project.latest_strategy_version
   ) {
     return "strategy";
-  }
-
-  if (
-    safeString(project.workflow_stage).includes("production") ||
-    safeString(project.status).includes("production")
-  ) {
-    return "in_production";
-  }
-
-  if (
-    safeString(project.status).includes("deliver") ||
-    safeString(project.workflow_stage).includes("deliver")
-  ) {
-    return "delivered";
-  }
-
-  if (
-    safeString(project.status).includes("complete") ||
-    safeString(project.workflow_stage).includes("complete")
-  ) {
-    return "completed";
   }
 
   if (safeString(project.status).includes("draft") && !project.analysis_status) {
@@ -404,13 +406,7 @@ export function buildAuthContinuationPayload(overrides = {}) {
 
 export function readGuestSessionTokenFromWorkflow() {
   if (typeof window === "undefined") return "";
-  return (
-    window.localStorage.getItem("pgi_guest_session_token") ||
-    window.localStorage.getItem("guest_session_token") ||
-    window.localStorage.getItem("pgi_session") ||
-    readCanonicalGuestSessionToken() ||
-    ""
-  );
+  return readCanonicalGuestSessionToken() || "";
 }
 
 export function writeGuestSessionTokenToWorkflow(token) {
@@ -420,9 +416,61 @@ export function writeGuestSessionTokenToWorkflow(token) {
 export function clearGuestSessionTokenFromWorkflow() {
   if (typeof window === "undefined") return;
   clearCanonicalGuestSessionToken();
-  window.localStorage.removeItem("guest_session_token");
-  window.localStorage.removeItem("pgi_guest_session_token");
-  window.localStorage.removeItem("pgi_session");
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Guest workspace state (merged from workspaceState.js — H-9)
+// Per-project workspace snapshots for guest/preview persistence
+// ═══════════════════════════════════════════════════════════════════════════
+
+const GUEST_WORKSPACE_PREFIX = "pgi_guest_workspace:";
+
+function _workspaceKey(projectId) {
+  if (!projectId) return null;
+  return `${GUEST_WORKSPACE_PREFIX}${projectId}`;
+}
+
+export function saveGuestWorkspace(projectId, payload) {
+  try {
+    if (typeof window === "undefined") return null;
+    const key = _workspaceKey(projectId);
+    if (!key) return null;
+    const existing = loadGuestWorkspace(projectId) || {};
+    const next = {
+      ...existing,
+      ...payload,
+      project_id: projectId,
+      saved_at: new Date().toISOString(),
+    };
+    window.localStorage.setItem(key, JSON.stringify(next));
+    return next;
+  } catch {
+    return null;
+  }
+}
+
+export function loadGuestWorkspace(projectId) {
+  try {
+    if (typeof window === "undefined") return null;
+    const key = _workspaceKey(projectId);
+    if (!key) return null;
+    const raw = window.localStorage.getItem(key);
+    return safeParse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export function clearGuestWorkspace(projectId) {
+  try {
+    if (typeof window === "undefined") return;
+    const key = _workspaceKey(projectId);
+    if (!key) return;
+    window.localStorage.removeItem(key);
+  } catch {
+    // ignore storage failures
+  }
 }
 
 export { WORKFLOW_STEPS, WORKFLOW_ROUTE_HINTS };

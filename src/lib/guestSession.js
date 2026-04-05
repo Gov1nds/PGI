@@ -1,7 +1,11 @@
+/**
+ * Guest session token management — single canonical key.
+ * Canonical key: "pgi_guest_session_token"
+ * Legacy keys are migrated on first read and then removed.
+ */
 const CANONICAL_GUEST_SESSION_KEY = "pgi_guest_session_token";
 const LEGACY_GUEST_SESSION_KEYS = [
   "guest_session_token",
-  "pgi_guest_session_token",
   "pgi_session",
   "session_token",
 ];
@@ -11,32 +15,44 @@ function safeStorage() {
   return window.localStorage;
 }
 
+function _migrateLegacy() {
+  const storage = safeStorage();
+  if (!storage) return;
+  if (storage.getItem(CANONICAL_GUEST_SESSION_KEY)) {
+    // Canonical exists — just clean up legacy
+    for (const key of LEGACY_GUEST_SESSION_KEYS) storage.removeItem(key);
+    return;
+  }
+  // Migrate first found legacy key
+  for (const key of LEGACY_GUEST_SESSION_KEYS) {
+    const val = storage.getItem(key);
+    if (val) {
+      storage.setItem(CANONICAL_GUEST_SESSION_KEY, val);
+      for (const k of LEGACY_GUEST_SESSION_KEYS) storage.removeItem(k);
+      return;
+    }
+  }
+}
+
+// Run migration on module load
+_migrateLegacy();
+
 export function readGuestSessionToken() {
   const storage = safeStorage();
   if (!storage) return "";
-  for (const key of LEGACY_GUEST_SESSION_KEYS) {
-    const token = storage.getItem(key);
-    if (token) return token;
-  }
-  return "";
+  return storage.getItem(CANONICAL_GUEST_SESSION_KEY) || "";
 }
 
 export function writeGuestSessionToken(token) {
   const storage = safeStorage();
   if (!storage || !token) return token || "";
   storage.setItem(CANONICAL_GUEST_SESSION_KEY, token);
-  for (const key of LEGACY_GUEST_SESSION_KEYS) {
-    storage.setItem(key, token);
-  }
   return token;
 }
 
 export function clearGuestSessionToken() {
   const storage = safeStorage();
   if (!storage) return;
-  for (const key of LEGACY_GUEST_SESSION_KEYS) {
-    storage.removeItem(key);
-  }
   storage.removeItem(CANONICAL_GUEST_SESSION_KEY);
 }
 

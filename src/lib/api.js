@@ -1,16 +1,46 @@
 /**
  * PGI HUB — Centralized API Client
+ *
+ * Canonical localStorage keys (single source of truth):
+ *   Guest session: "pgi_guest_session_token"
+ *   Auth token:    "pgi_token"
  */
+
+const CANONICAL_SESSION_KEY = "pgi_guest_session_token";
+const LEGACY_SESSION_KEYS = ["guest_session_token", "pgi_session", "session_token"];
+
+const CANONICAL_TOKEN_KEY = "pgi_token";
+const LEGACY_TOKEN_KEYS = ["access_token", "token", "auth_token", "authToken"];
+
+function _migrateKey(canonicalKey, legacyKeys) {
+  if (typeof window === "undefined") return;
+  const current = localStorage.getItem(canonicalKey);
+  if (current) {
+    // Canonical key exists — remove legacy copies
+    for (const key of legacyKeys) localStorage.removeItem(key);
+    return;
+  }
+  // Migrate from first found legacy key
+  for (const key of legacyKeys) {
+    const val = localStorage.getItem(key);
+    if (val) {
+      localStorage.setItem(canonicalKey, val);
+      for (const k of legacyKeys) localStorage.removeItem(k);
+      return;
+    }
+  }
+}
+
+// Run migration once on module load
+if (typeof window !== "undefined") {
+  _migrateKey(CANONICAL_SESSION_KEY, LEGACY_SESSION_KEYS);
+  _migrateKey(CANONICAL_TOKEN_KEY, LEGACY_TOKEN_KEYS);
+}
 
 export function getSessionToken() {
   if (typeof window === "undefined") return "";
 
-  let session =
-    localStorage.getItem("guest_session_token") ||
-    localStorage.getItem("pgi_guest_session_token") ||
-    localStorage.getItem("pgi_session") ||
-    localStorage.getItem("session_token") ||
-    "";
+  let session = localStorage.getItem(CANONICAL_SESSION_KEY) || "";
 
   if (!session) {
     if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -22,9 +52,7 @@ export function getSessionToken() {
       });
     }
 
-    localStorage.setItem("guest_session_token", session);
-    localStorage.setItem("pgi_guest_session_token", session);
-    localStorage.setItem("pgi_session", session);
+    localStorage.setItem(CANONICAL_SESSION_KEY, session);
   }
 
   return session;
@@ -32,37 +60,23 @@ export function getSessionToken() {
 
 export function getGuestSessionToken() {
   if (typeof window === "undefined") return "";
-  return (
-    localStorage.getItem("guest_session_token") ||
-    localStorage.getItem("pgi_guest_session_token") ||
-    localStorage.getItem("pgi_session") ||
-    localStorage.getItem("session_token") ||
-    ""
-  );
+  return localStorage.getItem(CANONICAL_SESSION_KEY) || "";
 }
 
 function getStoredAccessToken() {
   if (typeof window === "undefined") return "";
-  return (
-    localStorage.getItem("access_token") ||
-    localStorage.getItem("pgi_token") ||
-    localStorage.getItem("token") ||
-    localStorage.getItem("auth_token") ||
-    localStorage.getItem("authToken") ||
-    ""
-  );
+  return localStorage.getItem(CANONICAL_TOKEN_KEY) || "";
 }
 
 function persistAccessToken(token) {
   if (typeof window === "undefined" || !token) return;
-  localStorage.setItem("access_token", token);
-  localStorage.setItem("pgi_token", token);
+  localStorage.setItem(CANONICAL_TOKEN_KEY, token);
 }
 
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_BASE ||
-  "https://platform-api-production-d66b.up.railway.app";
+  "";
 
 export async function apiCall(path, options = {}) {
   const cleanPath = path.trim();
@@ -387,10 +401,9 @@ export async function getRFQ(rfqId) {
 // TRACKING
 // ═══════════════════════════════════════════════════
 
+// getTracking is a backward-compat alias — canonical function is getFulfillmentTracking
 export async function getTracking(rfqId) {
-  const res = await apiCall(`/api/v1/tracking/rfq/${rfqId}`);
-  if (!res.ok) throw new Error("Tracking not found");
-  return res.json();
+  return getFulfillmentTracking(rfqId);
 }
 
 // ═══════════════════════════════════════════════════

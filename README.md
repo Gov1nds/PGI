@@ -1,55 +1,31 @@
-# PGI Hub — Manufacturing Intelligence Platform
+# PGI Hub — Frontend
 
-Built with **Vite + React (JS) + React Router + Tailwind CSS**.
-Dark theme with orange accent brand system.
+React + Vite + Tailwind CSS application for the PGI Hub procurement platform.
 
-## Public Pages
-- Home: `/`
-- Services: `/services`
-- Capabilities (Manufacturing Network): `/capabilities`
-- BOM Analyzer: `/bom-analyzer`
-- Pricing / Plans: `/pricing`
-- Insights: `/insights` and `/insights/:slug`
-- News: `/news` and `/news/:slug`
-- About: `/about`
-- Contact: `/contact`
+## Quick Start
 
-## Auth Pages
-- Login: `/login`
-- Register: `/register`
-
-## Protected Pages (require login)
-- Dashboard / Control Tower: `/dashboard`
-- Project Detail / Workspace: `/project/:id` and `/project/:id/workspace`
-- Vendor Discovery: `/project/:id/vendors`
-- Analytics: `/analytics`
-
-## Content
-Edit site data (services, capabilities, insights, news, pricing, testimonials):
-- `src/content/siteData.js`
-
-## Images
-Place images in `public/images/`. Key files:
-- `logo.png` — Brand logo
-- `hero-bg.jpg` — OG/social preview image
-- `about-hero.jpg` — About page hero
-- `service-*.jpg` — Service section images
-- `capability-*.jpg` — Capability cards
-- `insight-*.jpg` — Insight article images
-- `news-*.jpg` — News article images
-
-## API
-Backend API base URL is configured via `VITE_API_BASE` environment variable.
-Default: `https://platform-api-production-d66b.up.railway.app`
-
-## Run locally
 ```bash
+cp .env.example .env
+# Set VITE_API_BASE_URL to your Platform API URL
 npm install
 npm run dev
 ```
 
-## Deploy (Vercel)
-- Import this repo in Vercel
-- Build command: `npm run build`
-- Output directory: `dist`
-- Add `VITE_API_BASE` env var if using a custom backend
+## Build & Deploy
+
+```bash
+VITE_API_BASE_URL=https://your-api-url.com npm run build
+```
+
+Deploy `dist/` to Vercel, Netlify, or any static hosting.
+
+## Key Pages
+- `/bom-analyzer` — BOM upload and analysis
+- `/dashboard` — Project overview
+- `/project/:id` — Project workspace (strategy, vendors, RFQ, tracking, analytics)
+- `/analytics` — Spend analytics
+- `/login`, `/register` — Authentication
+
+## Vercel Deployment
+
+The `vercel.json` handles SPA routing. Set `VITE_API_BASE_URL` as a Vercel environment variable.

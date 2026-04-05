@@ -12,6 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import UniversalIntakeBox from "../components/UniversalIntakeBox.jsx";
+import GuestSessionBanner from "../components/GuestSessionBanner.jsx";
 import { clearGuestWorkflowState, getPostAuthRoute, readGuestWorkflowState, saveGuestWorkflowState } from "../lib/workflowState";
 
 
@@ -207,6 +208,8 @@ export default function BOMAnalyzer() {
   const [workspaceRoute, setWorkspaceRoute] = useState(null);
   const location = useLocation();
   const [draftText, setDraftText] = useState("");
+  // F-1: Intake mode chooser — "bom" for full project, "quick" for item search
+  const [intakeMode, setIntakeMode] = useState("bom");
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -808,14 +811,78 @@ export default function BOMAnalyzer() {
           </FadeIn>
           <FadeIn delay={160}>
             <p className="bom-hero-sub">
-              Upload your Bill of Materials. Get AI-powered sourcing decisions
-              with reinforcement learning optimization across 11 global regions.
+              Upload your Bill of Materials for AI-powered procurement analysis,
+              or search for individual parts and get instant vendor matches.
             </p>
+          </FadeIn>
+
+          {/* F-1/UX-1: Intake mode chooser */}
+          <FadeIn delay={220}>
+            <div className="flex items-center justify-center gap-2 mt-6">
+              <button
+                onClick={() => setIntakeMode("bom")}
+                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all ${
+                  intakeMode === "bom"
+                    ? "bg-blue-500/20 border border-blue-500/40 text-blue-300"
+                    : "bg-white/[0.04] border border-white/[0.08] text-white/50 hover:bg-white/[0.08] hover:text-white/70"
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+                Upload BOM
+              </button>
+              <button
+                onClick={() => setIntakeMode("quick")}
+                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all ${
+                  intakeMode === "quick"
+                    ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300"
+                    : "bg-white/[0.04] border border-white/[0.08] text-white/50 hover:bg-white/[0.08] hover:text-white/70"
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+                Quick Buy / Item Search
+              </button>
+            </div>
           </FadeIn>
         </Container>
       </section>
 
       <Container className="bom-body">
+        {/* UX-3: Guest session continuity banner */}
+        {!user && sessionToken && (bomId || projectId) && (
+          <div className="mb-6">
+            <GuestSessionBanner
+              sessionToken={sessionToken}
+              bomId={bomId}
+              projectId={projectId}
+            />
+          </div>
+        )}
+
+        {/* F-1: Show UniversalIntakeBox prominently in quick-buy mode */}
+        {intakeMode === "quick" ? (
+          <div className="mb-8">
+            <div className="mb-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-4">
+              <p className="text-sm text-emerald-300 font-medium">Quick Buy Mode</p>
+              <p className="text-xs text-white/50 mt-1">
+                Search for parts, get instant price and availability estimates.
+                No project required — promote to a full project later if needed.
+              </p>
+            </div>
+            <UniversalIntakeBox
+              className=""
+              initialText={draftText}
+              initialIntent="source"
+              initialMode="auto"
+              onParsed={handleUniversalParsed}
+              onSubmitted={handleUniversalSubmitted}
+            />
+          </div>
+        ) : (
+          <>
         <UniversalIntakeBox
           className="mb-8"
           initialText={draftText}
@@ -1688,6 +1755,9 @@ export default function BOMAnalyzer() {
               </div>
             </FadeIn>
           </div>
+        )}
+        {/* F-1: End of BOM project mode */}
+        </>
         )}
       </Container>
 

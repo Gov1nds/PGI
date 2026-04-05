@@ -27,6 +27,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ProjectWorkspace from "./pages/ProjectWorkspace.jsx";
 import VendorDiscovery from "./pages/VendorDiscovery.jsx";
 import Analytics from "./pages/Analytics.jsx";
+import WorkspaceManagement from "./pages/WorkspaceManagement.jsx";
 
 export default function App() {
   return (
@@ -98,6 +99,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ProjectWorkspace />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/workspaces"
+            element={
+              <ProtectedRoute>
+                <WorkspaceManagement />
               </ProtectedRoute>
             }
           />

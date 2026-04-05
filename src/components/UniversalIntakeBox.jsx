@@ -1,3 +1,20 @@
+/**
+ * UniversalIntakeBox — Unified intake component for text/voice/item search.
+ *
+ * F-1/UX-1: Part of the canonical intake flow alongside BOM file upload.
+ * Both paths produce the same guest workflow state shape (WorkflowEnvelope)
+ * so post-auth continuation works identically regardless of entry mode.
+ *
+ * Modes:
+ *   - quick_catalog: item search, no project required
+ *   - guided_project: promotes to full BOM project
+ *   - rfq_only: direct RFQ from text description
+ *
+ * Canonical lifecycle payload emitted via onParsed/onSubmitted:
+ *   { session_token, bom_id, project_id, analysis_status,
+ *     report_visibility_level, unlock_status, workspace_route,
+ *     recommended_flow, should_create_project, purchase_mode }
+ */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Mic,
