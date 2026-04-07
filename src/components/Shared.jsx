@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 export function LoadingState({ message = "Loading..." }) {
   return (
     <div className="flex items-center justify-center py-24">
-      <div className="shadow-soft flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+      <div className="shadow-soft flex items-center gap-3 rounded-2xl border border-white/09 bg-white/04 px-4 py-3">
         <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-white/90" />
         <span className="text-sm text-muted">{message}</span>
       </div>
@@ -20,9 +20,7 @@ export function ErrorState({ message = "Something went wrong", onRetry }) {
         {message}
       </div>
       {onRetry && (
-        <button onClick={onRetry} className="secondary-btn rounded-xl px-4 py-2 text-xs">
-          Retry
-        </button>
+        <button onClick={onRetry} className="secondary-btn rounded-xl px-4 py-2 text-xs">Retry</button>
       )}
     </div>
   );
@@ -31,7 +29,7 @@ export function ErrorState({ message = "Something went wrong", onRetry }) {
 export function EmptyState({ title = "Nothing here yet", description, action, actionLabel }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 shadow-soft">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/09 bg-white/04 shadow-soft">
         <svg className="h-6 w-6 text-muted-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
         </svg>
@@ -39,9 +37,7 @@ export function EmptyState({ title = "Nothing here yet", description, action, ac
       <div className="text-sm font-medium text-white">{title}</div>
       {description && <div className="mt-1 max-w-xs text-xs text-muted">{description}</div>}
       {action && (
-        <button onClick={action} className="primary-btn mt-4 rounded-xl px-4 py-2 text-xs">
-          {actionLabel}
-        </button>
+        <button onClick={action} className="primary-btn mt-4 rounded-xl px-4 py-2 text-xs">{actionLabel}</button>
       )}
     </div>
   );
@@ -58,9 +54,7 @@ export function ProtectedRoute({ children, allowGuest = false }) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <p className="text-muted">Sign in to continue</p>
-        <Link to="/login" className="primary-btn rounded-xl px-5 py-2.5 text-sm">
-          Sign In
-        </Link>
+        <Link to="/login" className="primary-btn rounded-xl px-5 py-2.5 text-sm">Sign In</Link>
       </div>
     );
   }
@@ -150,7 +144,7 @@ export function BOMCategoryGroup({ category, items, defaultOpen = false }) {
         </div>
       </button>
       {open && (
-        <div className="border-t border-white/[0.06] divide-y divide-white/[0.05]">
+        <div className="border-t border-white/[0.05] divide-y divide-white/[0.04]">
           {items.map((c, i) => (
             <div key={i} className="flex items-center justify-between px-5 py-3 text-xs transition hover:bg-white/[0.015]">
               <div className="min-w-0 flex-1">
@@ -191,26 +185,32 @@ const NAV = [
   { l: "Contact", to: "/contact" },
 ];
 
+/* ─── Public Navbar ─── */
 export function PublicNavbar() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
   const [mo, setMo] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#050510]/80 backdrop-blur-2xl">
+    <header className="sticky top-0 z-50 border-b border-white/[0.055] bg-[#050508]/82 backdrop-blur-2xl">
       <Container>
         <div className="flex h-16 items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3">
-            <BrandLogo className="h-9 w-auto" />
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2.5">
+            <BrandLogo className="h-8 w-auto" />
           </Link>
 
-          <nav className="hidden items-center gap-6 md:flex">
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-5 md:flex">
             {NAV.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
+                end={l.to === "/"}
                 className={({ isActive }) =>
-                  `text-[13px] font-medium transition ${isActive ? "text-white" : "text-white/45 hover:text-white/85"}`
+                  `text-[13px] font-medium transition-colors duration-150 ${
+                    isActive ? "text-white" : "text-white/42 hover:text-white/82"
+                  }`
                 }
               >
                 {l.l}
@@ -218,46 +218,72 @@ export function PublicNavbar() {
             ))}
           </nav>
 
+          {/* Desktop CTA */}
           <div className="hidden items-center gap-3 md:flex">
             {user ? (
               <>
-                <Link to="/dashboard" className="text-xs text-white/55 transition hover:text-white">Dashboard</Link>
-                <button onClick={() => { logout(); nav("/"); }} className="text-xs text-white/35 transition hover:text-white">Logout</button>
+                <Link to="/dashboard" className="text-xs text-white/52 transition hover:text-white">Dashboard</Link>
+                <button
+                  onClick={() => { logout(); nav("/"); }}
+                  className="text-xs text-white/32 transition hover:text-white"
+                >
+                  Logout
+                </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-xs text-white/55 transition hover:text-white">Sign In</Link>
-                <Link to="/register" className="primary-btn rounded-xl px-4 py-2 text-xs font-medium">Get Started</Link>
+                <Link to="/login" className="text-[13px] font-medium text-white/52 transition hover:text-white">Sign In</Link>
+                <Link
+                  to="/register"
+                  className="primary-btn rounded-xl px-4 py-2 text-[12px] font-semibold"
+                >
+                  Get Started
+                </Link>
               </>
             )}
           </div>
 
-          <button onClick={() => setMo(!mo)} className="rounded-xl border border-white/10 bg-white/5 p-2 text-white/70 md:hidden">
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMo(!mo)}
+            className="rounded-xl border border-white/09 bg-white/04 p-2 text-white/65 md:hidden"
+          >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              {mo
+                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              }
             </svg>
           </button>
         </div>
       </Container>
 
+      {/* Mobile menu */}
       {mo && (
-        <div className="border-t border-white/[0.06] bg-[#050510]/95 px-4 pb-4 pt-3 md:hidden">
-          <div className="space-y-1">
+        <div className="border-t border-white/[0.055] bg-[#050508]/96 px-4 pb-5 pt-3 md:hidden">
+          <div className="space-y-0.5">
             {NAV.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
+                end={l.to === "/"}
                 onClick={() => setMo(false)}
-                className={({ isActive }) => `block rounded-xl px-3 py-2 text-sm ${isActive ? "bg-white/8 text-white" : "text-white/55"}`}
+                className={({ isActive }) =>
+                  `block rounded-xl px-3 py-2.5 text-sm font-medium ${
+                    isActive ? "bg-white/07 text-white" : "text-white/52"
+                  }`
+                }
               >
                 {l.l}
               </NavLink>
             ))}
-            {user ? (
-              <button onClick={() => { logout(); nav("/"); setMo(false); }} className="block rounded-xl px-3 py-2 text-left text-sm text-white/55">Logout</button>
-            ) : (
-              <Link to="/login" onClick={() => setMo(false)} className="block rounded-xl px-3 py-2 text-sm text-white/55">Sign In</Link>
-            )}
+            <div className="pt-2 border-t border-white/[0.05] mt-2">
+              {user ? (
+                <button onClick={() => { logout(); nav("/"); setMo(false); }} className="block w-full rounded-xl px-3 py-2.5 text-left text-sm text-white/52">Logout</button>
+              ) : (
+                <Link to="/login" onClick={() => setMo(false)} className="block rounded-xl px-3 py-2.5 text-sm text-white/52">Sign In</Link>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -265,36 +291,92 @@ export function PublicNavbar() {
   );
 }
 
-export function Footer() {
-  const links = useMemo(
-    () => [
-      { l: "Analyze", to: "/analyze" },
-      { l: "Pricing", to: "/pricing" },
-      { l: "Insights", to: "/insights" },
-      { l: "Contact", to: "/contact" },
-    ],
-    []
-  );
+/* ─── Footer ─── */
+const FOOTER_LINKS = {
+  Platform: [
+    { l: "Analyze", to: "/analyze" },
+    { l: "Marketplace", to: "/marketplace" },
+    { l: "Insights", to: "/insights" },
+  ],
+  Company: [
+    { l: "Pricing", to: "/pricing" },
+    { l: "Contact", to: "/contact" },
+  ],
+  Account: [
+    { l: "Sign In", to: "/login" },
+    { l: "Register", to: "/register" },
+  ],
+};
 
+export function Footer() {
   return (
-    <footer className="mt-20 border-t border-white/[0.06] bg-black/20">
+    <footer className="mt-20 border-t border-white/[0.055]" style={{ background: "rgba(4,4,10,0.9)" }}>
+      {/* Main footer body */}
       <Container>
-        <div className="grid gap-8 py-10 md:grid-cols-3">
+        <div className="grid gap-10 py-14 md:grid-cols-[1.6fr_repeat(3,1fr)]">
+          {/* Brand column */}
           <div>
-            <BrandLogo className="h-9 w-auto" />
-            <p className="mt-4 max-w-sm text-sm text-muted">AI sourcing marketplace for BOM analysis, vendor discovery, RFQs, and procurement execution in one workflow.</p>
+            <BrandLogo className="h-8 w-auto" />
+            <p className="mt-4 max-w-[220px] text-[13.5px] leading-6 text-muted">
+              AI sourcing marketplace for BOM analysis, vendor discovery, RFQs, and procurement execution in one workflow.
+            </p>
+            <div className="mt-6 flex items-center gap-3">
+              {/* Social placeholders */}
+              {[
+                { label: "Twitter/X", icon: "𝕏" },
+                { label: "LinkedIn", icon: "in" },
+                { label: "GitHub", icon: "⌥" },
+              ].map((s) => (
+                <button
+                  key={s.label}
+                  aria-label={s.label}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/08 bg-white/04 text-[12px] font-semibold text-white/45 transition hover:bg-white/07 hover:text-white/75"
+                >
+                  {s.icon}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm md:justify-self-center">
-            {links.map((l) => (
-              <Link key={l.l} to={l.to} className="text-white/55 transition hover:text-white">{l.l}</Link>
+
+          {/* Link columns */}
+          {Object.entries(FOOTER_LINKS).map(([group, links]) => (
+            <div key={group}>
+              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/38">
+                {group}
+              </div>
+              <ul className="space-y-2.5">
+                {links.map((l) => (
+                  <li key={l.l}>
+                    <Link
+                      to={l.to}
+                      className="text-[13.5px] text-white/52 transition-colors duration-150 hover:text-white"
+                    >
+                      {l.l}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom bar */}
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-white/[0.052] py-5 sm:flex-row">
+          <div className="text-[12px] text-white/30">
+            © {new Date().getFullYear()} PGI Hub · AI Sourcing Marketplace
+          </div>
+          <div className="flex items-center gap-5">
+            {[
+              { l: "Privacy Policy", to: "/privacy" },
+              { l: "Terms of Service", to: "/terms" },
+              { l: "Sitemap", to: "/sitemap.xml" },
+            ].map((l) => (
+              <Link key={l.l} to={l.to} className="text-[12px] text-white/30 transition hover:text-white/60">
+                {l.l}
+              </Link>
             ))}
           </div>
-          <div className="md:justify-self-end">
-            <div className="text-sm font-medium text-white">Contact</div>
-            <div className="mt-2 text-sm text-muted">contact@pgihub.com</div>
-          </div>
         </div>
-        <div className="border-t border-white/[0.06] py-5 text-center text-[11px] text-white/35">© {new Date().getFullYear()} PGI Hub -AI Sourcing Marketplace</div>
       </Container>
     </footer>
   );
