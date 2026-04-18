@@ -1,28 +1,20 @@
-/**
- * Canonical state machine status maps per SM-001 through SM-008 and MKT-002.
- * Single source of truth for status → label, color, sort order.
- * Consumed by StatusBadge, filter tabs, charts, dashboards.
- */
-
-// Color semantic groups
 const COLOR = {
-  processing: "bg-amber-500/10 text-amber-200 border border-amber-400/15",
-  success:    "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  error:      "bg-red-500/10 text-red-200 border border-red-400/15",
-  waiting:    "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  review:     "bg-violet-500/10 text-violet-200 border border-violet-400/15",
-  draft:      "bg-white/6 text-white/70 border border-white/10",
-  info:       "bg-indigo-500/10 text-indigo-200 border border-indigo-400/15",
-  purple:     "bg-purple-500/10 text-purple-200 border border-purple-400/15",
-  teal:       "bg-teal-500/10 text-teal-200 border border-teal-400/15",
-  orange:     "bg-orange-500/10 text-orange-200 border border-orange-400/15",
-  cyan:       "bg-cyan-500/10 text-cyan-200 border border-cyan-400/15",
-  lime:       "bg-lime-500/10 text-lime-200 border border-lime-400/15",
+  processing: "bg-amber-50 text-amber-700 border border-amber-200",
+  success:    "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  error:      "bg-red-50 text-red-700 border border-red-200",
+  waiting:    "bg-sky-50 text-sky-700 border border-sky-200",
+  review:     "bg-violet-50 text-violet-700 border border-violet-200",
+  draft:      "bg-gray-50 text-gray-600 border border-gray-200",
+  info:       "bg-blue-50 text-blue-700 border border-blue-200",
+  purple:     "bg-purple-50 text-purple-700 border border-purple-200",
+  teal:       "bg-teal-50 text-teal-700 border border-teal-200",
+  orange:     "bg-orange-50 text-orange-700 border border-orange-200",
+  cyan:       "bg-cyan-50 text-cyan-700 border border-cyan-200",
+  lime:       "bg-lime-50 text-lime-700 border border-lime-200",
 };
 
-const FALLBACK = "bg-white/6 text-white/55 border border-white/10";
+const FALLBACK = "bg-gray-50 text-gray-500 border border-gray-200";
 
-/** SM-001: BOM_Line (17 states) */
 export const BOM_LINE_STATES = {
   RAW:          { label: "Raw",            color: COLOR.draft,      order: 0 },
   NORMALIZING:  { label: "Normalizing",    color: COLOR.processing, order: 1 },
@@ -43,7 +35,6 @@ export const BOM_LINE_STATES = {
   ERROR:        { label: "Error",          color: COLOR.error,      order: 16 },
 };
 
-/** SM-002: Project (12 states) */
 export const PROJECT_STATES = {
   DRAFT:                   { label: "Draft",                 color: COLOR.draft,      order: 0 },
   INTAKE_COMPLETE:         { label: "Intake Complete",       color: COLOR.waiting,    order: 1 },
@@ -59,7 +50,6 @@ export const PROJECT_STATES = {
   ARCHIVED:                { label: "Archived",              color: COLOR.draft,      order: 11 },
 };
 
-/** SM-003: Sourcing_Session (9 states) */
 export const SESSION_STATES = {
   ACTIVE:              { label: "Active",              color: COLOR.waiting,    order: 0 },
   RFQ_SENT:            { label: "RFQ Sent",            color: COLOR.purple,     order: 1 },
@@ -70,7 +60,6 @@ export const SESSION_STATES = {
   PROMOTED_TO_PROJECT: { label: "Promoted to Project", color: COLOR.success,    order: 6 },
 };
 
-/** SM-004: RFQ (7 states) */
 export const RFQ_STATES = {
   DRAFT:               { label: "Draft",               color: COLOR.draft,      order: 0 },
   SENT:                { label: "Sent",                color: COLOR.purple,     order: 1 },
@@ -81,7 +70,6 @@ export const RFQ_STATES = {
   CANCELLED:           { label: "Cancelled",           color: COLOR.error,      order: 6 },
 };
 
-/** SM-005: Quote (9 states) */
 export const QUOTE_STATES = {
   PENDING:             { label: "Pending",             color: COLOR.processing, order: 0 },
   DRAFT:               { label: "Draft",               color: COLOR.draft,      order: 1 },
@@ -94,7 +82,6 @@ export const QUOTE_STATES = {
   WITHDRAWN:           { label: "Withdrawn",           color: COLOR.draft,      order: 8 },
 };
 
-/** SM-006: Purchase_Order (15 states) */
 export const PO_STATES = {
   PO_APPROVED:           { label: "Approved",            color: COLOR.success,    order: 0 },
   PO_SENT:               { label: "Sent",                color: COLOR.purple,     order: 1 },
@@ -113,7 +100,6 @@ export const PO_STATES = {
   CHANGE_ORDER_PENDING:  { label: "Change Order Pending", color: COLOR.review,     order: 14 },
 };
 
-/** SM-007: Shipment (9 states) */
 export const SHIPMENT_STATES = {
   BOOKED:           { label: "Booked",            color: COLOR.info,       order: 0 },
   PICKED_UP:        { label: "Picked Up",         color: COLOR.processing, order: 1 },
@@ -126,7 +112,6 @@ export const SHIPMENT_STATES = {
   RETURNED:         { label: "Returned",           color: COLOR.error,      order: 8 },
 };
 
-/** SM-008: Invoice (11 states) */
 export const INVOICE_STATES = {
   RECEIVED:           { label: "Received",           color: COLOR.waiting,    order: 0 },
   VALIDATING:         { label: "Validating",         color: COLOR.processing, order: 1 },
@@ -141,7 +126,6 @@ export const INVOICE_STATES = {
   CANCELLED:          { label: "Cancelled",           color: COLOR.error,      order: 10 },
 };
 
-/** MKT-002: Vendor (8 states) */
 export const VENDOR_STATES = {
   GHOST:        { label: "Ghost",        color: COLOR.draft,      order: 0 },
   INVITED:      { label: "Invited",      color: COLOR.processing, order: 1 },
@@ -153,28 +137,13 @@ export const VENDOR_STATES = {
   DEACTIVATED:  { label: "Deactivated",  color: COLOR.error,      order: 7 },
 };
 
-/**
- * Unified lookup: returns { label, color } for any status string.
- * Checks all state machines. Returns fallback for unknown statuses.
- */
-const ALL_STATES = {
-  ...BOM_LINE_STATES,
-  ...PROJECT_STATES,
-  ...SESSION_STATES,
-  ...RFQ_STATES,
-  ...QUOTE_STATES,
-  ...PO_STATES,
-  ...SHIPMENT_STATES,
-  ...INVOICE_STATES,
-  ...VENDOR_STATES,
-};
+const ALL_STATES = { ...BOM_LINE_STATES, ...PROJECT_STATES, ...SESSION_STATES, ...RFQ_STATES, ...QUOTE_STATES, ...PO_STATES, ...SHIPMENT_STATES, ...INVOICE_STATES, ...VENDOR_STATES };
 
 export function getStatusMeta(status) {
   if (!status) return { label: "—", color: FALLBACK };
   const upper = status.toUpperCase();
   const meta = ALL_STATES[upper];
   if (meta) return meta;
-  // Try lowercase/mixed match
   const lower = status.toLowerCase();
   for (const [key, val] of Object.entries(ALL_STATES)) {
     if (key.toLowerCase() === lower) return val;
