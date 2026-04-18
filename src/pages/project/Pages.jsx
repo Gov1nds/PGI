@@ -1,73 +1,360 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { LoadingState, ErrorState, EmptyState, StatusBadge, ScoreBar, BOMCategoryGroup } from "../../components/Shared";
-import { getProject, matchVendors, listRFQs, getRFQQuotes, getChatThreads, createChatThread, getChatMessages, sendChatMessage, listPOs } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
+import { useRealTime } from "../../hooks/useRealTime";
+import StaleBadge from "../../components/StaleBadge";
+import Pagination from "../../components/Pagination";
+import { BOMStatusTabs, BOMGroupBy, BOMBulkBar, AttentionQueue } from "../../components/bom/BOMDashboard";
+import VendorShortlistTable from "../../components/bom/VendorShortlistTable";
+import POTimeline from "../../components/orders/POTimeline";
+import {
+  getProject, getBOMLines, getBOMLineRecommendations,
+  matchVendors, listProjectRFQs, createRFQ, getComparisonMatrix,
+  acceptQuote, rejectQuote, listProjectPOs, createPurchaseOrder,
+  decideApproval, getProjectShipments, getProjectAnalytics,
+  getProjectEvents, getWeightProfile, setWeightProfile,
+  getChatThreads, createChatThread, getChatMessages, sendChatMessage,
+  bulkBOMAction, getBOMAttentionQueue
+} from "../../lib/api";
 
+/* ═══ OVERVIEW (Enhanced: BOM dashboard with tabs, bulk, attention queue, vendor shortlist) ═══ */
 export function ProjectOverview() {
-  const { id } = useParams(); const [p,sP]=useState(null); const [l,sL]=useState(true); const [e,sE]=useState("");
-  useEffect(()=>{getProject(id).then(sP).catch(x=>sE(x.message)).finally(()=>sL(false));},[id]);
-  if (l) return <LoadingState/>; if (e) return <ErrorState message={e}/>; if (!p) return <ErrorState message="Not found"/>;
-  const r = p.analyzer_report||{}, s = r.summary||{}, comps = r.components||[];
-  const grouped = {}; comps.forEach(c=>{const cat=c.category||"unknown";if(!grouped[cat])grouped[cat]=[];grouped[cat].push(c);});
+  const { id } = useParams();
+  const { accessToken } = useAuth();
+  const [project, setProject] = useState(null);
+  const [bomLines, setBomLines] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [statusFilter, setStatusFilter] = useState(null);
+  const [groupBy, setGroupBy] = useState("none");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selected, setSelected] = useState(new Set());
+  const [expandedLine, setExpandedLine] = useState(null);
+  const [attentionItems, setAttentionItems] = useState([]);
+
+  const fetchProject = useCallback(async () => {
+    try { setProject(await getProject(id, accessToken)); } catch (e) { setError(e); }
+  }, [id, accessToken]);
+
+  const fetchLines = useCallback(async (cursor) => {
+    try {
+      const d = await getBOMLines(id, accessToken, cursor, 50, statusFilter);
+      setBomLines(d.items || d || []);
+      setPagination(d.pagination);
+    } catch {}
+    setLoading(false);
+  }, [id, accessToken, statusFilter]);
+
+  useEffect(() => { fetchProject(); fetchLines(); }, [fetchProject, fetchLines]);
+  useEffect(() => {
+    getBOMAttentionQueue(id, accessToken).then(d => setAttentionItems(d.items || d || [])).catch(() => {});
+  }, [id, accessToken]);
+
+  useRealTime("bom_line.status_changed", useCallback((data) => {
+    if (data.project_id === id) fetchLines();
+  }, [id, fetchLines]));
+
+  if (loading) return <LoadingState />;
+  if (error) return <ErrorState error={error} onRetry={() => { fetchProject(); fetchLines(); }} />;
+  const p = project || {};
+  const bom = p.bom_summary || {};
+
+  // Count statuses for tabs
+  const statusCounts = useMemo(() => {
+    const counts = {};
+    bomLines.forEach(l => { counts[l.status] = (counts[l.status] || 0) + 1; });
+    return counts;
+  }, [bomLines]);
+
+  const toggleSelect = (lineId) => setSelected(prev => {
+    const next = new Set(prev);
+    next.has(lineId) ? next.delete(lineId) : next.add(lineId);
+    return next;
+  });
+
+  const selectAll = () => setSelected(new Set(bomLines.map(l => l.bom_line_id || l.id)));
+
+  const handleBulk = async (action) => {
+    try {
+      await bulkBOMAction(id, [...selected], action, {}, accessToken);
+      setSelected(new Set());
+      fetchLines();
+    } catch {}
+  };
+
+  // Group lines
+  const grouped = useMemo(() => {
+    if (groupBy === "none") return null;
+    const map = {};
+    bomLines.forEach(l => {
+      const key = groupBy === "category" ? (l.category || "Uncategorized")
+        : groupBy === "vendor" ? (l.matched_vendor_name || "Unassigned")
+        : groupBy === "lead_time_risk" ? (l.lead_time_risk || "Unknown")
+        : (l.tags?.[0] || "Untagged");
+      if (!map[key]) map[key] = [];
+      map[key].push(l);
+    });
+    return Object.entries(map).sort((a, b) => b[1].length - a[1].length);
+  }, [bomLines, groupBy]);
+
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-white">{p.name}</h1><div className="flex items-center gap-2 mt-1"><StatusBadge status={p.status}/><span className="text-[11px] text-zinc-500">{p.total_parts} parts</span></div></div><div className="flex gap-2"><Link to={`/project/${id}/vendors`} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-500 font-medium">Match Vendors</Link><Link to={`/project/${id}/rfq`} className="px-4 py-2 bg-white/[0.03] text-white text-xs rounded-lg border border-white/[0.06] hover:bg-white/[0.06]">Send RFQ</Link></div></div>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="kpi-card"><div className="text-xl font-bold">{s.total_items||p.total_parts}</div><div className="text-[11px] text-zinc-500">Parts</div></div>
-        <div className="kpi-card"><div className="text-xl font-bold">{Object.keys(grouped).length}</div><div className="text-[11px] text-zinc-500">Categories</div></div>
-        <div className="kpi-card"><div className="text-xl font-bold">{s.rfq_required_count||0}</div><div className="text-[11px] text-zinc-500">RFQ Required</div></div>
-        {s.total_cost_range&&<div className="kpi-card"><div className="text-lg font-bold font-mono">${s.total_cost_range.low?.toLocaleString()}</div><div className="text-[11px] text-zinc-500">Cost Low</div></div>}
-        {s.total_cost_range&&<div className="kpi-card"><div className="text-lg font-bold font-mono">${s.total_cost_range.high?.toLocaleString()}</div><div className="text-[11px] text-zinc-500">Cost High</div></div>}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div><h1 className="text-xl font-bold text-white">{p.name}</h1><div className="flex items-center gap-2 mt-1"><StatusBadge status={p.status} /><span className="text-[11px] text-zinc-500">{bom.total_lines || p.total_parts || bomLines.length} parts</span></div></div>
+        <div className="flex gap-2"><Link to={`/project/${id}/vendors`} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-500 font-medium">Match Vendors</Link><Link to={`/project/${id}/rfq`} className="px-4 py-2 bg-white/[0.03] text-white text-xs rounded-lg border border-white/[0.06] hover:bg-white/[0.06]">Send RFQ</Link></div>
       </div>
-      <div><h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Components by Category</h2>{Object.entries(grouped).sort((a,b)=>b[1].length-a[1].length).map(([cat,items])=><BOMCategoryGroup key={cat} category={cat} items={items} defaultOpen={Object.keys(grouped).length<=3}/>)}</div>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="kpi-card"><div className="text-xl font-bold">{bom.total_lines || p.total_parts || bomLines.length}</div><div className="text-[11px] text-zinc-500">Total Lines</div></div>
+        <div className="kpi-card"><div className="text-xl font-bold">{bom.scored_count || statusCounts.SCORED || 0}</div><div className="text-[11px] text-zinc-500">Scored</div></div>
+        <div className="kpi-card"><div className="text-xl font-bold">{bom.needs_review_count || statusCounts.NEEDS_REVIEW || 0}</div><div className="text-[11px] text-zinc-500">Needs Review</div></div>
+        <div className="kpi-card"><div className="text-xl font-bold">{(statusCounts.NORMALIZING||0)+(statusCounts.ENRICHING||0)+(statusCounts.SCORING||0)}</div><div className="text-[11px] text-zinc-500">In Progress</div></div>
+        <div className="kpi-card"><div className="text-xl font-bold">{statusCounts.ERROR || 0}</div><div className="text-[11px] text-zinc-500">Errors</div></div>
+      </div>
+
+      <div className="grid lg:grid-cols-[1fr_280px] gap-6">
+        <div className="space-y-4">
+          {/* Tabs + controls */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <BOMStatusTabs activeFilter={statusFilter} onChange={(v) => { setStatusFilter(v); setLoading(true); }} counts={statusCounts} />
+            <div className="flex items-center gap-2">
+              <BOMGroupBy value={groupBy} onChange={setGroupBy} />
+              <button onClick={selectAll} className="text-[11px] text-indigo-300 hover:text-indigo-200">Select All</button>
+            </div>
+          </div>
+
+          {/* BOM Lines */}
+          <div className="space-y-1.5">
+            {(grouped ? grouped.flatMap(([group, items]) => [
+              <div key={`g-${group}`} className="text-xs font-semibold text-white/30 uppercase tracking-wider pt-3 pb-1 flex items-center gap-2">
+                <span>{group}</span><span className="text-white/15">({items.length})</span>
+              </div>,
+              ...items.map(line => renderBOMLine(line))
+            ]) : bomLines.map(line => renderBOMLine(line)))}
+          </div>
+          <Pagination pagination={pagination} onPageChange={fetchLines} currentCount={bomLines.length} />
+          <BOMBulkBar selectedCount={selected.size} totalInTab={bomLines.length} onAction={handleBulk} />
+        </div>
+
+        {/* Attention Queue (left sidebar on desktop) */}
+        <AttentionQueue items={attentionItems} onItemClick={(item) => setExpandedLine(item.bom_line_id || item.id)} />
+      </div>
+
+      {/* Expanded vendor shortlist */}
+      {expandedLine && (
+        <div className="card p-5 animate-fade-in">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white">Vendor Shortlist</h3>
+            <button onClick={() => setExpandedLine(null)} className="text-xs text-white/30 hover:text-white/60">✕ Close</button>
+          </div>
+          <VendorShortlistTable lineId={expandedLine} projectId={id} />
+        </div>
+      )}
     </div>
   );
+
+  function renderBOMLine(line) {
+    const lineId = line.bom_line_id || line.id;
+    const isSelected = selected.has(lineId);
+    return (
+      <div key={lineId} className={`card p-3.5 transition ${isSelected ? "border-indigo-500/20 bg-indigo-500/[0.02]" : ""}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(lineId)} className="rounded border-white/10 bg-white/[0.03]" aria-label={`Select ${line.part_name || line.raw_text}`} />
+            <button onClick={() => setExpandedLine(expandedLine === lineId ? null : lineId)} className="text-left flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-white truncate">{line.part_name || line.raw_text || line.description}</span>
+                <StatusBadge status={line.status} />
+              </div>
+              <div className="text-[11px] text-zinc-500 mt-0.5">
+                {line.category && <span className="capitalize">{line.category}</span>}
+                {line.quantity && <span> · Qty {line.quantity}</span>}
+                {line.normalization_confidence != null && <span> · Conf: {(line.normalization_confidence*100).toFixed(0)}%</span>}
+              </div>
+            </button>
+          </div>
+          <div className="flex items-center gap-2 ml-2">
+            {line.is_processing && <div className="h-3 w-3 animate-spin rounded-full border border-indigo-400/30 border-t-indigo-400" />}
+            {line.processing_stage && <span className="text-[10px] text-amber-300">{line.processing_stage}</span>}
+            {line.status === "NEEDS_REVIEW" && <span className="text-[10px] px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-400/15">Review</span>}
+            <button onClick={() => setExpandedLine(expandedLine === lineId ? null : lineId)} className="text-[10px] text-indigo-400 hover:text-indigo-300">
+              {expandedLine === lineId ? "▾" : "▸"} Vendors
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
-export function ProjectStrategy() { const {id}=useParams(); const [p,sP]=useState(null); useEffect(()=>{getProject(id).then(sP).catch(()=>{});},[id]); return <div className="p-6"><h2 className="text-xl font-bold text-white mb-6">Sourcing Strategy</h2>{p?.strategy&&Object.keys(p.strategy).length?<div className="card p-5"><pre className="text-xs text-zinc-300 whitespace-pre-wrap">{JSON.stringify(p.strategy,null,2)}</pre></div>:<EmptyState title="No strategy yet" description="Run vendor matching to generate a strategy"/>}</div>; }
+/* ═══ STRATEGY ═══ */
+export function ProjectStrategy() {
+  const { id } = useParams(); const { accessToken } = useAuth();
+  const [profile, setProfile] = useState(null); const [loading, setLoading] = useState(true);
+  useEffect(() => { getWeightProfile(id, accessToken).then(setProfile).catch(()=>{}).finally(()=>setLoading(false)); }, [id, accessToken]);
+  const PROFILES = ["balanced","cost_first","speed_first","quality_first"];
+  const changeProfile = async (p) => { try { await setWeightProfile(id, { profile: p }, accessToken); setProfile({ ...profile, profile: p }); } catch {} };
+  if (loading) return <LoadingState />;
+  return (<div className="p-6"><h2 className="text-xl font-bold text-white mb-6">Sourcing Strategy</h2><div className="card p-5 mb-6"><h3 className="text-sm font-semibold text-white mb-3">Weight Profile</h3><div className="flex flex-wrap gap-2">{PROFILES.map(p => (<button key={p} onClick={() => changeProfile(p)} className={`tab-chip capitalize ${profile?.profile === p ? "active" : ""}`}>{p.replace("_"," ")}</button>))}</div>{profile?.weights && <div className="mt-4 space-y-2">{Object.entries(profile.weights).map(([k,v]) => <ScoreBar key={k} label={k.replace(/_/g," ")} score={v} />)}</div>}</div>{!profile && <EmptyState title="No strategy data" description="Run vendor matching to generate strategy insights" />}</div>);
+}
 
+/* ═══ VENDORS ═══ */
 export function ProjectVendors() {
-  const {id}=useParams(); const [m,sM]=useState(null); const [l,sL]=useState(false); const [e,sE]=useState("");
-  const run=async()=>{sL(true);sE("");try{sM(await matchVendors(id));}catch(x){sE(x.message);}sL(false);};
+  const { id } = useParams(); const { accessToken } = useAuth();
+  const [m, sM] = useState(null); const [l, sL] = useState(false); const [e, sE] = useState("");
+  const run = async () => { sL(true); sE(""); try { sM(await matchVendors(id, accessToken)); } catch (x) { sE(x.message); } sL(false); };
+  return (<div className="p-6"><div className="flex items-center justify-between mb-6"><h2 className="text-xl font-bold text-white">Vendor Matching</h2><button onClick={run} disabled={l} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-500 disabled:opacity-50 font-medium">{l?"Matching...":"Run Match"}</button></div>{e&&<ErrorState message={e} onRetry={run}/>}{m&&<div className="space-y-3"><p className="text-[11px] text-zinc-500">{m.total_considered} vendors evaluated</p>{(m.matches||[]).map(v=>(<div key={v.vendor_id} className="card p-5"><div className="flex items-center justify-between mb-3"><div><span className="text-xs text-indigo-400 font-bold mr-2">#{v.rank}</span><span className="text-sm font-semibold text-white">{v.vendor_name}</span></div><div className="text-right"><span className="text-lg font-bold text-white">{(v.total_score*100).toFixed(0)}%</span></div></div><div className="space-y-1.5">{Object.entries(v.breakdown||{}).map(([k,s])=><ScoreBar key={k} label={k.replace(/_/g," ")} score={s}/>)}</div><p className="text-[11px] text-zinc-500 mt-3">{v.explanation}</p></div>))}</div>}{!m&&!l&&<EmptyState title="Run vendor match to find suppliers"/>}</div>);
+}
+
+/* ═══ RFQ (with creation wizard) ═══ */
+export function ProjectRFQ() {
+  const { id } = useParams();
+  // Delegate to full RFQ Wizard (Task 7)
+  const RFQWizard = useState(null)[0] || null;
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6"><h2 className="text-xl font-bold text-white">Vendor Matching</h2><button onClick={run} disabled={l} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-500 disabled:opacity-50 font-medium">{l?"Matching...":"Run Match"}</button></div>
-      {e&&<ErrorState message={e} onRetry={run}/>}
-      {m&&<div className="space-y-3"><p className="text-[11px] text-zinc-500">{m.total_considered} vendors evaluated</p>{m.matches.map(v=>(
-        <div key={v.vendor_id} className="card p-5"><div className="flex items-center justify-between mb-3"><div><span className="text-xs text-indigo-400 font-bold mr-2">#{v.rank}</span><span className="text-sm font-semibold text-white">{v.vendor_name}</span></div><div className="text-right"><span className="text-lg font-bold text-white">{(v.total_score*100).toFixed(0)}%</span>{v.market_freshness&&<div className="text-[10px] text-zinc-600">{v.market_freshness}</div>}</div></div><div className="space-y-1.5">{Object.entries(v.breakdown||{}).map(([k,s])=><ScoreBar key={k} label={k.replace(/_/g," ")} score={s}/>)}</div><p className="text-[11px] text-zinc-500 mt-3">{v.explanation}</p></div>
-      ))}</div>}
-      {!m&&!l&&<EmptyState title="Run vendor match to find suppliers"/>}
+    <div>
+      <RFQWizardLazy projectId={id} />
     </div>
   );
 }
 
-export function ProjectRFQ() { const {id}=useParams(); const [r,sR]=useState([]); const [l,sL]=useState(true); useEffect(()=>{listRFQs(id).then(sR).catch(()=>[]).finally(()=>sL(false));},[id]); if(l)return<LoadingState/>; return <div className="p-6"><h2 className="text-xl font-bold text-white mb-6">RFQs</h2>{r.length===0?<EmptyState title="No RFQs yet" description="Match vendors first"/>:<div className="space-y-2">{r.map(x=><div key={x.id} className="card p-4"><div className="flex items-center justify-between"><div><div className="text-sm text-white">RFQ {x.id.slice(0,8)}</div><div className="text-[11px] text-zinc-600">{x.items?.length||0} items · {x.invitations?.length||0} vendors</div></div><StatusBadge status={x.status}/></div>{x.quotes?.length>0&&<div className="mt-2 text-[11px] text-zinc-500">{x.quotes.length} quote(s)</div>}</div>)}</div>}</div>; }
+// Lazy-load the full wizard
+function RFQWizardLazy({ projectId }) {
+  const [Wizard, setWizard] = useState(null);
+  useEffect(() => {
+    import("./RFQWizard").then(m => setWizard(() => m.default));
+  }, []);
+  if (!Wizard) return <LoadingState />;
+  return <Wizard />;
+}
 
+/* ═══ COMPARE (full quote matrix — Task 8-9) ═══ */
 export function ProjectCompare() {
-  const {id}=useParams(); const [quotes,sQ]=useState([]); const [l,sL]=useState(true);
-  useEffect(()=>{listRFQs(id).then(async rs=>{const qs=[];for(const r of rs){if(r.quotes?.length)try{qs.push(...(await getRFQQuotes(r.id)));}catch{}}sQ(qs);sL(false);}).catch(()=>sL(false));},[id]);
-  if(l)return<LoadingState/>;
-  return <div className="p-6"><h2 className="text-xl font-bold text-white mb-6">Quote Comparison</h2>{quotes.length===0?<EmptyState title="No quotes to compare"/>:<div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-left text-zinc-500 border-b border-white/[0.04]"><th className="pb-2 pr-4">Vendor</th><th className="pb-2 pr-4">Ver</th><th className="pb-2 pr-4">Total</th><th className="pb-2 pr-4">Status</th><th className="pb-2">Lines</th></tr></thead><tbody>{quotes.map(q=><tr key={q.id} className="border-b border-white/[0.03]"><td className="py-2.5 pr-4 text-zinc-300">{q.vendor_id?.slice(0,8)||"—"}</td><td className="py-2.5 pr-4 text-zinc-400">v{q.quote_version}</td><td className="py-2.5 pr-4 text-white font-medium font-mono">{q.total?`$${Number(q.total).toLocaleString()}`:"-"}</td><td className="py-2.5 pr-4"><StatusBadge status={q.quote_status}/></td><td className="py-2.5 text-zinc-400">{q.lines?.length||0}</td></tr>)}</tbody></table></div>}</div>;
+  const [Matrix, setMatrix] = useState(null);
+  useEffect(() => {
+    import("./QuoteMatrix").then(m => setMatrix(() => m.default));
+  }, []);
+  if (!Matrix) return <LoadingState />;
+  return <Matrix />;
 }
 
+/* ═══ CHAT (WebSocket + offer composer — Task 11) ═══ */
 export function ProjectChat() {
-  const {id}=useParams(); const {user}=useAuth();
-  const [threads,sT]=useState([]); const [active,sA]=useState(null); const [msgs,sM]=useState([]); const [msg,sMg]=useState(""); const [vis,sV]=useState("internal");
-  useEffect(()=>{getChatThreads("project",id).then(sT).catch(()=>[]);},[id]);
-  const load=async tid=>{sA(tid);try{sM(await getChatMessages(tid));}catch{}};
-  const send=async()=>{if(!msg.trim()||!active)return;try{await sendChatMessage({thread_id:active,content:msg,visibility:vis});sMg("");load(active);}catch{}};
-  const make=async()=>{try{const t=await createChatThread({context_type:"project",context_id:id,title:"Discussion"});sT(p=>[t,...p]);sA(t.id);}catch{}};
-  return (
-    <div className="p-6"><div className="flex items-center justify-between mb-6"><h2 className="text-xl font-bold text-white">Chat</h2><button onClick={make} className="px-3 py-1.5 bg-indigo-600 text-white text-xs rounded-lg font-medium">New Thread</button></div>
-    <div className="grid md:grid-cols-3 gap-4">
-      <div className="space-y-1.5">{threads.map(t=><button key={t.id} onClick={()=>load(t.id)} className={`w-full text-left p-3 rounded-xl border transition ${active===t.id?"bg-indigo-900/10 border-indigo-500/20":"card hover:border-white/10"}`}><div className="text-sm text-white">{t.title||"Thread"}</div><div className="text-[11px] text-zinc-600">{t.context_type}</div></button>)}</div>
-      <div className="md:col-span-2">{active?<><div className="space-y-2 mb-4 max-h-72 overflow-y-auto">{msgs.map(m=><div key={m.id} className={`p-3 rounded-lg text-sm ${m.visibility==="vendor_visible"?"bg-purple-500/5 border border-purple-500/10":"card"}`}><div className="flex items-center gap-2 mb-1"><span className="text-[10px] text-zinc-600">{m.sender_user_id?.slice(0,8)||"System"}</span><span className={`text-[9px] px-1.5 py-0.5 rounded ${m.visibility==="internal"?"bg-zinc-800 text-zinc-500":"bg-purple-500/10 text-purple-400"}`}>{m.visibility}</span></div><div className="text-zinc-300">{m.content}</div></div>)}</div><div className="flex gap-2"><select value={vis} onChange={e=>sV(e.target.value)} className="px-2 py-2 bg-white/[0.03] border border-white/[0.06] rounded-lg text-[11px] text-white"><option value="internal">Internal</option><option value="vendor_visible">Vendor</option></select><input value={msg} onChange={e=>sMg(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")send();}} placeholder="Message..." className="flex-1 px-3 py-2 bg-white/[0.03] border border-white/[0.06] rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none"/><button onClick={send} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg">Send</button></div></>:<EmptyState title="Select or create a thread"/>}</div>
-    </div></div>
-  );
+  const { id } = useParams();
+  const [ChatPage, setChatPage] = useState(null);
+  useEffect(() => {
+    import("./ChatPage").then(m => setChatPage(() => m.default));
+  }, []);
+  if (!ChatPage) return <LoadingState />;
+  return <ChatPage projectId={id} />;
 }
 
-export function ProjectOrders() { const {id}=useParams(); const [pos,sP]=useState([]); const [l,sL]=useState(true); useEffect(()=>{listPOs(id).then(sP).catch(()=>[]).finally(()=>sL(false));},[id]); if(l)return<LoadingState/>; return <div className="p-6"><h2 className="text-xl font-bold text-white mb-6">Purchase Orders</h2>{pos.length===0?<EmptyState title="No POs yet"/>:<div className="space-y-2">{pos.map(p=><div key={p.id} className="card flex items-center justify-between p-4"><div><div className="text-sm text-white">{p.po_number||p.id.slice(0,8)}</div><div className="text-[11px] text-zinc-600">{p.total?`$${Number(p.total).toLocaleString()}`:""}</div></div><StatusBadge status={p.status}/></div>)}</div>}</div>; }
-export function ProjectTracking() { return <div className="p-6"><h2 className="text-xl font-bold text-white mb-6">Tracking</h2><EmptyState title="No shipments yet" description="Tracking appears when orders ship"/></div>; }
-export function ProjectAnalytics() { const {id}=useParams(); const [p,sP]=useState(null); useEffect(()=>{getProject(id).then(sP).catch(()=>{});},[id]); const s=p?.analyzer_report?.summary||{}; return <div className="p-6"><h2 className="text-xl font-bold text-white mb-6">Project Analytics</h2>{s.categories?<div className="grid md:grid-cols-2 gap-4"><div className="card p-5"><h3 className="text-sm font-semibold text-white mb-3">Categories</h3>{Object.entries(s.categories).map(([k,v])=><div key={k} className="flex justify-between py-1.5 border-b border-white/[0.03]"><span className="text-xs text-zinc-400 capitalize">{k}</span><span className="text-xs text-white">{v}</span></div>)}</div>{s.total_cost_range&&<div className="card p-5"><h3 className="text-sm font-semibold text-white mb-3">Cost</h3><div className="flex justify-between py-1.5"><span className="text-xs text-zinc-400">Low</span><span className="text-xs text-white font-mono">${s.total_cost_range.low?.toLocaleString()}</span></div><div className="flex justify-between py-1.5"><span className="text-xs text-zinc-400">High</span><span className="text-xs text-white font-mono">${s.total_cost_range.high?.toLocaleString()}</span></div></div>}</div>:<EmptyState title="No data"/>}</div>; }
-export function ProjectHistory() { const {id}=useParams(); const [p,sP]=useState(null); useEffect(()=>{getProject(id).then(sP).catch(()=>{});},[id]); const ev=p?.events||[]; return <div className="p-6"><h2 className="text-xl font-bold text-white mb-6">History</h2>{ev.length===0?<EmptyState title="No events"/>:<div className="space-y-2">{ev.map((e,i)=><div key={i} className="card flex items-center gap-4 p-3.5"><div className="w-2 h-2 rounded-full bg-indigo-500 shrink-0"/><div className="flex-1"><div className="text-sm text-white">{e.event_type}</div>{e.old_status&&<div className="text-[11px] text-zinc-600">{e.old_status} → {e.new_status}</div>}</div><div className="text-[11px] text-zinc-600">{e.created_at?.slice(0,10)}</div></div>)}</div>}</div>; }
+/* ═══ ORDERS (with PO creation + approval + timeline — Task 10) ═══ */
+export function ProjectOrders() {
+  const { id } = useParams(); const { accessToken, user } = useAuth();
+  const [pos, setPOs] = useState([]); const [l, sL] = useState(true);
+  const [showCreate, setShowCreate] = useState(false); const [creating, setCreating] = useState(false);
+  const [expandedPO, setExpandedPO] = useState(null);
+
+  const fetchPOs = useCallback(async () => { try { const d = await listProjectPOs(id, accessToken); setPOs(d.items||d||[]); } catch {} sL(false); }, [id, accessToken]);
+  useEffect(() => { fetchPOs(); }, [fetchPOs]);
+
+  const handleCreate = async () => {
+    setCreating(true);
+    try { await createPurchaseOrder(id, { delivery_terms: "CIF", payment_terms: "net_30" }, accessToken); setShowCreate(false); fetchPOs(); } catch {}
+    setCreating(false);
+  };
+
+  const handleApproval = async (approvalId, decision) => {
+    try { await decideApproval(approvalId, { decision, notes: "" }, accessToken); fetchPOs(); } catch {};
+  };
+
+  if (l) return <LoadingState />;
+  return (<div className="p-6">
+    <div className="flex items-center justify-between mb-6"><h2 className="text-xl font-bold text-white">Purchase Orders</h2>{user?.permissions?.can_create_po !== false && <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg font-medium">Create PO</button>}</div>
+    {showCreate && (<div className="card p-5 mb-6"><h3 className="text-sm font-semibold text-white mb-3">Create Purchase Order</h3><p className="text-xs text-zinc-500 mb-3">Creates a PO from accepted quotes. Approval may be required.</p><button onClick={handleCreate} disabled={creating} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg disabled:opacity-50">{creating ? "Creating..." : "Create PO"}</button></div>)}
+    {pos.length===0?<EmptyState title="No POs yet"/>:<div className="space-y-3">{pos.map(p=>{
+      const poId = p.id||p.po_id;
+      return (<div key={poId} className="card p-4">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <div className="text-sm text-white">{p.po_number||poId.slice(0,8)}</div>
+            <div className="text-[11px] text-zinc-600">{p.vendor_name||""} · {p.total?`$${Number(p.total).toLocaleString()}`:""}</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <StatusBadge status={p.status}/>
+            <button onClick={() => setExpandedPO(expandedPO === poId ? null : poId)} className="text-[10px] text-indigo-400 hover:text-indigo-300">
+              {expandedPO === poId ? "▾ Hide" : "▸ Timeline"}
+            </button>
+            {p.approval_id && p.approval_status === "PENDING" && user?.permissions?.can_approve && (<><button onClick={() => handleApproval(p.approval_id, "APPROVED")} className="px-2 py-1 bg-emerald-600 text-white text-[10px] rounded">Approve</button><button onClick={() => handleApproval(p.approval_id, "REJECTED")} className="px-2 py-1 bg-red-600/20 text-red-300 text-[10px] rounded border border-red-500/20">Reject</button></>)}
+          </div>
+        </div>
+        {expandedPO === poId && (
+          <div className="mt-3 pt-3 border-t border-white/[0.04]">
+            <POTimeline poId={poId} onRefresh={fetchPOs} />
+          </div>
+        )}
+      </div>);
+    })}</div>}
+  </div>);
+}
+
+/* ═══ TRACKING (with POTimeline — Task 10) ═══ */
+export function ProjectTracking() {
+  const { id } = useParams(); const { accessToken } = useAuth();
+  const [pos, setPOs] = useState([]); const [loading, setLoading] = useState(true);
+
+  const fetchPOs = useCallback(async () => {
+    try {
+      const poData = await listProjectPOs(id, accessToken);
+      setPOs(poData.items || poData || []);
+    } catch {}
+    setLoading(false);
+  }, [id, accessToken]);
+
+  useEffect(() => { fetchPOs(); }, [fetchPOs]);
+
+  useRealTime("shipment.milestone", useCallback(() => { fetchPOs(); }, [fetchPOs]));
+
+  if (loading) return <LoadingState />;
+  return (<div className="p-6">
+    <h2 className="text-xl font-bold text-white mb-6">Order Tracking</h2>
+    {pos.length === 0 ? <EmptyState title="No orders yet" description="Tracking appears when purchase orders are created" /> :
+      <div className="space-y-4">{pos.map(po => {
+        const poId = po.id || po.po_id;
+        return (
+          <div key={poId} className="card p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="text-sm font-medium text-white">{po.po_number || poId.slice(0,8)}</div>
+                <div className="text-[11px] text-zinc-500">{po.vendor_name || ""} · {po.total ? `$${Number(po.total).toLocaleString()}` : ""}</div>
+              </div>
+              <StatusBadge status={po.status} />
+            </div>
+            <POTimeline poId={poId} onRefresh={fetchPOs} />
+          </div>
+        );
+      })}</div>
+    }
+  </div>);
+}
+
+/* ═══ ANALYTICS (project-scoped) ═══ */
+export function ProjectAnalytics() {
+  const { id } = useParams(); const { accessToken } = useAuth();
+  const [data, setData] = useState(null); const [loading, setLoading] = useState(true);
+  useEffect(() => { getProjectAnalytics(id, accessToken).then(setData).catch(()=>{}).finally(()=>setLoading(false)); }, [id, accessToken]);
+  if (loading) return <LoadingState />;
+  if (!data) return <EmptyState title="No analytics data" />;
+  return (<div className="p-6"><h2 className="text-xl font-bold text-white mb-6">Project Analytics</h2>{data.computed_at && <StaleBadge computedAt={data.computed_at} />}<div className="grid md:grid-cols-2 gap-4 mt-4">{data.spend_by_category && <div className="card p-5"><h3 className="text-sm font-semibold text-white mb-3">Spend by Category</h3>{Object.entries(data.spend_by_category).map(([k,v])=><div key={k} className="flex justify-between py-1.5 border-b border-white/[0.03]"><span className="text-xs text-zinc-400 capitalize">{k}</span><span className="text-xs text-white font-mono">${v.toLocaleString()}</span></div>)}</div>}{data.vendor_performance && <div className="card p-5"><h3 className="text-sm font-semibold text-white mb-3">Vendor Performance</h3>{data.vendor_performance.map(v => <div key={v.vendor_id} className="flex justify-between py-1.5 border-b border-white/[0.03]"><span className="text-xs text-zinc-400">{v.vendor_name}</span><span className="text-xs text-white">{(v.score*100).toFixed(0)}%</span></div>)}</div>}{data.savings_vs_baseline != null && <div className="card p-5"><h3 className="text-sm font-semibold text-white mb-3">Savings vs Baseline</h3><div className="text-2xl font-bold text-emerald-400">${data.savings_vs_baseline.toLocaleString()}</div></div>}</div></div>);
+}
+
+/* ═══ HISTORY (paginated events) ═══ */
+export function ProjectHistory() {
+  const { id } = useParams(); const { accessToken } = useAuth();
+  const [events, setEvents] = useState([]); const [loading, setLoading] = useState(true); const [pagination, setPagination] = useState(null);
+  const fetch = useCallback(async (cursor) => { setLoading(true); try { const d = await getProjectEvents(id, accessToken, cursor); setEvents(d.items||d||[]); setPagination(d.pagination); } catch {} setLoading(false); }, [id, accessToken]);
+  useEffect(() => { fetch(); }, [fetch]);
+  if (loading) return <LoadingState />;
+  return (<div className="p-6"><h2 className="text-xl font-bold text-white mb-6">History</h2>{events.length===0?<EmptyState title="No events"/>:<div className="space-y-2">{events.map((e,i)=><div key={e.event_id||i} className="card flex items-center gap-4 p-3.5"><div className="w-2 h-2 rounded-full bg-indigo-500 shrink-0"/><div className="flex-1"><div className="text-sm text-white">{e.event_type}</div>{(e.from_state||e.old_status)&&<div className="text-[11px] text-zinc-600">{e.from_state||e.old_status} → {e.to_state||e.new_status}</div>}{e.actor && <div className="text-[10px] text-zinc-600">by {e.actor}</div>}</div><div className="text-[11px] text-zinc-600">{(e.timestamp||e.created_at)?.slice(0,16)}</div></div>)}</div>}<Pagination pagination={pagination} onPageChange={fetch} currentCount={events.length} /></div>);
+}

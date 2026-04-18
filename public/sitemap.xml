@@ -8,4 +8,6 @@
   <url><loc>https://pgihub.com/contact</loc><lastmod>2025-01-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://pgihub.com/login</loc><lastmod>2025-01-01</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
   <url><loc>https://pgihub.com/register</loc><lastmod>2025-01-01</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://pgihub.com/privacy</loc><lastmod>2025-01-01</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://pgihub.com/terms</loc><lastmod>2025-01-01</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

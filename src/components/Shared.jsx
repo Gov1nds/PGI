@@ -1,7 +1,10 @@
 import { useAuth } from "../context/AuthContext";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { getStatusMeta } from "../lib/statusMaps";
+import { ApiValidationError, ApiForbiddenError } from "../lib/apiErrors";
 
+/* ─── Loading ─── */
 export function LoadingState({ message = "Loading..." }) {
   return (
     <div className="flex items-center justify-center py-24">
@@ -13,19 +16,44 @@ export function LoadingState({ message = "Loading..." }) {
   );
 }
 
-export function ErrorState({ message = "Something went wrong", onRetry }) {
+/* ─── Error (enhanced: typed errors, trace_id, field-level) ─── */
+export function ErrorState({ message = "Something went wrong", error, onRetry }) {
+  if (error instanceof ApiValidationError && error.details?.length > 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+        <div className="rounded-2xl border border-red-500/15 bg-red-500/10 p-4 text-sm text-red-200">
+          <div className="mb-2 font-medium">{error.message || "Validation failed"}</div>
+          <ul className="space-y-1 text-left text-xs">
+            {error.details.map((d, i) => <li key={i} className="text-red-300">{d.field ? `${d.field}: ` : ""}{d.message || d}</li>)}
+          </ul>
+          {error.traceId && <div className="mt-2 text-[10px] text-red-400/60">Ref: {error.traceId}</div>}
+        </div>
+        {onRetry && <button onClick={onRetry} className="secondary-btn rounded-xl px-4 py-2 text-xs">Retry</button>}
+      </div>
+    );
+  }
+  if (error instanceof ApiForbiddenError) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
+        <div className="rounded-full border border-orange-500/15 bg-orange-500/10 px-4 py-2 text-sm text-orange-200">
+          Insufficient permissions
+        </div>
+        <p className="text-xs text-muted">You don't have access to this resource. Contact your organization admin.</p>
+        {error.traceId && <div className="text-[10px] text-zinc-600">Ref: {error.traceId}</div>}
+      </div>
+    );
+  }
+  const msg = error?.message || message;
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
-      <div className="rounded-full border border-red-500/15 bg-red-500/10 px-4 py-2 text-sm text-red-200">
-        {message}
-      </div>
-      {onRetry && (
-        <button onClick={onRetry} className="secondary-btn rounded-xl px-4 py-2 text-xs">Retry</button>
-      )}
+      <div className="rounded-full border border-red-500/15 bg-red-500/10 px-4 py-2 text-sm text-red-200">{msg}</div>
+      {error?.traceId && <div className="text-[10px] text-zinc-600">Ref: {error.traceId}</div>}
+      {onRetry && <button onClick={onRetry} className="secondary-btn rounded-xl px-4 py-2 text-xs">Retry</button>}
     </div>
   );
 }
 
+/* ─── Empty ─── */
 export function EmptyState({ title = "Nothing here yet", description, action, actionLabel }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -36,20 +64,28 @@ export function EmptyState({ title = "Nothing here yet", description, action, ac
       </div>
       <div className="text-sm font-medium text-white">{title}</div>
       {description && <div className="mt-1 max-w-xs text-xs text-muted">{description}</div>}
-      {action && (
-        <button onClick={action} className="primary-btn mt-4 rounded-xl px-4 py-2 text-xs">{actionLabel}</button>
-      )}
+      {action && <button onClick={action} className="primary-btn mt-4 rounded-xl px-4 py-2 text-xs">{actionLabel}</button>}
     </div>
   );
 }
 
+/* ─── Container ─── */
 export function Container({ children, className = "" }) {
   return <div className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>;
 }
 
-export function ProtectedRoute({ children, allowGuest = false }) {
-  const { user, loading } = useAuth();
-  if (loading) return <LoadingState />;
+/* ─── ProtectedRoute (with refresh + permission gating) ─── */
+export function ProtectedRoute({ children, allowGuest = false, requiredPermission }) {
+  const { user, loading, refreshAuth } = useAuth();
+  const [refreshAttempted, setRefreshAttempted] = useState(false);
+
+  useEffect(() => {
+    if (!user && !loading && !refreshAttempted) {
+      refreshAuth().finally(() => setRefreshAttempted(true));
+    }
+  }, [user, loading, refreshAttempted, refreshAuth]);
+
+  if (loading || (!user && !refreshAttempted && !allowGuest)) return <LoadingState />;
   if (!user && !allowGuest) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
@@ -58,56 +94,28 @@ export function ProtectedRoute({ children, allowGuest = false }) {
       </div>
     );
   }
+  if (user && requiredPermission && !user.permissions?.[requiredPermission]) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+        <div className="rounded-full border border-orange-500/15 bg-orange-500/10 px-4 py-2 text-sm text-orange-200">Insufficient permissions</div>
+        <p className="text-xs text-muted">You need the "{requiredPermission}" permission to access this page.</p>
+      </div>
+    );
+  }
   return children;
 }
 
-const SC = {
-  draft: "bg-white/6 text-white/70 border border-white/10",
-  analyzing: "bg-amber-500/10 text-amber-200 border border-amber-400/15",
-  analyzed: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  strategy: "bg-indigo-500/10 text-indigo-200 border border-indigo-400/15",
-  vendor_match: "bg-violet-500/10 text-violet-200 border border-violet-400/15",
-  rfq_pending: "bg-purple-500/10 text-purple-200 border border-purple-400/15",
-  rfq_sent: "bg-purple-500/10 text-purple-200 border border-purple-400/15",
-  quote_compare: "bg-amber-500/10 text-amber-200 border border-amber-400/15",
-  negotiation: "bg-orange-500/10 text-orange-200 border border-orange-400/15",
-  vendor_selected: "bg-teal-500/10 text-teal-200 border border-teal-400/15",
-  po_issued: "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  in_production: "bg-lime-500/10 text-lime-200 border border-lime-400/15",
-  qc_inspection: "bg-cyan-500/10 text-cyan-200 border border-cyan-400/15",
-  shipped: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  in_transit: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  delivered: "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  completed: "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  cancelled: "bg-red-500/10 text-red-200 border border-red-400/15",
-  invited: "bg-amber-500/10 text-amber-200 border border-amber-400/15",
-  opened: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  partially_quoted: "bg-amber-500/10 text-amber-200 border border-amber-400/15",
-  fully_quoted: "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  awarded: "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  expired: "bg-red-500/10 text-red-200 border border-red-400/15",
-  received: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  submitted: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  issued: "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  pending: "bg-amber-500/10 text-amber-200 border border-amber-400/15",
-  active: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-  created: "bg-white/6 text-white/70 border border-white/10",
-  booked: "bg-indigo-500/10 text-indigo-200 border border-indigo-400/15",
-  customs: "bg-orange-500/10 text-orange-200 border border-orange-400/15",
-  promoted: "bg-emerald-500/10 text-emerald-200 border border-emerald-400/15",
-  saved: "bg-teal-500/10 text-teal-200 border border-teal-400/15",
-  sent: "bg-purple-500/10 text-purple-200 border border-purple-400/15",
-  quoted: "bg-sky-500/10 text-sky-200 border border-sky-400/15",
-};
-
+/* ─── StatusBadge (canonical SM-001—SM-008 + MKT-002) ─── */
 export function StatusBadge({ status }) {
+  const meta = getStatusMeta(status);
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium whitespace-nowrap ${SC[status] || "bg-white/6 text-white/55 border border-white/10"}`}>
-      {(status || "—").replace(/_/g, " ")}
+    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium whitespace-nowrap ${meta.color}`}>
+      {meta.label}
     </span>
   );
 }
 
+/* ─── ScoreBar ─── */
 export function ScoreBar({ score, label }) {
   const p = Math.round((score || 0) * 100);
   const c = p >= 70 ? "bg-emerald-400" : p >= 40 ? "bg-amber-300" : "bg-red-300";
@@ -122,13 +130,13 @@ export function ScoreBar({ score, label }) {
   );
 }
 
+/* ─── BOMCategoryGroup ─── */
 export function BOMCategoryGroup({ category, items, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen);
   const rfq = items.filter((c) => c.rfq_required).length;
   const cL = items.reduce((s, c) => s + (c.cost_estimate?.total_cost_low || 0), 0);
   const cH = items.reduce((s, c) => s + (c.cost_estimate?.total_cost_high || 0), 0);
   const high = items.filter((c) => c.risk_assessment?.risk_level === "high").length;
-
   return (
     <div className="card mb-3 overflow-hidden">
       <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between p-4 text-left transition hover:bg-white/[0.02]">
@@ -148,21 +156,20 @@ export function BOMCategoryGroup({ category, items, defaultOpen = false }) {
           {items.map((c, i) => (
             <div key={i} className="flex items-center justify-between px-5 py-3 text-xs transition hover:bg-white/[0.015]">
               <div className="min-w-0 flex-1">
-                <div className="truncate text-white/85">{c.description || c.raw_text}</div>
-                <div className="mt-0.5 text-muted-2">{c.item_id} · Qty {c.quantity} · {c.procurement_class}</div>
+                <div className="flex items-center gap-2">
+                  <span className="truncate text-white/85">{c.description || c.raw_text}</span>
+                  {c.status && <StatusBadge status={c.status} />}
+                </div>
+                <div className="mt-0.5 text-muted-2">{c.item_id || c.bom_line_id} · Qty {c.quantity} · {c.procurement_class || c.category}</div>
               </div>
               <div className="ml-4 flex shrink-0 items-center gap-3">
                 {c.cost_estimate && <span className="font-mono text-muted">${c.cost_estimate.unit_cost_mid}</span>}
                 {c.risk_assessment && (
                   <span className={`rounded px-1.5 py-0.5 text-[10px] ${
-                    c.risk_assessment.risk_level === "high"
-                      ? "border border-red-400/15 bg-red-500/10 text-red-200"
-                      : c.risk_assessment.risk_level === "medium"
-                      ? "border border-amber-400/15 bg-amber-500/10 text-amber-200"
-                      : "border border-emerald-400/15 bg-emerald-500/10 text-emerald-200"
-                  }`}>
-                    {c.risk_assessment.risk_level}
-                  </span>
+                    c.risk_assessment.risk_level === "high" ? "border border-red-400/15 bg-red-500/10 text-red-200"
+                    : c.risk_assessment.risk_level === "medium" ? "border border-amber-400/15 bg-amber-500/10 text-amber-200"
+                    : "border border-emerald-400/15 bg-emerald-500/10 text-emerald-200"
+                  }`}>{c.risk_assessment.risk_level}</span>
                 )}
               </div>
             </div>
@@ -173,6 +180,7 @@ export function BOMCategoryGroup({ category, items, defaultOpen = false }) {
   );
 }
 
+/* ─── BrandLogo ─── */
 function BrandLogo({ className = "h-10 w-auto" }) {
   return <img src="/logo.svg" alt="PGI Hub" className={className} />;
 }
@@ -190,92 +198,41 @@ export function PublicNavbar() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
   const [mo, setMo] = useState(false);
-
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.055] bg-[#050508]/82 backdrop-blur-2xl">
       <Container>
         <div className="flex h-16 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5">
-            <BrandLogo className="h-8 w-auto" />
-          </Link>
-
-          {/* Desktop nav */}
+          <Link to="/" className="flex items-center gap-2.5"><BrandLogo className="h-8 w-auto" /></Link>
           <nav className="hidden items-center gap-5 md:flex">
             {NAV.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                end={l.to === "/"}
-                className={({ isActive }) =>
-                  `text-[13px] font-medium transition-colors duration-150 ${
-                    isActive ? "text-white" : "text-white/42 hover:text-white/82"
-                  }`
-                }
-              >
-                {l.l}
-              </NavLink>
+              <NavLink key={l.to} to={l.to} end={l.to === "/"} className={({ isActive }) => `text-[13px] font-medium transition-colors duration-150 ${isActive ? "text-white" : "text-white/42 hover:text-white/82"}`}>{l.l}</NavLink>
             ))}
           </nav>
-
-          {/* Desktop CTA */}
           <div className="hidden items-center gap-3 md:flex">
             {user ? (
               <>
                 <Link to="/dashboard" className="text-xs text-white/52 transition hover:text-white">Dashboard</Link>
-                <button
-                  onClick={() => { logout(); nav("/"); }}
-                  className="text-xs text-white/32 transition hover:text-white"
-                >
-                  Logout
-                </button>
+                <button onClick={() => { logout(); nav("/"); }} className="text-xs text-white/32 transition hover:text-white">Logout</button>
               </>
             ) : (
               <>
                 <Link to="/login" className="text-[13px] font-medium text-white/52 transition hover:text-white">Sign In</Link>
-                <Link
-                  to="/register"
-                  className="primary-btn rounded-xl px-4 py-2 text-[12px] font-semibold"
-                >
-                  Get Started
-                </Link>
+                <Link to="/register" className="primary-btn rounded-xl px-4 py-2 text-[12px] font-semibold">Get Started</Link>
               </>
             )}
           </div>
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMo(!mo)}
-            className="rounded-xl border border-white/09 bg-white/04 p-2 text-white/65 md:hidden"
-          >
+          <button onClick={() => setMo(!mo)} className="rounded-xl border border-white/09 bg-white/04 p-2 text-white/65 md:hidden">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mo
-                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              }
+              {mo ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
             </svg>
           </button>
         </div>
       </Container>
-
-      {/* Mobile menu */}
       {mo && (
         <div className="border-t border-white/[0.055] bg-[#050508]/96 px-4 pb-5 pt-3 md:hidden">
           <div className="space-y-0.5">
             {NAV.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                end={l.to === "/"}
-                onClick={() => setMo(false)}
-                className={({ isActive }) =>
-                  `block rounded-xl px-3 py-2.5 text-sm font-medium ${
-                    isActive ? "bg-white/07 text-white" : "text-white/52"
-                  }`
-                }
-              >
-                {l.l}
-              </NavLink>
+              <NavLink key={l.to} to={l.to} end={l.to === "/"} onClick={() => setMo(false)} className={({ isActive }) => `block rounded-xl px-3 py-2.5 text-sm font-medium ${isActive ? "bg-white/07 text-white" : "text-white/52"}`}>{l.l}</NavLink>
             ))}
             <div className="pt-2 border-t border-white/[0.05] mt-2">
               {user ? (
@@ -293,87 +250,37 @@ export function PublicNavbar() {
 
 /* ─── Footer ─── */
 const FOOTER_LINKS = {
-  Platform: [
-    { l: "Analyze", to: "/analyze" },
-    { l: "Marketplace", to: "/marketplace" },
-    { l: "Insights", to: "/insights" },
-  ],
-  Company: [
-    { l: "Pricing", to: "/pricing" },
-    { l: "Contact", to: "/contact" },
-  ],
-  Account: [
-    { l: "Sign In", to: "/login" },
-    { l: "Register", to: "/register" },
-  ],
+  Platform: [{ l: "Analyze", to: "/analyze" }, { l: "Marketplace", to: "/marketplace" }, { l: "Insights", to: "/insights" }],
+  Company: [{ l: "Pricing", to: "/pricing" }, { l: "Contact", to: "/contact" }],
+  Account: [{ l: "Sign In", to: "/login" }, { l: "Register", to: "/register" }],
 };
 
 export function Footer() {
   return (
     <footer className="mt-20 border-t border-white/[0.055]" style={{ background: "rgba(4,4,10,0.9)" }}>
-      {/* Main footer body */}
       <Container>
         <div className="grid gap-10 py-14 md:grid-cols-[1.6fr_repeat(3,1fr)]">
-          {/* Brand column */}
           <div>
             <BrandLogo className="h-8 w-auto" />
-            <p className="mt-4 max-w-[220px] text-[13.5px] leading-6 text-muted">
-              AI sourcing marketplace for BOM analysis, vendor discovery, RFQs, and procurement execution in one workflow.
-            </p>
+            <p className="mt-4 max-w-[220px] text-[13.5px] leading-6 text-muted">AI sourcing marketplace for BOM analysis, vendor discovery, RFQs, and procurement execution in one workflow.</p>
             <div className="mt-6 flex items-center gap-3">
-              {/* Social placeholders */}
-              {[
-                { label: "Twitter/X", icon: "𝕏" },
-                { label: "LinkedIn", icon: "in" },
-                { label: "GitHub", icon: "⌥" },
-              ].map((s) => (
-                <button
-                  key={s.label}
-                  aria-label={s.label}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/08 bg-white/04 text-[12px] font-semibold text-white/45 transition hover:bg-white/07 hover:text-white/75"
-                >
-                  {s.icon}
-                </button>
+              {[{ label: "Twitter/X", icon: "𝕏" }, { label: "LinkedIn", icon: "in" }, { label: "GitHub", icon: "⌥" }].map((s) => (
+                <button key={s.label} aria-label={s.label} className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/08 bg-white/04 text-[12px] font-semibold text-white/45 transition hover:bg-white/07 hover:text-white/75">{s.icon}</button>
               ))}
             </div>
           </div>
-
-          {/* Link columns */}
           {Object.entries(FOOTER_LINKS).map(([group, links]) => (
             <div key={group}>
-              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/38">
-                {group}
-              </div>
-              <ul className="space-y-2.5">
-                {links.map((l) => (
-                  <li key={l.l}>
-                    <Link
-                      to={l.to}
-                      className="text-[13.5px] text-white/52 transition-colors duration-150 hover:text-white"
-                    >
-                      {l.l}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/38">{group}</div>
+              <ul className="space-y-2.5">{links.map((l) => (<li key={l.l}><Link to={l.to} className="text-[13.5px] text-white/52 transition-colors duration-150 hover:text-white">{l.l}</Link></li>))}</ul>
             </div>
           ))}
         </div>
-
-        {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-3 border-t border-white/[0.052] py-5 sm:flex-row">
-          <div className="text-[12px] text-white/30">
-            © {new Date().getFullYear()} PGI Hub · AI Sourcing Marketplace
-          </div>
+          <div className="text-[12px] text-white/30">© {new Date().getFullYear()} PGI Hub · AI Sourcing Marketplace</div>
           <div className="flex items-center gap-5">
-            {[
-              { l: "Privacy Policy", to: "/privacy" },
-              { l: "Terms of Service", to: "/terms" },
-              { l: "Sitemap", to: "/sitemap.xml" },
-            ].map((l) => (
-              <Link key={l.l} to={l.to} className="text-[12px] text-white/30 transition hover:text-white/60">
-                {l.l}
-              </Link>
+            {[{ l: "Privacy Policy", to: "/privacy" }, { l: "Terms of Service", to: "/terms" }, { l: "Sitemap", to: "/sitemap.xml" }].map((l) => (
+              <Link key={l.l} to={l.to} className="text-[12px] text-white/30 transition hover:text-white/60">{l.l}</Link>
             ))}
           </div>
         </div>

@@ -69,3 +69,16 @@ export const orgSchema = {
   url: "https://pgihub.com/",
   logo: "https://pgihub.com/favicon.svg",
 };
+
+export const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "PGI Hub AI Sourcing Platform",
+  description: "AI-powered procurement and sourcing marketplace for BOM analysis, vendor discovery, RFQs, and supply chain execution.",
+  brand: { "@type": "Brand", name: "PGI Hub" },
+  url: "https://pgihub.com/",
+  offers: [
+    { "@type": "Offer", name: "Starter", price: "39", priceCurrency: "USD", url: "https://pgihub.com/pricing" },
+    { "@type": "Offer", name: "Enterprise", price: "99", priceCurrency: "USD", url: "https://pgihub.com/pricing" },
+  ],
+};

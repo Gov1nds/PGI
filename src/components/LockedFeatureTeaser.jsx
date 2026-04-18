@@ -1,0 +1,27 @@
+import { Link } from "react-router-dom";
+
+export default function LockedFeatureTeaser({ feature: f }) {
+  return (
+    <div className="card p-4 flex items-start gap-3 border-white/[0.04] hover:border-white/[0.08] transition group">
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-400/10 shrink-0 mt-0.5">
+        <svg className="w-4 h-4 text-amber-300/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-medium text-white/80 group-hover:text-white transition">
+          {f.feature}
+        </div>
+        <p className="text-[11px] text-white/35 leading-4 mt-0.5">
+          {f.description}
+        </p>
+        <Link
+          to="/register"
+          className="inline-block mt-1.5 text-[11px] text-indigo-300 hover:text-indigo-200 font-medium transition"
+        >
+          Sign up to unlock →
+        </Link>
+      </div>
+    </div>
+  );
+}
