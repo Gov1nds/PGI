@@ -54,16 +54,16 @@ export default function OAuthCallback() {
         {error ? (
           <>
             <div className="mb-3 text-red-400 text-lg">⚠</div>
-            <div className="text-sm text-red-600">{error}</div>
-            <div className="mt-2 text-xs text-[#0A0A0A]/40">Redirecting to sign in…</div>
+            <div className="text-sm text-red-200">{error}</div>
+            <div className="mt-2 text-xs text-white/40">Redirecting to sign in…</div>
           </>
         ) : (
           <>
             <div className="mb-4 flex justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-indigo-400" />
             </div>
-            <div className="text-sm text-[#0A0A0A]/70">Signing you in…</div>
-            <div className="mt-1 text-xs text-[#0A0A0A]/30 capitalize">{provider}</div>
+            <div className="text-sm text-white/70">Signing you in…</div>
+            <div className="mt-1 text-xs text-white/30 capitalize">{provider}</div>
           </>
         )}
       </div>

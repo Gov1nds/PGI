@@ -30,6 +30,7 @@ export default function AppShell() {
   const debounceRef = useRef(null);
   const notifRef = useRef(null);
 
+  // Debounced search
   const onSearchChange = useCallback((val) => {
     setSearchQuery(val);
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -42,78 +43,86 @@ export default function AppShell() {
     }, 300);
   }, [accessToken]);
 
+  // Close notification dropdown on click outside
   useEffect(() => {
     const handler = (e) => { if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotif(false); };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Filter RAIL by permissions
   const visibleRail = RAIL.filter(r => !r.perm || user?.permissions?.[r.perm]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#FAFAFA]">
-      <aside className="hidden w-60 flex-col border-r border-[#E5E5E5] bg-white md:flex">
-        <div className="flex h-14 items-center border-b border-[#E5E5E5] px-5">
-          <Link to="/dashboard" className="flex items-center gap-2.5">
-            <img src="/logo.svg" alt="PGI Hub" className="h-7 w-auto" />
-            <span className="text-sm font-semibold text-[#0A0A0A]">PGI Hub</span>
+    <div className="flex h-screen overflow-hidden bg-transparent">
+      <aside className="hidden w-64 flex-col border-r border-white/[0.055] bg-black/80 backdrop-blur-2xl md:flex">
+        <div className="flex h-16 items-center border-b border-white/[0.055] px-5">
+          <Link to="/dashboard" className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-[9px] border border-white/15 bg-white/[0.04]">
+              <svg viewBox="0 0 18 18" className="h-4 w-4" fill="none">
+                <path d="M3 5.5L9 2l6 3.5v7L9 16l-6-3.5v-7z" stroke="white" strokeWidth="1.3" strokeLinejoin="round" />
+                <path d="M9 9.5v6.5M3 5.5l6 4 6-4" stroke="white" strokeWidth="1.3" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <span className="text-[15px] font-semibold tracking-tight text-white">PGI<span className="text-white/55">Hub</span></span>
           </Link>
-          {user?.organization_name && <span className="ml-2 text-[10px] text-[#9CA3AF] truncate">{user.organization_name}</span>}
+          {user?.organization_name && <span className="ml-2 text-[10px] text-white/30 truncate">{user.organization_name}</span>}
         </div>
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           {visibleRail.map((r) => (
             <NavLink key={r.to} to={r.to} className={({ isActive }) => `rail-link ${isActive ? "active" : ""}`}>
               <I d={r.icon} /><span>{r.label}</span>
             </NavLink>
           ))}
         </nav>
-        <div className="border-t border-[#E5E5E5] p-4">
-          <div className="mb-2 truncate text-xs text-[#6B7280]">{user?.email}</div>
-          <button onClick={() => { logout(); nav("/"); }} className="text-[11px] text-[#9CA3AF] transition hover:text-[#0A0A0A]">Sign out</button>
+        <div className="border-t border-white/[0.06] p-4">
+          <div className="mb-2 truncate text-xs text-muted">{user?.email}</div>
+          <button onClick={() => { logout(); nav("/"); }} className="text-[11px] text-white/40 transition hover:text-white">Sign out</button>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 shrink-0 items-center gap-4 border-b border-[#E5E5E5] bg-white px-4 md:px-6">
+        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-white/[0.055] bg-black/60 px-4 backdrop-blur-2xl md:px-6">
           <div className="flex-1 relative">
             <div className="max-w-xl">
               <input
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Search projects, vendors, parts..."
-                className="glass-input w-full rounded-lg px-4 py-2 text-sm"
+                className="glass-input w-full rounded-xl px-4 py-2.5 text-sm"
               />
             </div>
             {searchResults && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-xl rounded-xl border border-[#E5E5E5] bg-white shadow-lg">
+              <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-xl rounded-xl border border-white/[0.08] bg-[#0a0a0a] shadow-2xl">
                 {searchResults.slice(0, 8).map((r, i) => (
-                  <button key={i} onClick={() => { nav(r.deep_link || `/project/${r.entity_id}`); setSearchResults(null); setSearchQuery(""); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-[#F5F5F5] first:rounded-t-xl last:rounded-b-xl">
-                    <span className="text-[10px] uppercase text-[#9CA3AF] w-16">{r.entity_type}</span>
-                    <span className="text-sm text-[#0A0A0A] truncate">{r.title}</span>
-                    {r.subtitle && <span className="text-[11px] text-[#9CA3AF] truncate">{r.subtitle}</span>}
+                  <button key={i} onClick={() => { nav(r.deep_link || `/project/${r.entity_id}`); setSearchResults(null); setSearchQuery(""); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.04] first:rounded-t-xl last:rounded-b-xl">
+                    <span className="text-[10px] uppercase text-zinc-500 w-16">{r.entity_type}</span>
+                    <span className="text-sm text-white truncate">{r.title}</span>
+                    {r.subtitle && <span className="text-[11px] text-zinc-500 truncate">{r.subtitle}</span>}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
+          {/* Notification bell */}
           <div className="relative" ref={notifRef}>
-            <button onClick={() => setShowNotif(!showNotif)} className="relative rounded-lg border border-[#E5E5E5] bg-white p-2 text-[#6B7280] hover:text-[#0A0A0A] transition">
+            <button onClick={() => setShowNotif(!showNotif)} className="relative rounded-xl border border-white/[0.06] bg-white/[0.03] p-2 text-white/50 hover:text-white transition">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
               {unreadCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">{unreadCount > 9 ? "9+" : unreadCount}</span>}
             </button>
             {showNotif && (
-              <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border border-[#E5E5E5] bg-white shadow-lg">
-                <div className="flex items-center justify-between border-b border-[#E5E5E5] px-4 py-3">
-                  <span className="text-xs font-medium text-[#0A0A0A]">Notifications</span>
-                  {unreadCount > 0 && <button onClick={markAllRead} className="text-[10px] text-[#0A0A0A] font-medium hover:underline">Mark all read</button>}
+              <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border border-white/[0.08] bg-[#0a0a0a] shadow-2xl">
+                <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
+                  <span className="text-xs font-medium text-white">Notifications</span>
+                  {unreadCount > 0 && <button onClick={markAllRead} className="text-[10px] text-indigo-400 hover:text-indigo-300">Mark all read</button>}
                 </div>
                 <div className="max-h-64 overflow-y-auto">
-                  {notifications.length === 0 ? <div className="px-4 py-6 text-center text-xs text-[#9CA3AF]">No notifications</div> :
+                  {notifications.length === 0 ? <div className="px-4 py-6 text-center text-xs text-zinc-500">No notifications</div> :
                     notifications.slice(0, 10).map(n => (
-                      <button key={n.id} onClick={() => { markAsRead(n.id); if (n.deep_link) nav(n.deep_link); setShowNotif(false); }} className={`w-full text-left px-4 py-2.5 hover:bg-[#F5F5F5] border-b border-[#F0F0F0] ${!n.read_at ? "bg-blue-50/50" : ""}`}>
-                        <div className="text-xs text-[#0A0A0A]">{n.title}</div>
-                        <div className="text-[10px] text-[#9CA3AF] mt-0.5">{n.body}</div>
+                      <button key={n.id} onClick={() => { markAsRead(n.id); if (n.deep_link) nav(n.deep_link); setShowNotif(false); }} className={`w-full text-left px-4 py-2.5 hover:bg-white/[0.03] border-b border-white/[0.03] ${!n.read_at ? "bg-indigo-500/[0.03]" : ""}`}>
+                        <div className="text-xs text-white">{n.title}</div>
+                        <div className="text-[10px] text-zinc-500 mt-0.5">{n.body}</div>
                       </button>
                     ))
                   }
@@ -122,10 +131,10 @@ export default function AppShell() {
             )}
           </div>
 
-          <Link to="/analyze" className="primary-btn rounded-lg px-4 py-2 text-xs font-medium">+ Analyze BOM</Link>
+          <Link to="/analyze" className="primary-btn rounded-xl px-4 py-2 text-xs font-medium">+ Analyze BOM</Link>
         </header>
 
-        <main className="min-h-0 flex-1 overflow-y-auto bg-[#FAFAFA]"><Outlet /></main>
+        <main className="min-h-0 flex-1 overflow-y-auto"><Outlet /></main>
       </div>
     </div>
   );

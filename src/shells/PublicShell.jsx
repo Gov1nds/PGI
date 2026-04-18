@@ -13,10 +13,13 @@ export default function PublicShell() {
   }, [location.pathname, trackPageView]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <PublicNavbar />
       <LocationBanner />
       <main className="relative min-h-[72vh]">
+        <div className="grid-orb one" />
+        <div className="grid-orb two" />
+        <div className="grid-orb three" />
         <Outlet />
       </main>
       <Footer />

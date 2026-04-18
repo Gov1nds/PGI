@@ -14,15 +14,15 @@ function VendorHeader({ vendor, onAction }) {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-[#0A0A0A]">{vendor.name}</h1>
+            <h1 className="text-xl font-bold text-white">{vendor.name}</h1>
             {vendor.verified && (
-              <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-600 font-medium">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-400/15 text-[10px] text-emerald-300 font-medium">
                 ✓ Verified
               </span>
             )}
             <StatusBadge status={vendor.status || "STANDARD"} />
           </div>
-          <div className="flex items-center gap-3 mt-2 text-xs text-[#0A0A0A]/40">
+          <div className="flex items-center gap-3 mt-2 text-xs text-white/40">
             <span>{vendor.country || "—"}</span>
             {vendor.region && <span>· {vendor.region}</span>}
             {vendor.commodity_groups?.length > 0 && (
@@ -37,19 +37,19 @@ function VendorHeader({ vendor, onAction }) {
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-2">
-            <div className="text-[11px] text-[#0A0A0A]/30">{completion}% complete</div>
-            <div className="w-20 h-1.5 rounded-full bg-[#F5F5F5] overflow-hidden">
+            <div className="text-[11px] text-white/30">{completion}% complete</div>
+            <div className="w-20 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
               <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${completion}%` }} />
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => onAction?.("rfq")} className="px-4 py-2 bg-[#0A0A0A] text-white text-xs rounded-lg hover:bg-[#1A1A1A] font-medium">
+            <button onClick={() => onAction?.("rfq")} className="px-4 py-2 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-500 font-medium">
               Send RFQ
             </button>
-            <button onClick={() => onAction?.("chat")} className="px-3 py-2 bg-[#F5F5F5] text-[#0A0A0A] text-xs rounded-lg border border-[#E5E5E5] hover:bg-[#F0F0F0]">
+            <button onClick={() => onAction?.("chat")} className="px-3 py-2 bg-white/[0.04] text-white text-xs rounded-lg border border-white/[0.06] hover:bg-white/[0.07]">
               Start Chat
             </button>
-            <button onClick={() => onAction?.("prefer")} className="px-3 py-2 bg-[#F5F5F5] text-[#0A0A0A]/60 text-xs rounded-lg border border-[#E5E5E5] hover:bg-[#F0F0F0]">
+            <button onClick={() => onAction?.("prefer")} className="px-3 py-2 bg-white/[0.04] text-white/60 text-xs rounded-lg border border-white/[0.06] hover:bg-white/[0.07]">
               + Preferred
             </button>
           </div>
@@ -64,28 +64,28 @@ function CapabilitiesTab({ data }) {
     <div className="space-y-4">
       {data?.capabilities && (
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Manufacturing Capabilities</h3>
-          <p className="text-sm text-[#0A0A0A]/60 leading-6">{data.capabilities}</p>
+          <h3 className="text-sm font-semibold text-white mb-3">Manufacturing Capabilities</h3>
+          <p className="text-sm text-white/60 leading-6">{data.capabilities}</p>
         </div>
       )}
       {data?.equipment?.length > 0 && (
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Equipment</h3>
+          <h3 className="text-sm font-semibold text-white mb-3">Equipment</h3>
           <div className="flex flex-wrap gap-1.5">
             {data.equipment.map((e, i) => (
-              <span key={i} className="px-2.5 py-1 rounded-lg bg-[#FAFAFA] border border-[#E5E5E5] text-xs text-[#0A0A0A]/50">{e}</span>
+              <span key={i} className="px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05] text-xs text-white/50">{e}</span>
             ))}
           </div>
         </div>
       )}
       {data?.capacity && (
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Capacity</h3>
+          <h3 className="text-sm font-semibold text-white mb-3">Capacity</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {Object.entries(data.capacity).map(([k, v]) => (
               <div key={k}>
-                <div className="text-[10px] text-[#0A0A0A]/25 uppercase tracking-wider">{k.replace(/_/g, " ")}</div>
-                <div className="text-sm font-medium text-[#0A0A0A] mt-0.5">{v}</div>
+                <div className="text-[10px] text-white/25 uppercase tracking-wider">{k.replace(/_/g, " ")}</div>
+                <div className="text-sm font-medium text-white mt-0.5">{v}</div>
               </div>
             ))}
           </div>
@@ -97,14 +97,14 @@ function CapabilitiesTab({ data }) {
 
 function CertificationsTab({ data }) {
   const certs = data?.certifications || [];
-  if (!certs.length) return <div className="text-xs text-[#0A0A0A]/30 py-6 text-center">No certifications on file.</div>;
+  if (!certs.length) return <div className="text-xs text-white/30 py-6 text-center">No certifications on file.</div>;
   return (
     <div className="space-y-2">
       {certs.map((c, i) => (
         <div key={i} className="card flex items-center justify-between p-4">
           <div>
-            <div className="text-sm font-medium text-[#0A0A0A]">{c.name || c.type}</div>
-            <div className="text-[11px] text-[#0A0A0A]/30 mt-0.5">
+            <div className="text-sm font-medium text-white">{c.name || c.type}</div>
+            <div className="text-[11px] text-white/30 mt-0.5">
               {c.issued_date && `Issued: ${c.issued_date.slice(0, 10)}`}
               {c.expiry_date && ` · Expires: ${c.expiry_date.slice(0, 10)}`}
             </div>
@@ -120,12 +120,12 @@ function CommercialTab({ data }) {
   const terms = data?.commercial_terms || {};
   return (
     <div className="card p-5">
-      <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Commercial Terms</h3>
+      <h3 className="text-sm font-semibold text-white mb-3">Commercial Terms</h3>
       <div className="space-y-2">
         {Object.entries(terms).map(([k, v]) => (
-          <div key={k} className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-xs text-[#0A0A0A]/40 capitalize">{k.replace(/_/g, " ")}</span>
-            <span className="text-xs text-[#0A0A0A]/70">{typeof v === "object" ? JSON.stringify(v) : String(v)}</span>
+          <div key={k} className="flex justify-between py-1.5 border-b border-white/[0.03]">
+            <span className="text-xs text-white/40 capitalize">{k.replace(/_/g, " ")}</span>
+            <span className="text-xs text-white/70">{typeof v === "object" ? JSON.stringify(v) : String(v)}</span>
           </div>
         ))}
       </div>
@@ -140,7 +140,7 @@ function PerformanceTab({ data }) {
     <div className="space-y-4">
       {Object.keys(scores).length > 0 && (
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Score Decomposition</h3>
+          <h3 className="text-sm font-semibold text-white mb-3">Score Decomposition</h3>
           <div className="space-y-2">
             {Object.entries(scores).map(([k, v]) => (
               <ScoreBar key={k} score={v} label={k.replace(/_/g, " ")} />
@@ -150,12 +150,12 @@ function PerformanceTab({ data }) {
       )}
       {history.length > 0 && (
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Score History</h3>
+          <h3 className="text-sm font-semibold text-white mb-3">Score History</h3>
           <div className="space-y-1">
             {history.slice(0, 10).map((h, i) => (
-              <div key={i} className="flex justify-between py-1 border-b border-[#F0F0F0] text-xs">
-                <span className="text-[#0A0A0A]/40">{h.date?.slice(0, 10)}</span>
-                <span className="text-[#0A0A0A]/70">{Math.round((h.score || 0) * 100)}%</span>
+              <div key={i} className="flex justify-between py-1 border-b border-white/[0.03] text-xs">
+                <span className="text-white/40">{h.date?.slice(0, 10)}</span>
+                <span className="text-white/70">{Math.round((h.score || 0) * 100)}%</span>
               </div>
             ))}
           </div>
@@ -167,14 +167,14 @@ function PerformanceTab({ data }) {
 
 function TransactionsTab({ data }) {
   const txns = data?.transactions || [];
-  if (!txns.length) return <div className="text-xs text-[#0A0A0A]/30 py-6 text-center">No transaction history.</div>;
+  if (!txns.length) return <div className="text-xs text-white/30 py-6 text-center">No transaction history.</div>;
   return (
     <div className="space-y-1.5">
       {txns.map((t, i) => (
         <div key={i} className="card flex items-center justify-between p-3.5">
           <div>
-            <div className="text-sm text-[#0A0A0A]">{t.type || "Order"} — {t.reference || t.po_number || "—"}</div>
-            <div className="text-[11px] text-[#0A0A0A]/30">{t.date?.slice(0, 10)} · {t.total ? `$${Number(t.total).toLocaleString()}` : ""}</div>
+            <div className="text-sm text-white">{t.type || "Order"} — {t.reference || t.po_number || "—"}</div>
+            <div className="text-[11px] text-white/30">{t.date?.slice(0, 10)} · {t.total ? `$${Number(t.total).toLocaleString()}` : ""}</div>
           </div>
           <StatusBadge status={t.status || "completed"} />
         </div>

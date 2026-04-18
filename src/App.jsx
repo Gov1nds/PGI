@@ -11,6 +11,9 @@ import { Home, Analyze, Login, Register, Pricing, Insights, Contact, NotFound } 
 import Privacy from "./pages/public/Privacy";
 import Terms from "./pages/public/Terms";
 import OAuthCallback from "./pages/public/OAuthCallback";
+const Customers = lazy(()=>import("./pages/public/Customers"));
+const Changelog = lazy(()=>import("./pages/public/Changelog"));
+const Security  = lazy(()=>import("./pages/public/Security"));
 
 const L = ({children}) => <Suspense fallback={<LoadingState/>}>{children}</Suspense>;
 
@@ -62,6 +65,9 @@ export default function App() {
         <Route path="/pricing" element={<Pricing/>}/>
         <Route path="/insights" element={<Insights/>}/>
         <Route path="/contact" element={<Contact/>}/>
+        <Route path="/customers" element={<L><Customers/></L>}/>
+        <Route path="/changelog" element={<L><Changelog/></L>}/>
+        <Route path="/security" element={<L><Security/></L>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/marketplace" element={<L><Marketplace/></L>}/>

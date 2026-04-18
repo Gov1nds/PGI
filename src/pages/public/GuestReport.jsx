@@ -37,10 +37,10 @@ function HeroSearch({ components, setComponents, onRun, loading }) {
 
   return (
     <div className="hero-surface p-5 md:p-6">
-      <h2 className="text-lg font-semibold text-[#0A0A0A] mb-1">
+      <h2 className="text-lg font-semibold text-white mb-1">
         Free Intelligence Report
       </h2>
-      <p className="text-sm text-[#0A0A0A]/45 mb-4">
+      <p className="text-sm text-white/45 mb-4">
         Enter components to get pricing, strategy, and risk analysis — no sign-up required.
       </p>
       <div className="flex gap-2">
@@ -78,12 +78,12 @@ function HeroSearch({ components, setComponents, onRun, loading }) {
           {components.map((c, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] text-xs text-[#0A0A0A]"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-400/15 text-xs text-indigo-200"
             >
               {c.raw_text}
               <button
                 onClick={() => remove(i)}
-                className="text-[#374151]/50 hover:underline ml-0.5"
+                className="text-indigo-300/50 hover:text-indigo-200 ml-0.5"
                 aria-label={`Remove ${c.raw_text}`}
               >
                 ×
@@ -99,8 +99,8 @@ function HeroSearch({ components, setComponents, onRun, loading }) {
 function FreshnessFooter({ freshness }) {
   if (!freshness) return null;
   return (
-    <div className="flex items-center gap-2 text-[10px] text-[#0A0A0A]/30 pt-3 border-t border-[#F0F0F0]">
-      <svg className="w-3 h-3 text-[#0A0A0A]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="flex items-center gap-2 text-[10px] text-white/30 pt-3 border-t border-white/[0.04]">
+      <svg className="w-3 h-3 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <span>
@@ -115,9 +115,9 @@ function VendorShortlist({ vendors }) {
   if (!vendors?.length) return null;
   return (
     <div className="card p-5">
-      <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">
+      <h3 className="text-sm font-semibold text-white mb-3">
         Vendor Shortlist
-        <span className="ml-2 text-xs text-[#0A0A0A]/30 font-normal">
+        <span className="ml-2 text-xs text-white/30 font-normal">
           (limited preview)
         </span>
       </h3>
@@ -132,11 +132,11 @@ function VendorShortlist({ vendors }) {
 
 function CTASigninPanel() {
   return (
-    <div className="card p-5 border-indigo-500/15 bg-blue-50/50">
-      <div className="text-sm font-semibold text-[#0A0A0A] mb-2">
+    <div className="card p-5 border-indigo-500/15 bg-indigo-500/[0.03]">
+      <div className="text-sm font-semibold text-white mb-2">
         Unlock full intelligence
       </div>
-      <p className="text-xs text-[#0A0A0A]/45 mb-4 leading-5">
+      <p className="text-xs text-white/45 mb-4 leading-5">
         Sign in to access vendor contact info, detailed score breakdowns,
         RFQ dispatch, order tracking, and more.
       </p>
@@ -146,9 +146,9 @@ function CTASigninPanel() {
       >
         Create Free Account
       </Link>
-      <p className="text-center mt-2 text-[11px] text-[#0A0A0A]/30">
+      <p className="text-center mt-2 text-[11px] text-white/30">
         Already have an account?{" "}
-        <Link to="/login" className="text-[#374151] hover:underline">
+        <Link to="/login" className="text-indigo-300 hover:text-indigo-200">
           Sign in
         </Link>
       </p>
@@ -211,9 +211,9 @@ export default function GuestReport() {
         {/* Welcome back */}
         {previousSearch && !report && (
           <div className="mb-4 card p-4 flex items-center gap-3 border-indigo-500/10">
-            <span className="text-xs text-[#0A0A0A]/50">
+            <span className="text-xs text-white/50">
               Welcome back — your previous search for{" "}
-              <strong className="text-[#0A0A0A]/70">
+              <strong className="text-white/70">
                 {previousSearch.slice(0, 3).join(", ")}
               </strong>{" "}
               is saved.
@@ -222,7 +222,7 @@ export default function GuestReport() {
               onClick={() => {
                 setComponents(previousSearch.map((t) => ({ raw_text: t, qty: 1 })));
               }}
-              className="text-xs text-[#374151] hover:underline shrink-0"
+              className="text-xs text-indigo-300 hover:text-indigo-200 shrink-0"
             >
               Restore
             </button>
@@ -237,7 +237,7 @@ export default function GuestReport() {
         />
 
         {error && (
-          <div className="mt-4 rounded-xl border border-red-500/15 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="mt-4 rounded-xl border border-red-500/15 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             {error}
           </div>
         )}
@@ -252,10 +252,10 @@ export default function GuestReport() {
               {/* Strategy summary */}
               {report.strategy_summary && (
                 <div className="card p-5 border-l-2 border-indigo-500/30">
-                  <div className="text-xs text-[#374151]/60 uppercase tracking-wider mb-1">
+                  <div className="text-xs text-indigo-300/60 uppercase tracking-wider mb-1">
                     Strategy Summary
                   </div>
-                  <p className="text-sm text-[#0A0A0A]/80 leading-6">
+                  <p className="text-sm text-white/80 leading-6">
                     {report.strategy_summary}
                   </p>
                 </div>

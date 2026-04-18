@@ -43,15 +43,32 @@ export default function ProjectShell() {
   const [error, setError] = useState(null);
 
   const fetchProject = useCallback(async () => {
-    try { const data = await getProject(id, accessToken); setProject(data); setError(null); } catch (e) { setError(e); } finally { setLoading(false); }
+    try {
+      const data = await getProject(id, accessToken);
+      setProject(data);
+      setError(null);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
   }, [id, accessToken]);
+
   useEffect(() => { fetchProject(); }, [fetchProject]);
 
+  // Real-time project status updates
   useEffect(() => {
-    const handler = (data) => { if (data.project_id === id || data.entity_id === id) fetchProject(); };
+    const handler = (data) => {
+      if (data.project_id === id || data.entity_id === id) {
+        fetchProject();
+      }
+    };
     subscribe("project.status_changed", handler);
     subscribe("bom_line.status_changed", handler);
-    return () => { unsubscribe("project.status_changed", handler); unsubscribe("bom_line.status_changed", handler); };
+    return () => {
+      unsubscribe("project.status_changed", handler);
+      unsubscribe("bom_line.status_changed", handler);
+    };
   }, [id, subscribe, unsubscribe, fetchProject]);
 
   if (loading) return <LoadingState />;
@@ -60,28 +77,37 @@ export default function ProjectShell() {
 
   const visibleTabs = TABS.filter(t => {
     if (t.always) return true;
-    if (t.perm && !project.permissions?.[t.perm]) return true;
+    if (t.perm && !project.permissions?.[t.perm]) return true; // Still show, server enforces
     return statusAtLeast(project.status, t.minStatus);
   });
 
   return (
     <ProjectCtx.Provider value={{ project, refetchProject: fetchProject }}>
-      <div className="flex h-screen overflow-hidden bg-[#FAFAFA]">
-        <aside className="hidden w-52 flex-col border-r border-[#E5E5E5] bg-white md:flex">
-          <div className="flex h-14 items-center border-b border-[#E5E5E5] px-4">
-            <Link to="/projects" className="text-sm text-[#6B7280] transition hover:text-[#0A0A0A]">← Projects</Link>
+      <div className="flex h-screen overflow-hidden bg-transparent">
+        <aside className="hidden w-52 flex-col border-r border-white/[0.06] bg-black/80 backdrop-blur-2xl md:flex">
+          <div className="flex h-16 items-center border-b border-white/[0.06] px-4">
+            <Link to="/projects" className="text-sm text-white/55 transition hover:text-white">← Projects</Link>
           </div>
-          <div className="px-4 py-3 border-b border-[#E5E5E5]">
-            <div className="text-sm font-medium text-[#0A0A0A] truncate">{project.name}</div>
+          <div className="px-4 py-3 border-b border-white/[0.06]">
+            <div className="text-sm font-medium text-white truncate">{project.name}</div>
             <div className="mt-1"><StatusBadge status={project.status} /></div>
           </div>
-          <nav className="space-y-0.5 px-3 py-4">
+          <nav className="space-y-1 px-3 py-4">
             {visibleTabs.map((t) => (
-              <NavLink key={t.p} to={t.p ? `/project/${id}/${t.p}` : `/project/${id}`} end={!t.p} className={({ isActive }) => `rail-link ${isActive ? "active" : ""}`}>{t.l}</NavLink>
+              <NavLink
+                key={t.p}
+                to={t.p ? `/project/${id}/${t.p}` : `/project/${id}`}
+                end={!t.p}
+                className={({ isActive }) => `rail-link ${isActive ? "active" : ""}`}
+              >
+                {t.l}
+              </NavLink>
             ))}
           </nav>
         </aside>
-        <div className="min-w-0 flex-1 overflow-y-auto"><Outlet /></div>
+        <div className="min-w-0 flex-1 overflow-y-auto">
+          <Outlet />
+        </div>
       </div>
     </ProjectCtx.Provider>
   );

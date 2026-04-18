@@ -7,31 +7,31 @@ import StaleBadge from "../../components/StaleBadge";
 
 /* ─── Matrix Cell ─── */
 function MatrixCell({ cell, isBest, isSelected, onSelect }) {
-  if (!cell) return <td className="px-2 py-2 text-center text-[10px] text-[#0A0A0A]/15">—</td>;
+  if (!cell) return <td className="px-2 py-2 text-center text-[10px] text-white/15">—</td>;
   const bg = isBest
     ? "bg-emerald-500/[0.06] border-emerald-500/15"
     : isSelected
-    ? "bg-[#F5F5F5] border-[#D4D4D4]"
-    : "hover:bg-[#FAFAFA]";
+    ? "bg-indigo-500/[0.06] border-indigo-500/20"
+    : "hover:bg-white/[0.02]";
 
   return (
     <td
       onClick={() => onSelect?.()}
-      className={`px-2 py-2 border border-[#F0F0F0] cursor-pointer transition ${bg} group`}
+      className={`px-2 py-2 border border-white/[0.03] cursor-pointer transition ${bg} group`}
     >
-      <div className="text-xs text-[#0A0A0A] font-mono">
+      <div className="text-xs text-white font-mono">
         ${Number(cell.unit_price || 0).toLocaleString()}
       </div>
       {cell.lead_time_weeks != null && (
-        <div className="text-[10px] text-[#0A0A0A]/35">{cell.lead_time_weeks}w lead</div>
+        <div className="text-[10px] text-white/35">{cell.lead_time_weeks}w lead</div>
       )}
       {cell.tlc_total != null && (
-        <div className="text-[10px] text-amber-600/50 font-mono">
+        <div className="text-[10px] text-amber-300/50 font-mono">
           TLC ${Number(cell.tlc_total).toLocaleString()}
         </div>
       )}
       {isSelected && (
-        <div className="text-[9px] text-[#374151] mt-0.5">✓ Selected</div>
+        <div className="text-[9px] text-indigo-300 mt-0.5">✓ Selected</div>
       )}
     </td>
   );
@@ -44,8 +44,8 @@ function ConstraintsToggle({ show, onToggle }) {
       onClick={onToggle}
       className={`px-3 py-1.5 rounded-lg text-[11px] border transition ${
         show
-          ? "bg-[#F5F5F5] border-[#D4D4D4] text-[#0A0A0A]"
-          : "bg-[#FAFAFA] border-[#E5E5E5] text-[#0A0A0A]/40 hover:text-[#0A0A0A]/60"
+          ? "bg-indigo-500/10 border-indigo-500/20 text-indigo-200"
+          : "bg-white/[0.03] border-white/[0.06] text-white/40 hover:text-white/60"
       }`}
     >
       {show ? "Hide" : "Show"} Constraints
@@ -71,15 +71,15 @@ function SplitBOMSelector({ selections, vendors, lines, onConfirm, confirming })
 
   return (
     <div className="card p-4 border-indigo-500/15">
-      <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">
+      <h3 className="text-sm font-semibold text-white mb-3">
         Split BOM Summary — {groups.length} PO{groups.length > 1 ? "s" : ""} will be created
       </h3>
       <div className="space-y-2 mb-4">
         {groups.map((g) => (
-          <div key={g.vendor.vendor_id || g.vendor.name} className="flex items-center justify-between p-2 rounded-lg bg-[#FAFAFA] border border-[#F0F0F0]">
+          <div key={g.vendor.vendor_id || g.vendor.name} className="flex items-center justify-between p-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">
             <div>
-              <span className="text-xs text-[#0A0A0A] font-medium">{g.vendor.name}</span>
-              <span className="text-[11px] text-[#0A0A0A]/30 ml-2">{g.lineIds.length} lines</span>
+              <span className="text-xs text-white font-medium">{g.vendor.name}</span>
+              <span className="text-[11px] text-white/30 ml-2">{g.lineIds.length} lines</span>
             </div>
           </div>
         ))}
@@ -185,14 +185,14 @@ export default function QuoteMatrix() {
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-bold text-[#0A0A0A]">Quote Comparison</h2>
-          <p className="text-xs text-[#0A0A0A]/30 mt-0.5">
+          <h2 className="text-xl font-bold text-white">Quote Comparison</h2>
+          <p className="text-xs text-white/30 mt-0.5">
             {lines.length} lines × {vendors.length} vendors
           </p>
         </div>
         <div className="flex items-center gap-2">
           <ConstraintsToggle show={showConstraints} onToggle={() => setShowConstraints(!showConstraints)} />
-          <button onClick={autoSelect} className="px-3 py-1.5 bg-[#0A0A0A] text-white text-[11px] rounded-lg hover:bg-[#1A1A1A] font-medium">
+          <button onClick={autoSelect} className="px-3 py-1.5 bg-indigo-600 text-white text-[11px] rounded-lg hover:bg-indigo-500 font-medium">
             Auto-Select Best
           </button>
         </div>
@@ -201,20 +201,20 @@ export default function QuoteMatrix() {
       {matrix.computed_at && <StaleBadge computedAt={matrix.computed_at} />}
 
       {/* Matrix table */}
-      <div className="overflow-x-auto rounded-xl border border-[#E5E5E5]">
+      <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
         <table className="w-full text-xs">
           <thead>
-            <tr className="bg-[#FAFAFA]">
-              <th className="sticky left-0 z-10 bg-white px-3 py-2.5 text-left text-[10px] uppercase tracking-wider text-[#0A0A0A]/25 border-r border-[#E5E5E5] min-w-[180px]">
+            <tr className="bg-white/[0.02]">
+              <th className="sticky left-0 z-10 bg-[#0a0a12] px-3 py-2.5 text-left text-[10px] uppercase tracking-wider text-white/25 border-r border-white/[0.06] min-w-[180px]">
                 Component
               </th>
               {vendors.map((v) => (
-                <th key={v.vendor_id} className="px-3 py-2.5 text-center text-[10px] uppercase tracking-wider text-[#0A0A0A]/30 min-w-[130px]">
-                  <div className="text-[#0A0A0A]/60 normal-case text-xs font-medium">{v.name}</div>
-                  <div className="text-[#0A0A0A]/20">{v.country || ""}</div>
+                <th key={v.vendor_id} className="px-3 py-2.5 text-center text-[10px] uppercase tracking-wider text-white/30 min-w-[130px]">
+                  <div className="text-white/60 normal-case text-xs font-medium">{v.name}</div>
+                  <div className="text-white/20">{v.country || ""}</div>
                 </th>
               ))}
-              <th className="px-3 py-2.5 text-center text-[10px] uppercase tracking-wider text-[#374151]/40 min-w-[120px]">
+              <th className="px-3 py-2.5 text-center text-[10px] uppercase tracking-wider text-indigo-300/40 min-w-[120px]">
                 PGI Rec.
               </th>
             </tr>
@@ -228,9 +228,9 @@ export default function QuoteMatrix() {
               );
               return (
                 <tr key={line.line_id} className="hover:bg-white/[0.01]">
-                  <td className="sticky left-0 z-10 bg-white px-3 py-2 border-r border-[#E5E5E5]">
-                    <div className="text-[#0A0A0A]/80 font-medium truncate max-w-[170px]">{line.part_name || line.raw_text}</div>
-                    <div className="text-[10px] text-[#0A0A0A]/25">Qty {line.quantity}</div>
+                  <td className="sticky left-0 z-10 bg-[#0a0a12] px-3 py-2 border-r border-white/[0.06]">
+                    <div className="text-white/80 font-medium truncate max-w-[170px]">{line.part_name || line.raw_text}</div>
+                    <div className="text-[10px] text-white/25">Qty {line.quantity}</div>
                   </td>
                   {vendors.map((v) => {
                     const cell = quotes.find((q) => q.vendor_id === v.vendor_id);
@@ -248,7 +248,7 @@ export default function QuoteMatrix() {
                   })}
                   <td className="px-2 py-2 text-center">
                     {line.recommendation && (
-                      <div className="text-[10px] text-[#374151]/60">{line.recommendation}</div>
+                      <div className="text-[10px] text-indigo-300/60">{line.recommendation}</div>
                     )}
                   </td>
                 </tr>
@@ -261,11 +261,11 @@ export default function QuoteMatrix() {
       {/* Constraint details */}
       {showConstraints && matrix.constraint_details && (
         <div className="card p-4 space-y-2">
-          <h3 className="text-xs font-semibold text-[#0A0A0A]/50 uppercase tracking-wider">Constraint Breakdown</h3>
+          <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Constraint Breakdown</h3>
           {Object.entries(matrix.constraint_details).map(([key, val]) => (
-            <div key={key} className="flex justify-between py-1 border-b border-[#F0F0F0] text-xs">
-              <span className="text-[#0A0A0A]/40 capitalize">{key.replace(/_/g, " ")}</span>
-              <span className="text-[#0A0A0A]/60">{typeof val === "object" ? JSON.stringify(val) : val}</span>
+            <div key={key} className="flex justify-between py-1 border-b border-white/[0.03] text-xs">
+              <span className="text-white/40 capitalize">{key.replace(/_/g, " ")}</span>
+              <span className="text-white/60">{typeof val === "object" ? JSON.stringify(val) : val}</span>
             </div>
           ))}
         </div>

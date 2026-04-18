@@ -41,54 +41,54 @@ export default function VendorProfile() {
   return (
     <div className="p-6 max-w-2xl">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-[#0A0A0A]">Vendor Profile</h1>
+        <h1 className="text-xl font-bold text-white">Vendor Profile</h1>
         <div className="flex items-center gap-2">
-          <div className="text-[11px] text-[#6B7280]">{completionPct}% complete</div>
-          <div className="w-20 h-1.5 rounded-full bg-[#F5F5F5] overflow-hidden">
+          <div className="text-[11px] text-zinc-500">{completionPct}% complete</div>
+          <div className="w-20 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
             <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${completionPct}%` }} />
           </div>
         </div>
       </div>
 
-      {!isAdmin && <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-600">View only — contact your vendor admin to edit profile.</div>}
+      {!isAdmin && <div className="mb-4 rounded-xl border border-amber-400/15 bg-amber-500/10 px-4 py-2 text-xs text-amber-200">View only — contact your vendor admin to edit profile.</div>}
       
       {missingFields.length > 0 && isAdmin && (
-        <div className="mb-4 rounded-xl border border-[#E5E5E5] bg-[#F5F5F5] px-4 py-3 text-xs text-[#0A0A0A]">
+        <div className="mb-4 rounded-xl border border-indigo-400/15 bg-indigo-500/[0.06] px-4 py-3 text-xs text-indigo-200">
           <div className="font-medium mb-1">Complete your profile to improve visibility</div>
-          <div className="text-[#0A0A0A]/50">Missing: {missingFields.map(f => f.replace(/_/g, " ")).join(", ")}</div>
+          <div className="text-indigo-200/50">Missing: {missingFields.map(f => f.replace(/_/g, " ")).join(", ")}</div>
         </div>
       )}
 
       {profile && (
         <div className="space-y-6">
           <div className="card p-5">
-            <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Identity</h3>
+            <h3 className="text-sm font-semibold text-white mb-3">Identity</h3>
             <div className="space-y-3">
-              <div><label className="text-[11px] text-[#6B7280] block mb-1">Company Name</label>
+              <div><label className="text-[11px] text-zinc-500 block mb-1">Company Name</label>
                 <input value={profile.name || ""} onChange={e => upd("name", e.target.value)} disabled={!isAdmin} className="glass-input rounded-lg px-3 py-2 text-sm w-full" /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="text-[11px] text-[#6B7280] block mb-1">Country</label>
+                <div><label className="text-[11px] text-zinc-500 block mb-1">Country</label>
                   <input value={profile.country || ""} onChange={e => upd("country", e.target.value)} disabled={!isAdmin} className="glass-input rounded-lg px-3 py-2 text-sm" /></div>
-                <div><label className="text-[11px] text-[#6B7280] block mb-1">Region</label>
+                <div><label className="text-[11px] text-zinc-500 block mb-1">Region</label>
                   <input value={profile.region || ""} onChange={e => upd("region", e.target.value)} disabled={!isAdmin} className="glass-input rounded-lg px-3 py-2 text-sm" /></div>
               </div>
             </div>
           </div>
           <div className="card p-5">
-            <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Capabilities</h3>
+            <h3 className="text-sm font-semibold text-white mb-3">Capabilities</h3>
             <textarea value={profile.capabilities || ""} onChange={e => upd("capabilities", e.target.value)} disabled={!isAdmin} rows={3} placeholder="e.g., CNC machining, injection molding, PCB assembly" className="glass-textarea rounded-lg px-3 py-2 text-sm w-full" />
           </div>
           <div className="card p-5">
-            <h3 className="text-sm font-semibold text-[#0A0A0A] mb-3">Contact</h3>
+            <h3 className="text-sm font-semibold text-white mb-3">Contact</h3>
             <input value={profile.contact_email || ""} onChange={e => upd("contact_email", e.target.value)} disabled={!isAdmin} placeholder="contact@vendor.com" className="glass-input rounded-lg px-3 py-2 text-sm w-full" />
           </div>
 
           {isAdmin && (
             <div className="flex items-center gap-3">
-              <button onClick={handleSave} disabled={saving} className="px-5 py-2.5 bg-[#0A0A0A] text-white text-sm rounded-xl hover:bg-[#1A1A1A] disabled:opacity-50 font-medium">
+              <button onClick={handleSave} disabled={saving} className="px-5 py-2.5 bg-indigo-600 text-white text-sm rounded-xl hover:bg-indigo-500 disabled:opacity-50 font-medium">
                 {saving ? "Saving..." : "Save Profile"}
               </button>
-              {success && <span className="text-xs text-emerald-600">Saved successfully</span>}
+              {success && <span className="text-xs text-emerald-400">Saved successfully</span>}
               {error && <span className="text-xs text-red-400">{error.message}</span>}
             </div>
           )}
